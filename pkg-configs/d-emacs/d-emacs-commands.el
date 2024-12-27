@@ -670,15 +670,16 @@ Interactively, STRINGS are collected by prompting with a minibuffer until an emp
         (perform-replace from-string to-string nil nil nil nil nil))))
 
 (defun d-emacs-replace-regexp-throughout-buffer (from-regexp to-regexp)
-  "Replace all instances of FROM-REGEXP with TO-REGEXP throughout the entire buffer."
-  (interactive
+                  "Replace all instances of FROM-REGEXP with TO-REGEXP throughout the entire buffer."
+                  (interactive
    (let ((common
 	  (query-replace-read-args
 	   (concat "Replace regexp in buffer."
 		   (if (use-region-p) " in region" "")))))
      (list (nth 0 common) (nth 1 common))))
-  (let ((pos (point))
+                  (let ((pos (point))
         (perform-replace from-regexp to-regexp nil regexp nil nil nil))))
+
 
 ;;;;; Open Emacs
 (defun d-emacs-open-file-in-new-emacs (&optional filename)

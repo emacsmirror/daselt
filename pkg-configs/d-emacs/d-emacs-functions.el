@@ -599,6 +599,33 @@ Works for `defun', `defmacro', `defconst', `defcustom', `defalias' and `defun*'.
         (search-forward "\"")
         (backward-char)))))
 
+;;;; Symbol renaming
+(defun d-emacs-definition-name ()
+  "If point is within a definition, move to the beginning of the docstring.
+Works for definition types in `d-emacs-docstring-functions-list'."
+  (mark-defun)
+  (let* ((defn (d-read-region))
+         (first-symbol (nth 0 defn))
+         (name (nth 1 defn)))
+    (if (member first-symbol d-emacs-docstring-functions-list)
+        name)))
+
+(defun d-emacs-definition-names-in-file (fname)
+  "Return the names of definitions in FNAME, listed according to definition type.
+Works for definition types in `d-emacs-docstring-functions-list'."
+  (let ((buf (current-buffer)))
+    (set-buffer (find-file-noselect fname))
+    (prog1 (remq nil (mapcar (lambda (deftype)
+                               (save-excursion
+                                 (goto-char (point-min))
+                                 (let (rlist)
+                                   (while (search-forward (symbol-name deftype) nil t)
+                                     (save-excursion
+                                       (beginning-of-defun)
+                                       (push (d-emacs-definition-name) rlist)))
+                                   rlist)))
+                             d-emacs-docstring-functions-list))
+      (set-buffer buf))))
 
 ;;;; Provide
 (provide 'd-emacs-functions)
