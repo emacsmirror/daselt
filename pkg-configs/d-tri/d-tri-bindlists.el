@@ -56,7 +56,7 @@
 ;;;;;;; 2
 ((2 -1 -2) . "bmark") 
 (("C-" . (2 -1 -2)) . "gobble 1 quickmark") 
-((2 -1 2) . "fillcmdline bmarks") 
+((2 -1 3) . "hint -t") 
 ((2 -1 4) . "fillcmdline taball") 
 
 ;;;;;;;; 2-0 

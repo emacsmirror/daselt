@@ -31,32 +31,32 @@
 Welcome to the Daselt tutorial! Note that you can stop the display of this tutorial by setting the constant ~d-show-tutorial~ to ~nil~. You can save this tutorial by pressing *C-(1 0 5)* and you can save your position by setting a bookmark using *M-(2 -1 -2)*, see below for an explanation of these coordinates. You can re-generate this tutorial with the command ~d-generate-tutorial~. Note that parts of this tutorial are set based on Daselt customs that have been set automatically. If you decide to change them, you can re-generate this tutorial using the command ~d-generate-tutorial~.
 
 * Introduction
-Let's start with the basic navigation shortcuts. To move point (the Emacs cursor) left and right you can hold down the _Space_ bar and press the keys " (d-xkb--binding-from-coords '(1 0 -2)) " and " (d-xkb--binding-from-coords '(1 0 2))". Similarly you can move up and down with " (d-xkb--binding-from-coords '(1 0 -3)) " and "(d-xkb--binding-from-coords '(1 0 3))" and scroll down an entire screen using "(d-xkb--binding-from-coords '(1 0 1))
+Let's start with the basic navigation shortcuts. To move point (the Emacs cursor) left and right you can hold down the _Space_ bar and press the keys " (d-emacs-xkb--binding-from-coords '(1 0 -2)) " and " (d-emacs-xkb--binding-from-coords '(1 0 2))". Similarly you can move up and down with " (d-emacs-xkb--binding-from-coords '(1 0 -3)) " and "(d-emacs-xkb--binding-from-coords '(1 0 3))" and scroll down an entire screen using "(d-emacs-xkb--binding-from-coords '(1 0 1))
 
 (if (or d-stump d-emacs-translate-C-1-1--2-C-g
-        (not (string= (d-xkb--binding-from-coords '(1 0 -1)) "g")))
+        (not (string= (d-emacs-xkb--binding-from-coords '(1 0 -1)) "g")))
     (concat ". Silmilarly, you can scroll up using *C-"
-            (d-xkb--binding-from-coords '(1 0 -1))
+            (d-emacs-xkb--binding-from-coords '(1 0 -1))
             "*. N")
-  "Note that you cannot use *C-g* to scroll a screen up though. This is because the *C-g*-signal aborts running processes in Emacs, and this action cannot easily be remapped. There are ways to remedy this, but they come with some caveats, see [[*The *C-g* Issue]]. In the meantime you can use " (d-xkb--binding-from-coords '(1 1 -2)) "to scroll up a screen. In any case, n")
+  "Note that you cannot use *C-g* to scroll a screen up though. This is because the *C-g*-signal aborts running processes in Emacs, and this action cannot easily be remapped. There are ways to remedy this, but they come with some caveats, see [[*The *C-g* Issue]]. In the meantime you can use " (d-emacs-xkb--binding-from-coords '(1 1 -2)) "to scroll up a screen. In any case, n")
 
 "otice the symmetry and flatness of these bindings. These are consistent features of Daselt's shortcuts. If any one of the shortcuts in this tutorial does not work for you don't panic, it might be a bad key (see the section [[Bad Key Configs]]). In the absolutely worst case you can use the arrow keys to navigate, but that shouldn't be necessary.
 
 * Modifiers
 "
 (if d-emacs-avy-act
-    (concat "If you hold down *_Space_* and either *_CapsLock_* or the key next to your right pinky on the home row and tap " (d-xkb--binding-from-coords `(1 1 2)) " , then you can see the lines in the current emacs buffer being prefixed by either one or two symbols. If you press the symbols next to the upper end of the diagram below, you can put it at the top of your screen. If you accidentally hit the wrong symbols, you can always return to the previous position by holding down _Space_ and tapping "
-            (d-xkb--binding-from-coords `(1 -1 -1))
+    (concat "If you hold down *_Space_* and either *_CapsLock_* or the key next to your right pinky on the home row and tap " (d-emacs-xkb--binding-from-coords `(1 1 2)) " , then you can see the lines in the current emacs buffer being prefixed by either one or two symbols. If you press the symbols next to the upper end of the diagram below, you can put it at the top of your screen. If you accidentally hit the wrong symbols, you can always return to the previous position by holding down _Space_ and tapping "
+            (d-emacs-xkb--binding-from-coords `(1 -1 -1))
             "
 
 ")
   (concat "If you move point down to top of the diagram below, hold down _Space_ and either _CapsLock_ or the key next to your right pinky on the home row and tap *"
-          (d-xkb--binding-from-coords `(1 1 2))
+          (d-emacs-xkb--binding-from-coords `(1 1 2))
           "* you can place the diagram below at the top of your screen.
 
 "))
 
-(d-capture-inserted-text #'d-xkb-draw-keyboard-layer 0 t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-keyboard-layer 0 t)
 
 "
 This is a Daselt-keyboard-diagram. It displays the modifiers in the Daselt-layout and should be read in the following way:
@@ -65,9 +65,14 @@ This is a Daselt-keyboard-diagram. It displays the modifiers in the Daselt-layou
 
 - One-letter-expressions designate modifiers that are applied while the corresponding key is held down (called /continuous modifiers/ in Daselt-lingo). You have already applied the *C(trl)*-modifier by holding down the _Space_-key, here displayed right in the middle of the lowest row of the diagram. The other continuous modifiers are placed in the number row.
 
-- Numbers designate the corresponding layer of Daselt's layout that the other keys are shifted to while the corresponding key is held down. For instance, the _Alt_-keys shift keys to the second keyboard-layer, which houses uppercase-letters. If you want, you can try this out right now by holding down one of the _Alt_ keys and typing some text. You can undo your actions using *C-" (d-xkb--binding-from-coords '(1 -1 -2))"*.
+- Numbers designate the corresponding layer of Daselt's layout that the other keys are shifted to while the corresponding key is held down. For instance, the _Alt_-keys shift keys to the second keyboard-layer, which houses uppercase-letters. If you want, you can try this out right now by holding down one of the _Alt_ keys and typing some text. You can undo your actions using *C-" (d-emacs-xkb--binding-from-coords '(1 -1 -2))"*.
 
-- If an expression is of the form *A/B*, then *A* designates what happens when the key is held down while *B* is what happens when the key is tapped. For instance, the _4_- and _8_-keys in the QWERTY-layout, or whatever analogue you have on your keyboard, shift the keyboard to the "(if d-dfk-dual-functions-outside-main-keys "seventh" "third")" layer while held down and send *Compose*-signals when tapped, which allow you to write symbols used in your local language using those of the standard Latin alphabet (see [[https://www.x.org/releases/current/doc/libX11/i18n/compose/en_US.UTF-8.html][here]] for all available sequences).
+- If an expression is of the form *A/B*, then *A* designates what happens when the key is held down while *B* is what happens when the key is tapped. For instance, the _4_- and _8_-keys in the QWERTY-layout, or whatever analogue you have on your keyboard, shift the keyboard to layer "
+(let* ((unsplitbind (d-emacs-xkb--binding-from-coords '(0 -2 3) nil t))
+       (firstbindpart (car (split-string unsplitbind "/")))
+       (bind (or firstbindpart unsplitbind)))
+  bind)
+" while held down and send *Compose*-signals when tapped, which allow you to write symbols in your local language using those of the standard Latin alphabet (see [[https://www.x.org/releases/current/doc/libX11/i18n/compose/en_US.UTF-8.html][here]] for all available sequences).
 
 - An expression of the form *dX* denotes a so-called /discrete modifier/, meaning a signal that makes Emacs apply the modifier X to the next signal it receives. For instance, the _Alt_-keys apply an *M*(eta)-modifier to the next signal if they are tapped.
 
@@ -81,31 +86,31 @@ The signals (symbols and function signals) on this layer are generally constant 
 
 "
 
-(unless (eq d-xkb-layout 'd-xkb-main-layout) (concat "Note that some design compromises had to be made for layouts other than Daselt's main layout because dual functions on keys housing letters are error-prone." (if d-dfk-dual-functions-outside-main-keys "In particular, the modifiers for the third layer had to be put onto the _4_ and _8_ keys, and the " (d-xkb--binding-from-coords '(1 1 0)) "houses a H(yper)-modifier in the main layout that had to be taken out for the same reason. If you are willing to type slower or accept the possibility of occasional errors, you can re-introduce the more optimal modifier placement by setting ~d-dfk-reduced.yaml~ or ~d-dfk-reduced-iso.yaml~ to ~d-dfk.yaml`/`d-dfk-iso.yaml~ in your ~udevmon.yaml~ config file (provided you copied the unreduced ~d-dfk~ files into your ~dual-function-keys~ directory).")))
+(unless (eq d-emacs-xkb-layout 'd-emacs-xkb-main-layout) (concat "Note that some design compromises had to be made for layouts other than Daselt's main layout because dual functions on keys housing letters are error-prone." (if d-dfk-dual-functions-outside-main-keys "In particular, the modifiers for the third layer had to be put onto the _4_ and _8_ keys, and the " (d-emacs-xkb--binding-from-coords '(1 1 0)) "houses a H(yper)-modifier in the main layout that had to be taken out for the same reason. If you are willing to type slower or accept the possibility of occasional errors, you can re-introduce the more optimal modifier placement by setting ~d-dfk-reduced.yaml~ or ~d-dfk-reduced-iso.yaml~ to ~d-dfk.yaml`/`d-dfk-iso.yaml~ in your ~udevmon.yaml~ config file (provided you copied the unreduced ~d-dfk~ files into your ~dual-function-keys~ directory).")))
 
 "* Keyboard Layout
 ** Layer *1* and Coordinates
 
 "
-(d-capture-inserted-text #'d-xkb-draw-keyboard-layer 1 t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-keyboard-layer 1 t)
 
 "
 Here you can see the first layer of Daselt's layout. Notice the empty cells in the middle of the upper two rows and next to the key in the middle of the lower row. These exist due to the peculiar shape of a standard keyboard, in which the middle of the upper two rows is in-between two other keys while there is a key right in the middle of the lowest row (the B-key in QWERTY). This allows us to describe Daselt's bindings using an assignment of coordinates to each key given by the row the key is in and its distance from the middle of the keyboard. The coordinates of the keys are shown in the next diagram:
 
 "
-(d-capture-inserted-text #'d-xkb-draw-key-coordinates nil t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-key-coordinates nil t)
 
 "
 The coordinates are chosen in such a way that all keys with the same /place coordinate/ (meaning the last coordinate) are in a column so that they can be pressed with the same finger: *1* and *2* with the index finger, *3* with the middle finger, *4* with the ring finger and *5* and *6* with the little finger (same for negative values).
 
-From these key coordinates we can create coordinates for each signal in Daselt's layout by prefixing the key coordinates with the layer layer number as a third coordinate. Thus, *(1 0 2)* denotes the signal housed by the key under your index finger on layer 1, which in this case is " (d-xkb--binding-from-coords '(1 0 2)) ". Daselt is mostly structured according to position and this allows us to keep shortcuts independent from particular signals assigned to a key. Accordingly, we will from now on use position instead of the attached signal to write shortcuts. For instance, *C-(1 1 2)* allows you to execute a command.
+From these key coordinates we can create coordinates for each signal in Daselt's layout by prefixing the key coordinates with the layer layer number as a third coordinate. Thus, *(1 0 2)* denotes the signal housed by the key under your index finger on layer 1, which in this case is " (d-emacs-xkb--binding-from-coords '(1 0 2)) ". Daselt is mostly structured according to position and this allows us to keep shortcuts independent from particular signals assigned to a key. Accordingly, we will from now on use position instead of the attached signal to write shortcuts. For instance, *C-(1 1 2)* allows you to execute a command.
 
 ** Layer 2
 
 "
-(d-capture-inserted-text #'d-xkb-draw-keyboard-layer 2 t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-keyboard-layer 2 t)
 "
-As already mentioned, this layer consists mostly of uppercase variants of lowercase letters. The big exception are *Backspace* and *Return*, which are also on this layer to make them easier to apply. Note however that because these are on the layer that is shifted to by applying Shift, they are automatically endowed with shift modifiers, so programs will interpret them as *S(hift)-Backspace* and *S-Return*, which in some programs makes a difference (in Emacs differences only arise in mode-specific bindings). I haven't really found anything I can do against that so sometimes you might need to use normal _Backspace_ and _Enter_." (unless (eq d-xkb-layout 'd-xkb-main-layout) " Moreover, the only position I could give these bindings is on punctuation signs, which depending on your layout might not be on ideal keys. If that is the case, just view these keys as a free bonus — you don't need to use them but you can if you want.
+As already mentioned, this layer consists mostly of uppercase variants of lowercase letters. The big exception are *Backspace* and *Return*, which are also on this layer to make them easier to apply. Note however that because these are on the layer that is shifted to by applying Shift, they are automatically endowed with shift modifiers, so programs will interpret them as *S(hift)-Backspace* and *S-Return*, which in some programs makes a difference (in Emacs differences only arise in mode-specific bindings). I haven't really found anything I can do against that so sometimes you might need to use normal _Backspace_ and _Enter_." (unless (eq d-emacs-xkb-layout 'd-emacs-xkb-main-layout) " Moreover, the only position I could give these bindings is on punctuation signs, which depending on your layout might not be on ideal keys. If that is the case, just view these keys as a free bonus — you don't need to use them but you can if you want.
 
 You can lock the second layer, like pressing _CapsLock_ would in QWERTY, by holding down both _Alt_ keys at the same time.")
 
@@ -114,20 +119,20 @@ You can lock the second layer, like pressing _CapsLock_ would in QWERTY, by hold
 ** Layer 3
 
 "
-(d-capture-inserted-text #'d-xkb-draw-keyboard-layer 3 t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-keyboard-layer 3 t)
 
 "
 This layer houses punctuation marks, brackets and other special signs, most of which are in ASCII.
 
 ** Layer 4
 "
-(d-capture-inserted-text #'d-xkb-draw-keyboard-layer 4 t)
+(d-capture-inserted-text #'d-emacs-xkb-draw-keyboard-layer 4 t)
 "
 As you can see, this layer houses numbers, calculation signs and \"backup\" arrow keys. The placement of numbers is probably the least intuitive aspect of the layout. It is a design compromise and might take  a while to learn, but there is a system: lower numbers were given better positions than higher ones and even numbers are on the left while odd ones are on the right. Overall, this makes the typing of small numbers fairly easy while that of larger numbers is still workable though, admittedly, a bit cumbersome. To further alleviate this, a bash script ~d-toggle-layer-lock~ is in the ~scripts~ folder of Daselt, which allows for locking any layer using ~xdotools~. The binding of this script to keys in StumpWM is still work in progress because it runs into the [[https://github.com/stumpwm/stumpwm/wiki][Problems Stump has with XKB]]. Binding it to keys in other window managers might be easier though.
 
 These four layers together house all signs found on a normal keyboard (except regional signs that can be typed using the *Compose* signal). Layers *5*, *6*, *7* and *8* house Greek letters, mathematical signs and Emoji but rather than go through them here it is better to explain how to draw them on the fly.
 
-*The Emacs help menu is bound to *C-(1 0 -5)**, so the key under your left pinky (and *C-h* in the main layout). By typing *C-(1 0 -5) (3 0 -2)*, so by opening the help menu and pressing the key under your left index finger shifted to the third layer, you can execute ~d-xkb-draw-layer~. You will be asked to choose a layer based on its number. Since you might have forgotten where a particular number is, you can always look at the fourth layer by pressing *(1 0 2)*. Similarly, you can look at the 0-th layer (the modifier layer) by pressing (1 0 -2). The chosen layer will be displayed in a maximised window and you will be asked a yes-or-no question on whether you want to restore the previous window configuration or not. Note that, if you have set ~use-short-answers~ to t, you can press *(1 0 2)* instead of *y* and *(1 0 -2)* instead of *n* to answer yes-or-no questions. More generally, *y* and *n* are replaced by the values of *(1 0 2)* and *(1 0 -2)* in multiple-choice-queries. Since this replacement uses override advice, it can be disabled by setting ~d-emacs-replace-multiple-choice~ to ~nil~ (before starting ~d-emacs-mode~).
+*The Emacs help menu is bound to *C-(1 0 -5)**, so the key under your left pinky (and *C-h* in the main layout). By typing *C-(1 0 -5) (3 0 -2)*, so by opening the help menu and pressing the key under your left index finger shifted to the third layer, you can execute ~d-emacs-xkb-draw-layer~. You will be asked to choose a layer based on its number. Since you might have forgotten where a particular number is, you can always look at the fourth layer by pressing *(1 0 2)*. Similarly, you can look at the 0-th layer (the modifier layer) by pressing (1 0 -2). The chosen layer will be displayed in a maximised window and you will be asked a yes-or-no question on whether you want to restore the previous window configuration or not. Note that, if you have set ~use-short-answers~ to t, you can press *(1 0 2)* instead of *y* and *(1 0 -2)* instead of *n* to answer yes-or-no questions. More generally, *y* and *n* are replaced by the values of *(1 0 2)* and *(1 0 -2)* in multiple-choice-queries. Since this replacement uses override advice, it can be disabled by setting ~d-emacs-replace-multiple-choice~ to ~nil~ (before starting ~d-emacs-mode~).
 
 Note also that, if you choose to not return to the previous window configuration or press the wrong key, you can still navigate back using the shortcut *C-(7 0 -1)* (running ~tab-bar-history-back~).
 
@@ -175,7 +180,7 @@ Combinations using other modifiers usually fall into the same layer-specific par
 You can draw any layer of any bindlist using *C-(1 0 -5) (3 0 2)* (triggering ~d-draw-bindlist-layer~). You will be asked for a bindlist (by default the ~d-emacs-d-emacs-mode-map-bindlist~ which houses global bindings), a layer and modifiers. More generally, you can draw the bindings in all bindlists whose names match a regular expression with commands, coordinates and modifiers matching regular expressions using *C-(1 0 -5) (3 0 3)* (triggering ~d-draw-bindings-from-regexps~). This command allows for very fine-grained layout analyses. This command is /very powerful/ and allows for a fine-grained analysis of the structure of Daselt's layout (and your own [[*][user-generated bindlists][** Writing Your Own Bindlists]]). Look at its command description for a more complete overview and usage examples. If you are using the package ~embark~ then you can also look up key bindings through *M-(1 0 -3)* (triggering ~embark-bindings~).
 
 ** Bad Key Configs
-Many keyboards simply don't register certain key combinations. Which ones they are depends on the keyboard and thus cannot be accounted for by Daselt. To cope with this limitation, Daselt introduces the variable ~d-xkb-bad-key-combinations-list~. Whenever you find a key combination that doesn't seem to work, check if it is registered using *C-(1 0 -5) k*, and if not, add it to the ~d-xkb-bad-key-combinations-list~. Then Daselt will automatically add a variant of that key combination in which the *C*-modifier has been replaced by an *A*-modifier, which you can apply discretely by tapping right Shift and, if you have an iso-layout, also by tapping left Shift, and in which each *H*-modifier is replaced by an *s-M-*combination.
+Many keyboards simply don't register certain key combinations. Which ones they are depends on the keyboard and thus cannot be accounted for by Daselt. To cope with this limitation, Daselt introduces the variable ~d-emacs-xkb-bad-key-combinations-list~. Whenever you find a key combination that doesn't seem to work, check if it is registered using *C-(1 0 -5) k*, and if not, add it to the ~d-emacs-xkb-bad-key-combinations-list~. Then Daselt will automatically add a variant of that key combination in which the *C*-modifier has been replaced by an *A*-modifier, which you can apply discretely by tapping right Shift and, if you have an iso-layout, also by tapping left Shift, and in which each *H*-modifier is replaced by an *s-M-*combination.
 
 "
 

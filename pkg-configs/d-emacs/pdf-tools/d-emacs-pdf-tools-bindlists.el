@@ -64,6 +64,7 @@
 `(pdf-outline
   (pdf-outline-minor-mode-map 
 ;;;;; Coordinates
+   ((1 0 -1) . nil)
 ;;;;;;; 2
 ;;;;;;;; 2--1
    ((2 -1 4) . #'pdf-outline))
@@ -94,5 +95,11 @@
    ((3 0 1) . #'pdf-outline-quit) 
    ((3 0 1) . #'quit-window) 
    ((3 0 2) . #'pdf-outline-follow-link-and-quit)))
+
+`(pdf-history
+  (pdf-history-minor-mode-map
+   ((1 0 -2) . #'pdf-history-backward)
+   ((1 0 2) . #'pdf-history-forward)
+   ((1 0 3) . nil)))
 
 ;;; d-emacs-pdf-tools-bindlists.el ends here

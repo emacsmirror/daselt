@@ -92,7 +92,7 @@ If non-nil, previously read buffers will not be closed."
 
 (defcustom d-mention-unmatched
   nil
-  "Notify when a suffix in a keybind is not in `d-xkb-layout'.
+  "Notify when a suffix in a keybind is not in `d-emacs-xkb-layout'.
 
 Useful for users who import their keybinds, as it highlights unmatched suffixes."
   :type 'boolean

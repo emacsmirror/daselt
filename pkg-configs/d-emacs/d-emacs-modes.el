@@ -44,8 +44,8 @@
                          (lambda (cns) (key-translate (car cns) (cdr cns)))
                          d-emacs-key-translations-alist)))
 
-             ;; Refresh the d-xkb-layouts in case someone has changed bindings.
-             (d-xkb--generate-layouts)
+             ;; Refresh the d-emacs-xkb-layouts in case someone has changed bindings.
+             (d-emacs-xkb--generate-layouts)
 
              ;; Add all files in pkg-configs to the load-path.
              (let ((default-directory  (concat d-emacs-directory "pkg-configs/")))

@@ -32,14 +32,14 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-(declare-function d-xkb-coordinatize-layout "d-xkb-functions" (layout &optional extt))
+(declare-function d-emacs-xkb-coordinatize-layout "d-emacs-xkb-functions" (layout &optional extt))
 (declare-function d--special-file-p "d-macroexpansions" (filepath))
-(declare-function d-xkb--binding-from-coords "d-xkb-functions" (coords &optional extlayout))
+(declare-function d-emacs-xkb--binding-from-coords "d-emacs-xkb-functions" (coords &optional extlayout))
 (declare-function d--user-defined-file-p "d-macro-expansions.el" (filename) t)
 (declare-function d--eval-file-p "d-macro-expansions.el" (filename) t)
-(declare-function d-xkb--coordinates-p (lst))
+(declare-function d-emacs-xkb--coordinates-p (lst))
 
-(defvar d-xkb-extended-layout)
+(defvar d-emacs-xkb-extended-layout)
 (defvar d-mention-unmatched)
 (defvar d-modifiers-list)
 (defvar d-emacs-no-shift-list)
@@ -53,7 +53,7 @@
 (defvar d-debug)
 (defvar d-keep-read-buffers)
 (defvar d-escape-kbd-regexps-list)
-(defvar d-xkb-layout)
+(defvar d-emacs-xkb-layout)
 
 ;;;; General purpose functions
 (defun d-cardinal (n &optional fromone)
@@ -872,42 +872,42 @@ or its second element is not a binding."
 
 (defun d--binding-coords-form-p (cns)
   "Return t if CNS looks like a binding in coords-form.
-This means its car is a cns for which `d-xkb--coordinates-p' is t, and it is
+This means its car is a cns for which `d-emacs-xkb--coordinates-p' is t, and it is
 either not a proper list or its second element is not a binding."
   (condition-case nil
       (and (consp cns)
-           (d-xkb--coordinates-p (car cns)))
+           (d-emacs-xkb--coordinates-p (car cns)))
     (error nil)))
 
 (defun d--binding-prefix-coords-form-p (cns)
   "Return t if CNS is a binding in prefix-coords form.
-This means that the car must be a cons of a string (the prefix) and a d-xkb
+This means that the car must be a cons of a string (the prefix) and a d-emacs-xkb
 coordinate list."
   (and (consp cns)
        (consp (car cns))
        (stringp (caar cns))
-       (d-xkb--coordinates-p (cdar cns))))
+       (d-emacs-xkb--coordinates-p (cdar cns))))
 
 (defun d--binding-prefix-suffix-coords-form-p (cns)
   "Return t if CNS looks like a binding in prefix-suffix-coords-form.
 This means its car is cons whose car is a cons of two strings and whose cdr is
-either nil or a cns for which d-xkb--coordinates-p is t, and it is either not a
+either nil or a cns for which d-emacs-xkb--coordinates-p is t, and it is either not a
 proper list or its second element is not a binding."
   (condition-case nil (and (consp (car cns)) (consp (caar cns))
                            (stringp (caaar cns)) (stringp (cdaar cns))
                            (or (not (cdar cns))
-                               (d-xkb--coordinates-p (cdar cns))))
+                               (d-emacs-xkb--coordinates-p (cdar cns))))
     (error nil)))
 
 (defun d--binding-elaborate-form-p (cns)
   "Return t if CNS looks like a binding in elaborate form.
 This means its car is cons whose car is a cons of a list and a string and whose
-cdr is either nil or a cns for which d-xkb--coordinates-p is t, and it is either
+cdr is either nil or a cns for which d-emacs-xkb--coordinates-p is t, and it is either
 not a proper list or its second element is not a binding."
   (condition-case nil (and (consp (car cns)) (consp (caar cns))
                            (listp (caaar cns)) (stringp (cdaar cns))
                            (or (not (cdar cns))
-                               (d-xkb--coordinates-p (cdar cns))))
+                               (d-emacs-xkb--coordinates-p (cdar cns))))
     (error nil)))
 
 (defun d--elaborate-unmatched-binding-p (cns)
@@ -923,26 +923,26 @@ A binding location consists of either
 
 - a string, like a normal string fed to `kbd',
 
-- a d-xkb coordinate list (see `d-xkb--coordinates-p'),
+- a d-emacs-xkb coordinate list (see `d-emacs-xkb--coordinates-p'),
 
 a cons whose car is a string of prefixes like `M-C-' and a suffix which is the
 name of the signal that is sent from the keyboard without any applied modifiers
 \(so a letter name or a name like `<kp-add>'),
 
-- a cons whose car is a prefix and whose cdr is a d-xkb-coordinate-list,
+- a cons whose car is a prefix and whose cdr is a d-emacs-xkb-coordinate-list,
 
 - a cons
 
   - whose car is a cons consisting of a prefix and a suffix
 
-  - and whose cdr is a d-xkb-coordinate-list,
+  - and whose cdr is a d-emacs-xkb-coordinate-list,
 
 - a cons whose car is
 
   - a cons whose car is a list of modifiers, given as characters, like `C', `M'
     etc. and whose cdr is a suffix,
 
-- and whose cdr is is a d-xkb-coordinate-list.
+- and whose cdr is is a d-emacs-xkb-coordinate-list.
 
 The last two forms are redundant and so usually not needed, although the last
 form (the so-called elaborate form) is used by some daselt-functions, such as
@@ -1018,8 +1018,8 @@ is a bound variable and the value of SYMB returns t when tested with
 (defun d--string-binding-p (cns)
             "Return t if CNS is a binding given by a binding string."
             (and (d--binding-p cns)
-       (not (d-xkb--coordinates-p (car cns)))
-       (not (d-xkb--coordinates-p (cdar cns)))))
+       (not (d-emacs-xkb--coordinates-p (car cns)))
+       (not (d-emacs-xkb--coordinates-p (cdar cns)))))
 
 
 ;;;; Bindlist formatting
@@ -1049,7 +1049,7 @@ MODLIST is not specified, `d-modifiers-list' is used."
 
 (defun d-index-and-sort-modifiers (mods &optional indexed modlist)
   "Index the modifiers in MODS based on their position in MODLIST and sort them.
-The default MODLIST is `d-xkb-modifiers-list'.
+The default MODLIST is `d-emacs-xkb-modifiers-list'.
 If INDEXED is t, assume the MODS are already indexed and don't index them again."
   (let* ((modlist (or modlist d-modifiers-list))
          (indmods (if indexed
@@ -1093,9 +1093,9 @@ KEEPINDICES is true, keep modifier indices."
 Otherwise, return nil."
   (cond ((stringp (car binding))
          nil)
-        ((and (consp (car binding)) (d-xkb--coordinates-p (cdar binding)))
+        ((and (consp (car binding)) (d-emacs-xkb--coordinates-p (cdar binding)))
          (cdar binding))
-        ((d-xkb--coordinates-p (car binding)) (car binding))))
+        ((d-emacs-xkb--coordinates-p (car binding)) (car binding))))
 
 ;;;;; Elaborate forms
 (defun d--get-layout-matches-for-binding-string (str)
@@ -1103,8 +1103,8 @@ Otherwise, return nil."
 Return a cons of STR and the list of matching conses."
   (d-recursive-get-cons
    str
-   (d-xkb-coordinatize-layout
-    (symbol-value d-xkb-extended-layout)
+   (d-emacs-xkb-coordinatize-layout
+    (symbol-value d-emacs-xkb-extended-layout)
     t)
    (lambda (str compstr)
      (let ((case-fold-search nil))
@@ -1119,7 +1119,7 @@ Return a cons of STR and the list of matching conses."
                 (car (last (split-string compstr "/"))))
              string-end))
 
-        ;; If the tested string in the layout is longer than one character, split it along /'s. This is mostly for elements of d-xkb-layer-0. Let's just hope nobody ever defines a signal name containing /'s. But that seems unlikely.
+        ;; If the tested string in the layout is longer than one character, split it along /'s. This is mostly for elements of d-emacs-xkb-layer-0. Let's just hope nobody ever defines a signal name containing /'s. But that seems unlikely.
         str)))
    t))
 
@@ -1148,7 +1148,7 @@ are available."
                       (message "%s in %s is not matched by any signal in %s."
                                (car matches)
                                (current-buffer)
-                               d-xkb-layout))
+                               d-emacs-xkb-layout))
                (car matches)))
           (t (cdr matches)))))
 
@@ -1169,12 +1169,12 @@ match is found, the suffix is converted into an elaborate binding."
       (cons (cons (d-modifiers-of-prefix bindstr nil t) bindstr) nil))))
 
 (defun d--elaborate-on-binding (binding)
-  "Transform a d-xkb BINDING into its elaborate form.
+  "Transform a d-emacs-xkb BINDING into its elaborate form.
 
 If the binding is given by a binding string, it extracts the prefix, the suffix
 and its corresponding coordinates from the string by matching the end of the
 string against the symbols in the layout. If no matching suffix in the layout
-given by d-xkb-layout is found, it tries to extract modifiers from the string
+given by d-emacs-xkb-layout is found, it tries to extract modifiers from the string
 and returns the string along with the extracted modifiers and nil in place of
 coordinates.
 
@@ -1290,7 +1290,7 @@ specificity and lexicographical order."
           `(nil))))))
 
 (defun d--compare-coords (coords1 coords2)
-  "This function compares two d-xkb-coordinates COORDS1 and COORDS2 lexically.
+  "This function compares two d-emacs-xkb-coordinates COORDS1 and COORDS2 lexically.
 First it checks layer, then row, then place.
 If it finds no difference between the coordinates it sends the string
     \"isequal\"."
@@ -1372,9 +1372,9 @@ the sorting order."
 ;;;;; Formatting
 ;;;;;; Lists
 (defun d--sort-and-format-bindlist (blist &optional coordsonly prefun modlist)
-  "Sort a d-xkb bindlist BLIST and format the result.
+  "Sort a d-emacs-xkb bindlist BLIST and format the result.
 
-  Key combinations that are not matched by the layout in d-xkb-layout are put at
+  Key combinations that are not matched by the layout in d-emacs-xkb-layout are put at
   the very top (because they are most likely errors or depreciated).
 
   Modifiers are ordered according to their order in MODLIST (d-modifiers-list by
@@ -1394,7 +1394,7 @@ the sorting order."
   With optional argument COORDSONLY, the function translates bindings that are
   given by a binding string into ones given by coordinates if that is possible,
   i.e. if the end of the binding string corresponds to a signal in the
-  d-xkb-layout.
+  d-emacs-xkb-layout.
 
   PREFUN is a function that is applied to the bindlist after it is transformed
   into an elaborate bindlist. This is useful to apply functions that should act
@@ -1791,7 +1791,7 @@ coordinates)."
          (pfx (if coords ; If the binding is unmatched, then it has already its modifiers in its suffix.
                   (d-string-together-modifiers mods)
                 ""))
-         (coordval (if coords (d-xkb--binding-from-coords coords)))
+         (coordval (if coords (d-emacs-xkb--binding-from-coords coords)))
          (newsfx ;; Let's put an error check here.
           (let ((newsfx (if (d-string-exists-and-nonempty sfx)
                             sfx
@@ -1799,7 +1799,7 @@ coordinates)."
             (if (d-string-exists-and-nonempty newsfx)
                 newsfx
               (error (if coords (format "Coordinates %s in binding %s have no match in %s."
-                                        coords binding d-xkb-layout)
+                                        coords binding d-emacs-xkb-layout)
                        (format "%s has neither coordinates nor a suffix." binding))))))
          (non-translated-string (concat pfx newsfx))
          shifted) ; To check later whether it was shifted.
@@ -1878,7 +1878,7 @@ coordinates)."
 ;;          (modifiers (d-modifiers-of-prefix pfx))
 ;;          (suffix (cdar binding))
 ;;          (coords (cdar binding))
-;;          (bindingfromcoords (if coords (d-xkb--binding-from-coords coords) nil))
+;;          (bindingfromcoords (if coords (d-emacs-xkb--binding-from-coords coords) nil))
 ;;          (value (cdr binding))
 ;;          (base-vector (vconcat modifiers (list (or suffix bindingfromcoords))))
 ;;          (vector-after-doublebind (if (and doublebind (or suffix
@@ -2039,8 +2039,8 @@ Return the modified bindlist."
 (defun d--change-coords-in-binding (bind coordlistlist)
   "Change coordinates in BIND according to COORDLISTLIST.
 Return the modified binding."
-  (let* ((carcoordsp (d-xkb--coordinates-p (car bind)))
-         (cdarcoordsp (unless carcoordsp (d-xkb--coordinates-p (cdar bind))))
+  (let* ((carcoordsp (d-emacs-xkb--coordinates-p (car bind)))
+         (cdarcoordsp (unless carcoordsp (d-emacs-xkb--coordinates-p (cdar bind))))
          (origcoords (cond (carcoordsp (car bind))
                            (cdarcoordsp (cdar bind))))
          (newcoords (unless (not origcoords)

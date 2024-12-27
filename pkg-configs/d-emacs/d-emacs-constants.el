@@ -48,7 +48,7 @@ d-modifiers-list.")
 
 ;;;; Lists of commands used in macros to create commands
 (defconst d-emacs-backward-command-list
-  '(sp-kill-hybrid-sexp sp-mark-sexp mark-sexp mark-defun transpose-paragraphs kill-paragraph transpose-sentences delete-char transpose-lines kill-line transpose-words transpose-sexps sp-down-sexp down-list transpose-chars other-frame sp-transpose-sexp sp-transpose-hybrid-sexp mark-line d-emacs-kill-defun delete-all-space delete-horizontal-space sp-up-sexp)
+  '(sp-kill-hybrid-sexp sp-mark-sexp mark-sexp mark-defun transpose-paragraphs kill-paragraph transpose-sentences delete-char transpose-lines kill-line transpose-words transpose-sexps sp-down-sexp down-list transpose-chars other-frame sp-transpose-sexp sp-transpose-hybrid-sexp mark-line d-emacs-kill-defun delete-all-space delete-horizontal-space sp-up-sexp up-list)
   "List of commands for which backward analogs are created in
   `d-emacs-commands'.")
 

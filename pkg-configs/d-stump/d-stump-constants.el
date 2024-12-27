@@ -52,8 +52,8 @@
                           (cons (d--extract-binding-string bind)
                                 (let* ((val (cdr bind))
                                        (formval (if (member val
-                                                            d-xkb-special-key-names)
-                                                    (d-xkb--format-special-key val)
+                                                            d-emacs-xkb-special-key-names)
+                                                    (d-emacs-xkb--format-special-key val)
                                                   val)))
                                   formval)))
                         body)))

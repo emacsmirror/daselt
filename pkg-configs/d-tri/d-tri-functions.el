@@ -43,7 +43,7 @@
                                      (let* ((mods (d-remove-indices (caaar elbind)))
                                             (coords (cdar elbind))
                                             (sfx (if coords
-                                                     (d-xkb--binding-from-coords coords)
+                                                     (d-emacs-xkb--binding-from-coords coords)
                                                    (cdaar elbind)))
                                             (nsfx (cond ((string= sfx "<")
                                                          "<<")

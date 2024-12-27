@@ -34,16 +34,16 @@
   :group 'Daselt
   :prefix "d-dfk")
 
-(with-eval-after-load 'd-xkb-customs
+(with-eval-after-load 'd-emacs-xkb-customs
   (defcustom d-dfk-dual-functions-outside-main-keys
-    (if (not (eq d-xkb-layout 'd-xkb-main-layout))
+    (if (not (eq d-emacs-xkb-layout 'd-emacs-xkb-main-layout))
         t
       nil)
     "Non-nil if dual functions on main keys are not used.
 
 If you do not use dual functions on the main keys (i.e., keys that usually house
 letters), set this variable to t. This variable is non-nil by default unless
-`d-xkb-layout` is set to `d-xkb-main-layout`, as most other layouts place
+`d-emacs-xkb-layout` is set to `d-emacs-xkb-main-layout`, as most other layouts place
 letters on the keys within the reduced layout. Having dual functions on letter
 keys can often lead to typing errors."
     :type 'boolean

@@ -23,6 +23,10 @@
 ;; 
 
 ;;; Code:
+;;;; Preamble
+(declare-function or "eval" (&rest rest))
+(defvar or)
+(defvar or)
 
 (defun d-emacs-org-insert-superheading (&optional number)
   "Insert a heading one or several levels above the previous one.
@@ -55,6 +59,46 @@ that number of levels are gone up."
   (interactive)
   (org-insert-heading-after-current)
   (org-todo))
+
+(defun d-emacs-org-convert-quote ()
+  "Convert the quote at or surrounding point to an Org block quote."
+  (interactive)
+  (cl-flet ((format-quote () 
+              (mark-sexp)
+              (let* ((quote (buffer-substring (1+ (region-beginning))
+                                              (1- (region-end))))
+                     (finquote (concat "#+begin_quote\n"
+                                       quote
+                                       "\n#+end_quote")))
+                (d-replace-region-with-arg finquote))))
+    (save-excursion
+      ;; Go up lists as long as possible or until a quote is found.
+      (let ((endloop)
+            (backward-up-fun ; Use `sp-backward-up-sexp' if possible.
+             (if (package-installed-p 'smartparens)
+                 #'sp-backward-up-sexp
+               (lambda () (d-emacs-backward-up-list 1))))) 
+        (while (not endloop)
+          (if (= (char-after) ?\")
+              (progn (format-quote)
+                     (setq endloop t))
+            (condition-case msg (funcall backward-up-fun)
+              (error (progn (setq endloop t)
+                            (message msg))))))))))
+
+(defun d-emacs-org-remove-page-heading (heading)
+  "Remove page HEADING of imported documents.
+Might need to be adapted to your imported document."
+  (interactive "sHeading: ")
+  (save-excursion
+    (while (re-search-forward (concat heading (rx (or blank "\n")
+                                                  (*? anychar)
+                                                  word-end))
+                              nil t)
+      (delete-region (match-beginning 0)
+                     (match-end 0))
+      (delete-all-space)
+      (insert " "))))
 
 (provide 'd-emacs-org-eval-commands)
 ;;; d-emacs-org-eval-commands.el ends here

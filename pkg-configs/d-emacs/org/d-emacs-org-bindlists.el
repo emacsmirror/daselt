@@ -38,6 +38,7 @@
 ;;;;;;; 0
 ;;;;;;;; 0-0
   ((0 0 -6) . #'cdlatex-math-symbol) 
+  ((2 -1 3) . nil) 
 
 ;;;;;; C- 
 ;;;;;;; C-3 
@@ -109,6 +110,7 @@
 ;;;;;; M-C- 
 ;;;;;;; M-C-3 
 ;;;;;;;; M-C-3--1 
+  (("M-C-" . (3 -1 -3)) . #'d-emacs-org-convert-quote) 
   (("M-C-" . (3 -1 3)) . #'org-insert-todo-heading-respect-content) 
 
 ;;;;;;;; M-C-3-0 

@@ -32,7 +32,7 @@
 (declare-function checkdoc-error-text "checkdoc" (cl-x))
 (declare-function checkdoc-error-end "checkdoc" (cl-x))
 (declare-function checkdoc-error-start "checkdoc" (cl-x))
-(declare-function d-xkb--binding-from-coords "d-xkb-functions" (coords &optional extlayout))
+(declare-function d-emacs-xkb--binding-from-coords "d-emacs-xkb-functions" (coords &optional extlayout))
 (declare-function d-emacs-minor-mode-key-binding "d-emacs-commands" (key))
 (declare-function d-reverse-alist-get "d-functions" (key alist &optional default))
 (declare-function d-recurse-through-directory "d-functions" (dir funtests &optional dirtest lstcolfun allfiles sortfun contt))
@@ -46,7 +46,7 @@
 (defvar checkdoc--help-buffer)
 (defvar d-emacs-special-read-answer-bindlist)
 (defvar d-emacs-directory)
-(defvar d-xkb-bad-key-combinations-list)
+(defvar d-emacs-xkb-bad-key-combinations-list)
 (defvar d-emacs-replace-binding-strings-alist)
 (defvar d-emacs-pkgs-list)
 
@@ -124,7 +124,7 @@ The binding value is evaluated and assigned to the corresponding keys."
          (value (cdr binding)))
     (mapcar (lambda (bstr)
               (define-key map (kbd bstr) (eval value))
-              (if (d-exists-p d-xkb-bad-key-combinations-list
+              (if (d-exists-p d-emacs-xkb-bad-key-combinations-list
                               (lambda (combination)
                                 (string= (d--extract-binding-string (cons combination nil))
                                          bstr)))
@@ -430,11 +430,11 @@ with Daselt shortcuts. See the main command for further documentation."
 	 (cdo nil)
 	 (returnme nil)
 	 c
-         (nextchar (string-to-char (d-xkb--binding-from-coords '(1 0 3))))
-         (prevchar (string-to-char (d-xkb--binding-from-coords '(1 0 -3))))
-         (quitchar (string-to-char (d-xkb--binding-from-coords '(1 1 -2))))
-         (fixchar (string-to-char (d-xkb--binding-from-coords '(1 0 2))))
-         (inschar (string-to-char (d-xkb--binding-from-coords '(1 0 -2)))))
+         (nextchar (string-to-char (d-emacs-xkb--binding-from-coords '(1 0 3))))
+         (prevchar (string-to-char (d-emacs-xkb--binding-from-coords '(1 0 -3))))
+         (quitchar (string-to-char (d-emacs-xkb--binding-from-coords '(1 1 -2))))
+         (fixchar (string-to-char (d-emacs-xkb--binding-from-coords '(1 0 2))))
+         (inschar (string-to-char (d-emacs-xkb--binding-from-coords '(1 0 -2)))))
     (save-window-excursion
       (if (not (car err-list)) (setq err-list nil))
       ;; Include whatever function point is in for good measure.
