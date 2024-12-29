@@ -36,37 +36,37 @@
     (d--act-on-bindlists-in-file
      bindfile
      (lambda () (let* ((blist (d--extract-bindlist))
-                  (elblist (mapcar (lambda (bind)
-                                     (d--elaborate-on-binding bind))
-                                   blist))
-                  (strlist (mapcar (lambda (elbind)
-                                     (let* ((mods (d-remove-indices (caaar elbind)))
-                                            (coords (cdar elbind))
-                                            (sfx (if coords
-                                                     (d-emacs-xkb--binding-from-coords coords)
-                                                   (cdaar elbind)))
-                                            (nsfx (cond ((string= sfx "<")
-                                                         "<<")
-                                                        ((string= sfx ">")
-                                                         ">>")
-                                                        (t sfx)))
-                                            (value (cdr elbind)))
-                                       (concat "bind "
-                                               (if mods "<")
-                                               (if mods (d-string-together-modifiers mods))
-                                               nsfx
-                                               (if mods ">")
-                                               " "
-                                               value
-                                               "\n")))
-                                   elblist)))
-             (cl-flet ((frmtstrlst (lststr) (string-replace
-                                             "\")" ""
-                                             (string-replace
-                                              "(\"" ""
-                                              (string-replace "\" \"" "" lststr)))))
-               (set-buffer buffer)
-               (insert (frmtstrlst (format "%S" strlist)))))))))
+                       (elblist (mapcar (lambda (bind)
+                                          (d--elaborate-on-binding bind))
+                                        blist))
+                       (strlist (mapcar (lambda (elbind)
+                                          (let* ((mods (d-remove-indices (caaar elbind)))
+                                                 (coords (cdar elbind))
+                                                 (sfx (if coords
+                                                          (d-emacs-coords-binding coords)
+                                                        (cdaar elbind)))
+                                                 (nsfx (cond ((string= sfx "<")
+                                                              "<<")
+                                                             ((string= sfx ">")
+                                                              ">>")
+                                                             (t sfx)))
+                                                 (value (cdr elbind)))
+                                            (concat "bind "
+                                                    (if mods "<")
+                                                    (if mods (d-string-together-modifiers mods))
+                                                    nsfx
+                                                    (if mods ">")
+                                                    " "
+                                                    value
+                                                    "\n")))
+                                        elblist)))
+                  (cl-flet ((frmtstrlst (lststr) (string-replace
+                                                  "\")" ""
+                                                  (string-replace
+                                                   "(\"" ""
+                                                   (string-replace "\" \"" "" lststr)))))
+                    (set-buffer buffer)
+                    (insert (frmtstrlst (format "%S" strlist)))))))))
 
 (provide 'd-tri-functions)
 ;;; d-tri-functions.el ends here

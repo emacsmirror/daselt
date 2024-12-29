@@ -662,24 +662,60 @@ Interactively, STRINGS are collected by prompting with a minibuffer until an emp
   "Replace all instances of FROM-STRING with TO-STRING throughout the entire buffer."
   (interactive
    (let ((common
-	  (query-replace-read-args (concat "Replace string in buffer."
-		                           (if (use-region-p) " in region" ""))
+	  (query-replace-read-args (concat "Replace string in buffer: ")
                                    nil)))
      (list (nth 0 common) (nth 1 common))))
-  (let ((pos (point))
-        (perform-replace from-string to-string nil nil nil nil nil))))
+  (save-excursion (d-emacs-goto-min)
+                  (while (search-forward from-string nil t)
+                    (replace-match to-string))))
 
 (defun d-emacs-replace-regexp-throughout-buffer (from-regexp to-regexp)
-                  "Replace all instances of FROM-REGEXP with TO-REGEXP throughout the entire buffer."
-                  (interactive
+                                  "Replace all instances of FROM-REGEXP with TO-REGEXP throughout the entire buffer."
+                                  (interactive
    (let ((common
 	  (query-replace-read-args
 	   (concat "Replace regexp in buffer."
 		   (if (use-region-p) " in region" "")))))
      (list (nth 0 common) (nth 1 common))))
-                  (let ((pos (point))
+                                  (let ((pos (point))
         (perform-replace from-regexp to-regexp nil regexp nil nil nil))))
 
+
+(defun d-emacs-replace-string-throughout-directory (from-string to-string dir &optional filetest dirtest allfiles)
+  "Replace FROM-STRING with TO-STRING in files in DIR.
+
+FILETEST can be either a regexp or a function. If it is a regexp, replacement is
+only done in a file if the regexp is matched in the filename. If it is a
+function, that function is called with the filename as an argument and
+replacement is only done if the output is non-nil.
+
+DIRTEST is a test for whether a directory should be recursed into. It can be
+either a regexp or a function and works similar to FILETEST.
+
+If ALLFILES is t, all files and directories are considered, otherwise hidden
+files and directories (starting with a period) are left out."
+  (interactive "sString: \nsReplacement: \nDDirectory: ")
+  (let* ((buf (current-buffer))
+         (filetest (if filetest
+                       (if (stringp filetest)
+                           (lambda (fname) (string-match-p filetest fname))
+                         filetest)
+                     (lambda (file) t)))
+         (dirtest (if (stringp dirtest)
+                      (lambda (fname) (re-search-forward dirtest fname))
+                    dirtest)))
+    (save-excursion
+      (d-recurse-through-directory
+       dir
+       `(((lambda (fname) (set-buffer (find-file-noselect fname))
+            (d-emacs-replace-string-throughout-buffer ,from-string ,to-string))
+          . (lambda (idx flist)
+              (let ((file (nth idx flist)))
+                (funcall ,filetest file)))))
+       dirtest
+       nil
+       allfiles)
+      (set-buffer buf))))
 
 ;;;;; Open Emacs
 (defun d-emacs-open-file-in-new-emacs (&optional filename)

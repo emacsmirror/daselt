@@ -50,9 +50,6 @@
   (("C-" . (3 0 2)) . #'org-forward-element) 
   (("C-" . (3 0 3)) . #'org-next-block) 
 
-;;;;;;;; C-3-1 
-  (("C-" . (3 1 3)) . #'org-reftex-citation) 
-
 ;;;;;;; C-8 
 ;;;;;;;; C-8--1 
   (("C-" . (8 -1 -4)) . #'org-global-cycle) 

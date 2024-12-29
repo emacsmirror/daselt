@@ -36,7 +36,7 @@
 ;;;;; Strings
 ;;;;;; C-
   ("C-<return>" . #'d-emacs-insert-newline-forward) 
-  ("C-RET" . #'d-emacs-insert-newline-forward) 
+  ("C-RET" . #'d-emacs-insert-newline-forward)
 
 ;;;;; Coordinates 
 ;;;;;;; 4 
@@ -276,6 +276,16 @@
   (("H-" . (2 1 -3)) . #'icicle-switch-to/from-minibuffer) 
   (("H-" . (2 1 3)) . #'icicle-switch-to/from-minibuffer) 
 
+;;;;;;;; H-4-0
+  (("H-" . (4 -1 -4)) . #'swiper-all)
+  (("H-" . (4 0 -4)) . #'swiper-backward)
+  (("H-" . (4 0 4)) . #'swiper)
+  (("H-" . (4 -1 4)) . #'swiper-avy)
+  
+;;;;;;;; H-4-0
+  (("H-" . (4 0 -4)) . #'swiper-all-thing-at-point)
+  (("H-" . (4 0 4)) . #'swiper-thing-at-point)
+
 ;;;;;;; H-8 
 ;;;;;;;; H-8-0 
   (("H-" . (8 0 -3)) . #'buf-move-up) 
@@ -329,7 +339,9 @@
   (("M-" . (2 -1 -5)) . #'projectile-find-implementation-or-test) 
   (("M-" . (2 -1 -4)) . #'eval-expression) 
   (("M-" . (2 -1 -3)) . #'mark-word) 
-  (("M-" . (2 -1 -2)) . #'bookmark-set) 
+  (("M-" . (2 -1 -2)) . #'bookmark-set)
+  (("M-" . (2 -1 -1)) . #'goto-char)
+  (("M-" . (2 -1 1)) . #'goto-line)
   (("M-" . (2 -1 2)) . #'list-bookmarks) 
   (("M-" . (2 -1 3)) . #'mark-paragraph) 
   (("M-" . (2 -1 4)) . #'list-registers) 
@@ -755,8 +767,12 @@
 ;;;;;; s-H- 
 ;;;;;;; s-H-2 
 ;;;;;;;; s-H-2-0 
-  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame) 
+  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame)
   (("s-H-" . (2 0 5)) . #'projectile-find-related-file-other-frame) 
+
+;;;;;;;; s-H-4-0 
+  (("s-H-" . (4 0 -4)) . #'swiper-isearch-backward)
+  (("s-H-" . (4 0 4)) . #'swiper-isearch)
 
 ;;;;;; s-M- 
 ;;;;;;; s-M-1 

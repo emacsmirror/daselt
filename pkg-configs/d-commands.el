@@ -50,9 +50,9 @@
                   (list &optional elt))
 (declare-function d-complement "d-functions.el"
                   (list1 list2 &optional compfun))
-(declare-function d-emacs-xkb-placevals-matching-indexed-rx "d-emacs-xkb/d-emacs-xkb-functions.el"
+(declare-function d-emacs-coords-placevals-matching-indexed-rx "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (placevals idx coordrx))
-(declare-function d-emacs-xkb-draw-placevals "d-functions.el"
+(declare-function d-emacs-coords-draw-placevals "d-functions.el"
                   (placevals &optional drawfull runcoords org))
 (declare-function d-execute-in-maximized-maybe-temp-buffer "d-functions.el"
                   (buffername function))
@@ -60,7 +60,7 @@
                   (symb))
 (declare-function d-flatten-until "d-functions.el"
                   (lst cnd))
-(declare-function d-emacs-xkb--coordinates-p "d-emacs-xkb/d-emacs-xkb-functions.el"
+(declare-function d-emacs-coords-p "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (list))
 (declare-function d-string-together-modifiers "d-functions.el"
                   (modifiers))
@@ -68,11 +68,11 @@
                   (str))
 (declare-function d-filter-by-predicate "d-functions.el"
                   (lst predicate))
-(declare-function d-emacs-xkb-extract-value-string "d-emacs-xkb/d-emacs-xkb-functions.el"
+(declare-function d-emacs-coords-extract-value-string "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (val))
-(declare-function d-emacs-xkb-placevals-matching-coordrx "d-emacs-xkb/d-emacs-xkb-functions.el"
+(declare-function d-emacs-coords-placevals-matching-coordrx "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (placevals rx))
-(declare-function d-emacs-xkb--binding-from-coords "d-emacs-xkb/d-emacs-xkb-functions.el"
+(declare-function d-emacs-coords-binding "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (coords))
 (declare-function d--bindlist-p "d-functions.el"
                   (list))
@@ -141,7 +141,7 @@ LAYCOORD specifies the layer to draw, and MODS the modifiers of the layer."
                              (completing-read
                               "Layer: "
                               (append '(0)
-                                      (d-cardinal (length d-emacs-xkb-layer-numbers-list) t))
+                                      (d-cardinal (length d-emacs-coords-layer-numbers-list) t))
                               t nil nil nil
                               "1"))
                        (cl-loop for repl = (completing-read "Modifier (empty to exit): "
@@ -151,7 +151,7 @@ LAYCOORD specifies the layer to draw, and MODS the modifiers of the layer."
                                 while (not (string-empty-p repl))
                                 collect repl)))
 
-  (let ((placevals (d-emacs-xkb-placevals-matching-indexed-rx
+  (let ((placevals (d-emacs-coords-placevals-matching-indexed-rx
                     (remq nil ; Filters out bindings without coordinate matches.
                           (mapcar #'d--placeval-from-elaborate-binding
                                   (d--elbinds-matching-modifier-regexps
@@ -161,8 +161,8 @@ LAYCOORD specifies the layer to draw, and MODS the modifiers of the layer."
     
     (funcall
      (if (called-interactively-p 'any)
-         #'d-emacs-xkb-draw-placevals-in-temp-buffer
-       #'d-emacs-xkb-draw-placevals)
+         #'d-emacs-coords-draw-placevals-in-temp-buffer
+       #'d-emacs-coords-draw-placevals)
      placevals
      nil
      nil
@@ -246,7 +246,7 @@ This is the most powerful of the Daselt-helper functions.
                                                 (let* ((coords (car placeval))
                                                        (val (cdr placeval)))
                                                   (if (string= "g"
-                                                               (d-emacs-xkb--binding-from-coords
+                                                               (d-emacs-coords-binding
                                                                 coords))
                                                       (cons '(1 1 -2)
                                                             val)
@@ -256,7 +256,7 @@ This is the most powerful of the Daselt-helper functions.
                                         
                                         (coordmatchedplacevals
                                          (if (d-string-exists-and-nonempty coordrx)
-                                             (d-emacs-xkb-placevals-matching-coordrx
+                                             (d-emacs-coords-placevals-matching-coordrx
                                               modmatchedplacevals coordrx)
                                            modmatchedplacevalsw-C-g-remapped))
 
@@ -266,7 +266,7 @@ This is the most powerful of the Daselt-helper functions.
                                               coordmatchedplacevals
                                               (lambda (placeval)
                                                 (string-match-p
-                                                 valrx (d-emacs-xkb-extract-value-string
+                                                 valrx (d-emacs-coords-extract-value-string
                                                         (cdr placeval)))))
                                            coordmatchedplacevals)))
 
@@ -274,7 +274,7 @@ This is the most powerful of the Daselt-helper functions.
                                        (progn (insert (format "\n%s\n"
                                                               (d-string-together-modifiers
                                                                mods)))
-                                              (d-emacs-xkb-draw-placevals valmatchedplacevals t))))))
+                                              (d-emacs-coords-draw-placevals valmatchedplacevals t))))))
                 
                 do (insert "\n"))))))
 
@@ -301,7 +301,7 @@ there."
          
          (allcoords (d-flatten-until d-emacs-xkb-coordinates
                                      (lambda (lst)
-                                       (d-emacs-xkb--coordinates-p
+                                       (d-emacs-coords-p
                                         (car lst)))))
 
          (allmodifiercoordscombinations (apply #'append (mapcar (lambda (coords)
@@ -359,14 +359,14 @@ there."
                           (coordmatchedfreeplacevals
                            (if (string-empty-p coordrx)
                                modmatchedfreeplacevals
-                             (d-emacs-xkb-placevals-matching-coordrx
+                             (d-emacs-coords-placevals-matching-coordrx
                               modmatchedfreeplacevals coordrx))))
 
                      (if coordmatchedfreeplacevals
                          (progn (insert (format "\n%s\n"
                                                 (d-string-together-modifiers
                                                  mods)))
-                                (d-emacs-xkb-draw-placevals coordmatchedfreeplacevals t))))
+                                (d-emacs-coords-draw-placevals coordmatchedfreeplacevals t))))
                 do (insert "\n"))))))
 
 ;;;; Import

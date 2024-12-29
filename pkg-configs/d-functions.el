@@ -32,12 +32,12 @@
 (require 'cl-lib)
 (require 'subr-x)
 
-(declare-function d-emacs-xkb-coordinatize-layout "d-emacs-xkb-functions" (layout &optional extt))
+(declare-function d-emacs-coords-coordinatize-layout "d-emacs-xkb-functions" (layout &optional extt))
 (declare-function d--special-file-p "d-macroexpansions" (filepath))
-(declare-function d-emacs-xkb--binding-from-coords "d-emacs-xkb-functions" (coords &optional extlayout))
+(declare-function d-emacs-coords-binding "d-emacs-xkb-functions" (coords &optional extlayout))
 (declare-function d--user-defined-file-p "d-macro-expansions.el" (filename) t)
 (declare-function d--eval-file-p "d-macro-expansions.el" (filename) t)
-(declare-function d-emacs-xkb--coordinates-p (lst))
+(declare-function d-emacs-coords-p (lst))
 
 (defvar d-emacs-xkb-extended-layout)
 (defvar d-mention-unmatched)
@@ -463,7 +463,7 @@ See there for further explanation."
 This function traverses the directory structure of DIR and applies specified
 functions to files that satisfy condition tests. The tests and functions are
 specified in FUNTESTS, a list of condition-function pairs (like TEST .
-FUNCTION). Eahc TEST takes two arguments: IDX, the index of the position of the
+FUNCTION). Each TEST takes two arguments: IDX, the index of the position of the
 file in the folder, and LIST, the list of file names. Each FUNCTION takes one
 argument, the file name.
 
@@ -872,11 +872,11 @@ or its second element is not a binding."
 
 (defun d--binding-coords-form-p (cns)
   "Return t if CNS looks like a binding in coords-form.
-This means its car is a cns for which `d-emacs-xkb--coordinates-p' is t, and it is
+This means its car is a cns for which `d-emacs-coords-p' is t, and it is
 either not a proper list or its second element is not a binding."
   (condition-case nil
       (and (consp cns)
-           (d-emacs-xkb--coordinates-p (car cns)))
+           (d-emacs-coords-p (car cns)))
     (error nil)))
 
 (defun d--binding-prefix-coords-form-p (cns)
@@ -886,28 +886,28 @@ coordinate list."
   (and (consp cns)
        (consp (car cns))
        (stringp (caar cns))
-       (d-emacs-xkb--coordinates-p (cdar cns))))
+       (d-emacs-coords-p (cdar cns))))
 
 (defun d--binding-prefix-suffix-coords-form-p (cns)
   "Return t if CNS looks like a binding in prefix-suffix-coords-form.
 This means its car is cons whose car is a cons of two strings and whose cdr is
-either nil or a cns for which d-emacs-xkb--coordinates-p is t, and it is either not a
+either nil or a cns for which d-emacs-coords-p is t, and it is either not a
 proper list or its second element is not a binding."
   (condition-case nil (and (consp (car cns)) (consp (caar cns))
                            (stringp (caaar cns)) (stringp (cdaar cns))
                            (or (not (cdar cns))
-                               (d-emacs-xkb--coordinates-p (cdar cns))))
+                               (d-emacs-coords-p (cdar cns))))
     (error nil)))
 
 (defun d--binding-elaborate-form-p (cns)
   "Return t if CNS looks like a binding in elaborate form.
 This means its car is cons whose car is a cons of a list and a string and whose
-cdr is either nil or a cns for which d-emacs-xkb--coordinates-p is t, and it is either
+cdr is either nil or a cns for which d-emacs-coords-p is t, and it is either
 not a proper list or its second element is not a binding."
   (condition-case nil (and (consp (car cns)) (consp (caar cns))
                            (listp (caaar cns)) (stringp (cdaar cns))
                            (or (not (cdar cns))
-                               (d-emacs-xkb--coordinates-p (cdar cns))))
+                               (d-emacs-coords-p (cdar cns))))
     (error nil)))
 
 (defun d--elaborate-unmatched-binding-p (cns)
@@ -923,7 +923,7 @@ A binding location consists of either
 
 - a string, like a normal string fed to `kbd',
 
-- a d-emacs-xkb coordinate list (see `d-emacs-xkb--coordinates-p'),
+- a d-emacs-xkb coordinate list (see `d-emacs-coords-p'),
 
 a cons whose car is a string of prefixes like `M-C-' and a suffix which is the
 name of the signal that is sent from the keyboard without any applied modifiers
@@ -1018,8 +1018,8 @@ is a bound variable and the value of SYMB returns t when tested with
 (defun d--string-binding-p (cns)
             "Return t if CNS is a binding given by a binding string."
             (and (d--binding-p cns)
-       (not (d-emacs-xkb--coordinates-p (car cns)))
-       (not (d-emacs-xkb--coordinates-p (cdar cns)))))
+       (not (d-emacs-coords-p (car cns)))
+       (not (d-emacs-coords-p (cdar cns)))))
 
 
 ;;;; Bindlist formatting
@@ -1093,9 +1093,9 @@ KEEPINDICES is true, keep modifier indices."
 Otherwise, return nil."
   (cond ((stringp (car binding))
          nil)
-        ((and (consp (car binding)) (d-emacs-xkb--coordinates-p (cdar binding)))
+        ((and (consp (car binding)) (d-emacs-coords-p (cdar binding)))
          (cdar binding))
-        ((d-emacs-xkb--coordinates-p (car binding)) (car binding))))
+        ((d-emacs-coords-p (car binding)) (car binding))))
 
 ;;;;; Elaborate forms
 (defun d--get-layout-matches-for-binding-string (str)
@@ -1103,7 +1103,7 @@ Otherwise, return nil."
 Return a cons of STR and the list of matching conses."
   (d-recursive-get-cons
    str
-   (d-emacs-xkb-coordinatize-layout
+   (d-emacs-coords-coordinatize-layout
     (symbol-value d-emacs-xkb-extended-layout)
     t)
    (lambda (str compstr)
@@ -1791,7 +1791,7 @@ coordinates)."
          (pfx (if coords ; If the binding is unmatched, then it has already its modifiers in its suffix.
                   (d-string-together-modifiers mods)
                 ""))
-         (coordval (if coords (d-emacs-xkb--binding-from-coords coords)))
+         (coordval (if coords (d-emacs-coords-binding coords)))
          (newsfx ;; Let's put an error check here.
           (let ((newsfx (if (d-string-exists-and-nonempty sfx)
                             sfx
@@ -1878,7 +1878,7 @@ coordinates)."
 ;;          (modifiers (d-modifiers-of-prefix pfx))
 ;;          (suffix (cdar binding))
 ;;          (coords (cdar binding))
-;;          (bindingfromcoords (if coords (d-emacs-xkb--binding-from-coords coords) nil))
+;;          (bindingfromcoords (if coords (d-emacs-coords-binding coords) nil))
 ;;          (value (cdr binding))
 ;;          (base-vector (vconcat modifiers (list (or suffix bindingfromcoords))))
 ;;          (vector-after-doublebind (if (and doublebind (or suffix
@@ -2039,8 +2039,8 @@ Return the modified bindlist."
 (defun d--change-coords-in-binding (bind coordlistlist)
   "Change coordinates in BIND according to COORDLISTLIST.
 Return the modified binding."
-  (let* ((carcoordsp (d-emacs-xkb--coordinates-p (car bind)))
-         (cdarcoordsp (unless carcoordsp (d-emacs-xkb--coordinates-p (cdar bind))))
+  (let* ((carcoordsp (d-emacs-coords-p (car bind)))
+         (cdarcoordsp (unless carcoordsp (d-emacs-coords-p (cdar bind))))
          (origcoords (cond (carcoordsp (car bind))
                            (cdarcoordsp (cdar bind))))
          (newcoords (unless (not origcoords)

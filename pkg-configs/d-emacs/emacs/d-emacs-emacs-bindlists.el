@@ -111,8 +111,8 @@
   ((3 -1 3) . #'d-free-places-from-regexps) 
 
 ;;;;;;;; 3-0 
-  ((3 0 -3) . #'d-emacs-xkb-draw-placevals-from-coordrxT) 
-  ((3 0 -2) . #'d-emacs-xkb-draw-keyboard-layer) 
+  ((3 0 -3) . #'d-emacs-coords-draw-placevals-from-coordrxT) 
+  ((3 0 -2) . #'d-emacs-coords-draw-keyboard-layer) 
   ((3 0 2) . #'d-draw-bindlist-layer) 
   ((3 0 3) . #'d-draw-bindings-from-regexps))
 
