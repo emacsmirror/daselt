@@ -580,7 +580,7 @@
   (("s-" . (1 0 -2)) . #'kmacro-start-macro-or-insert-counter) 
   (("s-" . (1 0 2)) . #'kmacro-end-or-call-macro) 
   (("s-" . (1 0 3)) . #'insert-kbd-macro) 
-  (("s-" . (1 0 4)) . #'icicle-search-generic) 
+  (("s-" . (1 0 4)) . #'d-emacs-replace-string-throughout-directory) 
   (("s-" . (1 0 5)) . #'desktop-save) 
 
 ;;;;;;;; s-1-1 
@@ -607,7 +607,7 @@
 ;;;;;;;; s-2-0 
   (("s-" . (2 0 -5)) . #'projectile-find-file) 
   (("s-" . (2 0 -4)) . #'icicle-occur) 
-  (("s-" . (2 0 4)) . #'icicle-search-keywords) 
+  (("s-" . (2 0 4)) . #'icicle-search-generic) 
   (("s-" . (2 0 5)) . #'projectile-find-related-file) 
 
 ;;;;;;;; s-2-1 
@@ -768,6 +768,8 @@
 ;;;;;;; s-H-2 
 ;;;;;;;; s-H-2-0 
   (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame)
+  (("s-H-" . (2 0 4)) . #'icicle-search-keywords)
+  
   (("s-H-" . (2 0 5)) . #'projectile-find-related-file-other-frame) 
 
 ;;;;;;;; s-H-4-0 

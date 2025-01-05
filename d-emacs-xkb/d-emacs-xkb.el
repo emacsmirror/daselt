@@ -105,20 +105,12 @@ Can be overwritten for any particular row using `d-emacs-xkb-rowlist'."
   :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-read-layer-function
-                            'd-emacs-xkb--generate-layer
-                            "Function used to generate a d-emacs-xkb-layer from an xkb-file.
+                                                                        'd-emacs-xkb--generate-layer
+                                                                        "Function used to generate a d-emacs-xkb-layer from an xkb-file.
 Default is `d-emacs-xkb--generate-layer'.
 Has to be adapted for different layouts."
-                            :type 'symbol
-                            :group 'd-emacs-xkb)
-
-(defcustom d-emacs-xkb-layout
-  'd-emacs-xkb-main-layout
-  "The keyboard-layout you're using.
-Should be one of the layouts in the `d-emacs-xkb-file'."
-  :group 'Daselt
-  :type 'symbol
-  :options d-emacs-xkb-layouts)
+                                                                        :type 'symbol
+                                                                        :group 'd-emacs-xkb)
 
 ;;;; Functions
 ;;;;; Reading d-emacs-xkb-file
@@ -128,7 +120,7 @@ The region searched is that from BEG to END. Returns nil if no binding is
 found."
   (goto-char beg)
   (if (search-forward keyname end t)
-                                          (progn (beginning-of-line)
+                                                              (progn (beginning-of-line)
              (search-forward "\{" end t)
              (mark-sexp)
              (nth (1+ num) ; First two entries are brackets, absolute layers start at zero.
@@ -203,7 +195,7 @@ string, in which case the string is assumed to be its name.
 This works only if the parent map appears earlier in the file."
   (goto-char beg)
   (if (search-forward "include" end t)
-      (progn (d-mark-line)
+                                                  (progn (d-mark-line)
              (let* ((includelinelist (remove "" (split-string (remove ?\" (buffer-substring-no-properties (region-beginning) (region-end)))
                                                               "\\(\(\\|\)\\|[ ]+\\|\_\\)" t)))
                     (parent (nth 2 includelinelist))
@@ -217,20 +209,20 @@ This works only if the parent map appears earlier in the file."
                     parrow)))
     nil))
 
-;;;;; Generate layouts
+;;;;; Layout generation functions
 (defun d-emacs-xkb--generate-layer (beg end laynum)
-  "Generate a list from a d-emacs-xkb layer.
+                  "Generate a list from a d-emacs-xkb layer.
 The layer is defined by the region from BEG to END in `d-emacs-xkb-file' and the
 layer number LAYNUM."
-  (mapcar (lambda (indrowinfo)
-                    (let* ((rowidx (car indrowinfo))
+                  (mapcar (lambda (indrowinfo)
+                                  (let* ((rowidx (car indrowinfo))
                    (rowinfo (cdr indrowinfo))
                    (rowinfo (if (atom rowinfo) ; Redefine if it's not a list.
-                                                (list rowinfo)
-                                      rowinfo))
+                                                                            (list rowinfo)
+                                                    rowinfo))
                    (rowlength (if (numberp (car rowinfo))
-                                                  (car rowinfo)
-                                        d-emacs-xkb-rows-length))
+                                                                              (car rowinfo)
+                                                      d-emacs-xkb-rows-length))
                    (idx 0)
                    (numbershift (progn (while (not (= 1 (length (nth idx rowinfo))))
                                          (setq idx (1+ idx)))
@@ -239,11 +231,11 @@ layer number LAYNUM."
                        for elt = (nth eltnum rowinfo)
                        append
                        (if (= 1 (length elt)) ; If it's a row letter.
-                                           (let* ((rowprefix (concat "A" elt)))
+                                                                       (let* ((rowprefix (concat "A" elt)))
                              (mapcar (lambda (keynum)
-                                               (let* ((keynumstr (if (>= keynum 10)
-                                                                             (number-to-string keynum)
-                                                                   (concat
+                                                             (let* ((keynumstr (if (>= keynum 10)
+                                                                                                         (number-to-string keynum)
+                                                                                 (concat
                                                             "0" (number-to-string
                                                                  keynum))))
                                               (keyname (concat rowprefix keynumstr))
@@ -296,138 +288,30 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
 
 
 ;; Generate layout constants.
-(defconst d-emacs-coords-key-coords
-  (mapcar (lambda (indrow)
-            (mapcar (lambda (indplace)
-                      (let ((fullcoords (d-emacs-coords-abs-to-rel
-                                         (list 0 (car indrow) (car indplace)))))
-                        (list (nth 1 fullcoords)
-                              (nth 2 fullcoords))))
-                    (d-add-list-indices (cdr indrow))))
-          (d-add-list-indices (car (symbol-value d-emacs-xkb-layout))))
-  "This is the coordinate system of keys of d-emacs-xkb.
-Generated from the first layer of `d-emacs-xkb-layout' layout.")
 
-(defconst d-emacs-xkb-layer-boundaries
-  (let* ((allcoords (d-flatten-until d-emacs-coords-key-coords
-                                     (lambda (lst) ; Flatten until the first entry is a coordinate.
-                                       (d-emacs-coords-p (car lst)))))
-         (allrows (mapcar (lambda (coords)
-                            (car coords))
-                          allcoords))
-         (allcols (mapcar (lambda (coords)
-                            (car (last coords)))
-                          allcoords)))
-    (cons (cons (apply #'min allrows)
-                (apply #'max allrows))
-          (cons (apply #'min allcols)
-                (apply #'max allcols))))
-  "A cons of conses that keep the minimum and maximum row and column
-        coordinates in `d-emacs-coords-key-coords'.")
+(defconst d-emacs-xkb-layouts
+  (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))
+  "List of d-emacs-xkb-layouts in unextended form. Generated automatically.")
+
+(defcustom d-emacs-xkb-layout
+  'd-emacs-xkb-main-layout
+  "The keyboard-layout you're using.
+Should be one of the layouts in the `d-emacs-xkb-file'."
+  :group 'Daselt
+  :type 'symbol
+  :options d-emacs-xkb-layouts)
 
 (defconst d-emacs-xkb-coordinates
-  (mapcar (lambda (layer)
-            (mapcar (lambda (row)
-                      (mapcar (lambda (place)
-                                (append (list layer) place))
-                              row))
-                    d-emacs-coords-key-coords))
-          (d-cardinal 8 t))
-  "The coordinates of all places in normal d-emacs-xkb-layers.
-Saved here for lookup in draw-commands.")
-
-(let ((layrx (rx string-start
-                 "d-emacs-xkb-"
-                 (group (zero-or-more (not "-")))
-                 "-layout" string-end)))
-
-  (cl-flet* ((namecore (layout) (let ((layname (symbol-name layout)))
-                                  (prog2 (string-match layrx layname)
-                                      (substring layname
-                                                 (match-beginning 1)
-                                                 (match-end 1)))))
-             (extlaysymb (layout) (let ((core (namecore layout)))
-                                    (intern (concat "d-emacs-xkb-extended-"
-                                                    core
-                                                    (unless (string-empty-p core) "-")
-                                                    "layout")))))
-    
-    (defconst d-emacs-xkb-layouts
-      (apropos-internal layrx (lambda (potlay) (and (boundp potlay)
-                                               (not (string-match-p
-                                                     "-extended-"
-                                                     (symbol-name potlay))))))
-      "List of Daselt layouts in unextended form. Generated automatically.")
-
-    (defconst d-emacs-xkb-inside-modifier-layer
-      (list (list "H" "s" "5/<tab>" "7/<compose>" "C" "M" "C" "7/<compose>" "5/<tab>" "s" "H")
-            (list "6/F11" "" "" "3" "" "" "" "" "3" "" "" "6/F11")
-            (list "4/<XF86Launch5>" "" "" "" "" "" "" "" "" "" "" "4/<XF86Launch5>")
-            (list "⟨I⟩dA/<f8>" "8" "" "" "" "" (if (eq d-emacs-xkb-layout 'd-emacs-xkb-main-layout) "H" "") "" "" "" "" "8" "dA/<f8>")
-            (list "2/dM/⟨C⟩ds/<XF86Launch6>" "C/SPC" "2/dM/⟨C⟩ds/<XF86Launch6>"))
-      "Daselt's modifier layout.")
-
-    (defconst d-emacs-xkb-outside-modifier-layer
-      (list (list "H" "s" "5/<tab>" "3/<compose>" "7" "M" "7" "3/<compose>" "5/<tab>" "s" "H")
-            (list "6/F11" "" "" "" "" "" "" "" "" "" "" "6/F11")
-            (list "4/<XF86Launch5>" "" "" "" "" "" "" "" "" "" "" "4/<XF86Launch5>")
-            (list "8" "" "" "" "" "" "" "" "" "" "8")
-            (list "2/dM/⟨C⟩ds/<XF86Launch6>" "C/SPC" "2/dM/⟨C⟩ds/<XF86Launch6>"))
-      "Daselt's modifier layout. Version where all modifiers are outside letter keys.")
-
-    (defconst d-emacs-xkb-extended-layout
-      (intern (concat "d-emacs-xkb-extended-"
-                      (namecore d-emacs-xkb-layout)
-                      "-layout"))
-      "Name of the extended version of d-emacs-xkb-layout.")
-
-    (mapc (lambda (layout)
-            (eval
-             `(defconst ,(extlaysymb layout)
-                (append (list (symbol-value d-emacs-xkb-layer-0)) ,layout)
-                (format "Extended version of %s.
-Generated automatically." layout))))
-          d-emacs-xkb-layouts)
-
-    (defconst d-emacs-xkb-extended-key-coords
-      (mapcar (lambda (indrow)
-                (mapcar (lambda (indplace)
-                          (let ((fullcoords (d-emacs-coords-abs-to-rel
-                                             (list 0 (car indrow) (car indplace))
-                                             t)))
-                            (list (nth 1 fullcoords)
-                                  (nth 2 fullcoords))))
-                        (d-add-list-indices (cdr indrow))))
-              (d-add-list-indices (car (symbol-value d-emacs-xkb-extended-layout))))
-      "This is the extended coordinate system of keys of d-emacs-xkb.
-Generated from the first layer of the main layout.")
-
-    (defconst d-emacs-xkb-layer-0-boundaries
-      (let* ((allcoords (d-flatten-until d-emacs-xkb-extended-key-coords
-                                         (lambda (lst) ; Flatten until the first entry is a coordinate.
-                                           (d-emacs-coords-p (car lst)))))
-             (allrows (mapcar (lambda (coords)
-                                (car coords))
-                              allcoords))
-             (allcols (mapcar (lambda (coords)
-                                (car (last coords)))
-                              allcoords)))
-        (cons (cons (apply #'min allrows)
-                    (apply #'max allrows))
-              (cons (apply #'min allcols)
-                    (apply #'max allcols))))
-      "A cons of conses that keep the minimum and maximum row and column
-        coordinates in `d-emacs-xkb-extended-key-coords`.")
-
-    (defconst d-emacs-xkb-extended-coordinates
-      (append (mapcar (lambda (row)
-                        (mapcar (lambda (place)
-                                  (append (list 0) place))
-                                row))
-                      d-emacs-xkb-extended-key-coords)
-              d-emacs-xkb-coordinates)
-      "The coordinates of all places in all d-emacs-xkb-layers, including the 0-th
-        layer.")))
+  (let* ((layout (symbol-value d-emacs-xkb-layout))
+         (coordlayout (d-emacs-coords-coordinatize-layout layout)))
+    (d-flatten-until (mapcar (lambda (coordlayer)
+                               (mapcar (lambda (coordrow)
+                                         (mapcar #'car coordrow))
+                                       coordlayer))
+                             coordlayout)
+                     (lambda (lst) (d-emacs-coords-p (car lst)))))
+  "All coordinates in `d-emacs-xkb-layout'.
+Saved here to be called in calculations of drawing functions.")
 
 ;;;; Provide
 (provide 'd-emacs-xkb)

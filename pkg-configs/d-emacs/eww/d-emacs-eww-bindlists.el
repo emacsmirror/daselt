@@ -42,11 +42,14 @@
   ((1 -1 4) . #'avy-act-follow) 
 
 ;;;;;;;; 1-0 
-  ((1 0 -2) . #'eww-previous-url) 
+  ((1 0 -2) . #'eww-previous-url)
+  ((1 0 -1) . #'scroll-up-command) 
+  ((1 0 1) . #'scroll-down-command) 
   ((1 0 2) . #'eww-next-url) 
   ((1 0 5) . #'eww) 
 
 ;;;;;;;; 1-1 
+  ((1 1 -2) . #'eww-download)
   ((1 1 -3) . #'eww-copy-page-url) 
 
 ;;;;;;; 2 

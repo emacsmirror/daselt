@@ -274,7 +274,7 @@ This is the most powerful of the Daselt-helper functions.
                                        (progn (insert (format "\n%s\n"
                                                               (d-string-together-modifiers
                                                                mods)))
-                                              (d-emacs-coords-draw-placevals valmatchedplacevals t))))))
+                                              (d-emacs-coords-draw-placevals valmatchedplacevals))))))
                 
                 do (insert "\n"))))))
 
@@ -298,12 +298,7 @@ there."
                                                                (string-match-p
                                                                 blistrx
                                                                 (symbol-name blistsymb))))))
-         
-         (allcoords (d-flatten-until d-emacs-xkb-coordinates
-                                     (lambda (lst)
-                                       (d-emacs-coords-p
-                                        (car lst)))))
-
+         (allcoordsd-emacs-xkb-coordinates)
          (allmodifiercoordscombinations (apply #'append (mapcar (lambda (coords)
                                                                   (mapcar
                                                                    (lambda (mods)
@@ -366,7 +361,7 @@ there."
                          (progn (insert (format "\n%s\n"
                                                 (d-string-together-modifiers
                                                  mods)))
-                                (d-emacs-coords-draw-placevals coordmatchedfreeplacevals t))))
+                                (d-emacs-coords-draw-placevals coordmatchedfreeplacevals))))
                 do (insert "\n"))))))
 
 ;;;; Import

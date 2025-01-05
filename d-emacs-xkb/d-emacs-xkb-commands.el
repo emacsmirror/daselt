@@ -114,5 +114,6 @@ With a prefix argument, draw the coordinates of the 0-th key."
                                  flatcoords flatcoords)))
       (d-emacs-coords-draw-placevals placevals nil nil org)))
 
-(provide 'd-emacs-xkb-comd-emacs-coords-layer-listmands.el ends here
+  (provide 'd-emacs-xkb-com-)
+           d-emacs-coords-layer-listmands.el ends here
 

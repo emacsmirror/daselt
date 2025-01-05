@@ -39,7 +39,6 @@
 (declare-function d--eval-file-p "d-macro-expansions.el" (filename) t)
 (declare-function d-emacs-coords-p (lst))
 
-(defvar d-emacs-xkb-extended-layout)
 (defvar d-mention-unmatched)
 (defvar d-modifiers-list)
 (defvar d-emacs-no-shift-list)
@@ -108,9 +107,9 @@ the selection."
 
 ;;;;; Lists
 (defun d-remove-indices (indlst)
-  "Remove indices of the elements of INDLST."
+a  "Remove indices of the elements of INDLST."
   (mapcar (lambda (indelt)
-            (cdr indelt))
+              (cdr indelt))
           indlst))
 
 (defun d-filter-by-predicate (lst pred)
@@ -1016,8 +1015,8 @@ is a bound variable and the value of SYMB returns t when tested with
        (d--bindlist-p (symbol-value symb))))
 
 (defun d--string-binding-p (cns)
-            "Return t if CNS is a binding given by a binding string."
-            (and (d--binding-p cns)
+  "Return t if CNS is a binding given by a binding string."
+  (and (d--binding-p cns)
        (not (d-emacs-coords-p (car cns)))
        (not (d-emacs-coords-p (cdar cns)))))
 
@@ -1025,12 +1024,12 @@ is a bound variable and the value of SYMB returns t when tested with
 ;;;; Bindlist formatting
 ;;;;; General
 (defun d-head-if-exists (list)
-          "Check if LIST has a head.
+  "Check if LIST has a head.
 An element counts as a head if it isn't identified as a binding."
-          (if (and (proper-list-p list) (not (d--binding-p list)))
-                      (if (d--binding-p (car list))
-                          nil
-                (car list))))
+  (if (and (proper-list-p list) (not (d--binding-p list)))
+      (if (d--binding-p (car list))
+          nil
+        (car list))))
 
 ;;;;; Modifiers
 (defun d-index-prefix-modifiers (prefix &optional modlist)
@@ -1104,8 +1103,7 @@ Return a cons of STR and the list of matching conses."
   (d-recursive-get-cons
    str
    (d-emacs-coords-coordinatize-layout
-    (symbol-value d-emacs-xkb-extended-layout)
-    t)
+    (symbol-value (d-emacs-coords--dfk-or-xkb-layout)))
    (lambda (str compstr)
      (let ((case-fold-search nil))
        (string-match-p
@@ -1799,7 +1797,7 @@ coordinates)."
             (if (d-string-exists-and-nonempty newsfx)
                 newsfx
               (error (if coords (format "Coordinates %s in binding %s have no match in %s."
-                                        coords binding d-emacs-xkb-layout)
+                                        coords binding (d-emacs-coords--dfk-or-xkb-layout))
                        (format "%s has neither coordinates nor a suffix." binding))))))
          (non-translated-string (concat pfx newsfx))
          shifted) ; To check later whether it was shifted.

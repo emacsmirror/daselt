@@ -34,34 +34,43 @@ When non-nil, functions will print additional debugging messages."
     :group 'Daselt)
 
 (defcustom d-keep-read-buffers
-                        nil
-                        "Keep buffers open after d-emacs-functions read them.
+                                                      nil
+                                                      "Keep buffers open after d-emacs-functions read them.
 
 If non-nil, previously read buffers will not be closed."
-                        :type 'boolean
-                        :group 'Daselt)
+                                                      :type 'boolean
+                                                      :group 'Daselt)
 
 ;;;; General purpose functions
+;;;;; Numbers
+(defun d-numbers-between (num1 num2 &optional exclude1 exclude2)
+  "Generate a list of integers from num1 to num2, including both.
+With optional arguments EXCLUDE1 and EXCLUDE2, don't include num1
+repectively num2."
+  (cl-loop for k from (funcall (if exclude1 #'1+ #'identity) num1)
+           to (funcall (if exclude2 #'1- #'identity) num2)
+           collect k))
+
 (defun d-cardinal (n &optional fromone)
   "Generate a list of integers from 0 to N-1.
 If optional argument FROMONE is non-nil, return a list starting from 1 to N
 instead."
-  (append (unless fromone (list 0)) (cl-loop for k from 1 to (1- n)
-                                             collect k)
-          (if fromone (list n))))
+  (d-numbers-between 0 n fromone (not fromone)))
 
 (defun d-add-list-indices (list &optional fromone)
-  "Cons each element of LIST with its position in LIST.
+                                                          "Cons each element of LIST with its position in LIST.
 If optional argument FROMONE is non-nil, indices start from 1; otherwise, they
 start from 0."
-  (cl-mapcar (lambda (index elt)
-               (cons index elt))
+                                                          (cl-mapcar (lambda (index elt)
+                                                                       (cons index elt))
              (d-cardinal (length list) fromone) list))
 
+
+;;;;; Files
 (defun d-containing-directory-base-name (filepath)
-  "Retrieve the base name of the containing directory of FILEPATH.
+                                                            "Retrieve the base name of the containing directory of FILEPATH.
 This function does not include the full path or trailing slashes in the result."
-  (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
+                                                            (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
 
 (defun d-filter-obarray-by-predicate (predicate)
               "Filter symbols in the obarray by a given PREDICATE."
@@ -115,6 +124,52 @@ The function tests each entry in LST using PRED."
                           item))
                     lst)))
 
+(defun d-emacs-preimage (lst fun obj &optional keepobj eqpred)
+  "Return a list containing all elements of LST mapped to OBJ by FUN.
+
+If KEEPOBJ is t, return instead a cons whose car is OBJ and whose
+cdr are all elements mapped to it.
+
+EQPRED is the predicate used to find out equality. By default it is
+#'equal."
+  (let* ((eqpred (or eqpred #'equal))
+         (result (delq nil (mapcar (lambda (element)
+                                     (when (funcall eqpred (funcall fun element) obj)
+                                       element))
+                                   lst))))
+    (if keepobj
+        (cons obj result)
+      result)))
+
+(defun d-emacs-image (lst fun &optional eqpred)
+  "Return the list of all results of FUN applied to elements of LST.
+
+EQPRED is used to compare results for equality. It is #'equal by
+default."
+  (let ((eqpred (or eqpred #'equal)))
+    (cl-remove-duplicates (mapcar fun lst) :test eqpred)))
+
+(defun d-emacs-fiber-by-property (lst propfun &optional keepprops eqpred)
+  "Fiber the elements of LST according to PROP.
+
+PROPFUN should be a function that can be applied to the elements of LST.
+
+Return a list whose elements are lists consisting of the elements that have
+the same output under PROP.
+
+Use EQPRED to compare the outputs of PROP. By default, EQPRED is #'equal.
+
+If KEEPPROPS is t, return a list of conses whose cdr are lists with the
+same property and whose car is a representative of that property."
+  (let* ((eqpred (or eqpred #'equal))
+         (props (d-emacs-image lst propfun eqpred))
+         (fibration (mapcar (lambda (prop)
+                              (let ((fiber (d-emacs-preimage
+                                            lst propfun prop keepprops eqpred)))
+                                fiber))
+                            props)))
+    fibration))
+
 (defun d-lisp-file-code (filename)
   "Extract and return the code section from a Lisp file specified by FILENAME.
 The extraction is done by reading the content between `;;; Code:' and `;;; .*
@@ -149,6 +204,10 @@ This creates a list where the first element is the car of CNS, and the second
 element is its cdr."
   (list (car cns) (cdr cns)))
 
+(defun d-list-to-cons (lst)
+  "Convert the list LST into a cons consisting of the first two elements of LST.."
+  (cons (car lst) (nth 1 lst)))
+
 (defun d-flatten-until (lst cnd)
   "Flatten the list LST until the condition CND becomes true.
 CND should be a function accepting one argument to check flattenings of LST."
@@ -166,12 +225,13 @@ If N is not provided, the function flattens LST once."
              do (setq runlst (apply #'append runlst))
              finally return runlst)))
 
-(defun d-reverse-alist-get (key alist &optional default)
+(defun d-reverse-alist-get (key alist &optional default testfn)
   "Return the car of the first cons in ALIST whose cdr equals KEY.
-If nothing is found, return DEFAULT."
+If nothing is found, return DEFAULT.
+If TESTFN is given, use it for testing, otherwise use `equal'."
   (catch 'found
     (dolist (item alist)
-      (when (equal (cdr item) key)
+      (when (funcall (or testfn #'equal) (cdr item) key)
         (throw 'found (car item))))
     default))
 
@@ -381,11 +441,17 @@ The opposite of truncate, but unlike truncate accepts non-floating numbers."
   (let* ((num (float num))
          (tnum (truncate num)))
     (if (= tnum num)
-        tnum
-      (if (<= 0.0 num)
-          (1+ tnum)
-        (1- tnum)))))
+                            tnum
+                (if (<= 0.0 num)
+                              (1+ tnum)
+                  (1- tnum)))))
 
+(defun d-emacs-namecore (sym pfx sfx)
+  "Return the core of the symbol name of SYM.
+This is the part between PFX and SFX."
+  (let ((name (symbol-name sym)))
+    (string-match (eval `(rx ,pfx (group (* not-newline)) ,sfx)) name)
+    (match-string 1 name)))
 ;;;; Recursion
 (defun d-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply functions to elements of OBJ based on condition tests.
@@ -416,7 +482,7 @@ output.
 OBJ can represent structured data such as folders, where elements are evaluated
 and results collected based on hierarchy and matching tests."
   (let* ((recursetest (or recursetest (lambda (idx lst &optional _restargs)
-                                                        (proper-list-p (nth idx lst)))))
+                                                                  (proper-list-p (nth idx lst)))))
          (formatfun (or formatfun #'identity))
          (eltcolfun (or eltcolfun (lambda (lst result) (append lst (list result)))))
          (lstcolfun (or lstcolfun #'list))
@@ -429,7 +495,7 @@ and results collected based on hierarchy and matching tests."
 
     ;; This somewhat awkward construction is necessary to allow test1 and the other functions to not need an input corresponding to RESTARGS if RESTARGS is not given.
     (cl-flet* ((apply-with-restargs-if-given (fun arg1 &optional arg2)
-                                 (eval (append `(funcall fun arg1)
+                                           (eval (append `(funcall fun arg1)
                                (if arg2 `(arg2))
                                (if restargs `(restargs)))
                        `((fun . ,fun)
@@ -451,13 +517,13 @@ and results collected based on hierarchy and matching tests."
                            do (if debug (message "Fun: %s \nTest: %s \nElement Collection Function: %s"
                                                  fun test eltcolfun))
                            do (if (apply-with-restargs-if-given test idx lst)
-                                                                  (let ((result (apply-with-restargs-if-given fun elt)))
+                                                                                      (let ((result (apply-with-restargs-if-given fun elt)))
                                     (if debug (message "\nRunlist: %s \nResult: %s" runlist result))
                                     (setq runlist (funcall eltcolfun runlist result))
                                     (unless contt (cl-return)))))
 
                do (if (apply-with-restargs-if-given recursetest idx lst)
-                                                      (setq runlist
+                                                                          (setq runlist
                             (funcall lstcolfun runlist
                                      (d-funcalls-recursively
                                       elt funtests recursetest formatfun eltcolfun lstcolfun

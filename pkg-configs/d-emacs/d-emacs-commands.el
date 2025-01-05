@@ -436,17 +436,24 @@ The statement is put into the preamble of the current file."
 
 
 (defun d-emacs-toggle-variable (var)
-  "Toggle the variable VAR on or off."
-  (interactive "vToggle variable: ")
-  (if (symbol-value var)
-      (set var nil)
-    (set var t)))
+            "Toggle the variable VAR on or off."
+            (interactive "vToggle variable: ")
+            (if (symbol-value var)
+                          (set var nil)
+              (set var t)))
+
+(defun d-emacs-trim-line-ends ()
+  "Remove whitespace at the end of each line in the current buffer."
+  (interactive)
+  (save-excursion (d-emacs-goto-min)
+                  (while (re-search-forward (rx (+ blank) line-end) nil t)
+                    (replace-match ""))))
 
 ;;;;; Search
 (defun d-emacs-do-not-search-invisible ()
-  "Set the search to ignore invisible portions of the text."
-  (interactive)
-  (setq search-invisible nil))
+            "Set the search to ignore invisible portions of the text."
+            (interactive)
+            (setq search-invisible nil))
 
 (defun d-emacs-search-invisible ()
       "Set the search to include invisible portions of the text."
