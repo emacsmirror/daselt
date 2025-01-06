@@ -372,7 +372,7 @@
 (("s-H-" . (3 0 2)) . #'icicle-candidate-alt-action) 
 
 ;;;;;;;; s-H-3-1 
-  (("s-H-" . (3 1 -2)) . #'icicle-all-candidates-list-alt-action))
+(("s-H-" . (3 1 -2)) . #'icicle-all-candidates-list-alt-action))
 
 ;;;; icicle-buffer-candidate-key-bindings
 `(icicle-buffer-candidate-key-bindings 

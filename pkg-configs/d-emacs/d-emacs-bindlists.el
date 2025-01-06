@@ -40,16 +40,16 @@
 
 ;;;;; Coordinates 
 ;;;;;;; 4 
-  ((4 -1 -1) . (if d-emacs-icicles #'beginning-of-line+ #'beginning-of-line)) 
-  ((4 -1 1) . (if d-emacs-icicles #'end-of-line+ #'end-of-line)) 
+  ((8 -1 -1) . (if d-emacs-icicles #'beginning-of-line+ #'beginning-of-line)) 
+  ((8 -1 1) . (if d-emacs-icicles #'end-of-line+ #'end-of-line)) 
 
-;;;;;;;; 4-0 
-  ((4 0 -3) . #'backward-up-list) 
-  ((4 0 -2) . #'backward-list) 
-  ((4 0 -1) . (if d-emacs-icicles #'beginning-of-visual-line+ #'beginning-of-visual-line)) 
-  ((4 0 1) . (if d-emacs-icicles #'end-of-visual-line+ #'end-of-visual-line)) 
-  ((4 0 2) . #'forward-list) 
-  ((4 0 3) . #'up-list) 
+;;;;;;;; 8-0 
+  ((8 0 -3) . #'backward-up-list) 
+  ((8 0 -2) . #'backward-list) 
+  ((8 0 -1) . (if d-emacs-icicles #'beginning-of-visual-line+ #'beginning-of-visual-line)) 
+  ((8 0 1) . (if d-emacs-icicles #'end-of-visual-line+ #'end-of-visual-line)) 
+  ((8 0 2) . #'forward-list) 
+  ((8 0 3) . #'up-list) 
 
 ;;;;;;; 7 
 ;;;;;;;; 7-0 
@@ -521,6 +521,7 @@
   (("M-C-" . (5 0 1)) . #'citar-insert-edit) 
 
 ;;;;;;;; M-C-5-1 
+  (("M-C-" . (5 1 -3)) . #'append-to-register) 
   (("M-C-" . (5 1 -1)) . #'citar-add-file-to-library) 
   (("M-C-" . (5 1 1)) . #'citar-create-note) 
 
@@ -530,7 +531,6 @@
   (("M-C-" . (6 -1 -5)) . #'password-store-edit) 
   (("M-C-" . (6 -1 -4)) . #'undo-tree-save-state-to-register) 
   (("M-C-" . (6 -1 -2)) . #'embark-select) 
-  (("M-C-" . (6 -1 2)) . #'append-to-register) 
   (("M-C-" . (6 -1 3)) . #'avy-kill-whole-line) 
   (("M-C-" . (6 -1 4)) . #'undo-tree-restore-state-from-register) 
 

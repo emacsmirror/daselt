@@ -216,7 +216,17 @@
 ;;;;;;; 1
 ;;;;;;;; 1-0
   ((1 0 -2) . #'string-rectangle) 
-  ((1 0 2) . #'string-insert-rectangle))
+  ((1 0 2) . #'string-insert-rectangle)
+  ((1 1 -3) . #'copy-rectangle-as-kill)
+  ((1 1 3) . #'yank-rectangle)
+  ((1 -1 -2) . #'rectangle-exchange-point-and-mark)
+  ((1 -1 2) . #'clear-rectangle)
+  ((2 1 -3) . #'kill-rectangle)
+  ((1 -1 -3) . #'delete-rectangle)
+  ((1 0 -1) . #'open-rectangle)
+  ((1 0 1) . #'close-rectangle)
+  ((1 0 -3) . #'replace-rectangle)
+  ((5 1 -3) . #'copy-rectangle-to-register))
 
 ;;;; prog-mode-map
 `(prog-mode-map 

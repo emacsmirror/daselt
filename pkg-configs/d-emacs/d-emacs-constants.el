@@ -58,14 +58,19 @@ d-modifiers-list.")
   open a new buffer.")
 
 (defconst d-emacs-subsentence-command-list
-  '(backward-sentence forward-sentence backward-kill-sentence kill-sentence er/mark-sentence d-emacs-backward-er/mark-sentence d-emacs-backward-transpose-sentences)
-  "List of commands for which subsentence analogs are created in
+            '(backward-sentence forward-sentence backward-kill-sentence kill-sentence er/mark-sentence d-emacs-backward-er/mark-sentence d-emacs-backward-transpose-sentences)
+            "List of commands for which subsentence analogs are created in
   `d-emacs-commands'.")
+
+(defconst d-emacs-layers-to-shift-list
+  '(2 8)
+  "Layers to which a shift modifier should be added when `d--extract-binding-string'
+is called with CSECTOSHFT set.")
 
 ;;;; Lists for rebinding
 (defconst d-emacs-no-shift-list
-  '("'")
-  "List of strings that should not be replaced by their downcased version with a
+            '("'")
+            "List of strings that should not be replaced by their downcased version with a
 shift modifier when `d--extract-binding-string' is called with `csectoshft' set
 to t.")
 

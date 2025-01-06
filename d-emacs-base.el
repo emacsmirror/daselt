@@ -347,10 +347,10 @@ comparisons, defaulting to `equal'."
                 list1))
 
 (defun d-powerlist (list &optional elt)
-  "Generate the power list of SET represented by LIST.
+            "Generate the power list of SET represented by LIST.
 Returns a list of all sublists of LIST with elements ordered like in LIST. ELT
 is used for recursion and should normally not be set by the user."
-  (let ((powerlist (list nil))
+            (let ((powerlist (list nil))
         (cutlist list))
     (if elt (mapcar (lambda (sublist) (append (list elt) sublist))
                     (d-powerlist (cl-loop for index from 0 to (cl-position elt list)
@@ -360,10 +360,19 @@ is used for recursion and should normally not be set by the user."
                do (setq powerlist (append powerlist (d-powerlist list elt)))
                finally return powerlist))))
 
+(defun d-setequal (list1 list2 &optional elttest)
+  "Return t if LIST1 has the same elements as LIST2.
+
+ELTTEST is the test used for element comparison. It defaults to `equal'."
+  (and (cl-subsetp
+        list1 list2 :test elttest)
+       (cl-subsetp
+        list2 list1 :test elttest)))
+
 (defun d-remove-list-index (lst idx)
-  "Remove the element at index IDX from LST and return the resulting list.
+                          "Remove the element at index IDX from LST and return the resulting list.
 The operation does not modify the original list."
-  (let (runlst)
+                          (let (runlst)
     (cl-loop for runidx from 0 to (1- (length lst))
              do (unless (= runidx idx)
                   (setq runlst (append runlst (list (nth runidx lst)))))

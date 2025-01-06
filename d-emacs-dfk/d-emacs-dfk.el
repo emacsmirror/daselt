@@ -99,8 +99,12 @@
      ;; Hyper
      ((1 0) . ((1 0) . ,(nth 0 d-emacs-dfk-H-coords)))
 
+     ;; Super
+     ((-2 -5) . (,(nth 0 d-emacs-dfk-s-coords)
+                 . ,(nth 0 d-emacs-dfk-s-coords)))
+
      ;; Meta
-     ((2 3) . (,(car d-emacs-dfk-M-coords) . ,(car d-emacs-dfk-M-coords)))
+     ((2 -4) . (,(car d-emacs-dfk-M-coords) . ,(car d-emacs-dfk-M-coords)))
 
      ;; Alt
      ,(unless (string= d-emacs-dfk-keyboard-layout-type "ansi")
@@ -113,29 +117,29 @@
 
      ;; 3
      (,(if d-emacs-dfk-outside-mods '(-2 -3) '(-1 -3))
-      . ,(if d-emacs-dfk-outside-mods
-             `("scrolllock" . ,(nth 0 d-emacs-dfk-locking-3-coords))
-           `((-1 -3) . ,(nth 0 d-emacs-dfk-locking-3-coords))))
+      . (,(if d-emacs-dfk-outside-mods "scrolllock" '(-1 -3))
+         . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+            ,(nth 0 d-emacs-dfk-non-locking-3-coords))))
      (,(if d-emacs-dfk-outside-mods '(-2 3) '(-1 3))
-      . ,(if d-emacs-dfk-outside-mods
-             `("scrolllock" . ,(nth 1 d-emacs-dfk-locking-3-coords))
-           `((-1 3) . ,(nth 1 d-emacs-dfk-locking-3-coords))))
+      . (,(if d-emacs-dfk-outside-mods "scrolllock" '(-1 3))
+         . (,(nth 1 d-emacs-dfk-non-locking-3-coords)
+            ,(nth 1 d-emacs-dfk-non-locking-2-coords))))
 
      ;; 4
-     ((0 -6) . ("f14" . (,(nth 0 d-emacs-dfk-locking-3-coords)
-                         ,(nth 0 d-emacs-dfk-locking-5-coords))))
-     ((0 6) . ("f14" . (,(nth 1 d-emacs-dfk-locking-3-coords)
-                        ,(nth 0 d-emacs-dfk-locking-5-coords))))
+     ((0 -6) . ("f14" . ,(nth 0 d-emacs-dfk-locking-3-coords)))
+     ((0 6) . ("f14" . ,(nth 1 d-emacs-dfk-locking-3-coords)))
 
      ;; 5
      ((-2 -4) . ((-2 -4) . ,(nth 0 d-emacs-dfk-locking-5-coords)))
      ((-2 4) . ((-2 4) . ,(nth 0 d-emacs-dfk-locking-5-coords)))
 
      ;; 6
-     ((-1 -6) . ("f11" . (,(nth 0 d-emacs-dfk-locking-2-coords)
+     ((-1 -6) . ("f11" . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+                          ,(nth 0 d-emacs-dfk-locking-3-coords)
                           ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
-     ((-1 6) . ("f11" . (,(nth 0 d-emacs-dfk-locking-2-coords)
-                         ,(nth 1 d-emacs-dfk-non-locking-5-coords))))
+     ((-1 6) . ("f11" . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
+                         ,(nth 1 d-emacs-dfk-locking-3-coords)
+                         ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
 
      ;; 7
      (,(if d-emacs-dfk-outside-mods '(-2 -2) '(-2 -3))
@@ -143,23 +147,21 @@
               '(-2 -2)
             "scrolllock")
          . (,(nth 0 d-emacs-dfk-locking-2-coords)
-            ,(nth 0 d-emacs-dfk-locking-3-coords))))
+            ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
      (,(if d-emacs-dfk-outside-mods '(-2 2) '(-2 3))
       . (,(if d-emacs-dfk-outside-mods
               '(-2 2)
             "scrolllock")
-         . (,(nth 1 d-emacs-dfk-locking-3-coords)
-            ,(nth 0 d-emacs-dfk-locking-2-coords))))
+         . (,(nth 0 d-emacs-dfk-locking-2-coords)
+            ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
 
      ;; 8
      (,(if (string= d-emacs-dfk-keyboard-layout-type "ansi") '(1 -7) '(1 -6))
-      . ((1 -6) . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
-                   ,(nth 1 d-emacs-dfk-locking-3-coords)
-                   ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
+      . ((1 -6) . (,(nth 0 d-emacs-dfk-locking-3-coords)
+                   ,(nth 0 d-emacs-dfk-locking-5-coords))))
      ((1 6)
-      . ((1 6) . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
-                  ,(nth 0 d-emacs-dfk-locking-3-coords)
-                  ,(nth 1 d-emacs-dfk-non-locking-5-coords)))))
+      . ((1 6) . (,(nth 1 d-emacs-dfk-locking-3-coords)
+                  ,(nth 0 d-emacs-dfk-locking-5-coords)))))
   "Form to generate the d-dfk layouts.
 When evaluated, returns a bindlist that can be used in
 `d-emacs-dfk-generate-config'. The exact composition of the bindlist depends on
@@ -221,13 +223,13 @@ Keys are chosen to solve the following problems:
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-keyboard-layout-type
-        "iso"
-        "Type of the keyboard layout.
+  "iso"
+  "Type of the keyboard layout.
 This is how the keys on your keyboard are a arrranged.
 Currently supported options are ansi and iso."
-        :type 'string
-        :group 'd-emacs-dfk
-        :options '("ansi" "iso"))
+  :type 'string
+  :group 'd-emacs-dfk
+  :options '("ansi" "iso"))
 
 (defcustom d-emacs-dfk-special-bindlist-form
   'd-emacs-dfk-default-bindlist-form
@@ -258,7 +260,7 @@ https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-cod
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-C-coords
-  '((-2 -2) (-2 2) (2 -4))
+  '((-2 -2) (-2 2) (2 3))
   "Coordinates for keys that are used for Ctrl-signals.
 
 These are not the keys that are actually used as Ctrl-keys but the
@@ -280,7 +282,7 @@ endowed with one of the signals of these keys when held."
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-H-coords
-  '((-2 -6) (-2 6))
+  '((-2 6))
   "Coordinates for keys that are used for Hyper-signals.
 
 These are not the keys that are actually used as Hyper-keys but the
@@ -291,7 +293,7 @@ endowed with one of the signals of these keys when held."
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-s-coords
-  '((-2 -5) (-2 5))
+  '((-2 5))
   "Coordinates for keys that are used for Super-signals.
 
 These are not the keys that are actually used as Super-keys but the
@@ -329,7 +331,7 @@ See there for more information."
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-non-locking-3-coords
-  nil
+  '((0 -6) (-2 -5))
   "Coordinates for keys that are used for ISO-Level-3-Shift-signals that don't lock.
 
 By default these are added to the `d-emacs-dfk-2-coords'.
@@ -347,7 +349,7 @@ See there for more information."
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-non-locking-5-coords
-  '((0 -6) (0 6))
+  '((0 6))
   "Coordinates for keys that are used for ISO-Level-5-Shift-signals
 that don't lock.
 
@@ -433,21 +435,21 @@ called `input-event-codes.h' in your `d-emacs-dfk-directory'."
 
 ;;;;; Used for generating layer 0
 (defcustom d-emacs-dfk-layer-level-shifts
-          '((1 . nil)
+  '((1 . nil)
     (2 . (2))
-    (3 . (3))
+    (3 . (2 3))
     (4 . (3 5))
     (5 . (5))
-    (6 . (2 5))
-    (7 . (3 5))
-    (8 . (2 3 5)))
-          "Alist of layers and corresponding shift numbers.
+    (6 . (2 3 5))
+    (7 . (2 5))
+    (8 . (3)))
+  "Alist of layers and corresponding shift numbers.
 
 The cars of the conses in this list are layers. The cdr is the
 list of numbers of the shifts that have to be combined to access that
 layer."
-          :type '(alist :key-type natnum :value-type (repeat natnum))
-          :group 'd-emacs-dfk)
+  :type '(alist :key-type natnum :value-type (repeat natnum))
+  :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-special-tap-coord-strings
   '(((-2 -4) . "<backtab>") ((-2 4) . "<tab>") ((2 0) . "SPC"))
@@ -510,9 +512,14 @@ Each element of this list is supposed to be a CONS.
 
 ;;;; Constants
 (defconst d-emacs-dfk-shift-levels
-    '(2 3 5)
-    "Levels for which shifts exist that shift to that level.
+  '(2 3 5)
+  "Levels for which shifts exist that shift to that level.
 These are inherited from xkb.")
+
+(defconst d-emacs-dfk-layers-by-length
+  (sort (d-emacs-fiber-by-property d-emacs-dfk-layer-level-shifts
+                                   (lambda (lst) (length (cdr lst))) t)
+        :lessp (lambda (cns1 cns2) (< (car cns1) (car cns2)))))
 
 (defconst d-emacs-dfk-modifiers
   '('C 'M 'H 's)
@@ -539,8 +546,8 @@ an ISO-Level-3-Shift key, it is endowed with one of the signals of
 these keys when held.")
 
 (defconst d-emacs-dfk-5-coords
-        (append d-emacs-dfk-locking-5-coords d-emacs-dfk-non-locking-5-coords)
-        "Coordinates for keys that are used for ISO-Level-5-Shift-signals.
+  (append d-emacs-dfk-locking-5-coords d-emacs-dfk-non-locking-5-coords)
+  "Coordinates for keys that are used for ISO-Level-5-Shift-signals.
 
 These are not the keys that are actually used as
 ISO-Level-5-Shift-keys but the keys whose signals are used. In other
@@ -559,21 +566,16 @@ these keys when held.")
                                                      (group not-newline)
                                                      "-coords")
                                                  symname)
-                                   (d-remove-text-properties-from-string
+                                   (read
                                     (match-string 1 symname)))))
                 (cons match sym)))
             symbols))
   "Alist of modifier coordinate lists with their corresponding modifiers.")
 
-;; (defconst d-emacs-dfk-coords-layer-0
-
-;;   "The layer 0 of `d-emacs-dfk-coords'.
-;; Generated from `d-emacs-dfk-bindlist-form.'")
-
 ;;;; Functions
 (defun d-emacs-dfk--calculate-coords-code (coords)
-        "Calculate the keycode corresponding to COORDS."
-        (number-to-string
+  "Calculate the keycode corresponding to COORDS."
+  (number-to-string
    (or (alist-get coords d-emacs-dfk-special-codes-list
                   (let* ((row (car coords))
                          (col (d-emacs-coords--remove-formal-places coords)))
@@ -594,7 +596,7 @@ DATUM can be either a string or `d-emacs-coords'-coordinates."
                              (let ((buf (current-buffer)))
                                (progn (set-buffer (find-file-noselect eventcodes))
                                       (d-emacs-goto-min)
-                                      (search-forward "#define")
+                                      (search-forward "* Keys and buttons")
                                       (re-search-forward (eval `(rx (+ space) ,keycode)))
                                       (let* ((line (thing-at-point 'line))
                                              (linesplit (split-string line (rx (+ space)))))
@@ -665,85 +667,80 @@ DATUM can be either a string or `d-emacs-coords'-coordinates."
                             ".yaml"))))))
 
 (defun d-emacs-dfk-generate-standard-configs ()
-            "Generate all supported configs for `d-dfk'."
-            (interactive)
-            (dolist (tval '(nil t))
+  "Generate all supported configs for `d-dfk'."
+  (interactive)
+  (dolist (tval '(nil t))
     (dolist (lay d-emacs-dfk-supported-layout-types)
       (let ((d-emacs-dfk-outside-mods tval)
             (d-emacs-dfk-keyboard-layout-type lay))
         (d-emacs-dfk-generate-config)))))
 
+(defun d-emacs-dfk-coords-modifier (coords)
+  "Return the modifier that a pair of key coords represents if there is one."
+  (d-reverse-alist-get
+   coords
+   d-emacs-dfk-modifier-coords-alist
+   nil
+   (lambda (modlistsym coords)
+     (cl-member coords
+                (symbol-value modlistsym)
+                :test #'equal))))
+
+(defun d-emacs-dfk-levels-to-layer (levs)
+  "Return the layer that is reached through LEVS."
+  (let ((levnum (length levs)))
+    (d-reverse-alist-get
+     levs
+     (alist-get levnum d-emacs-dfk-layers-by-length #'equal)
+     nil
+     #'d-setequal)))
+
+(cl-defun d-emacs-dfk-datum-to-string (dtm)
+  "Convert a d-emacs-dfk-datum into a string."
+  (if (stringp dtm)
+      (alist-get dtm
+                 d-emacs-dfk-special-signal-translations-list
+                 dtm
+                 nil
+                 #'string=)
+    (let (levs)
+      (if (d-emacs-coords-p dtm)
+          (let ((match (d-emacs-dfk-coords-modifier dtm)))
+            (if match
+                (if (cl-member match d-emacs-dfk-shift-levels :test #'equal)
+                    (setq levs (list match))
+
+                  ;; Exit if it's just a non-level modifier.
+                  (cl-return-from d-emacs-dfk-datum-to-string (symbol-name match)))))
+        (setq levs (mapcar #'d-emacs-dfk-coords-modifier dtm)))
+      
+      (if levs (let ((lay (d-emacs-dfk-levels-to-layer levs)))
+                 (if lay (number-to-string lay)))))))
+
 (defun d-emacs-dfk-generate-layer-0-placevals ()
   "Return the placevals for layer 0 for `d-emacs-coords'.
 
 Based on the customs in `d-emacs-dfk'."
-  (let ((origblist (eval (symbol-value d-emacs-dfk-special-bindlist-form)))
-        (layers-by-length (list (cons 1 (d-filter-by-predicate d-emacs-dfk-layer-level-shifts
-                                                               (lambda (cns)
-                                                                 (= (length (cdr cns)) 1))))
-                                (cons 2 (d-filter-by-predicate d-emacs-dfk-layer-level-shifts
-                                                               (lambda (cns)
-                                                                 (= (length (cdr cns)) 2))))
-                                (cons 3 (d-filter-by-predicate d-emacs-dfk-layer-level-shifts
-                                                               (lambda (cns)
-                                                                 (= (length (cdr cns))
-                                                                    3)))))))
+  (let ((origblist (eval (symbol-value d-emacs-dfk-special-bindlist-form))))
+    
     (cl-flet*
         ((coords-of-level (num)
            (intern (concat "d-emacs-dfk-" (number-to-string num) "-coords")))
 
-         (mod-of-coords (coords)
-           (d-reverse-alist-get
-            coords
-            d-emacs-dfk-modifier-coords-alist
-            nil
-            (lambda (modlistsym coords)
-              (cl-member coords
-                         (symbol-value modlistsym)
-                         :test #'equal))))
-         
-         (tostring (obj) (if (stringp obj)
-                             (alist-get obj
-                                        d-emacs-dfk-special-signal-translations-list
-                                        obj
-                                        nil
-                                        #'string=)
-                           (if (d-emacs-coords-p obj)
-                               (mod-of-coords obj)
-                             
-                             (let* ((modnum (length obj))
-                                    
-                                    ;; We find out the modifiers that are represented by these key combinations.
-                                    (mods (mapcar #'mod-of-coords obj))
-                                    (lay (d-reverse-alist-get
-                                          mods
-                                          (alist-get modnum layers-by-length #'equal)
-                                          nil
-                                          ;; We have to find out for which layer all level modifiers are represented in the OBJ by a key coordinate in the coords-list corresponding to that level modifier while no other modifiers are represented.
-                                          (lambda (levs mods)
-                                            (and (cl-subsetp
-                                                  levs mods :test (lambda (lev mod)
-                                                                    (= (string-to-number mod)
-                                                                       lev)))
-                                                 (cl-subsetp
-                                                  mods levs :test (lambda (mod lev)
-                                                                    (= (string-to-number mod)
-                                                                       lev))))))))
-                               (if lay (number-to-string lay))))))
-
-         (disc-mod-strs (str) (let ((dmods (d-filter-by-predicate
-                                            d-emacs-dfk-discrete-modifiers-list
-                                            (lambda (cns1) (string= str (caar cns1))))))
-                                (mapcar (lambda (dmodcns)
-                                          (let ((mods (cdar dmodcns))
-                                                (dmodstr (cdr dmodcns)))
-                                            (concat (if mods "\⟨")
-                                                    (mapconcat #'char-to-string
-                                                               mods
-                                                               "-")
-                                                    (if mods "\⟩")
-                                                    dmodstr)))
-                                        dmods))))
+         (disc-mod-strs (str)
+           (let ((dmods (d-filter-by-predicate
+                         d-emacs-dfk-discrete-modifiers-list
+                         (lambda (cns1) (string= str (caar cns1))))))
+             (mapcar (lambda (dmodcns)
+                       (let ((mods (cdar dmodcns))
+                             (dmodstr (cdr dmodcns)))
+                         (concat (if mods "\⟨")
+                                 (mapconcat #'char-to-string
+                                            mods
+                                            "-")
+                                 (if mods "\⟩")
+                                 dmodstr)))
+                     dmods))))
 
       ;; Remove all places that were given using strings
       (append (remq nil
@@ -752,10 +749,10 @@ Based on the customs in `d-emacs-dfk'."
                                      (bval (cdr bind))
                                      (bvaltap (car bval))
                                      (bvalhold (cdr bval))
-                                     (holdstr (tostring bvalhold))
-                                     (tapstr (or (tostring bvaltap)
+                                     (holdstr (d-emacs-dfk-datum-to-string bvalhold))
+                                     (tapstr (or (d-emacs-dfk-datum-to-string bvaltap)
                                                  (alist-get
-                                                  bplace
+                                                  bvaltap
                                                   d-emacs-dfk-special-tap-coord-strings
                                                   nil
                                                   nil
@@ -775,8 +772,7 @@ Based on the customs in `d-emacs-dfk'."
               (mapcar (lambda (placeval)
                         (cons (append '(0) (car placeval))
                               (cdr placeval)))
-                      d-emacs-dfk-special-layer-0-placevals-alist)
-              ))))
+                      d-emacs-dfk-special-layer-0-placevals-alist)))))
 
 ;;;; Add layer 0 to d-emacs-xkb-layouts
 (with-eval-after-load 'd-emacs-coords

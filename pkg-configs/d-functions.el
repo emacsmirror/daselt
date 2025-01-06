@@ -107,9 +107,9 @@ the selection."
 
 ;;;;; Lists
 (defun d-remove-indices (indlst)
-a  "Remove indices of the elements of INDLST."
+  "Remove indices of the elements of INDLST."
   (mapcar (lambda (indelt)
-              (cdr indelt))
+            (cdr indelt))
           indlst))
 
 (defun d-filter-by-predicate (lst pred)
@@ -2053,15 +2053,14 @@ Return the modified binding."
 
 (defun d--change-coordlist (origcoords coordlistlist)
   "Change the coordinates in ORIGCOORDS based on the COORDLISTLIST.
-`origcoords' is a list of coordinates. `coordlistlist' is a list of lists, each
+ORIGCOORDS is a list of coordinates. COORDLISTLIST is a list of lists, each
 inner list COORDLIST representing a set of coordinates.
 
-Each coordinate in `origcoords' is compared to the values in the corresponding
-COORDLIST in `coordlistlist'. If a matching coordinate is found in
-`coordlistlist', the function returns the next coordinate value from COORDLIST.
-If no matching coordinate is found or the matching coordinate is the last entry
-in COORDLIST, the function returns the original coordinate value from
-ORIGCOORDS."
+Each coordinate in ORIGCOORDS is compared to the values in the COORDLIST in
+COORDLISTLIST that has the same index. If a matching coordinate is found in
+COORDLISTLIST, the function returns the next coordinate value from COORDLIST. If
+no matching coordinate is found or the matching coordinate is the last entry in
+COORDLIST, the function returns the original coordinate value from ORIGCOORDS."
   (mapcar (lambda (indcoord)
             (let ((coordlist (nth (car indcoord) coordlistlist)))
               (if coordlist
