@@ -32,9 +32,9 @@
 
 ;;; Code:
 
-
 ;;;; tabulated-list-mode-map
-`(;;;;; Coordinates
+`(
+;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
   ((1 0 -3) . #'previous-line) 
@@ -45,9 +45,9 @@
 ;;;;;;;; 1-1 
   ((1 1 0) . #'tabulated-list-sort) 
 
-;;;;;;; 3 
-;;;;;;;; 3--1 
-  ((3 -1 -2) . #'tabulated-list-narrow-current-column) 
-  ((3 -1 2) . #'tabulated-list-widen-current-column))
+;;;;;;; 4 
+;;;;;;;; 4--1 
+  ((4 -1 -2) . #'tabulated-list-narrow-current-column) 
+  ((4 -1 2) . #'tabulated-list-widen-current-column))
 
 ;;; d-emacs-tabulated-list-maps.el ends here

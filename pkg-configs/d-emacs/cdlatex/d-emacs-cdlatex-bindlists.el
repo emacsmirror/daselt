@@ -42,13 +42,13 @@
 ;;;;;;;; 0-0 
   ((0 0 -6) . #'cdlatex-math-symbol) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 4) . #'cdlatex-math-modify) 
+;;;;;;; 4 
+;;;;;;;; 4-0 
+  ((4 0 4) . #'cdlatex-math-modify) 
 
 ;;;;;; M- 
-;;;;;;; M-3 
-;;;;;;;; M-3--1 
-  (("M-" . (3 -1 2)) . #'cdlatex-item))
+;;;;;;; M-4 
+;;;;;;;; M-4--1 
+  (("M-" . (4 -1 2)) . #'cdlatex-item))
 
 ;;; d-emacs-cdlatex-bindlists.el ends here

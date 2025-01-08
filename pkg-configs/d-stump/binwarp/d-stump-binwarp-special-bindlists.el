@@ -32,24 +32,28 @@
 
 ;;; Code:
 
-
 ;;;; binwarp-mode-map
-`(("H-o"
-   ("H-d") ("H-RET") ("ESC"))
+`(("H-o" 
 ;;;;; Strings
-  ("Left" . "ratclick 2") 
+   ("ESC") 
+
+;;;;;; H- 
+   ("H-RET") 
+;;;;;;; H-1 
+   (("H-" . "d"))) 
+;;;;; Strings
   ("KP_4" . "binwarp left") 
   ("KP_5" . "binwarp down") 
   ("KP_6" . "binwarp right") 
   ("KP_7" . "ratclick 1") 
   ("KP_8" . "binwarp up") 
   ("KP_9" . "ratclick 3") 
+  ("Left" . "ratclick 2") 
   ("Right" . "ratclick 4") 
 
-;;;;; Coordinates
-;;;;;; C-
-;;;;;;; C-1
-;;;;;;;; C-1--1
+;;;;; Coordinates 
+;;;;;; C- 
+;;;;;;; C-1 
   (("C-" . (1 -1 -4)) . "ratclick 2") 
   (("C-" . (1 -1 -3)) . "ratclick 3") 
   (("C-" . (1 -1 -2)) . "back-binwarp") 
@@ -61,8 +65,6 @@
   (("C-" . (1 0 -2)) . "binwarp left") 
   (("C-" . (1 0 2)) . "binwarp right") 
   (("C-" . (1 0 3)) . "binwarp down") 
-
-;;;;;;;; C-1-1 
 
 ;;;;;; H- 
 ;;;;;;; H-1 

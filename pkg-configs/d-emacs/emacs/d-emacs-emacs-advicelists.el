@@ -34,10 +34,10 @@
 
 ;;; Code:
 
-`(,(if d-emacs-replace-multiple-choice `((read-answer) :around (d-emacs--replace-read-answer-answers))))
-`(,(if d-emacs-replace-multiple-choice `((read-multiple-choice) :override (d-emacs--replace-read-multiple-choice-choices))))
-
-`(((checkdoc-interactive-loop) :override (d-emacs-checkdoc-interactive-loop)))
+`(,(if d-emacs-translate-choices `((read-answer) :around (d-emacs--translate-read-answer))))
+`(,(if d-emacs-translate-choices `((read-multiple-choice) :around (d-emacs--translate-read-multiple-choice))))
+`(,(if d-emacs-translate-choices `((read-char-choice) :around (d-emacs--translate-read-char-choice))))
+`(,(if d-emacs-translate-choices `((checkdoc-interactive-loop) :override (d-emacs-checkdoc-interactive-loop))))
 
 (provide 'd-emacs-emacs-advice)
 ;;; d-emacs-emacs-advice.el ends here

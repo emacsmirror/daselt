@@ -99,7 +99,7 @@ Can be overwritten for any particular row using `d-emacs-xkb-rowlist'."
                             :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-remaining-char-mappings
-  '(("question" . "?") ("quotedbl" . "\"") ("exclam" . "!") ("grave" . "`") ("acute" . "´") ("asciitilde" . "~") ("bar" . "|") ("percent" . "%") ("equal" . "=") ("dollar" . "$") ("EuroSign" . "€") ("ellipsis" . "…") ("parenleft" . "(") ("numbersign" . "#") ("braceleft" . "{") ("bracketleft" . "\[") ("emdash" . "—") ("division" . "÷") ("parenright" . ")") ("underscore" . "_") ("at" . "@") ("braceright" . "}") ("bracketright" . "]") ("multiply" . "×") ("partialderivative" . "∂") ("radical" . "√") ("minus" . "-") ("plus" . "+"))
+  '(("question" . "?") ("quotedbl" . "\"") ("exclam" . "!") ("grave" . "`") ("acute" . "´") ("asciitilde" . "~") ("bar" . "|") ("percent" . "%") ("equal" . "=") ("dollar" . "$") ("EuroSign" . "€") ("ellipsis" . "…") ("parenleft" . "(") ("numbersign" . "#") ("braceleft" . "{") ("bracketleft" . "\[") ("emdash" . "—") ("division" . "÷") ("parenright" . ")") ("underscore" . "_") ("at" . "@") ("braceright" . "}") ("bracketright" . "]") ("multiply" . "×") ("partialderivative" . "∂") ("radical" . "√") ("minus" . "-") ("plus" . "+") ("degree" . "°"))
   "Alist of symbol names in xkb that have to be translated into symbols in Emacs."
   :type '(repeat (cons 'string 'string))
   :group 'd-emacs-xkb)

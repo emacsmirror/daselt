@@ -47,6 +47,9 @@
              ;; Refresh the d-emacs-xkb-layouts in case someone has changed bindings.
              (d-emacs-xkb--generate-layouts)
 
+             ;; Generate d-emacs-dfk-layout from the current d-emacs-xkb-layout.
+             (d-emacs-dfk-import-current-layout)
+
              ;; Add all files in pkg-configs to the load-path.
              (let ((default-directory  (concat d-emacs-directory "pkg-configs/")))
                (normal-top-level-add-to-load-path '("."))

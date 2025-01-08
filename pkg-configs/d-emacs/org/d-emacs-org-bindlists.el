@@ -38,99 +38,102 @@
 ;;;;;;; 0
 ;;;;;;;; 0-0
   ((0 0 -6) . #'cdlatex-math-symbol) 
-  ((2 -1 3) . nil) 
+
+;;;;;;; 2 
+;;;;;;;; 2--1 
+  ((2 -1 3)) 
 
 ;;;;;; C- 
-;;;;;;; C-3 
-;;;;;;;; C-3-0 
-  (("C-" . (3 0 -3)) . #'org-previous-block) 
-  (("C-" . (3 0 -2)) . #'org-backward-element) 
-  (("C-" . (3 0 -1)) . #'org-previous-item) 
-  (("C-" . (3 0 1)) . #'org-previous-item) 
-  (("C-" . (3 0 2)) . #'org-forward-element) 
-  (("C-" . (3 0 3)) . #'org-next-block) 
+;;;;;;; C-4 
+;;;;;;;; C-4-0 
+  (("C-" . (4 0 -3)) . #'org-previous-block) 
+  (("C-" . (4 0 -2)) . #'org-backward-element) 
+  (("C-" . (4 0 -1)) . #'org-previous-item) 
+  (("C-" . (4 0 1)) . #'org-previous-item) 
+  (("C-" . (4 0 2)) . #'org-forward-element) 
+  (("C-" . (4 0 3)) . #'org-next-block) 
 
-;;;;;;; C-8 
-;;;;;;;; C-8--1 
-  (("C-" . (8 -1 -4)) . #'org-global-cycle) 
-  (("C-" . (8 -1 -2)) . #'org-todo) 
-  (("C-" . (8 -1 4)) . #'org-cycle) 
+;;;;;;; C-7 
+;;;;;;;; C-7--1 
+  (("C-" . (7 -1 -4)) . #'org-global-cycle) 
+  (("C-" . (7 -1 -2)) . #'org-todo) 
+  (("C-" . (7 -1 4)) . #'org-cycle) 
 
-;;;;;;;; C-8-0 
-  (("C-" . (8 0 -4)) . #'org-backward-heading-same-level) 
-  (("C-" . (8 0 -2)) . #'org-previous-visible-heading) 
-  (("C-" . (8 0 -1)) . #'org-do-demote) 
-  (("C-" . (8 0 1)) . #'org-do-demote) 
-  (("C-" . (8 0 2)) . #'org-next-visible-heading) 
-  (("C-" . (8 0 4)) . #'org-forward-heading-same-level) 
+;;;;;;;; C-7-0 
+  (("C-" . (7 0 -4)) . #'org-backward-heading-same-level) 
+  (("C-" . (7 0 -2)) . #'org-previous-visible-heading) 
+  (("C-" . (7 0 -1)) . #'org-do-demote) 
+  (("C-" . (7 0 1)) . #'org-do-demote) 
+  (("C-" . (7 0 2)) . #'org-next-visible-heading) 
+  (("C-" . (7 0 4)) . #'org-forward-heading-same-level) 
 
-;;;;;;;; C-8-1 
-  (("C-" . (8 1 -3)) . #'org-store-link) 
-  (("C-" . (8 1 3)) . #'org-insert-link) 
+;;;;;;;; C-7-1 
+  (("C-" . (7 1 -3)) . #'org-store-link) 
+  (("C-" . (7 1 3)) . #'org-insert-link) 
 
 ;;;;;; M- 
-;;;;;;; M-3 
-;;;;;;;; M-3--1 
-  (("M-" . (3 -1 -5)) . #'org-roam-buffer-dedicated-p) 
-  (("M-" . (3 -1 -3)) . #'org-footnote-action) 
-  (("M-" . (3 -1 -2)) . #'org-insert-drawer) 
-  (("M-" . (3 -1 2)) . #'org-insert-item) 
-  (("M-" . (3 -1 3)) . #'org-insert-structure-template) 
-  (("M-" . (3 -1 5)) . #'org-roam-buffer-toggle) 
+;;;;;;; M-4 
+;;;;;;;; M-4--1 
+  (("M-" . (4 -1 -5)) . #'org-roam-buffer-dedicated-p) 
+  (("M-" . (4 -1 -3)) . #'org-footnote-action) 
+  (("M-" . (4 -1 -2)) . #'org-insert-drawer) 
+  (("M-" . (4 -1 2)) . #'org-insert-item) 
+  (("M-" . (4 -1 3)) . #'org-insert-structure-template) 
+  (("M-" . (4 -1 5)) . #'org-roam-buffer-toggle) 
 
-;;;;;;;; M-3-0 
-  (("M-" . (3 0 -3)) . #'d-emacs-org-insert-superheading) 
-  (("M-" . (3 0 -2)) . #'org-insert-heading) 
-  (("M-" . (3 0 -1)) . #'org-beginning-of-item) 
-  (("M-" . (3 0 1)) . #'org-end-of-item) 
-  (("M-" . (3 0 2)) . #'org-insert-heading-after-current) 
-  (("M-" . (3 0 3)) . #'org-insert-subheading) 
-  (("M-" . (3 0 5)) . #'org-goto) 
+;;;;;;;; M-4-0 
+  (("M-" . (4 0 -3)) . #'d-emacs-org-insert-superheading) 
+  (("M-" . (4 0 -2)) . #'org-insert-heading) 
+  (("M-" . (4 0 -1)) . #'org-beginning-of-item) 
+  (("M-" . (4 0 1)) . #'org-end-of-item) 
+  (("M-" . (4 0 2)) . #'org-insert-heading-after-current) 
+  (("M-" . (4 0 3)) . #'org-insert-subheading) 
+  (("M-" . (4 0 5)) . #'org-goto) 
 
-;;;;;;;; M-3-1 
-  (("M-" . (3 1 -3)) . #'org-insert-comment) 
-  (("M-" . (3 1 -2)) . #'org-insert-heading-respect-content) 
-  (("M-" . (3 1 2)) . #'org-toggle-inline-images) 
+;;;;;;;; M-4-1 
+  (("M-" . (4 1 -3)) . #'org-insert-comment) 
+  (("M-" . (4 1 -2)) . #'org-insert-heading-respect-content) 
+  (("M-" . (4 1 2)) . #'org-toggle-inline-images) 
 
-;;;;;;; M-8 
-;;;;;;;; M-8--8 
-  (("M-" . (8 -8 -2)) . #'org-fold-hide-subtree) 
-  (("M-" . (8 -8 1)) . #'org-fold-show-subtree) 
+;;;;;;; M-7 
+;;;;;;;; M-7--8 
+  (("M-" . (7 -8 -2)) . #'org-fold-hide-subtree) 
+  (("M-" . (7 -8 1)) . #'org-fold-show-subtree) 
 
-;;;;;;;; M-8-0 
-  (("M-" . (8 0 -2)) . #'org-fold-hide-entry) 
-  (("M-" . (8 0 -1)) . #'org-fold-hide-sublevels) 
-  (("M-" . (8 0 1)) . #'org-fold-show-all) 
-  (("M-" . (8 0 2)) . #'org-fold-show-entry) 
-  (("M-" . (8 0 3)) . #'org-fold-show-children) 
+;;;;;;;; M-7-0 
+  (("M-" . (7 0 -2)) . #'org-fold-hide-entry) 
+  (("M-" . (7 0 -1)) . #'org-fold-hide-sublevels) 
+  (("M-" . (7 0 1)) . #'org-fold-show-all) 
+  (("M-" . (7 0 2)) . #'org-fold-show-entry) 
+  (("M-" . (7 0 3)) . #'org-fold-show-children) 
 
 ;;;;;; M-C- 
-;;;;;;; M-C-3 
-;;;;;;;; M-C-3--1 
-  (("M-C-" . (3 -1 -3)) . #'d-emacs-org-convert-quote) 
-  (("M-C-" . (3 -1 3)) . #'org-insert-todo-heading-respect-content) 
+;;;;;;; M-C-4 
+;;;;;;;; M-C-4--1 
+  (("M-C-" . (4 -1 -3)) . #'d-emacs-org-convert-quote) 
+  (("M-C-" . (4 -1 3)) . #'org-insert-todo-heading-respect-content) 
 
-;;;;;;;; M-C-3-0 
-  (("M-C-" . (3 0 -3)) . #'d-emacs-org-insert-todo-superheading) 
-  (("M-C-" . (3 0 -2)) . #'org-insert-todo-heading) 
-  (("M-C-" . (3 0 -1)) . #'org-beginning-of-item-list) 
-  (("M-C-" . (3 0 1)) . #'org-end-of-item-list) 
-  (("M-C-" . (3 0 2)) . #'d-emacs-org-insert-todo-heading-after-current) 
-  (("M-C-" . (3 0 3)) . #'org-insert-todo-subheading) 
+;;;;;;;; M-C-4-0 
+  (("M-C-" . (4 0 -3)) . #'d-emacs-org-insert-todo-superheading) 
+  (("M-C-" . (4 0 -2)) . #'org-insert-todo-heading) 
+  (("M-C-" . (4 0 -1)) . #'org-beginning-of-item-list) 
+  (("M-C-" . (4 0 1)) . #'org-end-of-item-list) 
+  (("M-C-" . (4 0 2)) . #'d-emacs-org-insert-todo-heading-after-current) 
+  (("M-C-" . (4 0 3)) . #'org-insert-todo-subheading) 
 
 ;;;;;; s- 
-;;;;;;; s-8 
-;;;;;;;; s-8-0 
-  (("s-" . (8 0 -1)) . #'org-promote-subtree) 
-  (("s-" . (8 0 1)) . #'org-demote-subtree) 
+;;;;;;; s-7 
+;;;;;;;; s-7-0 
+  (("s-" . (7 0 -1)) . #'org-promote-subtree) 
+  (("s-" . (7 0 1)) . #'org-demote-subtree) 
 
 ;;;;;; s-C- 
-;;;;;;; s-C-3 
-;;;;;;;; s-C-3-0 
-  (("s-C-" . (3 0 -2)) . #'org-outdent-item-tree) 
-  (("s-C-" . (3 0 -1)) . #'org-move-item-up) 
-  (("s-C-" . (3 0 1)) . #'org-move-item-down) 
-  (("s-C-" . (3 0 2)) . #'org-indent-item-tree))
+;;;;;;; s-C-4 
+;;;;;;;; s-C-4-0 
+  (("s-C-" . (4 0 -2)) . #'org-outdent-item-tree) 
+  (("s-C-" . (4 0 -1)) . #'org-move-item-up) 
+  (("s-C-" . (4 0 1)) . #'org-move-item-down) 
+  (("s-C-" . (4 0 2)) . #'org-indent-item-tree))
 
 (provide 'd-emacs-org-bindlists)
 ;;; d-emacs-org-bindlists.el ends here

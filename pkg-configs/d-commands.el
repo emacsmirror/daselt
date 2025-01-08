@@ -100,22 +100,21 @@ replace matching binding strings with prefix-coords pairs."
     
     (d--act-on-bindlists-in-file
      blistfile
-     (lambda () (d--sort-and-format-marked-bindlist-string coordsonly prefun
-                                                      modifierlist)))
+     (lambda () (d--sort-and-format-marked-bindlist-string
+            coordsonly prefun modifierlist)))
 
     ;; Do some buffer formatting
-    (let ((buffer (current-buffer))
-          (pos (point)))
-      (find-file blistfile)
-      (d--delete-duplicate-comment-lines)
+    (let ((buffer (current-buffer)))
+      (save-excursion
+        (find-file blistfile)
+        (d--delete-duplicate-comment-lines)
 
-      ;; Remove unnecessary empty lines
-      (goto-char (point-min))
-      (while (re-search-forward (rx "\n" (one-or-more "\n")) nil t)
-        (replace-match "\n\n"))
+        ;; Remove unnecessary empty lines
+        (goto-char (point-min))
+        (while (re-search-forward (rx "\n" (one-or-more "\n")) nil t)
+          (replace-match "\n\n"))
 
-      (set-buffer buffer)
-      (goto-char pos))))
+        (set-buffer buffer)))))
 
 (defun d--save-bindlists-in-file-as-variables (&optional blistfile)
                           "Save all bindlists in BLISTFILE as variables.

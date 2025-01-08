@@ -35,30 +35,31 @@
 `(
 ;;;;; Strings
 ;;;;;; C-
-  ("C-<return>" . #'d-emacs-insert-newline-forward) 
-  ("C-RET" . #'d-emacs-insert-newline-forward)
+  ("C-RET" . #'d-emacs-insert-newline-forward) 
 
 ;;;;; Coordinates 
-;;;;;;; 4 
-  ((8 -1 -1) . (if d-emacs-icicles #'beginning-of-line+ #'beginning-of-line)) 
-  ((8 -1 1) . (if d-emacs-icicles #'end-of-line+ #'end-of-line)) 
-
-;;;;;;;; 8-0 
-  ((8 0 -3) . #'backward-up-list) 
-  ((8 0 -2) . #'backward-list) 
-  ((8 0 -1) . (if d-emacs-icicles #'beginning-of-visual-line+ #'beginning-of-visual-line)) 
-  ((8 0 1) . (if d-emacs-icicles #'end-of-visual-line+ #'end-of-visual-line)) 
-  ((8 0 2) . #'forward-list) 
-  ((8 0 3) . #'up-list) 
+;;;;;;; 6 
+  ((6 0 -5) . (if d-lua-insert-normpairs #'d-lua-insert-normpair-yas-snippet)) 
+  ((6 0 5) . (if d-lua-insert-normpairs #'d-lua-insert-othernormpair-yas-snippet)) 
 
 ;;;;;;; 7 
-;;;;;;;; 7-0 
-  ((7 0 -5) . (if d-lua-insert-normpairs #'d-lua-insert-normpair-yas-snippet)) 
-  ((7 0 5) . (if d-lua-insert-normpairs #'d-lua-insert-othernormpair-yas-snippet)) 
+;;;;;;;; 7--1 
+  ((7 -1 -1) . (if d-emacs-icicles #'beginning-of-line+ #'beginning-of-line)) 
+  ((7 -1 1) . (if d-emacs-icicles #'end-of-line+ #'end-of-line)) 
 
+;;;;;;;; 7-0 
+  ((7 0 -3) . #'backward-up-list) 
+  ((7 0 -2) . #'backward-list) 
+  ((7 0 -1) . (if d-emacs-icicles #'beginning-of-visual-line+ #'beginning-of-visual-line)) 
+  ((7 0 1) . (if d-emacs-icicles #'end-of-visual-line+ #'end-of-visual-line)) 
+  ((7 0 2) . #'forward-list) 
+  ((7 0 3) . #'up-list) 
+
+;;;;; Coordinates 
 ;;;;;; C- 
-;;;;;;; C-1 
-;;;;;;;; C-1--1 
+  (("C-" . "<return>") . #'d-emacs-insert-newline-forward) 
+
+;;;;; Coordinates 
   (("C-" . (1 -1 -5)) . #'d-emacs-backward-transpose-lines) 
   (("C-" . (1 -1 -4)) . #'avy-goto-char-in-line) 
   (("C-" . (1 -1 -3)) . #'set-mark-command) 
@@ -133,44 +134,44 @@
   (("C-" . (2 1 6)) . #'d-emacs-transpose-subsentences) 
 
 ;;;;;;; C-3 
+;;;;;;;; C-3--1
+  (("C-" . (3 -1 -5)) . #'d-emacs-backward-transpose-sexps) 
+  (("C-" . (3 -1 -4)) . #'eval-last-sexp) 
+  (("C-" . (3 -1 -3)) . #'sp-backward-kill-sexp) 
+  (("C-" . (3 -1 -2)) . #'abbrev-prefix-mark) 
+  (("C-" . (3 -1 -1)) . #'xref-go-back) 
+  (("C-" . (3 -1 1)) . #'xref-go-forward) 
+  (("C-" . (3 -1 2)) . #'embark-dwim) 
+  (("C-" . (3 -1 3)) . #'sp-kill-sexp) 
+  (("C-" . (3 -1 4)) . #'eval-defun) 
+  (("C-" . (3 -1 5)) . #'transpose-sexps) 
+
 ;;;;;;;; C-3-0 
-  (("C-" . (3 0 2)) . #'d-emacs-C-3-0-2) 
+  (("C-" . (3 0 -4)) . (if d-emacs-smartparens #'d-emacs-backward-sp-down-sexp #'d-emacs-backward-down-list)) 
+  (("C-" . (3 0 -3)) . #'d-emacs-backward-sp-up-sexp) 
+  (("C-" . (3 0 -2)) . #'sp-backward-sexp) 
+  (("C-" . (3 0 -1)) . #'beginning-of-defun) 
+  (("C-" . (3 0 1)) . #'end-of-defun) 
+  (("C-" . (3 0 2)) . #'sp-forward-sexp) 
+  (("C-" . (3 0 3)) . #'sp-up-sexp) 
+  (("C-" . (3 0 4)) . (if d-emacs-smartparens #'sp-down-sexp #'down-list)) 
+  (("C-" . (3 0 5)) . #'ekg-show-notes-with-tag) 
+
+;;;;;;;; C-3-1 
+  (("C-" . (3 1 -6)) . #'previous-error) 
+  (("C-" . (3 1 -5)) . #'d-emacs-backward-kill-defun) 
+  (("C-" . (3 1 -4)) . #'avy-act-on-region-by-same-function) 
+  (("C-" . (3 1 -3)) . #'d-emacs-kill-append) 
+  (("C-" . (3 1 -2)) . (if d-emacs-avy-act #'avy-act-recenter-bottom-at-line #'d-emacs-recenter-bottom)) 
+  (("C-" . (3 1 0)) . (if d-emacs-avy-act #'avy-act-recenter-middle-at-line #'recenter)) 
+  (("C-" . (3 1 2)) . (if d-emacs-avy-act #'avy-act-recenter-top-at-line #'d-emacs-recenter-top)) 
+  (("C-" . (3 1 4)) . #'avy-act-on-region) 
+  (("C-" . (3 1 5)) . #'d-emacs-kill-defun) 
+  (("C-" . (3 1 6)) . #'next-error) 
 
 ;;;;;;; C-4 
-;;;;;;;; C-4--1 
-  (("C-" . (4 -1 -5)) . #'d-emacs-backward-transpose-sexps) 
-  (("C-" . (4 -1 -4)) . #'eval-last-sexp) 
-  (("C-" . (4 -1 -3)) . #'sp-backward-kill-sexp) 
-  (("C-" . (4 -1 -2)) . #'abbrev-prefix-mark) 
-  (("C-" . (4 -1 -1)) . #'xref-go-back) 
-  (("C-" . (4 -1 1)) . #'xref-go-forward) 
-  (("C-" . (4 -1 2)) . #'embark-dwim) 
-  (("C-" . (4 -1 3)) . #'sp-kill-sexp) 
-  (("C-" . (4 -1 4)) . #'eval-defun) 
-  (("C-" . (4 -1 5)) . #'transpose-sexps) 
-
 ;;;;;;;; C-4-0 
-  (("C-" . (4 0 -4)) . (if d-emacs-smartparens #'d-emacs-backward-sp-down-sexp #'d-emacs-backward-down-list)) 
-  (("C-" . (4 0 -3)) . #'d-emacs-backward-sp-up-sexp) 
-  (("C-" . (4 0 -2)) . #'sp-backward-sexp) 
-  (("C-" . (4 0 -1)) . #'beginning-of-defun) 
-  (("C-" . (4 0 1)) . #'end-of-defun) 
-  (("C-" . (4 0 2)) . #'sp-forward-sexp) 
-  (("C-" . (4 0 3)) . #'sp-up-sexp) 
-  (("C-" . (4 0 4)) . (if d-emacs-smartparens #'sp-down-sexp #'down-list)) 
-  (("C-" . (4 0 5)) . #'ekg-show-notes-with-tag) 
-
-;;;;;;;; C-4-1 
-  (("C-" . (4 1 -6)) . #'previous-error) 
-  (("C-" . (4 1 -5)) . #'d-emacs-backward-kill-defun) 
-  (("C-" . (4 1 -4)) . #'avy-act-on-region-by-same-function) 
-  (("C-" . (4 1 -3)) . #'d-emacs-kill-append) 
-  (("C-" . (4 1 -2)) . (if d-emacs-avy-act #'avy-act-recenter-bottom-at-line #'d-emacs-recenter-bottom)) 
-  (("C-" . (4 1 0)) . (if d-emacs-avy-act #'avy-act-recenter-middle-at-line #'recenter)) 
-  (("C-" . (4 1 2)) . (if d-emacs-avy-act #'avy-act-recenter-top-at-line #'d-emacs-recenter-top)) 
-  (("C-" . (4 1 4)) . #'avy-act-on-region) 
-  (("C-" . (4 1 5)) . #'d-emacs-kill-defun) 
-  (("C-" . (4 1 6)) . #'next-error) 
+  (("C-" . (4 0 2)) . #'d-emacs-C-3-0-2) 
 
 ;;;;;;; C-5 
 ;;;;;;;; C-5--1 
@@ -203,60 +204,60 @@
 
 ;;;;;;; C-6 
 ;;;;;;;; C-6--1 
-  (("C-" . (6 -1 -5)) . #'d-emacs-backward-transpose-chars) 
-  (("C-" . (6 -1 -4)) . #'outline-cycle-buffer) 
-  (("C-" . (6 -1 -2)) . #'anchored-transpose) 
-  (("C-" . (6 -1 2)) . #'anchored-transpose) 
-  (("C-" . (6 -1 4)) . #'outline-cycle) 
-  (("C-" . (6 -1 5)) . #'transpose-chars) 
+  (("C-" . (6 -1 -5)) . #'overwrite-mode) 
+  (("C-" . (6 -1 -4)) . #'undelete-frame) 
+  (("C-" . (6 -1 -3)) . #'make-frame-command) 
+  (("C-" . (6 -1 -2)) . #'previous-frame) 
+  (("C-" . (6 -1 -1)) . #'text-scale-decrease) 
+  (("C-" . (6 -1 1)) . #'text-scale-increase) 
+  (("C-" . (6 -1 2)) . #'other-frame) 
+  (("C-" . (6 -1 3)) . #'delete-frame) 
+  (("C-" . (6 -1 5)) . #'d-emacs-insert-and-return) 
 
 ;;;;;;;; C-6-0 
-  (("C-" . (6 0 -5)) . #'d-emacs-toggle-variable) 
-  (("C-" . (6 0 -4)) . #'outline-backward-same-level) 
-  (("C-" . (6 0 -3)) . #'outline-up-heading) 
-  (("C-" . (6 0 -2)) . #'outline-previous-visible-heading) 
-  (("C-" . (6 0 -1)) . #'outline-promote) 
-  (("C-" . (6 0 1)) . #'outline-demote) 
-  (("C-" . (6 0 2)) . #'outline-next-visible-heading) 
-  (("C-" . (6 0 3)) . #'d-emacs-outline-forward-up-heading) 
-  (("C-" . (6 0 4)) . #'outline-forward-same-level) 
-  (("C-" . (6 0 5)) . #'consult-outline) 
+  (("C-" . (6 0 -4)) . #'tab-undo) 
+  (("C-" . (6 0 -3)) . #'tab-new) 
+  (("C-" . (6 0 -2)) . #'tab-previous) 
+  (("C-" . (6 0 -1)) . #'tab-bar-history-back) 
+  (("C-" . (6 0 1)) . #'tab-bar-history-forward) 
+  (("C-" . (6 0 2)) . #'tab-next) 
+  (("C-" . (6 0 3)) . #'tab-close) 
+  (("C-" . (6 0 4)) . #'tab-switch) 
+  (("C-" . (6 0 5)) . #'tabgo) 
 
 ;;;;;;;; C-6-1 
-  (("C-" . (6 1 -3)) . #'outline-headers-as-kill) 
-  (("C-" . (6 1 -2)) . #'outline-previous-heading) 
-  (("C-" . (6 1 2)) . #'outline-next-heading) 
+  (("C-" . (6 1 -5)) . #'org-roam-node-insert) 
+  (("C-" . (6 1 -3)) . #'clone-buffer) 
+  (("C-" . (6 1 -2)) . #'previous-buffer) 
+  (("C-" . (6 1 0)) . #'d-emacs-exchange) 
+  (("C-" . (6 1 2)) . #'next-buffer) 
+  (("C-" . (6 1 3)) . #'kill-current-buffer) 
 
-;;;;;;; C-7 
-;;;;;;;; C-7--1 
-  (("C-" . (7 -1 -5)) . #'overwrite-mode) 
-  (("C-" . (7 -1 -4)) . #'undelete-frame) 
-  (("C-" . (7 -1 -3)) . #'make-frame-command) 
-  (("C-" . (7 -1 -2)) . #'previous-frame) 
-  (("C-" . (7 -1 -1)) . #'text-scale-decrease) 
-  (("C-" . (7 -1 1)) . #'text-scale-increase) 
-  (("C-" . (7 -1 2)) . #'other-frame) 
-  (("C-" . (7 -1 3)) . #'delete-frame) 
-  (("C-" . (7 -1 5)) . #'d-emacs-insert-and-return) 
+;;;;;;; C-8 
+;;;;;;;; C-8--1 
+  (("C-" . (8 -1 -5)) . #'d-emacs-backward-transpose-chars) 
+  (("C-" . (8 -1 -4)) . #'outline-cycle-buffer) 
+  (("C-" . (8 -1 -2)) . #'anchored-transpose) 
+  (("C-" . (8 -1 2)) . #'anchored-transpose) 
+  (("C-" . (8 -1 4)) . #'outline-cycle) 
+  (("C-" . (8 -1 5)) . #'transpose-chars) 
 
-;;;;;;;; C-7-0 
-  (("C-" . (7 0 -4)) . #'tab-undo) 
-  (("C-" . (7 0 -3)) . #'tab-new) 
-  (("C-" . (7 0 -2)) . #'tab-previous) 
-  (("C-" . (7 0 -1)) . #'tab-bar-history-back) 
-  (("C-" . (7 0 1)) . #'tab-bar-history-forward) 
-  (("C-" . (7 0 2)) . #'tab-next) 
-  (("C-" . (7 0 3)) . #'tab-close) 
-  (("C-" . (7 0 4)) . #'tab-switch) 
-  (("C-" . (7 0 5)) . #'tabgo) 
+;;;;;;;; C-8-0 
+  (("C-" . (8 0 -5)) . #'d-emacs-toggle-variable) 
+  (("C-" . (8 0 -4)) . #'outline-backward-same-level) 
+  (("C-" . (8 0 -3)) . #'outline-up-heading) 
+  (("C-" . (8 0 -2)) . #'outline-previous-visible-heading) 
+  (("C-" . (8 0 -1)) . #'outline-promote) 
+  (("C-" . (8 0 1)) . #'outline-demote) 
+  (("C-" . (8 0 2)) . #'outline-next-visible-heading) 
+  (("C-" . (8 0 3)) . #'d-emacs-outline-forward-up-heading) 
+  (("C-" . (8 0 4)) . #'outline-forward-same-level) 
+  (("C-" . (8 0 5)) . #'consult-outline) 
 
-;;;;;;;; C-7-1 
-  (("C-" . (7 1 -5)) . #'org-roam-node-insert) 
-  (("C-" . (7 1 -3)) . #'clone-buffer) 
-  (("C-" . (7 1 -2)) . #'previous-buffer) 
-  (("C-" . (7 1 0)) . #'d-emacs-exchange) 
-  (("C-" . (7 1 2)) . #'next-buffer) 
-  (("C-" . (7 1 3)) . #'kill-current-buffer) 
+;;;;;;;; C-8-1 
+  (("C-" . (8 1 -3)) . #'outline-headers-as-kill) 
+  (("C-" . (8 1 -2)) . #'outline-previous-heading) 
+  (("C-" . (8 1 2)) . #'outline-next-heading) 
 
 ;;;;;; H- 
 ;;;;;;; H-2 
@@ -276,24 +277,25 @@
   (("H-" . (2 1 -3)) . #'icicle-switch-to/from-minibuffer) 
   (("H-" . (2 1 3)) . #'icicle-switch-to/from-minibuffer) 
 
-;;;;;;;; H-4-0
-  (("H-" . (4 -1 -4)) . #'swiper-all)
-  (("H-" . (4 0 -4)) . #'swiper-backward)
-  (("H-" . (4 0 4)) . #'swiper)
-  (("H-" . (4 -1 4)) . #'swiper-avy)
-  
-;;;;;;;; H-4-0
-  (("H-" . (4 0 -4)) . #'swiper-all-thing-at-point)
-  (("H-" . (4 0 4)) . #'swiper-thing-at-point)
+;;;;;;; H-3 
+;;;;;;;; H-3--1 
+  (("H-" . (3 -1 -4)) . #'swiper-all) 
+  (("H-" . (3 -1 4)) . #'swiper-avy) 
 
-;;;;;;; H-8 
-;;;;;;;; H-8-0 
-  (("H-" . (8 0 -3)) . #'buf-move-up) 
-  (("H-" . (8 0 -2)) . #'buf-move-left) 
-  (("H-" . (8 0 -1)) . #'winner-undo) 
-  (("H-" . (8 0 1)) . #'winner-redo) 
-  (("H-" . (8 0 2)) . #'buf-move-right) 
-  (("H-" . (8 0 3)) . #'buf-move-down) 
+;;;;;;;; H-3-0 
+  (("H-" . (3 0 -4)) . #'swiper-all-thing-at-point) 
+  (("H-" . (3 0 -4)) . #'swiper-backward) 
+  (("H-" . (3 0 4)) . #'swiper-thing-at-point) 
+  (("H-" . (3 0 4)) . #'swiper) 
+
+;;;;;;; H-7 
+;;;;;;;; H-7-0 
+  (("H-" . (7 0 -3)) . #'buf-move-up) 
+  (("H-" . (7 0 -2)) . #'buf-move-left) 
+  (("H-" . (7 0 -1)) . #'winner-undo) 
+  (("H-" . (7 0 1)) . #'winner-redo) 
+  (("H-" . (7 0 2)) . #'buf-move-right) 
+  (("H-" . (7 0 3)) . #'buf-move-down) 
 
 ;;;;;; M- 
 ;;;;;;; M-0 
@@ -339,9 +341,9 @@
   (("M-" . (2 -1 -5)) . #'projectile-find-implementation-or-test) 
   (("M-" . (2 -1 -4)) . #'eval-expression) 
   (("M-" . (2 -1 -3)) . #'mark-word) 
-  (("M-" . (2 -1 -2)) . #'bookmark-set)
-  (("M-" . (2 -1 -1)) . #'goto-char)
-  (("M-" . (2 -1 1)) . #'goto-line)
+  (("M-" . (2 -1 -2)) . #'bookmark-set) 
+  (("M-" . (2 -1 -1)) . #'goto-char) 
+  (("M-" . (2 -1 1)) . #'goto-line) 
   (("M-" . (2 -1 2)) . #'list-bookmarks) 
   (("M-" . (2 -1 3)) . #'mark-paragraph) 
   (("M-" . (2 -1 4)) . #'list-registers) 
@@ -358,32 +360,32 @@
   (("M-" . (2 1 2)) . #'embark-dwim) 
   (("M-" . (2 1 5)) . #'er/mark-sentence) 
 
-;;;;;;; M-4 
-;;;;;;;; M-4--1 
-  (("M-" . (4 -1 -3)) . (if d-emacs-smartparens #'d-emacs-backward-sp-mark-sexp #'d-emacs-backward-mark-sexp)) 
-  (("M-" . (4 -1 2)) . #'xref-find-references) 
-  (("M-" . (4 -1 3)) . (if d-emacs-smartparens #'sp-mark-sexp #'mark-sexp)) 
-  (("M-" . (4 -1 5)) . #'embark-live) 
+;;;;;;; M-3 
+;;;;;;;; M-3--1 
+  (("M-" . (3 -1 -3)) . (if d-emacs-smartparens #'d-emacs-backward-sp-mark-sexp #'d-emacs-backward-mark-sexp)) 
+  (("M-" . (3 -1 2)) . #'xref-find-references) 
+  (("M-" . (3 -1 3)) . (if d-emacs-smartparens #'sp-mark-sexp #'mark-sexp)) 
+  (("M-" . (3 -1 5)) . #'embark-live) 
 
-;;;;;;;; M-4-0 
-  (("M-" . (4 0 -5)) . #'ekg-show-notes-with-all-tags) 
-  (("M-" . (4 0 -3)) . #'sp-wrap-round) 
-  (("M-" . (4 0 -2)) . #'sp-backward-unwrap-sexp) 
-  (("M-" . (4 0 -1)) . #'sp-split-sexp) 
-  (("M-" . (4 0 1)) . #'sp-join-sexp) 
-  (("M-" . (4 0 2)) . #'sp-unwrap-sexp) 
-  (("M-" . (4 0 3)) . #'sp-wrap-curly) 
-  (("M-" . (4 0 4)) . #'sp-wrap-square) 
-  (("M-" . (4 0 5)) . #'ekg-show-notes-with-any-tags) 
+;;;;;;;; M-3-0 
+  (("M-" . (3 0 -5)) . #'ekg-show-notes-with-all-tags) 
+  (("M-" . (3 0 -3)) . #'sp-wrap-round) 
+  (("M-" . (3 0 -2)) . #'sp-backward-unwrap-sexp) 
+  (("M-" . (3 0 -1)) . #'sp-split-sexp) 
+  (("M-" . (3 0 1)) . #'sp-join-sexp) 
+  (("M-" . (3 0 2)) . #'sp-unwrap-sexp) 
+  (("M-" . (3 0 3)) . #'sp-wrap-curly) 
+  (("M-" . (3 0 4)) . #'sp-wrap-square) 
+  (("M-" . (3 0 5)) . #'ekg-show-notes-with-any-tags) 
 
-;;;;;;;; M-4-1 
-  (("M-" . (4 1 -5)) . #'d-emacs-backward-mark-defun) 
-  (("M-" . (4 1 -4)) . #'ekg-show-notes-in-trash) 
-  (("M-" . (4 1 -2)) . #'d-emacs-move-to-top) 
-  (("M-" . (4 1 0)) . #'move-to-window-line) 
-  (("M-" . (4 1 2)) . #'d-emacs-move-to-bottom) 
-  (("M-" . (4 1 4)) . #'ekg-show-notes-in-drafts) 
-  (("M-" . (4 1 5)) . #'mark-defun) 
+;;;;;;;; M-3-1 
+  (("M-" . (3 1 -5)) . #'d-emacs-backward-mark-defun) 
+  (("M-" . (3 1 -4)) . #'ekg-show-notes-in-trash) 
+  (("M-" . (3 1 -2)) . #'d-emacs-move-to-top) 
+  (("M-" . (3 1 0)) . #'move-to-window-line) 
+  (("M-" . (3 1 2)) . #'d-emacs-move-to-bottom) 
+  (("M-" . (3 1 4)) . #'ekg-show-notes-in-drafts) 
+  (("M-" . (3 1 5)) . #'mark-defun) 
 
 ;;;;;;; M-5 
 ;;;;;;;; M-5--1 
@@ -393,8 +395,8 @@
 
 ;;;;;;;; M-5-0 
   (("M-" . (5 0 -5)) . #'icicle-describe-option-of-type) 
-  (("M-" . (5 0 -4)) . #'projectile-multi-occur) 
   (("M-" . (5 0 -4)) . #'gptel-extensions-refactor) 
+  (("M-" . (5 0 -4)) . #'projectile-multi-occur) 
   (("M-" . (5 0 -3)) . #'gptel-menu) 
   (("M-" . (5 0 -2)) . #'gptel-set-topic) 
   (("M-" . (5 0 -1)) . #'gptel-extensions-ask-document) 
@@ -408,55 +410,55 @@
 
 ;;;;;;; M-6 
 ;;;;;;;; M-6--1 
-  (("M-" . (6 -1 -5)) . #'outline-apply-default-state) 
-  (("M-" . (6 -1 -4)) . #'outline-hide-leaves) 
-  (("M-" . (6 -1 -3)) . #'outline-mark-subtree) 
-  (("M-" . (6 -1 -2)) . #'outline-hide-other) 
-  (("M-" . (6 -1 2)) . #'outline-show-only-headings) 
-  (("M-" . (6 -1 3)) . #'outline-insert-heading) 
-  (("M-" . (6 -1 4)) . #'outline-show-branches) 
-  (("M-" . (6 -1 5)) . #'outline-show-children) 
+  (("M-" . (6 -1 -3)) . #'emms-shuffle) 
+  (("M-" . (6 -1 -2)) . #'emms-add-url) 
+  (("M-" . (6 -1 2)) . #'emms-play-url) 
+  (("M-" . (6 -1 3)) . #'emms-sort) 
+  (("M-" . (6 -1 4)) . #'emms-show) 
 
 ;;;;;;;; M-6-0 
-  (("M-" . (6 0 -5)) . #'outline-hide-sublevels) 
-  (("M-" . (6 0 -4)) . #'outline-hide-by-heading-regexp) 
-  (("M-" . (6 0 -4)) . #'d-emacs-do-not-search-invisible) 
-  (("M-" . (6 0 -3)) . #'outline-hide-subtree) 
-  (("M-" . (6 0 -2)) . #'outline-hide-entry) 
-  (("M-" . (6 0 -1)) . #'outline-hide-body) 
-  (("M-" . (6 0 1)) . #'outline-show-all) 
-  (("M-" . (6 0 2)) . #'outline-show-entry) 
-  (("M-" . (6 0 3)) . #'outline-show-subtree) 
-  (("M-" . (6 0 4)) . #'outline-show-by-heading-regexp) 
-  (("M-" . (6 0 4)) . #'d-emacs-search-invisible) 
-  (("M-" . (6 0 5)) . #'outlineify-sticky) 
+  (("M-" . (6 0 -3)) . #'upcase-region) 
+  (("M-" . (6 0 3)) . #'downcase-region) 
 
 ;;;;;;;; M-6-1 
-  (("M-" . (6 1 -2)) . #'allout-open-supertopic) 
-  (("M-" . (6 1 0)) . #'allout-open-sibtopic) 
-  (("M-" . (6 1 2)) . #'allout-open-subtopic) 
+  (("M-" . (6 1 -4)) . #'emms-play-find) 
+  (("M-" . (6 1 -3)) . #'emms-play-playlist) 
+  (("M-" . (6 1 -2)) . #'emms-play-directory) 
+  (("M-" . (6 1 -1)) . #'emms-play-directory-tree) 
+  (("M-" . (6 1 1)) . #'emms-add-directory-tree) 
+  (("M-" . (6 1 2)) . #'emms-add-directory) 
+  (("M-" . (6 1 3)) . #'emms-add-playlist) 
+  (("M-" . (6 1 4)) . #'emms-add-find) 
 
-;;;;;;; M-7 
-;;;;;;;; M-7--1 
-  (("M-" . (7 -1 -3)) . #'emms-shuffle) 
-  (("M-" . (7 -1 -2)) . #'emms-add-url) 
-  (("M-" . (7 -1 2)) . #'emms-play-url) 
-  (("M-" . (7 -1 3)) . #'emms-sort) 
-  (("M-" . (7 -1 4)) . #'emms-show) 
+;;;;;;; M-8 
+;;;;;;;; M-8--1 
+  (("M-" . (8 -1 -5)) . #'outline-apply-default-state) 
+  (("M-" . (8 -1 -4)) . #'outline-hide-leaves) 
+  (("M-" . (8 -1 -3)) . #'outline-mark-subtree) 
+  (("M-" . (8 -1 -2)) . #'outline-hide-other) 
+  (("M-" . (8 -1 2)) . #'outline-show-only-headings) 
+  (("M-" . (8 -1 3)) . #'outline-insert-heading) 
+  (("M-" . (8 -1 4)) . #'outline-show-branches) 
+  (("M-" . (8 -1 5)) . #'outline-show-children) 
 
-;;;;;;;; M-7-0 
-  (("M-" . (7 0 -3)) . #'upcase-region) 
-  (("M-" . (7 0 3)) . #'downcase-region) 
+;;;;;;;; M-8-0 
+  (("M-" . (8 0 -5)) . #'outline-hide-sublevels) 
+  (("M-" . (8 0 -4)) . #'d-emacs-do-not-search-invisible) 
+  (("M-" . (8 0 -4)) . #'outline-hide-by-heading-regexp) 
+  (("M-" . (8 0 -3)) . #'outline-hide-subtree) 
+  (("M-" . (8 0 -2)) . #'outline-hide-entry) 
+  (("M-" . (8 0 -1)) . #'outline-hide-body) 
+  (("M-" . (8 0 1)) . #'outline-show-all) 
+  (("M-" . (8 0 2)) . #'outline-show-entry) 
+  (("M-" . (8 0 3)) . #'outline-show-subtree) 
+  (("M-" . (8 0 4)) . #'d-emacs-search-invisible) 
+  (("M-" . (8 0 4)) . #'outline-show-by-heading-regexp) 
+  (("M-" . (8 0 5)) . #'outlineify-sticky) 
 
-;;;;;;;; M-7-1 
-  (("M-" . (7 1 -4)) . #'emms-play-find) 
-  (("M-" . (7 1 -3)) . #'emms-play-playlist) 
-  (("M-" . (7 1 -2)) . #'emms-play-directory) 
-  (("M-" . (7 1 -1)) . #'emms-play-directory-tree) 
-  (("M-" . (7 1 1)) . #'emms-add-directory-tree) 
-  (("M-" . (7 1 2)) . #'emms-add-directory) 
-  (("M-" . (7 1 3)) . #'emms-add-playlist) 
-  (("M-" . (7 1 4)) . #'emms-add-find) 
+;;;;;;;; M-8-1 
+  (("M-" . (8 1 -2)) . #'allout-open-supertopic) 
+  (("M-" . (8 1 0)) . #'allout-open-sibtopic) 
+  (("M-" . (8 1 2)) . #'allout-open-subtopic) 
 
 ;;;;;; M-C- 
 ;;;;;;; M-C-0 
@@ -494,22 +496,22 @@
   (("M-C-" . (2 0 4)) . #'query-replace-regexp) 
   (("M-C-" . (2 0 5)) . #'embark-export) 
 
-;;;;;;; M-C-4 
-;;;;;;;; M-C-4--1 
-  (("M-C-" . (4 -1 -5)) . #'ekg-show-notes-with-tag-prefix) 
-  (("M-C-" . (4 -1 3)) . #'undollar) 
-  (("M-C-" . (4 -1 4)) . #'eval-buffer) 
-  (("M-C-" . (4 -1 5)) . #'ekg-show-notes-for-today) 
+;;;;;;; M-C-3 
+;;;;;;;; M-C-3--1 
+  (("M-C-" . (3 -1 -5)) . #'ekg-show-notes-with-tag-prefix) 
+  (("M-C-" . (3 -1 3)) . #'undollar) 
+  (("M-C-" . (3 -1 4)) . #'eval-buffer) 
+  (("M-C-" . (3 -1 5)) . #'ekg-show-notes-for-today) 
 
-;;;;;;;; M-C-4-0 
-  (("M-C-" . (4 0 -5)) . #'ekg-capture-url) 
-  (("M-C-" . (4 0 -4)) . #'projectile-ripgrep) 
-  (("M-C-" . (4 0 4)) . #'ripgrep-regexp) 
-  (("M-C-" . (4 0 5)) . #'ekg-browse-url) 
+;;;;;;;; M-C-3-0 
+  (("M-C-" . (3 0 -5)) . #'ekg-capture-url) 
+  (("M-C-" . (3 0 -4)) . #'projectile-ripgrep) 
+  (("M-C-" . (3 0 4)) . #'ripgrep-regexp) 
+  (("M-C-" . (3 0 5)) . #'ekg-browse-url) 
 
-;;;;;;;; M-C-4-1 
-  (("M-C-" . (4 1 -2)) . #'projectile-run-shell-command-in-root) 
-  (("M-C-" . (4 1 2)) . #'projectile-run-async-shell-command-in-root) 
+;;;;;;;; M-C-3-1 
+  (("M-C-" . (3 1 -2)) . #'projectile-run-shell-command-in-root) 
+  (("M-C-" . (3 1 2)) . #'projectile-run-async-shell-command-in-root) 
 
 ;;;;;;; M-C-5 
 ;;;;;;;; M-C-5--1 
@@ -526,25 +528,25 @@
   (("M-C-" . (5 1 1)) . #'citar-create-note) 
 
 ;;;;;;; M-C-6 
-;;;;;;;; M-C-6--1 
-  (("M-C-" . (6 -1 -5)) . #'password-store-generate) 
-  (("M-C-" . (6 -1 -5)) . #'password-store-edit) 
-  (("M-C-" . (6 -1 -4)) . #'undo-tree-save-state-to-register) 
-  (("M-C-" . (6 -1 -2)) . #'embark-select) 
-  (("M-C-" . (6 -1 3)) . #'avy-kill-whole-line) 
-  (("M-C-" . (6 -1 4)) . #'undo-tree-restore-state-from-register) 
-
-;;;;;;;; M-C-6-0 
-  (("M-C-" . (6 0 -5)) . #'embark-become) 
-  (("M-C-" . (6 0 5)) . #'embark-collect) 
-
 ;;;;;;;; M-C-6-1 
-  (("M-C-" . (6 1 -3)) . #'password-store-copy-field) 
+  (("M-C-" . (6 1 -3)) . #'projectile-kill-buffers) 
+  (("M-C-" . (6 1 2)) . #'projectile-switch-to-buffer-other-window) 
 
-;;;;;;; M-C-7 
-;;;;;;;; M-C-7-1 
-  (("M-C-" . (7 1 -3)) . #'projectile-kill-buffers) 
-  (("M-C-" . (7 1 2)) . #'projectile-switch-to-buffer-other-window) 
+;;;;;;; M-C-8 
+;;;;;;;; M-C-8--1 
+  (("M-C-" . (8 -1 -5)) . #'password-store-edit) 
+  (("M-C-" . (8 -1 -5)) . #'password-store-generate) 
+  (("M-C-" . (8 -1 -4)) . #'undo-tree-save-state-to-register) 
+  (("M-C-" . (8 -1 -2)) . #'embark-select) 
+  (("M-C-" . (8 -1 3)) . #'avy-kill-whole-line) 
+  (("M-C-" . (8 -1 4)) . #'undo-tree-restore-state-from-register) 
+
+;;;;;;;; M-C-8-0 
+  (("M-C-" . (8 0 -5)) . #'embark-become) 
+  (("M-C-" . (8 0 5)) . #'embark-collect) 
+
+;;;;;;;; M-C-8-1 
+  (("M-C-" . (8 1 -3)) . #'password-store-copy-field) 
 
 ;;;;;; M-H- 
 ;;;;;;; M-H-2 
@@ -618,30 +620,30 @@
   (("s-" . (2 1 5)) . #'kill-sentence) 
   (("s-" . (2 1 6)) . #'transpose-sentences) 
 
-;;;;;;; s-4 
-;;;;;;;; s-4--1 
-  (("s-" . (4 -1 -3)) . #'just-one-space) 
-  (("s-" . (4 -1 -2)) . #'xref-find-references) 
-  (("s-" . (4 -1 2)) . #'xref-find-definitions) 
-  (("s-" . (4 -1 3)) . #'delete-trailing-whitespace) 
-  (("s-" . (4 -1 4)) . #'list-abbrevs) 
+;;;;;;; s-3 
+;;;;;;;; s-3--1 
+  (("s-" . (3 -1 -3)) . #'just-one-space) 
+  (("s-" . (3 -1 -2)) . #'xref-find-references) 
+  (("s-" . (3 -1 2)) . #'xref-find-definitions) 
+  (("s-" . (3 -1 3)) . #'delete-trailing-whitespace) 
+  (("s-" . (3 -1 4)) . #'list-abbrevs) 
 
-;;;;;;;; s-4-0 
-  (("s-" . (4 0 -5)) . #'icicle-dired-saved-file-candidates) 
-  (("s-" . (4 0 -4)) . #'d-emacs-isearch-backward-symbol) 
-  (("s-" . (4 0 -3)) . #'add-global-abbrev) 
-  (("s-" . (4 0 -2)) . #'add-mode-abbrev) 
-  (("s-" . (4 0 2)) . #'inverse-add-mode-abbrev) 
-  (("s-" . (4 0 3)) . #'inverse-add-global-abbrev) 
-  (("s-" . (4 0 4)) . #'isearch-forward-symbol) 
-  (("s-" . (4 0 5)) . #'abbrev-edit-save-buffer) 
+;;;;;;;; s-3-0 
+  (("s-" . (3 0 -5)) . #'icicle-dired-saved-file-candidates) 
+  (("s-" . (3 0 -4)) . #'d-emacs-isearch-backward-symbol) 
+  (("s-" . (3 0 -3)) . #'add-global-abbrev) 
+  (("s-" . (3 0 -2)) . #'add-mode-abbrev) 
+  (("s-" . (3 0 2)) . #'inverse-add-mode-abbrev) 
+  (("s-" . (3 0 3)) . #'inverse-add-global-abbrev) 
+  (("s-" . (3 0 4)) . #'isearch-forward-symbol) 
+  (("s-" . (3 0 5)) . #'abbrev-edit-save-buffer) 
 
-;;;;;;;; s-4-1 
-  (("s-" . (4 1 -5)) . #'d-emacs-backward-delete-all-space) 
-  (("s-" . (4 1 -4)) . #'debug-on-entry) 
-  (("s-" . (4 1 -3)) . #'append-next-kill) 
-  (("s-" . (4 1 4)) . #'cancel-debug-on-entry) 
-  (("s-" . (4 1 5)) . #'delete-all-space) 
+;;;;;;;; s-3-1 
+  (("s-" . (3 1 -5)) . #'d-emacs-backward-delete-all-space) 
+  (("s-" . (3 1 -4)) . #'debug-on-entry) 
+  (("s-" . (3 1 -3)) . #'append-next-kill) 
+  (("s-" . (3 1 4)) . #'cancel-debug-on-entry) 
+  (("s-" . (3 1 5)) . #'delete-all-space) 
 
 ;;;;;;; s-5 
 ;;;;;;;; s-5--1 
@@ -658,25 +660,25 @@
   (("s-" . (5 0 3)) . #'aya-next-in-history) 
   (("s-" . (5 0 4)) . #'isearch-forward-symbol) 
 
-;;;;;;; s-7 
-;;;;;;;; s-7--1 
-  (("s-" . (7 -1 -1)) . #'variable-text-scale-decrease) 
-  (("s-" . (7 -1 1)) . #'variable-text-scale-increase) 
-  (("s-" . (7 -1 2)) . #'icicle-select-frame) 
+;;;;;;; s-6 
+;;;;;;;; s-6--1 
+  (("s-" . (6 -1 -1)) . #'variable-text-scale-decrease) 
+  (("s-" . (6 -1 1)) . #'variable-text-scale-increase) 
+  (("s-" . (6 -1 2)) . #'icicle-select-frame) 
 
-;;;;;;;; s-7-0 
-  (("s-" . (7 0 -3)) . #'flycheck-previous-error) 
-  (("s-" . (7 0 -2)) . #'flycheck-clear) 
-  (("s-" . (7 0 -1)) . #'flycheck-first-error) 
-  (("s-" . (7 0 1)) . #'flycheck-list-errors) 
-  (("s-" . (7 0 2)) . #'flycheck-display-error-at-point) 
-  (("s-" . (7 0 3)) . #'flycheck-next-error) 
+;;;;;;;; s-6-0 
+  (("s-" . (6 0 -3)) . #'flycheck-previous-error) 
+  (("s-" . (6 0 -2)) . #'flycheck-clear) 
+  (("s-" . (6 0 -1)) . #'flycheck-first-error) 
+  (("s-" . (6 0 1)) . #'flycheck-list-errors) 
+  (("s-" . (6 0 2)) . #'flycheck-display-error-at-point) 
+  (("s-" . (6 0 3)) . #'flycheck-next-error) 
 
-;;;;;;;; s-7-1 
-  (("s-" . (7 1 -3)) . #'flycheck-copy-errors-as-kill) 
-  (("s-" . (7 1 -2)) . #'projectile-previous-project-buffer) 
-  (("s-" . (7 1 0)) . #'d-emacs-ireplace-listwise) 
-  (("s-" . (7 1 2)) . #'projectile-next-project-buffer) 
+;;;;;;;; s-6-1 
+  (("s-" . (6 1 -3)) . #'flycheck-copy-errors-as-kill) 
+  (("s-" . (6 1 -2)) . #'projectile-previous-project-buffer) 
+  (("s-" . (6 1 0)) . #'d-emacs-ireplace-listwise) 
+  (("s-" . (6 1 2)) . #'projectile-next-project-buffer) 
 
 ;;;;;; s-C- 
 ;;;;;;; s-C-1 
@@ -718,20 +720,20 @@
   (("s-C-" . (2 1 3)) . #'projectile-invalidate-cache) 
   (("s-C-" . (2 1 4)) . #'citar-open) 
 
-;;;;;;; s-C-4 
-;;;;;;;; s-C-4--1 
-  (("s-C-" . (4 -1 4)) . #'projectile-find-related-file-other-frame) 
-  (("s-C-" . (4 -1 5)) . #'projectile-find-file-dwim-other-frame) 
+;;;;;;; s-C-3 
+;;;;;;;; s-C-3--1 
+  (("s-C-" . (3 -1 4)) . #'projectile-find-related-file-other-frame) 
+  (("s-C-" . (3 -1 5)) . #'projectile-find-file-dwim-other-frame) 
 
-;;;;;;;; s-C-4-0 
-  (("s-C-" . (4 0 -5)) . #'icicle-dired-saved-file-candidates-other-window) 
-  (("s-C-" . (4 0 -4)) . #'d-emacs-isearch-backward-symbol-at-point) 
-  (("s-C-" . (4 0 -2)) . #'projectile-find-references) 
-  (("s-C-" . (4 0 4)) . #'isearch-forward-symbol-at-point) 
+;;;;;;;; s-C-3-0 
+  (("s-C-" . (3 0 -5)) . #'icicle-dired-saved-file-candidates-other-window) 
+  (("s-C-" . (3 0 -4)) . #'d-emacs-isearch-backward-symbol-at-point) 
+  (("s-C-" . (3 0 -2)) . #'projectile-find-references) 
+  (("s-C-" . (3 0 4)) . #'isearch-forward-symbol-at-point) 
 
-;;;;;;;; s-C-4-1 
-  (("s-C-" . (4 1 -5)) . #'d-emacs-backward-delete-horizontal-space) 
-  (("s-C-" . (4 1 5)) . #'delete-horizontal-space) 
+;;;;;;;; s-C-3-1 
+  (("s-C-" . (3 1 -5)) . #'d-emacs-backward-delete-horizontal-space) 
+  (("s-C-" . (3 1 5)) . #'delete-horizontal-space) 
 
 ;;;;;;; s-C-5 
 ;;;;;;;; s-C-5--1 
@@ -750,31 +752,31 @@
   (("s-C-" . (5 1 -3)) . #'window-configuration-to-register) 
 
 ;;;;;;; s-C-6 
-;;;;;;;; s-C-6-0 
-  (("s-C-" . (6 0 -1)) . #'outline-move-subtree-up) 
-  (("s-C-" . (6 0 1)) . #'outline-move-subtree-down) 
+;;;;;;;; s-C-6--1 
+  (("s-C-" . (6 -1 -1)) . #'default-text-scale-decrease) 
+  (("s-C-" . (6 -1 1)) . #'default-text-scale-increase) 
 
-;;;;;;; s-C-7 
-;;;;;;;; s-C-7--1 
-  (("s-C-" . (7 -1 -1)) . #'default-text-scale-decrease) 
-  (("s-C-" . (7 -1 1)) . #'default-text-scale-increase) 
+;;;;;;;; s-C-6-1 
+  (("s-C-" . (6 1 -3)) . #'save-some-buffers) 
+  (("s-C-" . (6 1 0)) . #'projectile-switch-to-buffer-other-frame) 
+  (("s-C-" . (6 1 3)) . #'kill-some-buffers) 
 
-;;;;;;;; s-C-7-1 
-  (("s-C-" . (7 1 -3)) . #'save-some-buffers) 
-  (("s-C-" . (7 1 0)) . #'projectile-switch-to-buffer-other-frame) 
-  (("s-C-" . (7 1 3)) . #'kill-some-buffers) 
+;;;;;;; s-C-8 
+;;;;;;;; s-C-8-0 
+  (("s-C-" . (8 0 -1)) . #'outline-move-subtree-up) 
+  (("s-C-" . (8 0 1)) . #'outline-move-subtree-down) 
 
 ;;;;;; s-H- 
 ;;;;;;; s-H-2 
 ;;;;;;;; s-H-2-0 
-  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame)
-  (("s-H-" . (2 0 4)) . #'icicle-search-keywords)
-  
+  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame) 
+  (("s-H-" . (2 0 4)) . #'icicle-search-keywords) 
   (("s-H-" . (2 0 5)) . #'projectile-find-related-file-other-frame) 
 
-;;;;;;;; s-H-4-0 
-  (("s-H-" . (4 0 -4)) . #'swiper-isearch-backward)
-  (("s-H-" . (4 0 4)) . #'swiper-isearch)
+;;;;;;; s-H-3 
+;;;;;;;; s-H-3-0 
+  (("s-H-" . (3 0 -4)) . #'swiper-isearch-backward) 
+  (("s-H-" . (3 0 4)) . #'swiper-isearch) 
 
 ;;;;;; s-M- 
 ;;;;;;; s-M-1 
@@ -788,39 +790,39 @@
 ;;;; d-emacs-miscellaneous-map
 `(d-emacs-miscellaneous-map 
 ;;;;; Strings
- ("5" . #'projectile-run-eshell) 
- ("C" . #'checkdoc) 
- ("F" . #'flycheck-mode) 
- ("G" . #'projectile-run-gdb) 
- ("L" . #'package-lint-current-buffer) 
- ("M" . #'d-emacs-toggle-mode-line) 
- ("P" . #'projectile-run-vterm) 
- ("S" . #'eshell) 
- ("[" . #'scroll-lock-mode) 
- ("\\" . #'projectile-run-term) 
- ("—" . #'projectile-run-shell) 
- ("c" . #'cdlatex-mode) 
- ("d" . #'display-line-numbers-mode) 
- ("f" . #'flyspell-mode) 
- ("g" . #'gnus) 
- ("i" . #'icicle-mode) 
- ("l" . #'list-packages) 
- ("m" . #'magit) 
- ("s" . #'shell) 
- ("t" . #'tab-bar-mode) 
- ("u" . #'undo-tree-mode) 
- ("v" . #'vterm))
+  ("5" . #'projectile-run-eshell) 
+  ("C" . #'checkdoc) 
+  ("F" . #'flycheck-mode) 
+  ("G" . #'projectile-run-gdb) 
+  ("L" . #'package-lint-current-buffer) 
+  ("M" . #'d-emacs-toggle-mode-line) 
+  ("P" . #'projectile-run-vterm) 
+  ("S" . #'eshell) 
+  ("[" . #'scroll-lock-mode) 
+  ("\\" . #'projectile-run-term) 
+  ("—" . #'projectile-run-shell) 
+  ("c" . #'cdlatex-mode) 
+  ("d" . #'display-line-numbers-mode) 
+  ("f" . #'flyspell-mode) 
+  ("g" . #'gnus) 
+  ("i" . #'icicle-mode) 
+  ("l" . #'list-packages) 
+  ("m" . #'magit) 
+  ("s" . #'shell) 
+  ("t" . #'tab-bar-mode) 
+  ("u" . #'undo-tree-mode) 
+  ("v" . #'vterm))
 
 ;;;; d-emacs-theme-map
 `(d-emacs-theme-map 
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
- ((1 -1 4) . #'modus-themes-select) 
+  ((1 -1 4) . #'modus-themes-select) 
 
 ;;;;;;;; 1-0 
- ((1 0 -2) . #'abyss-theme) 
- ((1 0 1) . #'color-theme-sanityinc-tomorrow-day) 
- ((1 0 5) . #'color-theme-sanityinc-tomorrow-bright))
+  ((1 0 -2) . #'abyss-theme) 
+  ((1 0 1) . #'color-theme-sanityinc-tomorrow-day) 
+  ((1 0 5) . #'color-theme-sanityinc-tomorrow-bright))
 
 ;;; d-emacs-bindlists.el ends here

@@ -32,13 +32,13 @@
 
 ;;; Code:
 
-
 ;;;; eshell-hist-mode
 `(eshell-hist-mode
-  (eshell-hist-mode-map ;;;;; Coordinates
+  (eshell-hist-mode-map 
+;;;;; Coordinates
 ;;;;;; C-
-;;;;;;; C-3
-;;;;;;;; C-3-0
+;;;;;;; C-4
+;;;;;;;; C-4-0
    (("C-" . (3 0 -4)) . #'eshell-previous-matching-input) 
    (("C-" . (3 0 4)) . #'eshell-next-matching-input)))
 

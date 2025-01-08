@@ -32,21 +32,19 @@
 
 ;;; Code:
 
-
 ;;;; help-mode-map
-`(;;;;; Coordinates
+`(
+;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
-
-;;;;;;;; 1-0 
-  ((1 0 -3) . #'scroll-up-command)
-  ((1 0 -2) . #'help-goto-previous-page) 
-  ((1 0 2) . #'help-goto-next-page) 
-  ((1 0 3) . #'scroll-down-command)  
-
-;;;;;;;; 1-1 
   ((1 -1 -4) . #'avy-act-follow-in-new-tab) 
   ((1 -1 4) . #'avy-act-follow) 
+
+;;;;;;;; 1-0 
+  ((1 0 -3) . #'scroll-up-command) 
+  ((1 0 -2) . #'help-goto-previous-page) 
+  ((1 0 2) . #'help-goto-next-page) 
+  ((1 0 3) . #'scroll-down-command) 
 
 ;;;;;;; 2 
 ;;;;;;;; 2-0 

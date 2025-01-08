@@ -22,7 +22,6 @@
 
 ;; The bindlists for cdlatex-math-symbol-alist-default. Read in in d-emacs-cdlatex-constants.el.
 
-
 ;;;; cdlatex-mode-map
 `(
 ;;;;; Strings
@@ -30,9 +29,8 @@
   ("⋉" "\\lftimes" "\\lfbowtie") 
   ("⋊" "\\rftimes" "\\rfbowtie") 
 
-;;;;; Coordinates
-;;;;;;; 1
-;;;;;;;; 1--1
+;;;;; Coordinates 
+;;;;;;; 1 
   ((1 -1 -3) "\\longleftarrow" "\\dashleftarrow") 
   ((1 -1 -2) "\\leftharpoonup" "\\leftharpoondown" "\\iffalse") 
   ((1 -1 1) "\\rightharpoonup" "\\rightharpoondown" "\\fi") 
@@ -58,32 +56,32 @@
 
 ;;;;;;; 3 
 ;;;;;;;; 3--1 
-  ((3 -1 -4) "\\mdlgblkcircle" "\\lgwhtcircle" "\\bigcirc") 
-  ((3 -1 -2) "\\simeq") 
-  ((3 -1 2) "\\equiv" "\\cong") 
-
-;;;;;;;; 3-0 
-  ((3 0 -4) "\\lcurvyangle") 
-  ((3 0 -3) "\\llparenthesis") 
-  ((3 0 -1) "\\&") 
-  ((3 0 3) "\\{") 
-  ((3 0 4) "\\right[") 
-  ((3 0 4) "\\left[") 
-
-;;;;;;;; 3-1 
-  ((3 1 -4) "\\rcurvyangle") 
-  ((3 1 -3) "\\rrparenthesis") 
-  ((3 1 0) "\\pm" "\\mp") 
-  ((3 1 2) "\\dagger") 
-  ((3 1 3) "\\}") 
-  ((3 1 5) "\\otimes" "\\boxtimes") 
+  ((3 -1 -5) "\\neq") 
+  ((3 -1 -3) "\\ominus" "\\boxminus") 
+  ((3 -1 3) "\\oplus" "\\boxplus") 
+  ((3 -1 4) "\\cdot" "\\star" "\\bullet") 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-  ((4 -1 -5) "\\neq") 
-  ((4 -1 -3) "\\ominus" "\\boxminus") 
-  ((4 -1 3) "\\oplus" "\\boxplus") 
-  ((4 -1 4) "\\cdot" "\\star" "\\bullet") 
+  ((4 -1 -4) "\\mdlgblkcircle" "\\lgwhtcircle" "\\bigcirc") 
+  ((4 -1 -2) "\\simeq") 
+  ((4 -1 2) "\\equiv" "\\cong") 
+
+;;;;;;;; 4-0 
+  ((4 0 -4) "\\lcurvyangle") 
+  ((4 0 -3) "\\llparenthesis") 
+  ((4 0 -1) "\\&") 
+  ((4 0 3) "\\{") 
+  ((4 0 4) "\\left[") 
+  ((4 0 4) "\\right[") 
+
+;;;;;;;; 4-1 
+  ((4 1 -4) "\\rcurvyangle") 
+  ((4 1 -3) "\\rrparenthesis") 
+  ((4 1 0) "\\pm" "\\mp") 
+  ((4 1 2) "\\dagger") 
+  ((4 1 3) "\\}") 
+  ((4 1 5) "\\otimes" "\\boxtimes") 
 
 ;;;;;;; 5 
 ;;;;;;;; 5--1 
@@ -101,18 +99,18 @@
   ((5 1 0) "\\Leftrightarrow" "\\Lleftrightarrow") 
   ((5 1 3) "\\Downarrow" "\\Ddownarrow") 
 
-;;;;;;; 7 
-;;;;;;;; 7--1 
-  ((7 -1 -3) "\\hookuparrow" "\\twoheaduparrow" "\\upuparrows") 
-  ((7 -1 -2) "\\hookleftarrow" "\\twoheadleftarrow" "\\leftleftarrows") 
-  ((7 -1 2) "\\hookrightarrow" "\\twoheadrightarrow" "\\rightrightarrows") 
-  ((7 -1 3) "\\hookdownarrow" "\\twoheaddownarrow" "\\downdownarrows") 
+;;;;;;; 6 
+;;;;;;;; 6--1 
+  ((6 -1 -3) "\\hookuparrow" "\\twoheaduparrow" "\\upuparrows") 
+  ((6 -1 -2) "\\hookleftarrow" "\\twoheadleftarrow" "\\leftleftarrows") 
+  ((6 -1 2) "\\hookrightarrow" "\\twoheadrightarrow" "\\rightrightarrows") 
+  ((6 -1 3) "\\hookdownarrow" "\\twoheaddownarrow" "\\downdownarrows") 
 
-;;;;;;;; 7-0 
-  ((7 0 -3) "\\bigwedge" "\\curlywedge") 
-  ((7 0 -2) "\\leq" "\\preceq" "\\precsim") 
-  ((7 0 2) "\\geq" "\\succeq" "\\succsim") 
-  ((7 0 3) "\\bigvee" "\\curlyvee"))
+;;;;;;;; 6-0 
+  ((6 0 -3) "\\bigwedge" "\\curlywedge") 
+  ((6 0 -2) "\\leq" "\\preceq" "\\precsim") 
+  ((6 0 2) "\\geq" "\\succeq" "\\succsim") 
+  ((6 0 3) "\\bigvee" "\\curlyvee"))
 
 (provide 'd-emacs-cdlatex-special-math-symbol-bindlists)
 ;;; d-emacs-cdlatex-special-math-symbol-bindlists.el ends here

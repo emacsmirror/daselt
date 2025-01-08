@@ -33,22 +33,21 @@
 ;;; Code:
 
 ;;;; avy-act-function-map
-`(avy-act-function-map
+`(avy-act-function-map 
 ;;;;; Coordinates
- ;;;;;;;; 1-0 
+;;;;;;; 1
+;;;;;;;; 1-0
   ((1 0 -3) . #'avy-goto-char-in-line) 
   ((1 0 -2) . #'avy-goto-char-timer) 
   ((1 0 -1) . #'avy-goto-line) 
-  ((1 0 1) . #'avy-goto-end-of-line)
+  ((1 0 1) . #'avy-goto-end-of-line) 
   ((1 0 2) . #'avy-goto-word-1) 
 
 ;;;;;;;; 1-1 
   ((1 1 -6) . #'avy-act-functions-help))
 
-
-
 ;;;; avy-act-selection-command-map
-`(avy-act-selection-command-map
+`(avy-act-selection-command-map 
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -58,12 +57,12 @@
   ((1 0 -4) . #'avy-act-overwrite) 
 
 ;;;;;;;; 1-1 
-  ((1 1 -3) . #'kill-ring-save)
-  ((1 1 3) . #'yank)
+  ((1 1 -3) . #'kill-ring-save) 
+  ((1 1 3) . #'yank) 
 
+;;;;;;; 2 
+;;;;;;;; 2-1 
   ((2 1 -3) . #'kill-region))
-
-
 
 ;;;; avy-act-position-selection-map
 `(avy-act-position-selection-map
@@ -80,7 +79,6 @@
 ;;;;;;;; 1-1 
   ((1 1 -2) . #'avy-act-mark-nothing)
   ((1 1 2) . #'avy-act-mark-character))
-
 
 ;;;; avy-act-post-action-map
 `(avy-act-post-action-map

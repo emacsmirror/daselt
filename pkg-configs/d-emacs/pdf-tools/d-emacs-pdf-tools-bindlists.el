@@ -52,28 +52,20 @@
   ((1 1 -2) . #'pdf-view-fit-height-to-window) 
   ((1 1 2) . #'pdf-view-fit-width-to-window) 
 
-;;;;;;; 3 
-;;;;;;;; 3--1 
-  ((3 -1 4) . #'pdf-view-goto-page) 
+;;;;;;; 4 
+;;;;;;;; 4--1 
+  ((4 -1 4) . #'pdf-view-goto-page) 
 
-;;;;;;;; 3-0 
-  ((3 0 -4) . #'org-noter) 
-  ((3 0 4) . #'pdf-view-rotate))
+;;;;;;;; 4-0 
+  ((4 0 -4) . #'org-noter) 
+  ((4 0 4) . #'pdf-view-rotate))
 
 ;;;; pdf-outline
 `(pdf-outline
-  (pdf-outline-minor-mode-map 
-;;;;; Coordinates
-   ((1 0 -1) . nil)
-;;;;;;; 2
-;;;;;;;; 2--1
-   ((2 -1 4) . #'pdf-outline))
-
-;;;; pdf-outline-buffer-mode-map
   (pdf-outline-buffer-mode-map 
-;;;;; Coordinates 
-;;;;;;; 1 
-;;;;;;;; 1--1 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
    ((1 -1 -1) . #'outline-backward-same-level) 
    ((1 -1 1) . #'outline-forward-same-level) 
    ((1 -1 4) . #'pdf-outline-follow-link) 
@@ -84,17 +76,25 @@
    ((1 0 2) . #'show-subtree) 
    ((1 0 3) . #'next-line) 
 
-;;;;;;; 3 
-;;;;;;;; 3--1 
+;;;;;;; 4 
+;;;;;;;; 4--1 
    ((3 -1 -4) . #'outline-cycle-buffer) 
    ((3 -1 4) . #'outline-cycle) 
 
-;;;;;;;; 3-0 
+;;;;;;;; 4-0 
    ((3 0 -3) . #'pdf-outline-up-heading) 
    ((3 0 -2) . #'pdf-outline-display-link) 
-   ((3 0 1) . #'pdf-outline-quit) 
    ((3 0 1) . #'quit-window) 
-   ((3 0 2) . #'pdf-outline-follow-link-and-quit)))
+   ((3 0 1) . #'pdf-outline-quit) 
+   ((3 0 2) . #'pdf-outline-follow-link-and-quit)) (pdf-outline-minor-mode-map 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+   ((1 0 -1)) 
+
+;;;;;;; 2 
+;;;;;;;; 2--1 
+   ((2 -1 4) . #'pdf-outline)))
 
 `(pdf-history
   (pdf-history-minor-mode-map

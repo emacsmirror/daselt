@@ -24,17 +24,15 @@
 
 ;;; Code:
 
-
 ;;;; stumpwm-mode-map
 `((
 ;;;;; Strings
    ("ESC") 
    ("RET") 
 
-;;;;; Coordinates   
+;;;;; Coordinates 
 ;;;;;; H- 
 ;;;;;;; H-1 
-;;;;;;;; H-1-0 
    (("H-" . (1 0 1)))) 
 ;;;;; Coordinates
 ;;;;;;; 1

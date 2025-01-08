@@ -635,11 +635,13 @@ results can be collected using `list' or `append' if UNTANGLE is non-nil."
                                   (mark-sexp)
                                   (prog1 (funcall function)
                                     (progn (deactivate-mark)
-                                           (forward-char))))))
+                                           (unless (eobp)
+                                             (forward-char)))))))
 
                (goto-char (point-min))
                (prog1 (cl-loop until (not (re-search-forward (rx (or bos
-                                                                     bol) "`")
+                                                                     bol)
+                                                                 "`")
                                                              nil t))
                                if untangle
                                append (mark-and-unmark-bindlist)
@@ -845,15 +847,14 @@ another binding form."
        (or (d--binding-location-p cns)
            (d--recursively-check-if-binding-cons-p (car cns))
            (if (proper-list-p (cdr cns))
-               (d--recursively-check-if-binding-cons-p
-                (car (cdr cns)))))))
+               (d-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
 
 (defun d--binding-suffix-form-p (cns)
-  "Return t if CNS looks like a binding in suffix form.
+            "Return t if CNS looks like a binding in suffix form.
 This means its car is a string, and it is either not a proper list or its second
 element is not a binding."
-  (condition-case nil
-      (and (consp cns)
+            (condition-case nil
+                          (and (consp cns)
            (atom (car cns))
            (stringp (car cns)))
     (error nil)))
@@ -955,13 +956,13 @@ form (the so-called elaborate form) is used by some daselt-functions, such as
                          (d--binding-elaborate-form-p cns)))))
 
 (defun d--binding-p (cns)
-  "This function returns t if CNS has the form ofa Daselt-binding.
+  "This function returns t if CNS has the form of a Daselt-binding.
 This means it is a cons whose car is a binding car and if CNS is not a list that
 contains any other binding forms."
   (and (consp cns)
        (d--binding-location-p cns)
        (not (if (proper-list-p (cdr cns))
-                (d--recursively-check-if-binding-cons-p (car (cdr cns)))))))
+                (d-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
 
 (defun d--standard-file-p (filename)
   "Check if the FILENAME corresponds to a standard file.
@@ -1411,10 +1412,9 @@ the sorting order."
                                      (cond ((d--binding-p elt)
                                             (d--elaborate-on-binding
                                              elt))
-                                           ((not (atom elt))
-                                            (d--sort-and-format-bindlist
-                                             elt coordsonly prefun modlist))
-                                           (t elt)))
+                                           ((atom elt) elt)
+                                           (t (d--sort-and-format-bindlist
+                                               elt coordsonly prefun modlist))))
                                    blist))
 
            ;; Do any function that should be applied before the sorting.
@@ -1426,7 +1426,6 @@ the sorting order."
                                       ((atom elt2) nil)
                                       ((not (d--binding-p elt1)) t) ; Then contained lists.
                                       ((not (d--binding-p elt2)) nil)
-
                                       (t (d--compare-elaborate-bindings
                                           elt1 elt2 coordsonly))))))
 
@@ -1615,11 +1614,9 @@ bindings.
 If `DIRECTORY' is given, it should be a subdirectory of `pkg-configs'. In that
 case, recurse through `DIRECTORY'."
   (interactive)
-  (d--act-on-pkg-files-by-type-and-maybe-kill
-   `(((lambda (filename) (d--act-on-bindlists-in-file
-                     filename
-                     (lambda () (d--sort-and-format-marked-bindlist-string ,coordsonly ,prefun
-                                                                      ,modlist))))
+  (d--act-on-pkg-files-by-type
+   `(((lambda (filename) (d--sort-and-format-bindlists-in-file
+                     filename ,coordsonly ,prefun ,modlist))
       .
       "bindlists"))
    (if directory directory)))
@@ -1634,21 +1631,19 @@ region with the result.
 
 COORDSONLY, PREFUN and MODLIST are passed forward to
 `d--sort-and-format-bindlist'."
-  (let* ((blist (d--extract-bindlist t))
+  (let* ((blist (d--extract-bindlist))
          (formattedblist
           (d--sort-and-format-bindlist blist coordsonly prefun modlist))
          (formattedstring (d--format-bindlist-into-string-before-insertion formattedblist)))
-
-    (d-replace-region-with-arg formattedstring))
-  (unless (eobp)
-    (forward-char)))
+    (d-replace-region-with-arg formattedstring)
+    (unless (eobp) (forward-char))))
 
 (defun d--format-bindlist-into-string-before-insertion (blist &optional headname)
-  "Convert BLIST into a formatted string for reinsertion.
+    "Convert BLIST into a formatted string for reinsertion.
 If HEADNAME is provided, use that as the head for the converted structure.
 Otherwise the headname of the list or the name of the containing folder is
 used."
-  (let* ((print-level nil)
+    (let* ((print-level nil)
          (print-length nil)
          (initialstring (format "%S" blist))
 
@@ -1706,7 +1701,7 @@ used."
                                                     (one-or-more space))
                                                    (group (or "\(" ";" "\n"))))
                                  str-with-points-and-brackets-around-coords)
-                   (substring str-with-points-and-brackets-around-coords
+                       (substring str-with-points-and-brackets-around-coords
                               (match-beginning 1) (match-end 1))))
 
          (str-with-line-breaks-after-head
@@ -1724,10 +1719,10 @@ used."
          (finalstring (concat (format "\n;;;; %s\n`"
                                       (if headname headname
                                         (if head
-                                            head
-                                          (let ((filename (buffer-file-name)))
+                                                head
+                                            (let ((filename (buffer-file-name)))
                                             (if filename
-                                                (concat
+                                                    (concat
                                                  (format "%s-mode-map"
                                                          (d-containing-directory-base-name
                                                           filename))))))))
@@ -1755,7 +1750,8 @@ used."
                                (if (string= curtrimline nexttrimline)
                                    (delete-region curpos (line-end-position))))))
         (goto-char curpos)
-        (forward-line)))))
+        (unless (eobp)
+          (forward-line))))))
 
 ;;;;; Extraction
 (defun d--extract-binding-string (binding &optional translate csectoshft doublebind)
@@ -2032,24 +2028,31 @@ MODLIST, COORDSONLY and DIRECTORY are forwarded to
 (defun d--change-coords-in-bindlist (blist coordlistlist)
   "Change coordinates in BLIST according to COORDLISTLIST.
 Return the modified bindlist."
-  (mapcar (lambda (bind) (d--change-coords-in-binding bind coordlistlist)) blist))
+  (mapcar (lambda (bind) (if (d--binding-p bind)
+                        (d--change-coords-in-binding bind coordlistlist)
+                      (if (consp bind)
+                          (d--change-coords-in-bindlist bind coordlistlist)
+                        bind)))
+          blist))
 
 (defun d--change-coords-in-binding (bind coordlistlist)
   "Change coordinates in BIND according to COORDLISTLIST.
 Return the modified binding."
-  (let* ((carcoordsp (d-emacs-coords-p (car bind)))
-         (cdarcoordsp (unless carcoordsp (d-emacs-coords-p (cdar bind))))
-         (origcoords (cond (carcoordsp (car bind))
-                           (cdarcoordsp (cdar bind))))
-         (newcoords (unless (not origcoords)
-                      (d--change-coordlist origcoords coordlistlist)))
-         (carrest (cond (carcoordsp nil)
-                        (cdarcoordsp (caar bind))
-                        (t (car bind))))
-         (val (cdr bind)))
-    (cond (carcoordsp (cons newcoords val))
-          (cdarcoordsp (cons (cons carrest newcoords) val))
-          (t (cons carrest val)))))
+  (if (stringp (car bind))
+      bind
+    (let* ((carcoordsp (d-emacs-coords-p (car bind)))
+           (cdarcoordsp (unless carcoordsp (d-emacs-coords-p (cdar bind))))
+           (origcoords (cond (carcoordsp (car bind))
+                             (cdarcoordsp (cdar bind))))
+           (newcoords (unless (not origcoords)
+                        (d--change-coordlist origcoords coordlistlist)))
+           (carrest (cond (carcoordsp nil)
+                          (cdarcoordsp (caar bind))
+                          (t (car bind))))
+           (val (cdr bind)))
+      (cond (carcoordsp (cons newcoords val))
+            (cdarcoordsp (cons (cons carrest newcoords) val))
+            (t (cons carrest val))))))
 
 (defun d--change-coordlist (origcoords coordlistlist)
   "Change the coordinates in ORIGCOORDS based on the COORDLISTLIST.
@@ -2057,8 +2060,8 @@ ORIGCOORDS is a list of coordinates. COORDLISTLIST is a list of lists, each
 inner list COORDLIST representing a set of coordinates.
 
 Each coordinate in ORIGCOORDS is compared to the values in the COORDLIST in
-COORDLISTLIST that has the same index. If a matching coordinate is found in
-COORDLISTLIST, the function returns the next coordinate value from COORDLIST. If
+COORDLISTLIST that has the same index. For the first matching coordinate in
+COORDLIST, the function returns the next coordinate value from COORDLIST. If
 no matching coordinate is found or the matching coordinate is the last entry in
 COORDLIST, the function returns the original coordinate value from ORIGCOORDS."
   (mapcar (lambda (indcoord)

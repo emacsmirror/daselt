@@ -35,16 +35,16 @@
 ;;;; flycheck-error-list-mode-map
 `(flycheck-error-list-mode-map 
 ;;;;; Coordinates
-;;;;;;; 3
-;;;;;;;; 3--1
-  ((3 -1 -3) . #'flycheck-error-list-check-source) 
-  ((3 -1 -2) . #'flycheck-error-list-set-filter) 
-  ((3 -1 2) . #'flycheck-error-list-reset-filter) 
+;;;;;;; 4
+;;;;;;;; 4--1
+  ((4 -1 -3) . #'flycheck-error-list-check-source) 
+  ((4 -1 -2) . #'flycheck-error-list-set-filter) 
+  ((4 -1 2) . #'flycheck-error-list-reset-filter) 
 
-;;;;;;;; 3-0 
-  ((3 0 -3) . #'flycheck-error-list-previous-error) 
-  ((3 0 -2) . #'flycheck-error-list-explain-error) 
-  ((3 0 2) . #'flycheck-error-list-goto-error) 
-  ((3 0 3) . #'flycheck-error-list-next-error))
+;;;;;;;; 4-0 
+  ((4 0 -3) . #'flycheck-error-list-previous-error) 
+  ((4 0 -2) . #'flycheck-error-list-explain-error) 
+  ((4 0 2) . #'flycheck-error-list-goto-error) 
+  ((4 0 3) . #'flycheck-error-list-next-error))
 
 ;;; d-emacs-flycheck-bindlists.el ends here

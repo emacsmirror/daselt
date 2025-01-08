@@ -23,15 +23,14 @@
 ;; Special bindlist for avy-act-recenter-at-cur-line-keys that is read in in d-emacs-avy-act-constants.
 ;;; Code:
 
-
 ;;;; avy-act-mode-map
 `(
 ;;;;; Coordinates
-;;;;;;; 1
-;;;;;;;; 1-0
- (("C-" . (1 0 -3))) 
- (("C-" . (1 0 3))))
-
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+  (("C-" . (1 0 -3))) 
+  (("C-" . (1 0 3))))
 
 (provide 'd-emacs-avy-act-special-recenter-bindlists)
 ;;; d-emacs-avy-act-special-recenter-bindlists.el ends here

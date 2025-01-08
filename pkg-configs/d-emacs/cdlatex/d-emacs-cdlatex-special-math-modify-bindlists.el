@@ -24,44 +24,44 @@
 
 ;;; Code:
 
-
 ;;;; cdlatex-mode-map
-`(;;;;; Coordinates
+`(
+;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
- ((1 0 -2) "\\mathbb" nil t nil nil) 
+  ((1 0 -2) "\\mathbb" nil t nil nil) 
 
 ;;;;;;;; 1-1 
- ((1 1 -3) "\\mathfrak" nil t nil nil) 
+  ((1 1 -3) "\\mathfrak" nil t nil nil) 
 
 ;;;;;;; 2 
 ;;;;;;;; 2-0 
- ((2 0 3) "\\red" nil t nil nil) 
+  ((2 0 3) "\\red" nil t nil nil) 
 
 ;;;;;;;; 2-1 
- ((2 1 -4) "\\yellow" nil t nil nil) 
- ((2 1 5) "\\blue" nil t nil nil) 
+  ((2 1 -4) "\\yellow" nil t nil nil) 
+  ((2 1 5) "\\blue" nil t nil nil) 
 
 ;;;;;;; 3 
 ;;;;;;;; 3--1 
- ((3 -1 -4) "\\reflectbox" nil t nil nil) 
-
-;;;;;;;; 3-1 
- ((3 1 -2) "\\underline" nil t nil nil) 
- ((3 1 2) "\\overline" nil t nil nil) 
+  ((3 -1 -5) "\\cancel" nil t nil nil) 
+  ((3 -1 -3) "\\mathsmaller" "\\textsmaller" t nil nil) 
+  ((3 -1 3) "\\mathlarger" "\\textlarger" t nil nil) 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
- ((4 -1 -5) "\\cancel" nil t nil nil) 
- ((4 -1 -3) "\\mathsmaller" "\\textsmaller" t nil nil) 
- ((4 -1 3) "\\mathlarger" "\\textlarger" t nil nil) 
+  ((4 -1 -4) "\\reflectbox" nil t nil nil) 
 
-;;;;;;; 7 
-;;;;;;;; 7--1 
- ((7 -1 -3) "\\xuparrow" nil t nil nil) 
- ((7 -1 -2) "\\xleftarrow" nil t nil nil) 
- ((7 -1 2) "\\xrightarrow" nil t nil nil) 
- ((7 -1 3) "\\xdownarrow" nil t nil nil))
+;;;;;;;; 4-1 
+  ((4 1 -2) "\\underline" nil t nil nil) 
+  ((4 1 2) "\\overline" nil t nil nil) 
+
+;;;;;;; 6 
+;;;;;;;; 6--1 
+  ((6 -1 -3) "\\xuparrow" nil t nil nil) 
+  ((6 -1 -2) "\\xleftarrow" nil t nil nil) 
+  ((6 -1 2) "\\xrightarrow" nil t nil nil) 
+  ((6 -1 3) "\\xdownarrow" nil t nil nil))
 
 (provide 'd-emacs-cdlatex-special-math-modify-bindlists)
 ;;; d-emacs-cdlatex-special-math-modify-bindlists.el ends here

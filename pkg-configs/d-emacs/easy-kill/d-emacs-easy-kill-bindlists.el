@@ -32,9 +32,8 @@
 
 ;;; Code:
 
-
 ;;;; easy-kill-base-map
-`(easy-kill-base-map
+`(easy-kill-base-map 
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -45,17 +44,17 @@
   ((1 1 3) . #'easy-kill-region) 
 
 ;;;;;; C- 
-;;;;;;; C-3 
-;;;;;;;; C-3--1 
-  (("C-" . (3 -1 -2)) . #'easy-kill-to-string-to-char-backward) 
-  (("C-" . (3 -1 2)) . #'easy-kill-to-string-to-char-forward) 
-  (("C-" . (3 -1 4)) . #'easy-kill-cycle) 
+;;;;;;; C-4 
+;;;;;;;; C-4--1 
+  (("C-" . (4 -1 -2)) . #'easy-kill-to-string-to-char-backward) 
+  (("C-" . (4 -1 2)) . #'easy-kill-to-string-to-char-forward) 
+  (("C-" . (4 -1 4)) . #'easy-kill-cycle) 
 
-;;;;;;;; C-3-0 
-  (("C-" . (3 0 -3)) . #'easy-kill-shrink) 
-  (("C-" . (3 0 -2)) . #'easy-kill-er-unexpand) 
-  (("C-" . (3 0 2)) . #'easy-kill-er-expand) 
-  (("C-" . (3 0 3)) . #'easy-kill-expand))
+;;;;;;;; C-4-0 
+  (("C-" . (4 0 -3)) . #'easy-kill-shrink) 
+  (("C-" . (4 0 -2)) . #'easy-kill-er-unexpand) 
+  (("C-" . (4 0 2)) . #'easy-kill-er-expand) 
+  (("C-" . (4 0 3)) . #'easy-kill-expand))
 
 (provide 'd-emacs-easy-kill-bindlists)
 ;;; d-emacs-easy-kill-bindlists.el ends here

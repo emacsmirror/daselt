@@ -97,6 +97,7 @@
      ("kp3" . ("kp3" . ,(nth 2 d-emacs-dfk-C-coords)))
 
      ;; Hyper
+     ((-2 -6) . (,(nth 0 d-emacs-dfk-H-coords) . ,(nth 0 d-emacs-dfk-H-coords)))
      ((1 0) . ((1 0) . ,(nth 0 d-emacs-dfk-H-coords)))
 
      ;; Super
@@ -116,52 +117,52 @@
      ((2 1) . ("f15" . ,(nth 0 d-emacs-dfk-locking-2-coords)))
 
      ;; 3
+     ((0 -6) . ("f14" . ,(nth 0 d-emacs-dfk-locking-3-coords)))
+     ((0 6) . ("f14" . ,(nth 1 d-emacs-dfk-locking-3-coords)))
+
+     ;; 4
      (,(if d-emacs-dfk-outside-mods '(-2 -3) '(-1 -3))
       . (,(if d-emacs-dfk-outside-mods "scrolllock" '(-1 -3))
-         . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+         . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
             ,(nth 0 d-emacs-dfk-non-locking-3-coords))))
      (,(if d-emacs-dfk-outside-mods '(-2 3) '(-1 3))
       . (,(if d-emacs-dfk-outside-mods "scrolllock" '(-1 3))
-         . (,(nth 1 d-emacs-dfk-non-locking-3-coords)
-            ,(nth 1 d-emacs-dfk-non-locking-2-coords))))
-
-     ;; 4
-     ((0 -6) . ("f14" . ,(nth 0 d-emacs-dfk-locking-3-coords)))
-     ((0 6) . ("f14" . ,(nth 1 d-emacs-dfk-locking-3-coords)))
+         . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+            ,(nth 1 d-emacs-dfk-non-locking-3-coords))))
 
      ;; 5
      ((-2 -4) . ((-2 -4) . ,(nth 0 d-emacs-dfk-locking-5-coords)))
      ((-2 4) . ((-2 4) . ,(nth 0 d-emacs-dfk-locking-5-coords)))
 
      ;; 6
+     (,(if d-emacs-dfk-outside-mods '(-2 -2) '(-2 -3))
+      . (,(if d-emacs-dfk-outside-mods
+              '(-2 -2)
+            "scrolllock")
+         . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
+            ,(nth 0 d-emacs-dfk-locking-5-coords))))
+     (,(if d-emacs-dfk-outside-mods '(-2 2) '(-2 3))
+      . (,(if d-emacs-dfk-outside-mods
+              '(-2 2)
+            "scrolllock")
+         . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+            ,(nth 0 d-emacs-dfk-locking-5-coords))))
+
+     ;; 7
+     (,(if (string= d-emacs-dfk-keyboard-layout-type "ansi") '(1 -7) '(1 -6))
+      . ((1 -6) . (,(nth 0 d-emacs-dfk-non-locking-3-coords)
+                   ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
+     ((1 6)
+      . ((1 6) . (,(nth 1 d-emacs-dfk-non-locking-3-coords)
+                  ,(nth 1 d-emacs-dfk-non-locking-5-coords))))
+
+     ;; 8
      ((-1 -6) . ("f11" . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
                           ,(nth 0 d-emacs-dfk-locking-3-coords)
                           ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
      ((-1 6) . ("f11" . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
                          ,(nth 1 d-emacs-dfk-locking-3-coords)
-                         ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
-
-     ;; 7
-     (,(if d-emacs-dfk-outside-mods '(-2 -2) '(-2 -3))
-      . (,(if d-emacs-dfk-outside-mods
-              '(-2 -2)
-            "scrolllock")
-         . (,(nth 0 d-emacs-dfk-locking-2-coords)
-            ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
-     (,(if d-emacs-dfk-outside-mods '(-2 2) '(-2 3))
-      . (,(if d-emacs-dfk-outside-mods
-              '(-2 2)
-            "scrolllock")
-         . (,(nth 0 d-emacs-dfk-locking-2-coords)
-            ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
-
-     ;; 8
-     (,(if (string= d-emacs-dfk-keyboard-layout-type "ansi") '(1 -7) '(1 -6))
-      . ((1 -6) . (,(nth 0 d-emacs-dfk-locking-3-coords)
-                   ,(nth 0 d-emacs-dfk-locking-5-coords))))
-     ((1 6)
-      . ((1 6) . (,(nth 1 d-emacs-dfk-locking-3-coords)
-                  ,(nth 0 d-emacs-dfk-locking-5-coords)))))
+                         ,(nth 0 d-emacs-dfk-non-locking-5-coords)))))
   "Form to generate the d-dfk layouts.
 When evaluated, returns a bindlist that can be used in
 `d-emacs-dfk-generate-config'. The exact composition of the bindlist depends on
@@ -349,7 +350,7 @@ See there for more information."
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-non-locking-5-coords
-  '((0 6))
+  '((0 6) (-2 -6))
   "Coordinates for keys that are used for ISO-Level-5-Shift-signals
 that don't lock.
 
@@ -437,12 +438,12 @@ called `input-event-codes.h' in your `d-emacs-dfk-directory'."
 (defcustom d-emacs-dfk-layer-level-shifts
   '((1 . nil)
     (2 . (2))
-    (3 . (2 3))
-    (4 . (3 5))
+    (3 . (3))
+    (4 . (2 3))
     (5 . (5))
-    (6 . (2 3 5))
-    (7 . (2 5))
-    (8 . (3)))
+    (6 . (2 5))
+    (7 . (3 5))
+    (8 . (2 3 5)))
   "Alist of layers and corresponding shift numbers.
 
 The cars of the conses in this list are layers. The cdr is the
@@ -774,28 +775,26 @@ Based on the customs in `d-emacs-dfk'."
                               (cdr placeval)))
                       d-emacs-dfk-special-layer-0-placevals-alist)))))
 
-;;;; Add layer 0 to d-emacs-xkb-layouts
-(with-eval-after-load 'd-emacs-coords
-  (with-eval-after-load 'd-emacs-xkb
-    (let ((layer0layout (d-emacs-coords-layout-from-placevals
-                         (d-emacs-dfk-generate-layer-0-placevals))))
-      
-      (mapc (lambda (laysym)
-              (let ((namecore (d-emacs-namecore laysym "d-emacs-xkb-" "-layout")))
-                (eval `(defconst ,(intern (concat "d-emacs-dfk-" namecore "-layout"))
-                         ',(append layer0layout (symbol-value laysym))
-                         ,(format "The d-emacs-dfk-layout generated from %s."
-                                  (symbol-name laysym))))))
-            d-emacs-xkb-layouts)
+;;;; Add layer 0 to other layouts
+(defmacro d-emacs-dfk-import-layout (laysym &optional pfx)
+  "Generate a `d-emacs-dfk'-layout from the layout named LAYSYM.
 
-      (defcustom d-emacs-dfk-layout
-        (let ((namecore (d-emacs-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")))
-          (intern (concat "d-emacs-dfk-" namecore "-layout")))
-        "The d-emacs-dfk-layout you're using.
+The layout is bound to the variable `d-emacs-dfk-CORE-layout', where
+the name of LAYSYM is of the form `PFX-CORE-layout'.
 
-By default this is just `d-emacs-xkb-layout' with layer 0 appended,
-but if you want to re-set your layout during an emacs-session, change
-this option because it overrides `d-emacs-xkb-layout'."))))
+PFX is `d-emacs-xkb-' by default."
+  (let* ((pfx (or pfx "d-emacs-xkb-"))
+         (namecore (d-emacs-namecore laysym pfx "-layout"))
+         (dfkname (intern (concat "d-emacs-dfk-" namecore "-layout"))))
+    `(let ((layer0layout (d-emacs-coords-layout-from-placevals
+                          (d-emacs-dfk-generate-layer-0-placevals))))
+       (defconst ,dfkname
+         (append layer0layout (symbol-value ',laysym))))))
+
+(defmacro d-emacs-dfk-import-current-layout ()
+  "Import the layout that is currently specified in `d-emacs-xkb-layout'.
+Set the result as the value of `d-emacs-dfk-layout'."
+  `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))
 
 ;;;; Provide
 (provide 'd-emacs-dfk)

@@ -29,229 +29,229 @@
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
-((1 -1 -5) . "pin") 
-((1 -1 -3) . "hint -h") 
-((1 -1 3) . "hint") 
-((1 -1 4) . "fillcmdline tab") 
+  ((1 -1 -5) . "help") 
+  ((1 -1 -5) . "pin") 
+  ((1 -1 -3) . "hint -h") 
+  ((1 -1 3) . "hint") 
+  ((1 -1 4) . "fillcmdline tab") 
 
 ;;;;;;;; 1-0 
-((1 -1 -5) . "help") 
-((1 0 -3) . "scrollline -15") 
-((1 0 -2) . "jumpprev") 
-((1 0 -1) . "scrollpage -1") 
-((1 0 1) . "scrollpage 1")
-((1 0 2) . "jumpnext") 
-((1 0 3) . "scrollline 15") 
-((1 0 4) . "reader") 
-((1 0 5) . "fillcmdline open") 
+  ((1 0 -3) . "scrollline -15") 
+  ((1 0 -2) . "jumpprev") 
+  ((1 0 -1) . "scrollpage -1") 
+  ((1 0 1) . "scrollpage 1") 
+  ((1 0 2) . "jumpnext") 
+  ((1 0 3) . "scrollline 15") 
+  ((1 0 4) . "reader") 
+  ((1 0 5) . "fillcmdline open") 
 
 ;;;;;;;; 1-1 
-((1 1 -4) . "mute") 
-((1 1 -3) . "clipboard yank") 
-((1 1 -2) . "reload 1") 
-((1 1 2) . "fillcmdline") 
-((1 1 3) . "clipboard open")
-((1 1 4) . "mute unmute") 
+  ((1 1 -4) . "mute") 
+  ((1 1 -3) . "clipboard yank") 
+  ((1 1 -2) . "reload 1") 
+  ((1 1 2) . "fillcmdline") 
+  ((1 1 3) . "clipboard open") 
+  ((1 1 4) . "mute unmute") 
 
-;;;;;;; 2
-((2 -1 -2) . "bmark") 
-(("C-" . (2 -1 -2)) . "gobble 1 quickmark") 
-((2 -1 3) . "hint -t") 
-((2 -1 4) . "fillcmdline taball") 
+;;;;;;; 2 
+;;;;;;;; 2--1 
+  ((2 -1 -2) . "bmark") 
+  ((2 -1 3) . "hint -t") 
+  ((2 -1 4) . "fillcmdline taball") 
 
 ;;;;;;;; 2-0 
-((2 0 -2) . "back") 
-((2 0 2) . "forward") 
+  ((2 0 -2) . "back") 
+  ((2 0 2) . "forward") 
 
 ;;;;;;;; 2-1 
-((2 1 -3) . "clipboard yankshort") 
-((2 1 3) . "clipboard tabopen") 
+  ((2 1 -3) . "clipboard yankshort") 
+  ((2 1 3) . "clipboard tabopen") 
 
-;;;;;;; 3
+;;;;;;; 3 
 ;;;;;;;; 3--1 
-((3 -1 -2) . "followpage prev") 
-((3 -1 1) . "focusinput -b") 
-((3 -1 2) . "followpage next")
+  ((3 -1 -4) . "reloadhard") 
+  ((3 -1 -2) . "fillcmdline markaddglobal ") 
+  ((3 -1 4) . "fillcmdline taball") 
 
 ;;;;;;;; 3-0 
+  ((3 0 -1) . "scrollto 0") 
+  ((3 0 1) . "scrollto 100") 
 
 ;;;;;;;; 3-1 
-((3 1 -5) . "changelistjump -1") 
-((3 1 -4) . "focusinput -p") 
-((3 1 -3) . "clipboard yanktitle") 
-((3 1 -2) . "focusinput -N") 
-((3 1 0) . "focusinput -l") 
-((3 1 2) . "focusinput -n") 
-((3 1 4) . "focusinput -b") 
+  ((3 1 -3) . "clipboard yankorg") 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-((4 -1 -4) . "reloadhard") 
-((4 -1 -2) . "fillcmdline markaddglobal ") 
-((4 -1 4) . "fillcmdline taball") 
-
-;;;;;;;; 4-0 
-((4 0 -1) . "scrollto 0") 
-((4 0 1) . "scrollto 100")
+  ((4 -1 -2) . "followpage prev") 
+  ((4 -1 1) . "focusinput -b") 
+  ((4 -1 2) . "followpage next") 
 
 ;;;;;;;; 4-1 
-((4 1 -3) . "clipboard yankorg") 
+  ((4 1 -5) . "changelistjump -1") 
+  ((4 1 -4) . "focusinput -p") 
+  ((4 1 -3) . "clipboard yanktitle") 
+  ((4 1 -2) . "focusinput -N") 
+  ((4 1 0) . "focusinput -l") 
+  ((4 1 2) . "focusinput -n") 
+  ((4 1 4) . "focusinput -b") 
 
 ;;;;;;; 5 
 ;;;;;;;; 5--1 
-((5 -1 -2) . "gobble 1 markadd") 
-((5 -1 2) . "gobble 1 markjump") 
+  ((5 -1 -2) . "gobble 1 markadd") 
+  ((5 -1 2) . "gobble 1 markjump") 
 
 ;;;;;;;; 5-0 
-((5 0 -3) . "urlparent") 
-((5 0 -1) . "urlroot") 
-((5 0 4) . "viewsource") 
+  ((5 0 -3) . "urlparent") 
+  ((5 0 -1) . "urlroot") 
+  ((5 0 4) . "viewsource") 
 
 ;;;;;;;; 5-1 
-((5 1 3) . "yankimage") 
+  ((5 1 3) . "yankimage") 
 
 ;;;;;;; 6 
 ;;;;;;;; 6--1 
-((6 -1 -5) . "hint -I") 
-((6 -1 -4) . "hint -b") 
-((6 -1 -3) . "hint -K") 
-((6 -1 -1) . "hint -a") 
-((6 -1 1) . "hint -z") 
-((6 -1 2) . "hint -t") 
-((6 -1 3) . "hint -k") 
-((6 -1 4) . "hint -r") 
-((6 -1 5) . "hint -wp") 
+  ((6 -1 -4) . "undo window") 
+  ((6 -1 -3) . "winopen") 
+  ((6 -1 -3) . "fillcmdline winopen") 
+  ((6 -1 2) . "winmerge") 
+  ((6 -1 3) . "winclose") 
 
 ;;;;;;;; 6-0 
-((6 0 -5) . "hint -;") 
-((6 0 -4) . "fillcmdline hint -f") 
-((6 0 -2) . "hint -i") 
-((6 0 2) . "hint -s") 
-((6 0 4) . "fillcmdline hint -fr") 
-((6 0 5) . "hint -#") 
+  ((6 0 -5) . "tabduplicate") 
+  ((6 0 -4) . "undo tab") 
+  ((6 0 -3) . "fillcmdline tabopen") 
+  ((6 0 -2) . "tabprev") 
+  ((6 0 -1) . "tabfirst") 
+  ((6 0 1) . "tablast") 
+  ((6 0 2) . "tabnext") 
+  ((6 0 3) . "tabclose") 
+  ((6 0 4) . "tabaudio") 
+  ((6 0 5) . "tabpush") 
 
 ;;;;;;;; 6-1 
-((6 1 -3) . "hint -P") 
-((6 1 -2) . "hint -w") 
-((6 1 2) . "hint -y") 
-((6 1 4) . "hint -p") 
+  ((6 1 0) . "rot13") 
 
-;;;;;;; 7 
-((7 -1 -4) . "undo window") 
-((7 -1 -3) . "fillcmdline winopen")
-((7 -1 -3) . "winopen") 
-((7 -1 2) . "winmerge")
-((7 -1 3) . "winclose") 
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -5) . "hint -I") 
+  ((8 -1 -4) . "hint -b") 
+  ((8 -1 -3) . "hint -K") 
+  ((8 -1 -1) . "hint -a") 
+  ((8 -1 1) . "hint -z") 
+  ((8 -1 2) . "hint -t") 
+  ((8 -1 3) . "hint -k") 
+  ((8 -1 4) . "hint -r") 
+  ((8 -1 5) . "hint -wp") 
 
-;;;;;;;; 7-0 
-((7 0 -5) . "tabduplicate") 
-((7 0 -4) . "undo tab") 
-((7 0 -3) . "fillcmdline tabopen") 
-((7 0 -2) . "tabprev") 
-((7 0 -1) . "tabfirst") 
-((7 0 1) . "tablast") 
-((7 0 2) . "tabnext") 
-((7 0 3) . "tabclose") 
-((7 0 4) . "tabaudio") 
-((7 0 5) . "tabpush") 
+;;;;;;;; 8-0 
+  ((8 0 -5) . "hint -;") 
+  ((8 0 -4) . "fillcmdline hint -f") 
+  ((8 0 -2) . "hint -i") 
+  ((8 0 2) . "hint -s") 
+  ((8 0 4) . "fillcmdline hint -fr") 
+  ((8 0 5) . "hint -#") 
 
-;;;;;;;; 7-1 
-((7 1 0) . "rot13")   
+;;;;;;;; 8-1 
+  ((8 1 -3) . "hint -P") 
+  ((8 1 -2) . "hint -w") 
+  ((8 1 2) . "hint -y") 
+  ((8 1 4) . "hint -p") 
 
 ;;;;;; C- 
-;;;;;;; C-1 
-;;;;;;;; C-1--1 
+;;;;;;; C-2 
+;;;;;;;; C-2--1 
+  (("C-" . (2 -1 -2)) . "gobble 1 quickmark") 
+  (("C-" . (2 -1 2)) . "fillcmdline bmark . ") 
 
 ;;;;;;; C-3 
-;;;;;;;; C-3-0 
-(("C-" . (3 -1 -4)) . "source --clipboard") 
-(("C-" . (2 -1 2)) . "fillcmdline bmark . ") 
+;;;;;;;; C-3-1 
+  (("C-" . (3 1 -3)) . "clipboard yankmd") 
 
 ;;;;;;; C-4 
-;;;;;;;; C-4-1 
-(("C-" . (4 1 -3)) . "clipboard yankmd") 
+;;;;;;;; C-4--1 
+  (("C-" . (4 -1 -4)) . "source --clipboard") 
 
 ;;;;;;; C-6 
 ;;;;;;;; C-6--1 
-(("C-" . (6 -1 -3)) . "hint -J*b") 
-(("C-" . (6 -1 -1)) . "hint -J*a") 
-(("C-" . (6 -1 1)) . "hint -J*z") 
-(("C-" . (6 -1 2)) . "hint -J*t") 
-(("C-" . (6 -1 3)) . "hint -J*r") 
-(("C-" . (6 -1 3)) . "hint -J*wp") 
-(("C-" . (6 -1 4)) . "hint -J*I") 
+  (("C-" . (6 -1 -3)) . "fillcmdline winopen -private") 
+  (("C-" . (6 -1 2)) . "winmerge") 
 
 ;;;;;;;; C-6-0 
-(("C-" . (6 0 -4)) . "hint -J*;") 
-(("C-" . (6 0 -2)) . "hint -J*i") 
-(("C-" . (6 0 2)) . "hint -J*s") 
-(("C-" . (6 0 4)) . "hint -J*#") 
+  (("C-" . (6 0 -4)) . "tabclosealltoleft") 
+  (("C-" . (6 0 -2)) . "tabmove -1") 
+  (("C-" . (6 0 2)) . "tabmove +1") 
+  (("C-" . (6 0 3)) . "tabonly") 
+  (("C-" . (6 0 4)) . "tabclosealltoright") 
 
 ;;;;;;;; C-6-1 
-(("C-" . (6 1 -3)) . "hint -J*P") 
-(("C-" . (6 1 -2)) . "hint -J*w") 
-(("C-" . (6 1 3)) . "hint -J*y") 
-(("C-" . (6 1 4)) . "hint -J*p") 
+  (("C-" . (6 1 0)) . "jumble") 
 
-;;;;;;; C-7 
-;;;;;;;; C-7--1 
-(("C-" . (7 0 -4)) . "tabclosealltoleft") 
-(("C-" . (7 0 3)) . "tabonly") 
-(("C-" . (7 0 4)) . "tabclosealltoright") 
+;;;;;;; C-8 
+;;;;;;;; C-8--1 
+  (("C-" . (8 -1 -3)) . "hint -J*b") 
+  (("C-" . (8 -1 -1)) . "hint -J*a") 
+  (("C-" . (8 -1 1)) . "hint -J*z") 
+  (("C-" . (8 -1 2)) . "hint -J*t") 
+  (("C-" . (8 -1 3)) . "hint -J*wp") 
+  (("C-" . (8 -1 3)) . "hint -J*r") 
+  (("C-" . (8 -1 4)) . "hint -J*I") 
 
-;;;;;;;; 7-0 
-(("C-" . (7 0 -2)) . "tabmove -1") 
-(("C-" . (7 0 2)) . "tabmove +1") 
+;;;;;;;; C-8-0 
+  (("C-" . (8 0 -4)) . "hint -J*;") 
+  (("C-" . (8 0 -2)) . "hint -J*i") 
+  (("C-" . (8 0 2)) . "hint -J*s") 
+  (("C-" . (8 0 4)) . "hint -J*#") 
 
-;;;;;;;; C-7--1 
-(("C-" . (7 -1 -3)) . "fillcmdline winopen -private") 
-(("C-" . (7 1 0)) . "jumble") 
-(("C-" . (7 -1 2)) . "winmerge") 
+;;;;;;;; C-8-1 
+  (("C-" . (8 1 -3)) . "hint -J*P") 
+  (("C-" . (8 1 -2)) . "hint -J*w") 
+  (("C-" . (8 1 3)) . "hint -J*y") 
+  (("C-" . (8 1 4)) . "hint -J*p") 
 
 ;;;;;; H- 
-;;;;;;; H-6 
-;;;;;;;; H-6--1 
-(("H-" . (6 -1 -3)) . "hint -Vb") 
-(("H-" . (6 -1 -1)) . "hint -Va") 
-(("H-" . (6 -1 1)) . "hint -Vz") 
-(("H-" . (6 -1 2)) . "hint -Vt") 
-(("H-" . (6 -1 3)) . "hint -Vr") 
-(("H-" . (6 -1 3)) . "hint -Vwp") 
-(("H-" . (6 -1 4)) . "hint -VI") 
+;;;;;;; H-8 
+;;;;;;;; H-8--1 
+  (("H-" . (8 -1 -3)) . "hint -Vb") 
+  (("H-" . (8 -1 -1)) . "hint -Va") 
+  (("H-" . (8 -1 1)) . "hint -Vz") 
+  (("H-" . (8 -1 2)) . "hint -Vt") 
+  (("H-" . (8 -1 3)) . "hint -Vwp") 
+  (("H-" . (8 -1 3)) . "hint -Vr") 
+  (("H-" . (8 -1 4)) . "hint -VI") 
 
-;;;;;;;; H-6-0 
-(("H-" . (6 0 -4)) . "hint -V;") 
-(("H-" . (6 0 -2)) . "hint -Vi") 
-(("H-" . (6 0 2)) . "hint -Vs") 
-(("H-" . (6 0 4)) . "hint -V#") 
+;;;;;;;; H-8-0 
+  (("H-" . (8 0 -4)) . "hint -V;") 
+  (("H-" . (8 0 -2)) . "hint -Vi") 
+  (("H-" . (8 0 2)) . "hint -Vs") 
+  (("H-" . (8 0 4)) . "hint -V#") 
 
-;;;;;;;; H-6-1 
-(("H-" . (6 1 -3)) . "hint -VP") 
-(("H-" . (6 1 -2)) . "hint -Vw") 
-(("H-" . (6 1 3)) . "hint -Vy") 
-(("H-" . (6 1 4)) . "hint -Vp") 
+;;;;;;;; H-8-1 
+  (("H-" . (8 1 -3)) . "hint -VP") 
+  (("H-" . (8 1 -2)) . "hint -Vw") 
+  (("H-" . (8 1 3)) . "hint -Vy") 
+  (("H-" . (8 1 4)) . "hint -Vp") 
 
 ;;;;;; H-C- 
-;;;;;;; H-C-6 
-;;;;;;;; H-C-6--1 
-(("H-C-" . (6 -1 -3)) . "hint -qb") 
-(("H-C-" . (6 -1 -1)) . "hint -qa") 
-(("H-C-" . (6 -1 1)) . "hint -qz") 
-(("H-C-" . (6 -1 2)) . "hint -qt") 
-(("H-C-" . (6 -1 3)) . "hint -qr") 
-(("H-C-" . (6 -1 4)) . "hint -qwp") 
-(("H-C-" . (6 -1 5)) . "hint -qI") 
+;;;;;;; H-C-8 
+;;;;;;;; H-C-8--1 
+  (("H-C-" . (8 -1 -3)) . "hint -qb") 
+  (("H-C-" . (8 -1 -1)) . "hint -qa") 
+  (("H-C-" . (8 -1 1)) . "hint -qz") 
+  (("H-C-" . (8 -1 2)) . "hint -qt") 
+  (("H-C-" . (8 -1 3)) . "hint -qr") 
+  (("H-C-" . (8 -1 4)) . "hint -qwp") 
+  (("H-C-" . (8 -1 5)) . "hint -qI") 
 
-;;;;;;;; H-C-6-0 
-(("H-C-" . (6 0 -4)) . "hint -q;") 
-(("H-C-" . (6 0 -2)) . "hint -qi") 
-(("H-C-" . (6 0 2)) . "hint -qs") 
-(("H-C-" . (6 0 4)) . "hint -q#") 
+;;;;;;;; H-C-8-0 
+  (("H-C-" . (8 0 -4)) . "hint -q;") 
+  (("H-C-" . (8 0 -2)) . "hint -qi") 
+  (("H-C-" . (8 0 2)) . "hint -qs") 
+  (("H-C-" . (8 0 4)) . "hint -q#") 
 
-;;;;;;;; H-C-6-1 
-(("H-C-" . (6 1 -3)) . "hint -qP") 
-(("H-C-" . (6 1 -2)) . "hint -qw") 
-(("H-C-" . (6 1 3)) . "hint -qy") 
-(("H-C-" . (6 1 4)) . "hint -qp"))
+;;;;;;;; H-C-8-1 
+  (("H-C-" . (8 1 -3)) . "hint -qP") 
+  (("H-C-" . (8 1 -2)) . "hint -qw") 
+  (("H-C-" . (8 1 3)) . "hint -qy") 
+  (("H-C-" . (8 1 4)) . "hint -qp"))
 
 ;;; d-tri-bindlists.el ends here

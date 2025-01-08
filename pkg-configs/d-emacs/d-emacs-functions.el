@@ -200,16 +200,7 @@ If no match is found, call DEFAULT."
 
 ;;;; Advice functions
 ;;;;; Read functions
-(defun d-emacs-read-multiple-choice-base (prompt choices &optional help-string show-help
-                                                 long-form)
-  "A copy of `read-multiple-choice' for advice purposes.
-Allows d-emacs to put advice around `read-multiple-choice' without recursion."
-  (if long-form
-                                  (read-multiple-choice--long-answers prompt choices)
-                  (read-multiple-choice--short-answers
-     prompt choices help-string show-help)))
-
-(defun d-emacs--replace-read-multiple-choice-choices (prompt choices &optional help-string show-help long-form)
+(defun d-emacs--translate-read-multiple-choice (fun prompt choices &optional help-string show-help long-form)
   "Replace short-choices in read-multiple-choice-input.
 Replacemets are specified in `d-emacs-special-read-answer-bindlist'. To be
 wrapped around `read-multiple-choice'."
@@ -228,7 +219,7 @@ wrapped around `read-multiple-choice'."
                                  newchoice))
                              choices))
 
-         (choicereturn (apply #'d-emacs-read-multiple-choice-base (list prompt newchoices help-string show-help long-form)))
+         (choicereturn (funcall fun prompt newchoices help-string show-help long-form))
 
          (carret (car choicereturn)) ; And back.
          (transcarret (char-to-string
@@ -237,106 +228,8 @@ wrapped around `read-multiple-choice'."
          (transret (cons transcarret (cdr choicereturn))))
     transret))
 
-(defun d-read-answer-base (question answers)
-  "Copy of `read-answer'.
-Allows putting advice around `read-answer' without recursion."
-  (let* ((short (if (eq read-answer-short 'auto)
-                    (or use-short-answers
-                        (eq (symbol-function 'yes-or-no-p) 'y-or-n-p))
-                  read-answer-short))
-         (answers-with-help
-          (if (assoc "help" answers)
-              answers
-            (append answers '(("help" ?? "show this help message")))))
-         (answers-without-help
-          (assoc-delete-all "help" (copy-alist answers-with-help)))
-         (prompt
-          (format "%s(%s) " question
-                  (mapconcat (lambda (a)
-                               (if short
-                                   (if (characterp (nth 1 a))
-                                       (format "%c" (nth 1 a))
-                                     (key-description (nth 1 a)))
-                                 (nth 0 a)))
-                             answers-with-help ", ")))
-         (message
-          (format "Please answer %s."
-                  (mapconcat (lambda (a)
-                               (format "`%s'" (if short
-                                                  (if (characterp (nth 1 a))
-                                                      (string (nth 1 a))
-                                                    (key-description (nth 1 a)))
-                                                (nth 0 a))))
-                             answers-with-help " or ")))
-         (short-answer-map
-          (when short
-            (or (gethash answers read-answer-map--memoize)
-                (puthash answers
-                         (let ((map (make-sparse-keymap)))
-                           (set-keymap-parent map minibuffer-local-map)
-                           (dolist (a answers-with-help)
-                             (define-key map (if (characterp (nth 1 a))
-                                                 (vector (nth 1 a))
-                                               (nth 1 a))
-                                         (lambda ()
-                                           (interactive)
-                                           (delete-minibuffer-contents)
-                                           (insert (nth 0 a))
-                                           (exit-minibuffer))))
-                           (define-key map [remap self-insert-command]
-                                       (lambda ()
-                                         (interactive)
-                                         (delete-minibuffer-contents)
-                                         (beep)
-                                         (message message)
-                                         (sit-for 2)))
-                           map)
-                         read-answer-map--memoize))))
-         answer)
-    (while (not (assoc (setq answer (downcase
-                                     (cond
-                                      ((and (display-popup-menus-p)
-                                            last-input-event ; not during startup
-                                            (listp last-nonmenu-event)
-                                            use-dialog-box)
-                                       (x-popup-dialog
-                                        t
-                                        (cons question
-                                              (mapcar (lambda (a)
-                                                        (cons (capitalize (nth 0 a))
-                                                              (nth 0 a)))
-                                                      answers-with-help))))
-                                      (short
-                                       (read-from-minibuffer
-                                        prompt nil short-answer-map nil
-                                        'read-char-history))
-                                      (t
-                                       (read-from-minibuffer
-                                        prompt nil nil nil
-                                        'yes-or-no-p-history)))))
-                       answers-without-help))
-      (if (string= answer "help")
-          (with-help-window "*Help*"
-            (with-current-buffer "*Help*"
-              (insert "Type:\n"
-                      (mapconcat
-                       (lambda (a)
-                         (format "`%s'%s to %s"
-                                 (if short (if (characterp (nth 1 a))
-                                               (string (nth 1 a))
-                                             (key-description (nth 1 a)))
-                                   (nth 0 a))
-                                 (if short (format " (%s)" (nth 0 a)) "")
-                                 (nth 2 a)))
-                       answers-with-help ",\n")
-                      ".\n")))
-        (beep)
-        (message message)
-        (sit-for 2)))
-    answer))
-
-(defun d-emacs--replace-read-answer-answers (_rans question answers)
-  "Replace short answers in `read-answer-input' with Daselt values.
+(defun d-emacs--translate-read-answer (fun question answers)
+  "Replace short answers in `read-answer'-input with Daselt values.
 These are specified in `d-emacs-special-read-answer-bindlist'. Wraps around
 `read-answer'."
   (let ((newans (mapcar (lambda (answer)
@@ -351,7 +244,24 @@ These are specified in `d-emacs-special-read-answer-bindlist'. Wraps around
                                                 (caddr answer))))
                             ansargs))
                         answers)))
-    (apply (intern "d-read-answer-base") (list question newans))))
+    (funcall fun question newans)))
+
+(defun d-emacs--translate-read-char-choice (fun prompt chars &optional inhibit-keyboard-quit)
+  "Replace characters in `read-char-choice' with Daselt values.
+These are specified in `d-emacs-special-read-answer-bindlist'. Wraps around
+`read-char-choice'."
+  (let* ((keylst (mapcar (lambda (bind)
+                           (cons (cdr bind)
+                                 (string-to-char
+                                  (d--extract-binding-string bind))))
+                         d-emacs-special-read-answer-bindlist))
+         (trans (mapcar (lambda (char)
+                          (let ((ret (alist-get char keylst char nil #'=)))
+                            ret))
+                        chars))
+         (answer (funcall fun prompt trans inhibit-keyboard-quit))
+         (retrans (d-reverse-alist-get answer keylst nil #'=)))
+    retrans))
 
 ;;;; Rebinder functions, taken from Abdulla Bubshait's rebinder package: https://github.com/darkstego/rebinder.el
 (defun d-emacs-dynamic-binding (key &optional toggle)
@@ -364,7 +274,7 @@ from Ctrl to regular key and vice versa"
     nil
     :filter
     (lambda (&optional _)
-                                ,`(d-emacs-key-binding ,key ,toggle))))
+      ,`(d-emacs-key-binding ,key ,toggle))))
 
 ;; might need to do keymap inheretence to perserve priority
 (defun d-emacs-key-binding (key &optional toggle)

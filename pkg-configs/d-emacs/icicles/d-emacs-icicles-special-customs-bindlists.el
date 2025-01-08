@@ -36,174 +36,174 @@
 `(
 ;;;;; Coordinates
 ;;;;;; C-
-;;;;;;; C-3
-;;;;;;;; C-3--1
-  (("C-" . (3 -1 -4)) . 'icicle-search-from-isearch-keys) 
-  (("C-" . (3 -1 -3)) . 'icicle-apropos-cycle-previous-keys) 
-  (("C-" . (3 -1 -2)) . 'icicle-apropos-complete-keys) 
-  (("C-" . (3 -1 3)) . 'icicle-apropos-cycle-next-keys) 
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 -4)) quote icicle-search-from-isearch-keys) 
+ (("C-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-keys) 
+ (("C-" . (4 -1 -2)) quote icicle-apropos-complete-keys) 
+ (("C-" . (4 -1 3)) quote icicle-apropos-cycle-next-keys) 
 
-;;;;;;;; C-3-0 
-  (("C-" . (3 0 -3)) . 'icicle-modal-cycle-up-keys) 
-  (("C-" . (3 0 3)) . 'icicle-modal-cycle-down-keys) 
+;;;;;;;; C-4-0 
+ (("C-" . (4 0 -3)) quote icicle-modal-cycle-up-keys) 
+ (("C-" . (4 0 3)) quote icicle-modal-cycle-down-keys) 
 
-;;;;;;;; C-3-1 
-  (("C-" . (3 1 -4)) . 'icicle-isearch-history-insert-keys) 
-  (("C-" . (3 1 -3)) . 'icicle-prefix-cycle-previous-keys) 
-  (("C-" . (3 1 -2)) . 'icicle-prefix-complete-keys) 
-  (("C-" . (3 1 3)) . 'icicle-prefix-cycle-next-keys) 
-  (("C-" . (3 1 4)) . 'icicle-isearch-complete-keys) 
+;;;;;;;; C-4-1 
+ (("C-" . (4 1 -4)) quote icicle-isearch-history-insert-keys) 
+ (("C-" . (4 1 -3)) quote icicle-prefix-cycle-previous-keys) 
+ (("C-" . (4 1 -2)) quote icicle-prefix-complete-keys) 
+ (("C-" . (4 1 3)) quote icicle-prefix-cycle-next-keys) 
+ (("C-" . (4 1 4)) quote icicle-isearch-complete-keys) 
 
 ;;;;;; s- 
-;;;;;;; s-3 
-;;;;;;;; s-3--1 
-(("s-" . (3 -1 -3)) . 'icicle-apropos-cycle-previous-action-keys) 
-(("s-" . (3 -1 3)) . 'icicle-apropos-cycle-next-action-keys) 
+;;;;;;; s-4 
+;;;;;;;; s-4--1 
+ (("s-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-action-keys) 
+ (("s-" . (4 -1 3)) quote icicle-apropos-cycle-next-action-keys) 
 
-;;;;;;;; s-3-0 
-(("s-" . (3 0 -3)) . 'icicle-modal-cycle-up-action-keys) 
-(("s-" . (3 0 2)) . 'icicle-candidate-action-keys) 
-(("s-" . (3 0 3)) . 'icicle-modal-cycle-down-action-keys) 
+;;;;;;;; s-4-0 
+ (("s-" . (4 0 -3)) quote icicle-modal-cycle-up-action-keys) 
+ (("s-" . (4 0 2)) quote icicle-candidate-action-keys) 
+ (("s-" . (4 0 3)) quote icicle-modal-cycle-down-action-keys) 
 
-;;;;;;;; s-3-1 
-(("s-" . (3 1 -3)) . 'icicle-prefix-cycle-previous-action-keys) 
-(("s-" . (3 1 3)) . 'icicle-prefix-cycle-next-action-keys) 
+;;;;;;;; s-4-1 
+ (("s-" . (4 1 -3)) quote icicle-prefix-cycle-previous-action-keys) 
+ (("s-" . (4 1 3)) quote icicle-prefix-cycle-next-action-keys) 
 
 ;;;;;; s-C- 
-;;;;;;; s-C-3 
-;;;;;;;; s-C-3--1 
-  (("s-C-" . (3 -1 -3)) . 'icicle-apropos-cycle-previous-help-keys) 
-  (("s-C-" . (3 -1 -2)) . 'icicle-apropos-complete-no-display-keys) 
-  (("s-C-" . (3 -1 3)) . 'icicle-apropos-cycle-previous-help-keys) 
+;;;;;;; s-C-4 
+;;;;;;;; s-C-4--1 
+ (("s-C-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-help-keys) 
+ (("s-C-" . (4 -1 -2)) quote icicle-apropos-complete-no-display-keys) 
+ (("s-C-" . (4 -1 3)) quote icicle-apropos-cycle-previous-help-keys) 
 
-;;;;;;;; s-C-3-0 
-  (("s-C-" . (3 0 -5)) . 'icicle-candidate-help-keys) 
-  (("s-C-" . (3 0 -3)) . 'icicle-modal-cycle-up-help-keys) 
-  (("s-C-" . (3 0 3)) . 'icicle-modal-cycle-down-help-keys) 
+;;;;;;;; s-C-4-0 
+ (("s-C-" . (4 0 -5)) quote icicle-candidate-help-keys) 
+ (("s-C-" . (4 0 -3)) quote icicle-modal-cycle-up-help-keys) 
+ (("s-C-" . (4 0 3)) quote icicle-modal-cycle-down-help-keys) 
 
-;;;;;;;; s-C-3-1 
-  (("s-C-" . (3 1 -3)) . 'icicle-prefix-cycle-previous-help-keys) 
-  (("s-C-" . (3 1 -2)) . 'icicle-prefix-complete-no-display-keys) 
-  (("s-C-" . (3 1 3)) . 'icicle-prefix-cycle-next-help-keys) 
+;;;;;;;; s-C-4-1 
+ (("s-C-" . (4 1 -3)) quote icicle-prefix-cycle-previous-help-keys) 
+ (("s-C-" . (4 1 -2)) quote icicle-prefix-complete-no-display-keys) 
+ (("s-C-" . (4 1 3)) quote icicle-prefix-cycle-next-help-keys) 
 
 ;;;;;; s-H- 
-;;;;;;; s-H-3 
-;;;;;;;; s-H-3--1 
-(("s-H-" . (3 -1 -3)) . 'icicle-apropos-cycle-previous-alt-action-keys) 
-(("s-H-" . (3 -1 3)) . 'icicle-apropos-cycle-next-alt-action-keys) 
+;;;;;;; s-H-4 
+;;;;;;;; s-H-4--1 
+ (("s-H-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-alt-action-keys) 
+ (("s-H-" . (4 -1 3)) quote icicle-apropos-cycle-next-alt-action-keys) 
 
-;;;;;;;; s-H-3-0 
-(("s-H-" . (3 0 -3)) . 'icicle-modal-cycle-up-alt-action-keys) 
-(("s-H-" . (3 0 3)) . 'icicle-modal-cycle-down-alt-action-keys) 
+;;;;;;;; s-H-4-0 
+ (("s-H-" . (4 0 -3)) quote icicle-modal-cycle-up-alt-action-keys) 
+ (("s-H-" . (4 0 3)) quote icicle-modal-cycle-down-alt-action-keys) 
 
-;;;;;;;; s-H-3-1 
-(("s-H-" . (3 1 -3)) . 'icicle-prefix-cycle-previous-alt-action-keys) 
-(("s-H-" . (3 1 3)) . 'icicle-prefix-cycle-next-alt-action-keys))
+;;;;;;;; s-H-4-1 
+ (("s-H-" . (4 1 -3)) quote icicle-prefix-cycle-previous-alt-action-keys) 
+ (("s-H-" . (4 1 3)) quote icicle-prefix-cycle-next-alt-action-keys))
 
 ;;;; icicle-minibuffer-key-bindings
 `(icicle-minibuffer-key-bindings 
 ;;;;; Coordinates
 ;;;;;; C-
-;;;;;;; C-3
-;;;;;;;; C-3-0
-  (("C-" . (3 0 1)) . #'icicle-insert-string-at-point) 
+;;;;;;; C-4
+;;;;;;;; C-4-0
+ (("C-" . (4 0 1)) . #'icicle-insert-string-at-point) 
 
-;;;;;;; C-8 
-;;;;;;;; C-8--1 
-  (("C-" . (8 -1 4)) . #'icicle-multi-inputs-act) 
+;;;;;;; C-7 
+;;;;;;;; C-7--1 
+ (("C-" . (7 -1 4)) . #'icicle-multi-inputs-act) 
 
-;;;;;;;; C-8-0 
-  (("C-" . (8 0 -1)) . #'icicle-scroll-backward) 
-  (("C-" . (8 0 1)) . #'icicle-scroll-forward) 
+;;;;;;;; C-7-0 
+ (("C-" . (7 0 -1)) . #'icicle-scroll-backward) 
+ (("C-" . (7 0 1)) . #'icicle-scroll-forward) 
 
 ;;;;;; M- 
 ;;;;;;; M-1 
 ;;;;;;;; M-1-1 
-  (("M-" . (1 1 -6)) . #'icicle-minibuffer-help) 
+ (("M-" . (1 1 -6)) . #'icicle-minibuffer-help) 
 
-;;;;;;; M-3 
-;;;;;;;; M-3--1 
-  (("M-" . (3 -1 -3)) . #'icicle-erase-minibuffer) 
-  (("M-" . (3 -1 3)) . #'icicle-erase-minibuffer-or-history-element) 
+;;;;;;; M-4 
+;;;;;;;; M-4--1 
+ (("M-" . (4 -1 -3)) . #'icicle-erase-minibuffer) 
+ (("M-" . (4 -1 3)) . #'icicle-erase-minibuffer-or-history-element) 
 
-;;;;;;;; M-3-0 
-  (("M-" . (3 0 -5)) . #'icicle-resolve-file-name) 
+;;;;;;;; M-4-0 
+ (("M-" . (4 0 -5)) . #'icicle-resolve-file-name) 
 
-;;;;;;;; M-3-1 
-  (("M-" . (3 1 -4)) . #'icicle-save-string-to-variable) 
-  (("M-" . (3 1 4)) . #'icicle-insert-string-from-variable) 
+;;;;;;;; M-4-1 
+ (("M-" . (4 1 -4)) . #'icicle-save-string-to-variable) 
+ (("M-" . (4 1 4)) . #'icicle-insert-string-from-variable) 
 
-;;;;;;; M-8 
-;;;;;;;; M-8--1 
-  (("M-" . (8 -1 -5)) . #'icicle-cycle-image-file-thumbnail) 
-  (("M-" . (8 -1 -4)) . #'icicle-toggle-search-complementing-domain) 
-  (("M-" . (8 -1 -2)) . #'icicle-toggle-sorting) 
-  (("M-" . (8 -1 -1)) . #'icicle-toggle-ignored-extensions) 
-  (("M-" . (8 -1 1)) . #'icicle-toggle-ignored-space-prefix) 
-  (("M-" . (8 -1 2)) . #'icicle-toggle-alternative-sorting) 
-  (("M-" . (8 -1 3)) . #'icicle-toggle-highlight-saved-candidates) 
-  (("M-" . (8 -1 4)) . #'icicle-toggle-search-cleanup) 
-  (("M-" . (8 -1 5)) . #'icicle-toggle-search-replace-common-match) 
+;;;;;;; M-7 
+;;;;;;;; M-7--1 
+ (("M-" . (7 -1 -5)) . #'icicle-cycle-image-file-thumbnail) 
+ (("M-" . (7 -1 -4)) . #'icicle-toggle-search-complementing-domain) 
+ (("M-" . (7 -1 -2)) . #'icicle-toggle-sorting) 
+ (("M-" . (7 -1 -1)) . #'icicle-toggle-ignored-extensions) 
+ (("M-" . (7 -1 1)) . #'icicle-toggle-ignored-space-prefix) 
+ (("M-" . (7 -1 2)) . #'icicle-toggle-alternative-sorting) 
+ (("M-" . (7 -1 3)) . #'icicle-toggle-highlight-saved-candidates) 
+ (("M-" . (7 -1 4)) . #'icicle-toggle-search-cleanup) 
+ (("M-" . (7 -1 5)) . #'icicle-toggle-search-replace-common-match) 
 
-;;;;;;;; M-8-0 
-  (("M-" . (8 0 -5)) . #'icicle-minibuffer-help) 
-  (("M-" . (8 0 -4)) . #'icicle-toggle-icomplete-mode) 
-  (("M-" . (8 0 -3)) . #'icicle-toggle-regexp-quote) 
-  (("M-" . (8 0 -2)) . #'icicle-toggle-annotation) 
-  (("M-" . (8 0 -1)) . #'icicle-toggle-proxy-candidates) 
-  (("M-" . (8 0 1)) . #'icicle-toggle-WYSIWYG-Completions) 
-  (("M-" . (8 0 2)) . #'icicle-toggle-case-sensitivity) 
-  (("M-" . (8 0 3)) . #'icicle-toggle-highlight-all-current) 
-  (("M-" . (8 0 4)) . #'icicle-toggle-literal-replacement) 
-  (("M-" . (8 0 5)) . #'icicle-toggle-highlight-historical-candidates) 
+;;;;;;;; M-7-0 
+ (("M-" . (7 0 -5)) . #'icicle-minibuffer-help) 
+ (("M-" . (7 0 -4)) . #'icicle-toggle-icomplete-mode) 
+ (("M-" . (7 0 -3)) . #'icicle-toggle-regexp-quote) 
+ (("M-" . (7 0 -2)) . #'icicle-toggle-annotation) 
+ (("M-" . (7 0 -1)) . #'icicle-toggle-proxy-candidates) 
+ (("M-" . (7 0 1)) . #'icicle-toggle-WYSIWYG-Completions) 
+ (("M-" . (7 0 2)) . #'icicle-toggle-case-sensitivity) 
+ (("M-" . (7 0 3)) . #'icicle-toggle-highlight-all-current) 
+ (("M-" . (7 0 4)) . #'icicle-toggle-literal-replacement) 
+ (("M-" . (7 0 5)) . #'icicle-toggle-highlight-historical-candidates) 
 
-;;;;;;;; M-8-1 
-  (("M-" . (8 1 -6)) . #'icicle-toggle-transforming) 
-  (("M-" . (8 1 -5)) . #'icicle-toggle-show-multi-completion) 
-  (("M-" . (8 1 -4)) . #'icicle-toggle-highlight-historical-candidates) 
-  (("M-" . (8 1 -3)) . #'icicle-toggle-hiding-common-match) 
-  (("M-" . (8 1 -2)) . #'icicle-toggle-completions-format) 
-  (("M-" . (8 1 0)) . #'icicle-toggle-expand-to-common-match) 
-  (("M-" . (8 1 2)) . #'icicle-toggle-expand-directory) 
-  (("M-" . (8 1 3)) . #'icicle-toggle-hiding-non-matching-lines) 
-  (("M-" . (8 1 4)) . #'icicle-toggle-highlight-saved-candidates) 
-  (("M-" . (8 1 5)) . #'icicle-toggle-search-whole-word) 
-  (("M-" . (8 1 6)) . #'icicle-toggle-WYSIWYG-Completions) 
+;;;;;;;; M-7-1 
+ (("M-" . (7 1 -6)) . #'icicle-toggle-transforming) 
+ (("M-" . (7 1 -5)) . #'icicle-toggle-show-multi-completion) 
+ (("M-" . (7 1 -4)) . #'icicle-toggle-highlight-historical-candidates) 
+ (("M-" . (7 1 -3)) . #'icicle-toggle-hiding-common-match) 
+ (("M-" . (7 1 -2)) . #'icicle-toggle-completions-format) 
+ (("M-" . (7 1 0)) . #'icicle-toggle-expand-to-common-match) 
+ (("M-" . (7 1 2)) . #'icicle-toggle-expand-directory) 
+ (("M-" . (7 1 3)) . #'icicle-toggle-hiding-non-matching-lines) 
+ (("M-" . (7 1 4)) . #'icicle-toggle-highlight-saved-candidates) 
+ (("M-" . (7 1 5)) . #'icicle-toggle-search-whole-word) 
+ (("M-" . (7 1 6)) . #'icicle-toggle-WYSIWYG-Completions) 
 
 ;;;;;; M-C- 
-;;;;;;; M-C-8 
-;;;;;;;; M-C-8--1 
-  (("M-C-" . (8 -1 3)) . #'icicle-insert-newline-in-minibuffer) 
+;;;;;;; M-C-7 
+;;;;;;;; M-C-7--1 
+ (("M-C-" . (7 -1 3)) . #'icicle-insert-newline-in-minibuffer) 
 
-;;;;;;;; M-C-8-0 
-  (("M-C-" . (8 0 -4)) . #'icicle-insert-history-element) 
+;;;;;;;; M-C-7-0 
+ (("M-C-" . (7 0 -4)) . #'icicle-insert-history-element) 
 
-;;;;;;;; M-C-8-1 
-  (("M-C-" . (8 1 -3)) . #'icicle-kill-region) 
-  (("M-C-" . (8 1 -2)) . #'icicle-abort-recursive-edit) 
-  (("M-C-" . (8 1 0)) . #'icicle-reverse-sort-order) 
+;;;;;;;; M-C-7-1 
+ (("M-C-" . (7 1 -3)) . #'icicle-kill-region) 
+ (("M-C-" . (7 1 -2)) . #'icicle-abort-recursive-edit) 
+ (("M-C-" . (7 1 0)) . #'icicle-reverse-sort-order) 
 
 ;;;;;; s- 
-;;;;;;; s-8 
-;;;;;;;; s-8--1 
-  (("s-" . (8 -1 -4)) . #'icicle-pp-eval-expression) 
-  (("s-" . (8 -1 4)) . #'icicle-other-history) 
+;;;;;;; s-7 
+;;;;;;;; s-7--1 
+ (("s-" . (7 -1 -4)) . #'icicle-pp-eval-expression) 
+ (("s-" . (7 -1 4)) . #'icicle-other-history) 
 
-;;;;;;;; s-8-0 
-  (("s-" . (8 0 5)) . #'icicle-multi-inputs-save) 
+;;;;;;;; s-7-0 
+ (("s-" . (7 0 5)) . #'icicle-multi-inputs-save) 
 
-;;;;;;;; s-8-1 
-  (("s-" . (8 1 -2)) . #'icicle-top-level) 
+;;;;;;;; s-7-1 
+ (("s-" . (7 1 -2)) . #'icicle-top-level) 
 
 ;;;;;; s-C- 
-;;;;;;; s-C-3 
-;;;;;;;; s-C-3-0 
-  (("s-C-" . (3 0 -5)) . #'icicle-minibuffer-help) 
+;;;;;;; s-C-4 
+;;;;;;;; s-C-4-0 
+ (("s-C-" . (4 0 -5)) . #'icicle-minibuffer-help) 
 
 ;;;;;; s-H- 
-;;;;;;; s-H-8 
-;;;;;;;; s-H-8--1 
-  (("s-H-" . (8 -1 -3)) . #'icicle-clear-current-history))
+;;;;;;; s-H-7 
+;;;;;;;; s-H-7--1 
+ (("s-H-" . (7 -1 -3)) . #'icicle-clear-current-history))
 
 ;;;; icicle-completion-key-bindings
 `(icicle-completion-key-bindings 
@@ -378,22 +378,22 @@
 `(icicle-buffer-candidate-key-bindings 
 ;;;;; Coordinates
 ;;;;;; s-H-
-;;;;;;; s-H-8
-;;;;;;;; s-H-8--1
-  (("s-H-" . (8 -1 -3)) . #'icicle-remove-buffer-cands-for-derived-mode) 
-  (("s-H-" . (8 -1 -2)) . #'icicle-toggle-include-cached-files) 
-  (("s-H-" . (8 -1 2)) . #'icicle-toggle-include-recent-files) 
-  (("s-H-" . (8 -1 3)) . #'icicle-keep-only-buffer-cands-for-derived-mode) 
+;;;;;;; s-H-7
+;;;;;;;; s-H-7--1
+  (("s-H-" . (7 -1 -3)) . #'icicle-remove-buffer-cands-for-derived-mode) 
+  (("s-H-" . (7 -1 -2)) . #'icicle-toggle-include-cached-files) 
+  (("s-H-" . (7 -1 2)) . #'icicle-toggle-include-recent-files) 
+  (("s-H-" . (7 -1 3)) . #'icicle-keep-only-buffer-cands-for-derived-mode) 
 
-;;;;;;;; s-H-8-0 
-  (("s-H-" . (8 0 -4)) . #'icicle-remove-buffer-cands-for-visible) 
-  (("s-H-" . (8 0 -3)) . #'icicle-remove-buffer-cands-for-mode) 
-  (("s-H-" . (8 0 -2)) . #'icicle-remove-buffer-cands-for-modified) 
-  (("s-H-" . (8 0 -1)) . #'icicle-remove-buffer-cands-for-indirect) 
-  (("s-H-" . (8 0 1)) . #'icicle-keep-only-buffer-cands-for-indirect) 
-  (("s-H-" . (8 0 2)) . #'icicle-keep-only-buffer-cands-for-modified) 
-  (("s-H-" . (8 0 3)) . #'icicle-keep-only-buffer-cands-for-mode) 
-  (("s-H-" . (8 0 4)) . #'icicle-keep-only-buffer-cands-for-visible))
+;;;;;;;; s-H-7-0 
+  (("s-H-" . (7 0 -4)) . #'icicle-remove-buffer-cands-for-visible) 
+  (("s-H-" . (7 0 -3)) . #'icicle-remove-buffer-cands-for-mode) 
+  (("s-H-" . (7 0 -2)) . #'icicle-remove-buffer-cands-for-modified) 
+  (("s-H-" . (7 0 -1)) . #'icicle-remove-buffer-cands-for-indirect) 
+  (("s-H-" . (7 0 1)) . #'icicle-keep-only-buffer-cands-for-indirect) 
+  (("s-H-" . (7 0 2)) . #'icicle-keep-only-buffer-cands-for-modified) 
+  (("s-H-" . (7 0 3)) . #'icicle-keep-only-buffer-cands-for-mode) 
+  (("s-H-" . (7 0 4)) . #'icicle-keep-only-buffer-cands-for-visible))
 
 ;;;; icicle-completion-list-key-bindings
 `(icicle-completion-list-key-bindings 

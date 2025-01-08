@@ -34,9 +34,9 @@
 
 ;;;; vterm-mode-map
 `(
-;;;;; Coordinates 
-;;;;;;; 0 
-;;;;;;;; 0-0 
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-0
   ((0 0 -6) . #'vterm-copy-mode) 
 
 ;;;;;; C- 

@@ -36,7 +36,7 @@
 `(
 ;;;;; Coordinates
 ;;;;;;; 0
-;;;;;;;; 0-0
+;;;;;;;; 0-2
   ((0 2 0) . #'hydra-dired-quick-sort/body) 
 
 ;;;;;;; 1 
@@ -89,39 +89,39 @@
 
 ;;;;;;; 3 
 ;;;;;;;; 3--1 
-  ((3 -1 -5) . #'dired-do-byte-compile) 
-  ((3 -1 -3) . #'dired-do-delete) 
-  ((3 -1 2) . #'dired-goto-file) 
-  ((3 -1 3) . #'dired-mark-sexp) 
-  ((3 -1 5) . #'bmkp-dired-jump) 
+  ((3 -1 -4) . #'dired-do-load) 
+  ((3 -1 -3) . #'dired-flag-file-deletion) 
 
 ;;;;;;;; 3-0 
-  ((3 0 -5) . #'dired-do-info) 
-  ((3 0 -4) . #'dired-do-find-regexp) 
-  ((3 0 -3) . #'dired-hide-subdir) 
-  ((3 0 -1) . #'dired-do-run-mail) 
-  ((3 0 1) . #'quit-window) 
-  ((3 0 2) . #'dired-find-file-other-window) 
-  ((3 0 3) . #'dired-insert-subdir) 
-  ((3 0 4) . #'dired-do-find-regexp-and-replace) 
-  ((3 0 5) . #'browse-url-of-dired-file) 
+  ((3 0 -3) . #'dired-hide-all) 
 
 ;;;;;;;; 3-1 
-  ((3 1 -6) . #'dired-show-file-type) 
-  ((3 1 -3) . #'dired-do-touch) 
-  ((3 1 3) . #'dired-flag-backup-files) 
-  ((3 1 5) . #'dired-copy-file-recursive) 
+  ((3 1 3) . #'image-dired-dired-toggle-marked-thumbs) 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-  ((4 -1 -4) . #'dired-do-load) 
-  ((4 -1 -3) . #'dired-flag-file-deletion) 
+  ((4 -1 -5) . #'dired-do-byte-compile) 
+  ((4 -1 -3) . #'dired-do-delete) 
+  ((4 -1 2) . #'dired-goto-file) 
+  ((4 -1 3) . #'dired-mark-sexp) 
+  ((4 -1 5) . #'bmkp-dired-jump) 
 
 ;;;;;;;; 4-0 
-  ((4 0 -3) . #'dired-hide-all) 
+  ((4 0 -5) . #'dired-do-info) 
+  ((4 0 -4) . #'dired-do-find-regexp) 
+  ((4 0 -3) . #'dired-hide-subdir) 
+  ((4 0 -1) . #'dired-do-run-mail) 
+  ((4 0 1) . #'quit-window) 
+  ((4 0 2) . #'dired-find-file-other-window) 
+  ((4 0 3) . #'dired-insert-subdir) 
+  ((4 0 4) . #'dired-do-find-regexp-and-replace) 
+  ((4 0 5) . #'browse-url-of-dired-file) 
 
 ;;;;;;;; 4-1 
-  ((4 1 3) . #'image-dired-dired-toggle-marked-thumbs) 
+  ((4 1 -6) . #'dired-show-file-type) 
+  ((4 1 -3) . #'dired-do-touch) 
+  ((4 1 3) . #'dired-flag-backup-files) 
+  ((4 1 5) . #'dired-copy-file-recursive) 
 
 ;;;;;;; 5 
 ;;;;;;;; 5--1 
@@ -134,43 +134,43 @@
 
 ;;;;;;; 6 
 ;;;;;;;; 6--1 
-  ((6 -1 -4) . #'dired-do-print) 
-  ((6 -1 -2) . #'d-dired-do-flagged-delete) 
+  ((6 -1 -3) . #'dired-display-file) 
+  ((6 -1 3) . #'dired-mark-suffix) 
 
 ;;;;;;;; 6-0 
-  ((6 0 -2) . #'image-dired-dired-edit-comment-and-tags) 
-  ((6 0 2) . #'image-dired-dired-display-image) 
-  ((6 0 4) . #'elgrep-menu) 
+  ((6 0 -3) . #'dired-tree-up) 
+  ((6 0 -2) . #'dired-prev-marked-file) 
+  ((6 0 2) . #'dired-next-marked-file) 
+  ((6 0 3) . #'dired-tree-down) 
+  ((6 0 4) . #'dired-goto-subdir) 
+  ((6 0 5) . #'dired-do-relsymlink) 
 
 ;;;;;;;; 6-1 
-  ((6 1 -3) . #'image-dired-mark-tagged-files) 
-  ((6 1 -2) . #'image-dired-tag-files) 
-  ((6 1 2) . #'image-dired-dired-comment-files) 
-  ((6 1 4) . #'image-dired-jump-thumbnail-buffer) 
-  ((6 1 5) . #'image-dired-dired-edit-comment-and-tags) 
+  ((6 1 -2) . #'dired-prev-subdir) 
+  ((6 1 0) . #'dired-toggle-marks) 
+  ((6 1 2) . #'dired-next-subdir) 
+  ((6 1 5) . #'dired-smart-shell-command) 
 
-;;;;;;; 7 
-;;;;;;;; 7--1 
-  ((7 -1 -3) . #'dired-display-file) 
-  ((7 -1 3) . #'dired-mark-suffix) 
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -4) . #'dired-do-print) 
+  ((8 -1 -2) . #'d-dired-do-flagged-delete) 
 
-;;;;;;;; 7-0 
-  ((7 0 -3) . #'dired-tree-up) 
-  ((7 0 -2) . #'dired-prev-marked-file) 
-  ((7 0 2) . #'dired-next-marked-file) 
-  ((7 0 3) . #'dired-tree-down) 
-  ((7 0 4) . #'dired-goto-subdir) 
-  ((7 0 5) . #'dired-do-relsymlink) 
+;;;;;;;; 8-0 
+  ((8 0 -2) . #'image-dired-dired-edit-comment-and-tags) 
+  ((8 0 2) . #'image-dired-dired-display-image) 
+  ((8 0 4) . #'elgrep-menu) 
 
-;;;;;;;; 7-1 
-  ((7 1 -2) . #'dired-prev-subdir) 
-  ((7 1 0) . #'dired-toggle-marks) 
-  ((7 1 2) . #'dired-next-subdir) 
-  ((7 1 5) . #'dired-smart-shell-command) 
+;;;;;;;; 8-1 
+  ((8 1 -3) . #'image-dired-mark-tagged-files) 
+  ((8 1 -2) . #'image-dired-tag-files) 
+  ((8 1 2) . #'image-dired-dired-comment-files) 
+  ((8 1 4) . #'image-dired-jump-thumbnail-buffer) 
+  ((8 1 5) . #'image-dired-dired-edit-comment-and-tags) 
 
 ;;;;;; M- 
-;;;;;;; M-3 
-;;;;;;;; M-3--1 
-  (("M-" . (3 -1 -3)) . #'d-dired-permanentely-delete))
+;;;;;;; M-4 
+;;;;;;;; M-4--1 
+  (("M-" . (4 -1 -3)) . #'d-dired-permanentely-delete))
 
 ;;; d-emacs-dired-bindlists.el ends here

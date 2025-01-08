@@ -42,15 +42,15 @@
   ((1 -1 4) . #'avy-act-follow) 
 
 ;;;;;;;; 1-0 
-  ((1 0 -2) . #'eww-previous-url)
+  ((1 0 -2) . #'eww-previous-url) 
   ((1 0 -1) . #'scroll-up-command) 
   ((1 0 1) . #'scroll-down-command) 
   ((1 0 2) . #'eww-next-url) 
   ((1 0 5) . #'eww) 
 
 ;;;;;;;; 1-1 
-  ((1 1 -2) . #'eww-download)
   ((1 1 -3) . #'eww-copy-page-url) 
+  ((1 1 -2) . #'eww-download) 
 
 ;;;;;;; 2 
 ;;;;;;;; 2--1 
@@ -69,22 +69,25 @@
   ((2 1 0) . #'eww-browse-with-external-browser) 
 
 ;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 -4) . #'eww-toggle-images) 
-  ((3 0 2) . #'eww-follow-link) 
-  ((3 1 0) . #'eww-download) 
+;;;;;;;; 3--1 
+  ((3 -1 -4) . #'eww-reload) 
 
+;;;;;;; 4 
+;;;;;;;; 4-0 
+  ((4 0 -4) . #'eww-toggle-images) 
+  ((4 0 2) . #'eww-follow-link) 
 
-  ((4 -1 -4) . #'eww-reload) 
+;;;;;;;; 4-1 
+  ((4 1 0) . #'eww-download) 
 
 ;;;;;;; 6 
-;;;;;;;; 6--1 
-  ((6 -1 -4) . #'d-emacs-eww-search-in-new-horizontal-window) 
-  ((6 -1 4) . #'d-emacs-eww-search-in-new-vertical-window) 
+;;;;;;;; 6-0 
+  ((6 0 -3) . #'d-emacs-eww-search-in-new-tab) 
 
-;;;;;;; 7 
-;;;;;;;; 7-0 
-  ((7 0 -3) . #'d-emacs-eww-search-in-new-tab))
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -4) . #'d-emacs-eww-search-in-new-horizontal-window) 
+  ((8 -1 4) . #'d-emacs-eww-search-in-new-vertical-window))
 
 (provide 'd-emacs-eww-bindlists)
 ;;; d-emacs-eww-bindlists.el ends here

@@ -54,16 +54,6 @@
 ;;;;;; C- 
   ("C-Print" . "screenshot-area") 
 
-;;;;;; M- 
-  ("M-Up" . "coord-up") 
-  ("M-Down" . "coord-down") 
-  ("M-Left" . "coord-left") 
-  ("M-Right" . "coord-right") 
-
-;;;;;; S- 
-  ("S-KP_7" . "coord-taskleft") 
-  ("S-KP_9" . "coord-taskright") 
-
 ;;;;;; H- 
   ("H-Up" . "move-focus up") 
   ("H-TAB" . "next-in-frame") 
@@ -75,10 +65,19 @@
   ("H-XF86AudioLowerVolume" . "backlight-down") 
   ("H-XF86AudioRaiseVolume" . "backlight-up") 
 
-;;;;; Coordinates 
+;;;;;; M- 
+  ("M-Up" . "coord-up") 
+  ("M-Down" . "coord-down") 
+  ("M-Left" . "coord-left") 
+  ("M-Right" . "coord-right") 
 
+;;;;;; S- 
+  ("S-KP_7" . "coord-taskleft") 
+  ("S-KP_9" . "coord-taskright") 
+
+;;;;; Coordinates 
+;;;;;; H- 
 ;;;;;;; H-1 
-;;;;;;;; H-1--1 
   (("H-" . (1 -1 -5)) . "fullscreen-in-frame") 
   (("H-" . (1 -1 -4)) . "coord-taskleft") 
   (("H-" . (1 -1 -3)) . "coord-up") 
@@ -143,7 +142,6 @@
 
 ;;;; "*root-map*"
 `("*root-map*" 
-
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1

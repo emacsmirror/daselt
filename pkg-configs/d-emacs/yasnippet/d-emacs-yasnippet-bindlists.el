@@ -32,14 +32,13 @@
 
 ;;; Code:
 
-
 ;;;; yas-keymap
-`(yas-keymap
+`(yas-keymap 
 ;;;;; Coordinates
 ;;;;;; C-
-;;;;;;; C-3
-;;;;;;;; C-3-0
-(("C-" . (3 0 -3)) . #'yas-prev-field) 
-(("C-" . (3 0 3)) . #'yas-next-field))
+;;;;;;; C-4
+;;;;;;;; C-4-0
+  (("C-" . (4 0 -3)) . #'yas-prev-field) 
+  (("C-" . (4 0 3)) . #'yas-next-field))
 
 ;;; d-emacs-yasnippet-bindlists.el ends here

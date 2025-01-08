@@ -32,9 +32,8 @@
 
 ;;; Code:
 
-
 ;;;; undo-tree-visualizer-mode-map
-`(undo-tree-visualizer-mode-map
+`(undo-tree-visualizer-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0

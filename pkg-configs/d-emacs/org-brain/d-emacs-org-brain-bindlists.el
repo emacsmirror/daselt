@@ -35,18 +35,18 @@
 ;;;; org-brain-select-map
 `(org-brain-select-map 
 ;;;;; Coordinates
-;;;;;;; 7
-;;;;;;;; 7-0
-  ((7 0 -3) . #'org-brain-add-selected-parents) 
-  ((7 0 -2) . #'org-brain-clear-selected) 
-  ((7 0 2) . #'org-brain-add-selected-friendships) 
-  ((7 0 3) . #'org-brain-add-selected-children) 
+;;;;;;; 6
+;;;;;;;; 6-0
+  ((6 0 -3) . #'org-brain-add-selected-parents) 
+  ((6 0 -2) . #'org-brain-clear-selected) 
+  ((6 0 2) . #'org-brain-add-selected-friendships) 
+  ((6 0 3) . #'org-brain-add-selected-children) 
 
-;;;;;;;; 7-1 
-  ((7 1 -3) . #'org-brain-remove-selected-parents) 
-  ((7 1 -2) . #'org-brain-delete-selected-entries) 
-  ((7 1 2) . #'org-brain-remove-selected-friendships) 
-  ((7 1 5) . #'org-brain-remove-selected-children))
+;;;;;;;; 6-1 
+  ((6 1 -3) . #'org-brain-remove-selected-parents) 
+  ((6 1 -2) . #'org-brain-delete-selected-entries) 
+  ((6 1 2) . #'org-brain-remove-selected-friendships) 
+  ((6 1 5) . #'org-brain-remove-selected-children))
 
 ;;;; org-brain-visualize-mode-map
 `(org-brain-visualize-mode-map 
@@ -57,8 +57,8 @@
   ((1 -1 -2) . #'org-brain-pin) 
   ((1 -1 2) . #'org-brain-select-dwim) 
   ((1 -1 3) . #'org-brain-visualize-follow) 
-  ((1 -1 4) . #'org-brain-hide-descendant-level) 
   ((1 -1 4) . #'org-brain-goto) 
+  ((1 -1 4) . #'org-brain-hide-descendant-level) 
 
 ;;;;;;;; 1-0 
   ((1 0 -3) . #'scroll-up-command) 
@@ -81,15 +81,15 @@
   ((2 0 3) . #'org-brain-add-child-headline) 
 
 ;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 -3) . #'org-brain-change-local-parent) 
-  ((3 0 -2) . #'org-brain-visualize-attach) 
-  ((3 0 3) . #'org-brain-refile) 
-  ((3 0 4) . #'org-brain-visualize-wander) 
+;;;;;;;; 3--1 
+  ((3 -1 -3) . #'org-brain-delete-entry) 
 
 ;;;;;;; 4 
-;;;;;;;; 4--1 
-  ((4 -1 -3) . #'org-brain-delete-entry) 
+;;;;;;;; 4-0 
+  ((4 0 -3) . #'org-brain-change-local-parent) 
+  ((4 0 -2) . #'org-brain-visualize-attach) 
+  ((4 0 3) . #'org-brain-refile) 
+  ((4 0 4) . #'org-brain-visualize-wander) 
 
 ;;;;;;; 5 
 ;;;;;;;; 5-0 
@@ -97,21 +97,21 @@
   ((5 0 1) . #'org-brain-visualize-quit) 
   ((5 0 2) . #'org-brain-open-resource) 
 
-;;;;;;; 7 
-;;;;;;;; 7--1 
-  ((7 -1 -3) . #'org-brain-visualize-parent) 
-  ((7 -1 3) . #'org-brain-visualize-mind-map) 
+;;;;;;; 6 
+;;;;;;;; 6--1 
+  ((6 -1 -3) . #'org-brain-visualize-parent) 
+  ((6 -1 3) . #'org-brain-visualize-mind-map) 
 
-;;;;;;;; 7-0 
-  ((7 0 -3) . #'org-brain-add-parent) 
-  ((7 0 -2) . #'org-brain-add-relationship) 
-  ((7 0 2) . #'org-brain-add-friendship) 
-  ((7 0 3) . #'org-brain-add-child) 
+;;;;;;;; 6-0 
+  ((6 0 -3) . #'org-brain-add-parent) 
+  ((6 0 -2) . #'org-brain-add-relationship) 
+  ((6 0 2) . #'org-brain-add-friendship) 
+  ((6 0 3) . #'org-brain-add-child) 
 
-;;;;;;;; 7-1 
-  ((7 1 -3) . #'org-brain-remove-parent) 
-  ((7 1 -2) . #'org-brain-visualize-back) 
-  ((7 1 2) . #'org-brain-pin) 
-  ((7 1 5) . #'org-brain-remove-child))
+;;;;;;;; 6-1 
+  ((6 1 -3) . #'org-brain-remove-parent) 
+  ((6 1 -2) . #'org-brain-visualize-back) 
+  ((6 1 2) . #'org-brain-pin) 
+  ((6 1 5) . #'org-brain-remove-child))
 
 ;;; d-emacs-org-brain-bindlists.el ends here

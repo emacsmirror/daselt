@@ -38,26 +38,25 @@
 ;;;;;; C-
 ;;;;;;; C-1
 ;;;;;;;; C-1-0
-  (("C-" . (1 0 -1)) . #'scroll-down-command) 
-  (("C-" . (1 0 1)) . #'scroll-up-command)) 
+ (("C-" . (1 0 -1)) . #'scroll-down-command) 
+ (("C-" . (1 0 1)) . #'scroll-up-command)) 
 
 ;;;; function-key-map
 `(function-key-map 
 ;;;;; Strings
-  ("<f7>" . #'event-apply-hyper-modifier) 
+ ("<f7>" . #'event-apply-hyper-modifier) 
 
 ;;;;; Coordinates 
 ;;;;;;; 0 
-;;;;;;;; 0-1 
-  ((0 1 -7) . #'event-apply-alt-modifier) 
+ ((0 1 -7) . #'event-apply-alt-modifier) 
 
 ;;;;;;;; 0-2 
-  ((0 2 -1) . #'event-apply-meta-modifier) 
+ ((0 2 -1) . #'event-apply-meta-modifier) 
 
 ;;;;;; C- 
 ;;;;;;; C-0 
 ;;;;;;;; C-0-2 
-  (("C-" . (0 2 -1)) . #'event-apply-super-modifier)) 
+ (("C-" . (0 2 -1)) . #'event-apply-super-modifier)) 
 
 ;;;; button-buffer-map
 `(button-buffer-map 

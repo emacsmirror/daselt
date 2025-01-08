@@ -18,7 +18,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;; This file contains the keylists for StumpWM maps of d-stump. If daselt-d-stump is t, it is parsed automatically when daselt-mode is started. Each element in this file should be either
 
 ;; 1. A LIST consisting of conses of whose car is a binding-location (see d--binding-location-p) binding-cars and values. This map list corresponds to the shortcuts that are sent to all programs that are not otherwise specified and should generally be at be at the top if it exists.
@@ -28,8 +27,6 @@
 ;; Each of these options should be given using a backquote.
 
 ;;; Code:
-
-
 
 ;;;; "Firefox"
 `("Firefox" 
@@ -42,9 +39,9 @@
   (("C-" . (1 -1 -2)) . "C-z") 
   (("C-" . (1 -1 -1)) . "Prior") 
   (("C-" . (1 -1 1)) . "Next") 
-  (("C-" . (1 -1 2)) . "C-y")   
-  (("C-" . (1 -1 3)) . "C-w")
-  
+  (("C-" . (1 -1 2)) . "C-y") 
+  (("C-" . (1 -1 3)) . "C-w") 
+
 ;;;;;;;; C-1-0 
   (("C-" . (1 0 -5)) . "C-o") 
   (("C-" . (1 0 -4)) . "C-S-g") 
@@ -58,34 +55,30 @@
 
 ;;;;;;;; C-1-1 
   (("C-" . (1 1 -3)) . "C-c") 
-  (("C-" . (1 1 -2)) . "Escape")
+  (("C-" . (1 1 -2)) . "Escape") 
   (("C-" . (1 1 3)) . "C-v") 
 
 ;;;;;;; C-2 
 ;;;;;;;; C-2-0 
-  (("C-" . (2 1 -3)) . "C-x") 
-  (("C-" . (2 0 1)) . "C-q"))
+  (("C-" . (2 0 1)) . "C-q") 
+
+;;;;;;;; C-2-1 
+  (("C-" . (2 1 -3)) . "C-x"))
 
 ;;;; "emacs"
-`("emacs"
-;;;;; Coordinates
+`("emacs" 
+;;;;; Strings
 ;;;;;; C-
-;;;;;;; C-1
-;;;;;;;; C-1--1
   (("C-" . "g") . "C-x") 
+  (("C-" . "x") . "C-g") 
 
-;;;;;;;; C-1-0
+;;;;; Coordinates 
   (("C-" . (1 0 -3)) . "Up") 
   (("C-" . (1 0 -2)) . "Left") 
   (("C-" . (1 0 -1)) . "Home") 
   (("C-" . (1 0 1)) . "End") 
   (("C-" . (1 0 2)) . "Right") 
-  (("C-" . (1 0 3)) . "Down") 
-
-;;;;;;;; C-1-1 
-  (("C-" . "x") . "C-g"))
-
-
+  (("C-" . (1 0 3)) . "Down"))
 
 ;;;; stumpwm-mode-map
 `(

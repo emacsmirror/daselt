@@ -118,7 +118,7 @@ bindings. When active, use the translated key combinations in bindings."
   :type 'boolean
   :group 'd-emacs)
 
-(defcustom d-emacs-replace-multiple-choice
+(defcustom d-emacs-translate-choices
   t
   "Replace 'y' and 'n' in multiple-choice queries with alternative values.
 If a query uses symbols at coordinates (1 0 2) or (1 0 -2), replace them with

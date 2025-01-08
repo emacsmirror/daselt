@@ -33,37 +33,37 @@
 ;;; Code:
 
 ;;;; corfu-map
-`(corfu-map
+`(corfu-map 
 ;;;;; Coordinates
 ;;;;;; C-
 ;;;;;;; C-1
 ;;;;;;;; C-1--1
   (("C-" . (1 -1 -3)) . #'corfu-insert-separator) 
   (("C-" . (1 -1 3)) . #'corfu-expand) 
-  (("C-" . (1 -1 4)) . #'corfu-quick-jump)
-  
+  (("C-" . (1 -1 4)) . #'corfu-quick-jump) 
+
 ;;;;;;;; C-1-0 
   (("C-" . (1 0 -5)) . #'corfu-info-documentation) 
   (("C-" . (1 0 -3)) . #'corfu-previous) 
-  (("C-" . (1 0 -2)) . #'corfu-quit)
-  (("C-" . (1 0 -1)) . #'corfu-first)
-  (("C-" . (1 0 1)) . #'corfu-last)  
+  (("C-" . (1 0 -2)) . #'corfu-quit) 
+  (("C-" . (1 0 -1)) . #'corfu-first) 
+  (("C-" . (1 0 1)) . #'corfu-last) 
   (("C-" . (1 0 2)) . #'corfu-insert) 
   (("C-" . (1 0 3)) . #'corfu-next) 
   (("C-" . (1 0 5)) . #'corfu-info-location) 
-  
-;;;;;;; C-8 
-;;;;;;;; C-8--1 
-  (("C-" . (8 -1 -3)) . #'prescient-toggle-prefix) 
-  (("C-" . (8 -1 -2)) . #'prescient-toggle-literal) 
-  (("C-" . (8 -1 2)) . #'prescient-toggle-initialism) 
-  (("C-" . (8 -1 3)) . #'prescient-toggle-literal-prefix) 
 
-;;;;;;;; C-8-0 
-  (("C-" . (8 0 -3)) . #'prescient-toggle-char-fold) 
-  (("C-" . (8 0 -2)) . #'prescient-toggle-literal-prefix) 
-  (("C-" . (8 0 -2)) . #'prescient-toggle-regexp) 
-  (("C-" . (8 0 2)) . #'prescient-toggle-fuzzy) 
-  (("C-" . (8 0 3)) . #'prescient-toggle-anchored))
+;;;;;;; C-7 
+;;;;;;;; C-7--1 
+  (("C-" . (7 -1 -3)) . #'prescient-toggle-prefix) 
+  (("C-" . (7 -1 -2)) . #'prescient-toggle-literal) 
+  (("C-" . (7 -1 2)) . #'prescient-toggle-initialism) 
+  (("C-" . (7 -1 3)) . #'prescient-toggle-literal-prefix) 
+
+;;;;;;;; C-7-0 
+  (("C-" . (7 0 -3)) . #'prescient-toggle-char-fold) 
+  (("C-" . (7 0 -2)) . #'prescient-toggle-regexp) 
+  (("C-" . (7 0 -2)) . #'prescient-toggle-literal-prefix) 
+  (("C-" . (7 0 2)) . #'prescient-toggle-fuzzy) 
+  (("C-" . (7 0 3)) . #'prescient-toggle-anchored))
 
 ;;; d-emacs-corfu-bindlists.el ends here

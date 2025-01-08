@@ -35,22 +35,22 @@
 ;;;; ekg-notes-mode-map
 `(ekg-notes-mode-map 
 ;;;;; Coordinates
-;;;;;;; 3
-;;;;;;;; 3--1
- ((3 -1 -5) . #'ekg-notes-tag) 
- ((3 -1 5) . #'ekg-notes-any-tags) 
+;;;;;;; 4
+;;;;;;;; 4--1
+  ((4 -1 -5) . #'ekg-notes-tag) 
+  ((4 -1 5) . #'ekg-notes-any-tags) 
 
-;;;;;;;; 3-0 
- ((3 0 -3) . #'org-open-at-point) 
- ((3 0 -2) . #'ekg-notes-previous) 
- ((3 0 -1) . #'ekg-notes-create) 
- ((3 0 1) . #'ekg-notes-delete) 
- ((3 0 2) . #'ekg-notes-next) 
- ((3 0 3) . #'ekg-notes-open) 
- ((3 0 5) . #'ekg-notes-browse) 
+;;;;;;;; 4-0 
+  ((4 0 -3) . #'org-open-at-point) 
+  ((4 0 -2) . #'ekg-notes-previous) 
+  ((4 0 -1) . #'ekg-notes-create) 
+  ((4 0 1) . #'ekg-notes-delete) 
+  ((4 0 2) . #'ekg-notes-next) 
+  ((4 0 3) . #'ekg-notes-open) 
+  ((4 0 5) . #'ekg-notes-browse) 
 
-;;;;;;;; 3-1 
- ((3 1 -2) . #'ekg-notes-refresh) 
- ((3 1 5) . #'ekg-notes-any-note-tags))
+;;;;;;;; 4-1 
+  ((4 1 -2) . #'ekg-notes-refresh) 
+  ((4 1 5) . #'ekg-notes-any-note-tags))
 
 ;;; d-emacs-ekg-bindlists.el ends here

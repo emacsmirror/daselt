@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-
 ;;;; org-mode-map
 `(
 ;;;;; Coordinates
@@ -64,48 +63,48 @@
 
 ;;;;;;; 3 
 ;;;;;;;; 3--1 
-  ((3 -1 -3) . org-mark-subtree) 
-  ((3 -1 2) . org-refile) 
-  ((3 -1 3) . org-archive-subtree-default-with-confirmation) 
-  ((3 -1 4) . org-metaleft) 
+  ((3 -1 -2) org-priority 32) 
+  ((3 -1 2) org-priority 65) 
+  ((3 -1 3) progn (forward-char 1) (call-interactively 'org-insert-heading-respect-content)) 
+  ((3 -1 4) . org-metadown) 
 
 ;;;;;;;; 3-0 
-  ((3 0 -3) . org-metaright) 
-  ((3 0 3) . org-metaup) 
-  ((3 0 4) . org-sort) 
-  ((3 0 5) . org-display-outline-path) 
+  ((3 0 -4) org-priority 66) 
+  ((3 0 4) org-priority 67) 
 
 ;;;;;;;; 3-1 
-  ((3 1 -5) . org-shiftmetaright) 
-  ((3 1 2) . org-toggle-comment) 
-  ((3 1 5) . org-shiftmetaleft) 
+  ((3 1 -3) . org-cycle) 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-  ((4 -1 -2) org-priority 32) 
-  ((4 -1 2) org-priority 65) 
-  ((4 -1 3) progn (forward-char 1) (call-interactively 'org-insert-heading-respect-content)) 
-  ((4 -1 4) . org-metadown) 
+  ((4 -1 -3) . org-mark-subtree) 
+  ((4 -1 2) . org-refile) 
+  ((4 -1 3) . org-archive-subtree-default-with-confirmation) 
+  ((4 -1 4) . org-metaleft) 
 
 ;;;;;;;; 4-0 
-  ((4 0 -4) org-priority 66) 
-  ((4 0 4) org-priority 67) 
+  ((4 0 -3) . org-metaright) 
+  ((4 0 3) . org-metaup) 
+  ((4 0 4) . org-sort) 
+  ((4 0 5) . org-display-outline-path) 
 
 ;;;;;;;; 4-1 
-  ((4 1 -3) . org-cycle) 
+  ((4 1 -5) . org-shiftmetaright) 
+  ((4 1 2) . org-toggle-comment) 
+  ((4 1 5) . org-shiftmetaleft) 
 
 ;;;;;;; 5 
 ;;;;;;;; 5-0 
   ((5 0 2) . org-open-at-point) 
 
-;;;;;;; 7 
-;;;;;;;; 7--1 
-  ((7 -1 -2) . org-clock-in) 
-  ((7 -1 2) . org-clock-out) 
+;;;;;;; 6 
+;;;;;;;; 6--1 
+  ((6 -1 -2) . org-clock-in) 
+  ((6 -1 2) . org-clock-out) 
 
-;;;;;;;; 7-0 
-  ((7 0 -2) org-agenda-set-restriction-lock 'subtree) 
-  ((7 0 2) org-agenda-remove-restriction-lock))
+;;;;;;;; 6-0 
+  ((6 0 -2) org-agenda-set-restriction-lock 'subtree) 
+  ((6 0 2) org-agenda-remove-restriction-lock))
 
 (provide 'd-emacs-org-speed-commands-special-bindlists)
 ;;; d-emacs-org-speed-commands-special-bindlists.el ends here

@@ -34,18 +34,18 @@
 ;;;; xref--xref-buffer-mode-map
 `(xref--xref-buffer-mode-map 
 ;;;;; Coordinates
-;;;;;;; 3
-;;;;;;;; 3-0
-  ((3 0 -3) . #'xref-prev-line) 
-  ((3 0 -2) . #'xref-show-location-at-point) 
-  ((3 0 -1) . #'xref-prev-group) 
-  ((3 0 1) . #'xref-next-group) 
-  ((3 0 2) . #'xref-goto-xref) 
-  ((3 0 3) . #'xref-next-line) 
-  ((3 0 4) . #'xref-query-replace-in-results) 
+;;;;;;; 4
+;;;;;;;; 4-0
+  ((4 0 -3) . #'xref-prev-line) 
+  ((4 0 -2) . #'xref-show-location-at-point) 
+  ((4 0 -1) . #'xref-prev-group) 
+  ((4 0 1) . #'xref-next-group) 
+  ((4 0 2) . #'xref-goto-xref) 
+  ((4 0 3) . #'xref-next-line) 
+  ((4 0 4) . #'xref-query-replace-in-results) 
 
-;;;;;;;; 3-1 
-  ((3 1 -2) . #'xref-quit-and-pop-marker-stack) 
-  ((3 1 2) . #'xref-quit-and-goto-xref))
+;;;;;;;; 4-1 
+  ((4 1 -2) . #'xref-quit-and-pop-marker-stack) 
+  ((4 1 2) . #'xref-quit-and-goto-xref))
 
 ;;; d-emacs-xref-bindlists.el ends here

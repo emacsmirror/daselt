@@ -56,33 +56,33 @@
 
 ;;;;;;; 6 
 ;;;;;;;; 6--1 
-  ((6 -1 -3) . #'magit-delete-thing) 
-  ((6 -1 4) . #'magit-dired-jump) 
+  ((6 -1 4) . #'magit-section-cycle) 
 
 ;;;;;;;; 6-0 
-  ((6 0 -3) . #'magit-section-up) 
-  ((6 0 -2) . #'magit-unstage-all) 
-  ((6 0 2) . #'magit-stage-all) 
+  ((6 0 -2) . #'magit-section-backward-sibling) 
+  ((6 0 2) . #'magit-section-forward-sibling) 
 
 ;;;;;;;; 6-1 
-  ((6 1 -2) . #'magit-refresh-all) 
-  ((6 1 2) . #'magit-git-command) 
+  ((6 1 -3) . #'magit-copy-buffer-revision) 
+  ((6 1 -2) . #'magit-reset) 
 
 ;;;;;;; 7 
-;;;;;;;; 7--1 
-  ((7 -1 4) . #'magit-section-cycle) 
-
-;;;;;;;; 7-0 
-  ((7 0 -2) . #'magit-section-backward-sibling) 
-  ((7 0 2) . #'magit-section-forward-sibling) 
-
 ;;;;;;;; 7-1 
-  ((7 1 -3) . #'magit-copy-buffer-revision) 
-  ((7 1 -2) . #'magit-reset) 
+  ((7 1 -3) . #'magit-clone) 
+  ((7 1 -2) . #'magit-reset-quickly) 
 
 ;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -3) . #'magit-delete-thing) 
+  ((8 -1 4) . #'magit-dired-jump) 
+
+;;;;;;;; 8-0 
+  ((8 0 -3) . #'magit-section-up) 
+  ((8 0 -2) . #'magit-unstage-all) 
+  ((8 0 2) . #'magit-stage-all) 
+
 ;;;;;;;; 8-1 
-  ((8 1 -3) . #'magit-clone) 
-  ((8 1 -2) . #'magit-reset-quickly))
+  ((8 1 -2) . #'magit-refresh-all) 
+  ((8 1 2) . #'magit-git-command))
 
 ;;; d-emacs-magit-bindlists.el ends here

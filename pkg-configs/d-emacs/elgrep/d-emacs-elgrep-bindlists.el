@@ -34,18 +34,22 @@
 
 ;;;; elgrep-mode-map
 `(elgrep-mode-map 
-
 ;;;;; Coordinates
-;;;;;;; 3
-;;;;;;;; 3-0
-  ((3 -1 -4) . #'elgrep-rerun) 
+;;;;;;; 4
+;;;;;;;; 4--1
+  ((4 -1 -4) . #'elgrep-rerun) 
 
 ;;;;;; C- 
-;;;;;;; C-3 
-;;;;;;;; C-3-0 
-  (("C-" . (3 0 -2)) . #'elgrep-edit-mode))
+;;;;;;; C-4 
+;;;;;;;; C-4-0 
+  (("C-" . (4 0 -2)) . #'elgrep-edit-mode))
 
-`(elgrep-edit-mode-map
-  (("C-" . (3 0 -2)) . #'elgrep-edit-mode))
+;;;; elgrep-edit-mode-map
+`(elgrep-edit-mode-map 
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
+  (("C-" . (4 0 -2)) . #'elgrep-edit-mode))
 
 ;;; d-emacs-elgrep-bindlists.el ends here

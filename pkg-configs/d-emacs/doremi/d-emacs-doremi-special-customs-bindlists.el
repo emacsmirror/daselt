@@ -24,10 +24,16 @@
 
 ;;; Code:
 
-`((("C-" . (3 0 -3)) . doremi-up-keys)
-  (("C-" . (3 0 3)) . doremi-down-keys)
-  (("C-" . (3 0 -1)) . doremi-boost-up-keys)
-  (("C-" . (3 0 1)) . doremi-boost-down-keys))
+;;;; doremi-mode-map
+`(
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
+  (("C-" . (4 0 -3)) . doremi-up-keys) 
+  (("C-" . (4 0 -1)) . doremi-boost-up-keys) 
+  (("C-" . (4 0 1)) . doremi-boost-down-keys) 
+  (("C-" . (4 0 3)) . doremi-down-keys))
 
 (provide 'd-emacs-doremi-special-customs-bindlists.el)
 ;;; d-emacs-doremi-special-customs-bindlists.el.el ends here
