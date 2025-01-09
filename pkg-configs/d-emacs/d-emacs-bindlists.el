@@ -32,6 +32,8 @@
 ;;; Code:
 
 ;;;; d-emacs-mode-map
+
+;;;; d-emacs-mode-map
 `(
 ;;;;; Strings
 ;;;;;; C-
@@ -134,7 +136,7 @@
   (("C-" . (2 1 6)) . #'d-emacs-transpose-subsentences) 
 
 ;;;;;;; C-3 
-;;;;;;;; C-3--1
+;;;;;;;; C-3--1 
   (("C-" . (3 -1 -5)) . #'d-emacs-backward-transpose-sexps) 
   (("C-" . (3 -1 -4)) . #'eval-last-sexp) 
   (("C-" . (3 -1 -3)) . #'sp-backward-kill-sexp) 
@@ -397,12 +399,12 @@
   (("M-" . (5 0 -5)) . #'icicle-describe-option-of-type) 
   (("M-" . (5 0 -4)) . #'gptel-extensions-refactor) 
   (("M-" . (5 0 -4)) . #'projectile-multi-occur) 
-  (("M-" . (5 0 -3)) . #'gptel-menu) 
+  (("M-" . (5 0 -3)) . #'gptel) 
   (("M-" . (5 0 -2)) . #'gptel-set-topic) 
   (("M-" . (5 0 -1)) . #'gptel-extensions-ask-document) 
   (("M-" . (5 0 1)) . #'gptel-extensions-rewrite-and-replace) 
   (("M-" . (5 0 2)) . #'copilot-complete) 
-  (("M-" . (5 0 3)) . #'gptel) 
+  (("M-" . (5 0 3)) . #'gptel-menu) 
 
 ;;;;;;;; M-5-1 
   (("M-" . (5 1 0)) . #'sp-convolute-sexp) 

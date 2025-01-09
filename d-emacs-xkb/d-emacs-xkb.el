@@ -23,30 +23,47 @@
 
 ;;; Commentary:
 
-;;  d-emacs-xkb functions.
+;; d-emacs-xkb.el is a component of the Daselt Emacs configuration that enables users
+;; to create and visualize a keyboard coordinate system based on their X Keyboard
+;; Extension (xkb) layout. This module parses specified xkb layout files to extract key
+;; bindings across multiple layers, organizing them into Emacs-compatible data structures.
+;;
+;; Key features include:
+;; - **Customization:** Users can specify the location of their xkb layout file, define
+;;   row configurations, handle special keys, and map xkb symbol names to Emacs-friendly
+;;   representations through various customizable variables.
+;;
+;; - **Layer Management:** The package supports multiple keyboard layers, allowing for
+;;   complex key binding schemes. It can inherit key bindings from parent layouts, ensuring
+;;   consistency and reducing redundancy in configurations.
+;;
+;; - **Symbol Translation:** d-emacs-xkb.el translates xkb symbol names into symbols that
+;;   Emacs can interpret, handling special characters, Unicode symbols, and function keys.
+;;
+;; - **Automatic Layout Generation:** Upon loading, the module automatically reads the
+;;   specified xkb file, processes the layout definitions, and generates corresponding
+;;   Emacs constants. This ensures that the Emacs environment accurately mirrors the
+;;   user's physical keyboard layout.
+;;
+;; By integrating with the broader Daselt system, d-emacs-xkb.el provides a foundation
+;; for advanced key binding strategies and coordinate-based operations within Emacs.
+;; This enhances customization capabilities and improves the efficiency of the user's
+;; workflow by allowing Emacs to understand and utilize the physical layout of the
+;; keyboard effectively.
+;;
+;; Overall, d-emacs-xkb.el is designed to bridge the gap between the system's keyboard
+;; configuration and Emacs, offering a seamless and customizable experience tailored to
+;; the user's specific keyboard setup.
 
 ;;; Code:
 
 ;;;; Preamble
-(require 'cl-macs)
-(require 'table)
-(require 'org-compat)
 (require 'd-emacs-base)
 
-(declare-function org-table-align "org-table" nil)
-(declare-function org-sublist "org-compat" (list start end))
-(declare-function d-execute-in-maximized-maybe-temp-buffer "d-emacs-base" (bufname fun))
-(declare-function d-remove-list-index "d-emacs-base" (lst idx))
-(declare-function d-filter-by-predicate "d-emacs-base" (lst pred))
-(declare-function d-string-exists-and-nonempty "d-emacs-base" (str))
-(declare-function d-forall-p "d-emacs-base" (list predicate))
-(declare-function d-add-list-indices "d-emacs-base" (list &optional fromone))
 (declare-function d-mark-line "d-emacs-base" (&optional arg))
-(declare-function d-cardinal "d-emacs-base" (n &optional fromone))
 (declare-function d-uppercase-p "d-emacs-base" (str))
+(declare-function d-cardinal "d-emacs-base" (n &optional fromone))
 
-;; (defvar d-emacs-xkb-layouts)
-;; (defvar d-debug)
 (defvar d-keep-read-buffers)
 
 ;;;; Customs
@@ -86,11 +103,11 @@ the row without the special key `LSGT' is taken to be
   :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-rows-length
-                                            10
-                                            "Length of normal rows in d-xkb-layouts.
+  10
+  "Length of normal rows in d-xkb-layouts.
 Can be overwritten for any particular row using `d-emacs-xkb-rowlist'."
-                                            :type 'natnum
-                                            :group 'd-emacs-xkb)
+  :type 'natnum
+  :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-special-key-names
                             '("Delete" "BackSpace" "Tab" "Escape" "Print" "Space" "Up" "Left" "Right" "Down" "Home" "End" "Return")
@@ -105,12 +122,18 @@ Can be overwritten for any particular row using `d-emacs-xkb-rowlist'."
   :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-read-layer-function
-                                                                        'd-emacs-xkb--generate-layer
-                                                                        "Function used to generate a d-emacs-xkb-layer from an xkb-file.
+          'd-emacs-xkb--generate-layer
+          "Function used to generate a d-emacs-xkb-layer from an xkb-file.
 Default is `d-emacs-xkb--generate-layer'.
 Has to be adapted for different layouts."
-                                                                        :type 'symbol
-                                                                        :group 'd-emacs-xkb)
+          :type 'symbol
+          :group 'd-emacs-xkb)
+
+(defcustom d-emacs-xkb-layer-numbers-list
+  (d-cardinal 8 t)
+  "Layers of the xkb-layout you want to import."
+  :type 'natnum
+  :group 'd-emacs-xkb)
 
 ;;;; Functions
 ;;;;; Reading d-emacs-xkb-file
@@ -120,10 +143,10 @@ The region searched is that from BEG to END. Returns nil if no binding is
 found."
   (goto-char beg)
   (if (search-forward keyname end t)
-                                                              (progn (beginning-of-line)
+      (progn (beginning-of-line)
              (search-forward "\{" end t)
              (mark-sexp)
-             (nth (1+ num) ; First two entries are brackets, absolute layers start at zero.
+             (nth num ; First two entries are brackets, absolute layers start at zero.
                   (split-string
                    (buffer-substring-no-properties (region-beginning)
                                                    (region-end))
@@ -131,9 +154,9 @@ found."
     nil))
 
 (defun d-emacs-xkb--format-special-key (str)
-                "Format a string STR describing a control character or function key.
+                  "Format a string STR describing a control character or function key.
 Return a form suitable for Emacs."
-                (concat "<" (replace-regexp-in-string "_" "-" (downcase str)) ">"))
+                  (concat "<" (replace-regexp-in-string "_" "-" (downcase str)) ">"))
 
 (defun d-emacs-xkb--format-xkb-signal-name (rawsigname)
     "Format the signal name RAWSIGNAME read by d-emacs-xkb into a form usable by
@@ -195,34 +218,34 @@ string, in which case the string is assumed to be its name.
 This works only if the parent map appears earlier in the file."
   (goto-char beg)
   (if (search-forward "include" end t)
-                                                  (progn (d-mark-line)
+      (progn (d-mark-line)
              (let* ((includelinelist (remove "" (split-string (remove ?\" (buffer-substring-no-properties (region-beginning) (region-end)))
                                                               "\\(\(\\|\)\\|[ ]+\\|\_\\)" t)))
                     (parent (nth 2 includelinelist))
                     (parentlayout (symbol-value
                                    (intern (concat "d-emacs-xkb-" parent "-layout"))))
-                    (parlayer (nth laynum parentlayout))
+                    (parlayer (nth (1- laynum) parentlayout)) ; Layers start at 1
                     (maxrowlength (apply #'max (mapcar #'length parlayer)))
                     (parrow (nth rownum parlayer))
                     (parrowlength (length parrow)))
-               (nth (- key (- maxrowlength parrowlength))
+               (nth (- (1+ key) (- maxrowlength parrowlength))
                     parrow)))
     nil))
 
 ;;;;; Layout generation functions
 (defun d-emacs-xkb--generate-layer (beg end laynum)
-                  "Generate a list from a d-emacs-xkb layer.
+  "Generate a list from a d-emacs-xkb layer.
 The layer is defined by the region from BEG to END in `d-emacs-xkb-file' and the
 layer number LAYNUM."
-                  (mapcar (lambda (indrowinfo)
-                                  (let* ((rowidx (car indrowinfo))
+  (mapcar (lambda (indrowinfo)
+            (let* ((rowidx (car indrowinfo))
                    (rowinfo (cdr indrowinfo))
                    (rowinfo (if (atom rowinfo) ; Redefine if it's not a list.
-                                                                            (list rowinfo)
-                                                    rowinfo))
+                                (list rowinfo)
+                              rowinfo))
                    (rowlength (if (numberp (car rowinfo))
-                                                                              (car rowinfo)
-                                                      d-emacs-xkb-rows-length))
+                                  (car rowinfo)
+                                d-emacs-xkb-rows-length))
                    (idx 0)
                    (numbershift (progn (while (not (= 1 (length (nth idx rowinfo))))
                                          (setq idx (1+ idx)))
@@ -231,11 +254,11 @@ layer number LAYNUM."
                        for elt = (nth eltnum rowinfo)
                        append
                        (if (= 1 (length elt)) ; If it's a row letter.
-                                                                       (let* ((rowprefix (concat "A" elt)))
+                           (let* ((rowprefix (concat "A" elt)))
                              (mapcar (lambda (keynum)
-                                                             (let* ((keynumstr (if (>= keynum 10)
-                                                                                                         (number-to-string keynum)
-                                                                                 (concat
+                                       (let* ((keynumstr (if (>= keynum 10)
+                                                             (number-to-string keynum)
+                                                           (concat
                                                             "0" (number-to-string
                                                                  keynum))))
                                               (keyname (concat rowprefix keynumstr))
@@ -258,10 +281,10 @@ layer number LAYNUM."
           (d-add-list-indices d-emacs-xkb-rowlist))) 
 
 (defun d-emacs-xkb--generate-layouts ()
-    "Generate lists from layouts defined in the d-emacs-xkb file.
+  "Generate lists from layouts defined in the d-emacs-xkb file.
 This function searches for `xkb_symbols', marks the line, extracts layout names,
 and processes them with `d-emacs-xkb--generate-layer' to define the layout."
-    (let ((dxkbbuf (find-file-noselect d-emacs-xkb-file)))
+  (let ((dxkbbuf (find-file-noselect d-emacs-xkb-file)))
     (set-buffer dxkbbuf)
     (goto-char (point-min))
     (while (search-forward "xkb_symbols" nil t)
@@ -271,7 +294,7 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
                       (nth 1 (split-string
                               (buffer-substring (region-beginning) (region-end)) " "))))
                  (if (string-match-p "base" laynameful)
-                                                 (let ((layname (remove ?\" (car (split-string laynameful "_")))))
+                     (let ((layname (remove ?\" (car (split-string laynameful "_")))))
                        (progn (goto-char linebeg)
                               (search-forward "\{" nil t)
                               (backward-char)
@@ -279,8 +302,8 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
                               (let ((laybeg (region-beginning)) (layend (region-end)))
                                 (set (intern (concat "d-emacs-xkb-" layname "-layout"))
                                      (mapcar (lambda (laynum)
-                                                             (d-emacs-xkb--generate-layer laybeg layend laynum))
-                                             d-emacs-coords-layer-numbers-list))))))))))
+                                               (d-emacs-xkb--generate-layer laybeg layend laynum))
+                                             d-emacs-xkb-layer-numbers-list))))))))))
     (unless (or d-debug d-keep-read-buffers) (kill-buffer dxkbbuf))))
 
 ;;;; Generated Constants
@@ -290,8 +313,8 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
 ;; Generate layout constants.
 
 (defconst d-emacs-xkb-layouts
-  (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))
-  "List of d-emacs-xkb-layouts in unextended form. Generated automatically.")
+    (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))
+    "List of d-emacs-xkb-layouts in unextended form. Generated automatically.")
 
 (defcustom d-emacs-xkb-layout
   'd-emacs-xkb-main-layout
@@ -300,18 +323,6 @@ Should be one of the layouts in the `d-emacs-xkb-file'."
   :group 'Daselt
   :type 'symbol
   :options d-emacs-xkb-layouts)
-
-(defconst d-emacs-xkb-coordinates
-  (let* ((layout (symbol-value d-emacs-xkb-layout))
-         (coordlayout (d-emacs-coords-coordinatize-layout layout)))
-    (d-flatten-until (mapcar (lambda (coordlayer)
-                               (mapcar (lambda (coordrow)
-                                         (mapcar #'car coordrow))
-                                       coordlayer))
-                             coordlayout)
-                     (lambda (lst) (d-emacs-coords-p (car lst)))))
-  "All coordinates in `d-emacs-xkb-layout'.
-Saved here to be called in calculations of drawing functions.")
 
 ;;;; Provide
 (provide 'd-emacs-xkb)

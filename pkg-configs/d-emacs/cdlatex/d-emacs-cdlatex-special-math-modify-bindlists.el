@@ -44,24 +44,24 @@
 
 ;;;;;;; 3 
 ;;;;;;;; 3--1 
-  ((3 -1 -5) "\\cancel" nil t nil nil) 
-  ((3 -1 -3) "\\mathsmaller" "\\textsmaller" t nil nil) 
-  ((3 -1 3) "\\mathlarger" "\\textlarger" t nil nil) 
+  ((3 -1 -4) "\\reflectbox" nil t nil nil) 
+
+;;;;;;;; 3-1 
+  ((3 1 -2) "\\underline" nil t nil nil) 
+  ((3 1 2) "\\overline" nil t nil nil) 
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-  ((4 -1 -4) "\\reflectbox" nil t nil nil) 
+  ((4 -1 -5) "\\cancel" nil t nil nil) 
+  ((4 -1 -3) "\\mathsmaller" "\\textsmaller" t nil nil) 
+  ((4 -1 3) "\\mathlarger" "\\textlarger" t nil nil) 
 
-;;;;;;;; 4-1 
-  ((4 1 -2) "\\underline" nil t nil nil) 
-  ((4 1 2) "\\overline" nil t nil nil) 
-
-;;;;;;; 6 
-;;;;;;;; 6--1 
-  ((6 -1 -3) "\\xuparrow" nil t nil nil) 
-  ((6 -1 -2) "\\xleftarrow" nil t nil nil) 
-  ((6 -1 2) "\\xrightarrow" nil t nil nil) 
-  ((6 -1 3) "\\xdownarrow" nil t nil nil))
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -3) "\\xuparrow" nil t nil nil) 
+  ((8 -1 -2) "\\xleftarrow" nil t nil nil) 
+  ((8 -1 2) "\\xrightarrow" nil t nil nil) 
+  ((8 -1 3) "\\xdownarrow" nil t nil nil))
 
 (provide 'd-emacs-cdlatex-special-math-modify-bindlists)
 ;;; d-emacs-cdlatex-special-math-modify-bindlists.el ends here

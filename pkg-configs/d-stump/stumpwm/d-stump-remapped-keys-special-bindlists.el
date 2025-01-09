@@ -109,7 +109,8 @@
 ;;;;;;; C-2 
 ;;;;;;;; C-2-0 
   (("C-" . (2 0 1)) . "C-q") 
-  (("C-" . (2 1 -3)) . "C-x") 
-  )
+
+;;;;;;;; C-2-1 
+  (("C-" . (2 1 -3)) . "C-x"))
 
 ;;; d-stump-remapped-keys-special-bindlists.el ends here

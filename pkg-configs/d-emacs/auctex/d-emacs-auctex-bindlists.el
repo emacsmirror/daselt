@@ -35,80 +35,80 @@
 ;;;; LaTeX-mode-map
 `(LaTeX-mode-map 
 ;;;;; Coordinates
-;;;;;;; 6
-;;;;;;;; 6-0
-  ((6 0 -5) . (if d-lua-insert-normpairs #'d-insert-normpair-yas-snippet)) 
-  ((6 0 5) . (if d-lua-insert-normpairs #'d-insert-othernormpair-yas-snippet)) 
+;;;;;;; 8
+;;;;;;;; 8-0
+  ((8 0 -5) . (if d-lua-insert-normpairs #'d-insert-normpair-yas-snippet)) 
+  ((8 0 5) . (if d-lua-insert-normpairs #'d-insert-othernormpair-yas-snippet)) 
 
 ;;;;;; C- 
-;;;;;;; C-4 
-;;;;;;;; C-4--1 
-  (("C-" . (4 -1 -3)) . #'LaTeX-mark-environment) 
-  (("C-" . (4 -1 3)) . #'LaTeX-mark-section) 
-  (("C-" . (4 -1 4)) . #'TeX-fold-dwim) 
+;;;;;;; C-3 
+;;;;;;;; C-3--1 
+  (("C-" . (3 -1 -3)) . #'LaTeX-mark-environment) 
+  (("C-" . (3 -1 3)) . #'LaTeX-mark-section) 
+  (("C-" . (3 -1 4)) . #'TeX-fold-dwim) 
 
-;;;;;;;; C-4-0 
-  (("C-" . (4 0 -2)) . #'latex/backward-environment) 
-  (("C-" . (4 0 -1)) . #'latex/beginning-of-environment) 
-  (("C-" . (4 0 1)) . #'latex/end-of-environment) 
-  (("C-" . (4 0 2)) . #'latex/forward-environment) 
+;;;;;;;; C-3-0 
+  (("C-" . (3 0 -2)) . #'latex/backward-environment) 
+  (("C-" . (3 0 -1)) . #'latex/beginning-of-environment) 
+  (("C-" . (3 0 1)) . #'latex/end-of-environment) 
+  (("C-" . (3 0 2)) . #'latex/forward-environment) 
 
-;;;;;;;; C-4-1 
-  (("C-" . (4 1 -4)) . #'latex/hide-show-all) 
-  (("C-" . (4 1 2)) . #'LaTeX-command-section) 
-  (("C-" . (4 1 3)) . #'reftex-reference) 
+;;;;;;;; C-3-1 
+  (("C-" . (3 1 -4)) . #'latex/hide-show-all) 
+  (("C-" . (3 1 2)) . #'LaTeX-command-section) 
+  (("C-" . (3 1 3)) . #'reftex-reference) 
 
-;;;;;;; C-7 
-;;;;;;;; C-7--1 
-  (("C-" . (7 -1 4)) . #'reftex-toc) 
+;;;;;;; C-6 
+;;;;;;;; C-6--1 
+  (("C-" . (6 -1 4)) . #'reftex-toc) 
 
-;;;;;;;; C-7-0 
-  (("C-" . (7 0 -3)) . #'latex/up-section) 
-  (("C-" . (7 0 -2)) . #'latex/previous-section) 
-  (("C-" . (7 0 -1)) . #'latex/previous-section-same-level) 
-  (("C-" . (7 0 1)) . #'latex/next-section-same-level) 
-  (("C-" . (7 0 2)) . #'latex/next-section) 
+;;;;;;;; C-6-0 
+  (("C-" . (6 0 -3)) . #'latex/up-section) 
+  (("C-" . (6 0 -2)) . #'latex/previous-section) 
+  (("C-" . (6 0 -1)) . #'latex/previous-section-same-level) 
+  (("C-" . (6 0 1)) . #'latex/next-section-same-level) 
+  (("C-" . (6 0 2)) . #'latex/next-section) 
 
 ;;;;;; M- 
-;;;;;;; M-4 
-;;;;;;;; M-4--1 
-  (("M-" . (4 -1 -4)) . #'TeX-fold-region) 
-  (("M-" . (4 -1 -3)) . #'LaTeX-mark-environment) 
-  (("M-" . (4 -1 -2)) . #'LaTeX-close-environment) 
-  (("M-" . (4 -1 3)) . #'LaTeX-mark-section) 
-  (("M-" . (4 -1 4)) . #'TeX-fold-clearout-region) 
+;;;;;;; M-3 
+;;;;;;;; M-3--1 
+  (("M-" . (3 -1 -4)) . #'TeX-fold-region) 
+  (("M-" . (3 -1 -3)) . #'LaTeX-mark-environment) 
+  (("M-" . (3 -1 -2)) . #'LaTeX-close-environment) 
+  (("M-" . (3 -1 3)) . #'LaTeX-mark-section) 
+  (("M-" . (3 -1 4)) . #'TeX-fold-clearout-region) 
 
-;;;;;;;; M-4-0 
-  (("M-" . (4 0 -4)) . #'d-lua-change-mathvar) 
-  (("M-" . (4 0 -3)) . #'TeX-fold-macro) 
-  (("M-" . (4 0 -3)) . #'TeX-fold-paragraph) 
-  (("M-" . (4 0 -1)) . #'TeX-fold-buffer) 
-  (("M-" . (4 0 1)) . #'TeX-fold-clearout-buffer) 
-  (("M-" . (4 0 3)) . #'TeX-fold-clearout-paragraph) 
-  (("M-" . (4 0 4)) . #'d-lua-change-mathvar-withinstring) 
-  (("M-" . (4 0 5)) . #'arxiv-lookup) 
+;;;;;;;; M-3-0 
+  (("M-" . (3 0 -4)) . #'d-lua-change-mathvar) 
+  (("M-" . (3 0 -3)) . #'TeX-fold-paragraph) 
+  (("M-" . (3 0 -3)) . #'TeX-fold-macro) 
+  (("M-" . (3 0 -1)) . #'TeX-fold-buffer) 
+  (("M-" . (3 0 1)) . #'TeX-fold-clearout-buffer) 
+  (("M-" . (3 0 3)) . #'TeX-fold-clearout-paragraph) 
+  (("M-" . (3 0 4)) . #'d-lua-change-mathvar-withinstring) 
+  (("M-" . (3 0 5)) . #'arxiv-lookup) 
 
-;;;;;;; M-7 
-;;;;;;;; M-7--1 
-  (("M-" . (7 -1 -4)) . #'TeX-fold-section) 
-  (("M-" . (7 -1 4)) . #'TeX-fold-clearout-section) 
+;;;;;;; M-6 
+;;;;;;;; M-6--1 
+  (("M-" . (6 -1 -4)) . #'TeX-fold-section) 
+  (("M-" . (6 -1 4)) . #'TeX-fold-clearout-section) 
 
 ;;;;;; M-C- 
-;;;;;;; M-C-4 
-;;;;;;;; M-C-4--1 
-  (("M-C-" . (4 -1 -4)) . #'reftex-label) 
-  (("M-C-" . (4 -1 -3)) . #'er/mark-LaTeX-inside-environment) 
-  (("M-C-" . (4 -1 4)) . #'reftex-goto-label) 
+;;;;;;; M-C-3 
+;;;;;;;; M-C-3--1 
+  (("M-C-" . (3 -1 -4)) . #'reftex-label) 
+  (("M-C-" . (3 -1 -3)) . #'er/mark-LaTeX-inside-environment) 
+  (("M-C-" . (3 -1 4)) . #'reftex-goto-label) 
 
-;;;;;;;; M-C-4-0 
-  (("M-C-" . (4 0 -2)) . #'LaTeX-environment) 
-  (("M-C-" . (4 0 2)) . #'LaTeX-section) 
+;;;;;;;; M-C-3-0 
+  (("M-C-" . (3 0 -2)) . #'LaTeX-environment) 
+  (("M-C-" . (3 0 2)) . #'LaTeX-section) 
 
 ;;;;;; s- 
-;;;;;;; s-4 
-;;;;;;;; s-4--1 
-  (("s-" . (4 -1 -3)) . #'d-lua-LaTeX-delete-environment-outside) 
-  (("s-" . (4 -1 3)) . #'d-lua-remove-modifier))
+;;;;;;; s-3 
+;;;;;;;; s-3--1 
+  (("s-" . (3 -1 -3)) . #'d-lua-LaTeX-delete-environment-outside) 
+  (("s-" . (3 -1 3)) . #'d-lua-remove-modifier))
 
 ;;;; reftex-toc-mode
 ;;;; reftex-toc
@@ -179,8 +179,8 @@
 ;;;;;;;; 1--1
    ((1 -1 -4) . #'reftex-select-jump-to-previous) 
    ((1 -1 -3) . #'reftex-select-unmark) 
-   ((1 -1 3) . #'reftex-select-mark-to) 
    ((1 -1 3) . #'reftex-select-mark) 
+   ((1 -1 3) . #'reftex-select-mark-to) 
    ((1 -1 4) . #'reftex-select-jump) 
 
 ;;;;;;;; 1-0 
@@ -192,8 +192,8 @@
    ((1 0 3) . #'reftex-select-next) 
 
 ;;;;;;;; 1-1 
-   ((1 1 2) . #'reftex-select-show-insertion-point) 
    ((1 1 2) . #'reftex-select-read-label) 
+   ((1 1 2) . #'reftex-select-show-insertion-point) 
 
 ;;;;;;; 2 
 ;;;;;;;; 2--1 
@@ -204,7 +204,7 @@
    ((2 0 -3) . #'reftex-select-cycle-ref-style-backward) 
    ((2 0 3) . #'reftex-select-cycle-ref-style-forward) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
+;;;;;;; 4 
+;;;;;;;; 4-0 
    ((3 0 1) . #'reftex-select-quit)))
 ;;; d-emacs-auctex-bindlists.el ends here

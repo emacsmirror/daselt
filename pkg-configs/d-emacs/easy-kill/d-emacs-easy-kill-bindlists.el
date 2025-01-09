@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; easy-kill-base-map
+
+;;;; easy-kill-base-map
 `(easy-kill-base-map 
 ;;;;; Coordinates
 ;;;;;;; 1

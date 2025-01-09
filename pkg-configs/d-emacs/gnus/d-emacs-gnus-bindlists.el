@@ -52,9 +52,9 @@
   ((5 0 -2) . #'gnus-group-exit) 
   ((5 0 2) . #'gnus-group-select-group) 
 
-;;;;;;; 8 
-;;;;;;;; 8-0 
-  ((8 0 2) . #'d-emacs-gnus-group-select-group-t))
+;;;;;;; 7 
+;;;;;;;; 7-0 
+  ((7 0 2) . #'d-emacs-gnus-group-select-group-t))
 
 ;;;; gnus-summary-mode-map
 `(gnus-summary-mode-map 

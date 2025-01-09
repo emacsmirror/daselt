@@ -47,9 +47,9 @@
 
 ;;;;;;;; 1-0 
   ((1 0 -5) . #'Info-follow-nearest-node) 
-  ((1 0 -3) . #'Info-scroll-up) 
-  ((1 0 -3) . #'Info-scroll-down) 
   ((1 0 -3) . #'d-emacs-scroll-chunk-down) 
+  ((1 0 -3) . #'Info-scroll-down) 
+  ((1 0 -3) . #'Info-scroll-up) 
   ((1 0 -2) . #'Info-prev-reference) 
   ((1 0 2) . #'Info-next-reference) 
   ((1 0 3) . #'d-emacs-scroll-chunk-up) 
@@ -68,14 +68,14 @@
   ((2 0 -2) . #'Info-history-back) 
   ((2 0 2) . #'Info-history-forward) 
 
-;;;;;;; 4 
-;;;;;;;; 4-0 
-  ((4 0 1) . #'quit-window) 
-  ((4 0 2) . #'d-emacs-C-3-0-2) 
+;;;;;;; 3 
+;;;;;;;; 3-0 
+  ((3 0 1) . #'quit-window) 
+  ((3 0 2) . #'d-emacs-C-3-0-2) 
 
-;;;;;;; 6 
-;;;;;;;; 6-0 
-  ((6 0 -2) . #'d-emacs-in-new-buffer-Info-prev) 
-  ((6 0 2) . #'d-emacs-in-new-buffer-Info-next))
+;;;;;;; 8 
+;;;;;;;; 8-0 
+  ((8 0 -2) . #'d-emacs-in-new-buffer-Info-prev) 
+  ((8 0 2) . #'d-emacs-in-new-buffer-Info-next))
 
 ;;; d-emacs-info-bindlists.el ends here

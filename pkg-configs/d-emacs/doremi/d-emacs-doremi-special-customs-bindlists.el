@@ -25,6 +25,8 @@
 ;;; Code:
 
 ;;;; doremi-mode-map
+
+;;;; doremi-mode-map
 `(
 ;;;;; Coordinates
 ;;;;;; C-

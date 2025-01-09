@@ -38,25 +38,25 @@
 ;;;;;; C-
 ;;;;;;; C-1
 ;;;;;;;; C-1-0
- (("C-" . (1 0 -1)) . #'scroll-down-command) 
- (("C-" . (1 0 1)) . #'scroll-up-command)) 
+  (("C-" . (1 0 -1)) . #'scroll-down-command) 
+  (("C-" . (1 0 1)) . #'scroll-up-command)) 
 
 ;;;; function-key-map
 `(function-key-map 
 ;;;;; Strings
- ("<f7>" . #'event-apply-hyper-modifier) 
+  ("<f7>" . #'event-apply-hyper-modifier) 
 
 ;;;;; Coordinates 
 ;;;;;;; 0 
- ((0 1 -7) . #'event-apply-alt-modifier) 
+  ((0 1 -7) . #'event-apply-alt-modifier) 
 
 ;;;;;;;; 0-2 
- ((0 2 -1) . #'event-apply-meta-modifier) 
+  ((0 2 -1) . #'event-apply-meta-modifier) 
 
 ;;;;;; C- 
 ;;;;;;; C-0 
 ;;;;;;;; C-0-2 
- (("C-" . (0 2 -1)) . #'event-apply-super-modifier)) 
+  (("C-" . (0 2 -1)) . #'event-apply-super-modifier)) 
 
 ;;;; button-buffer-map
 `(button-buffer-map 
@@ -88,32 +88,32 @@
   ((2 0 -1) . #'beginning-of-buffer) 
   ((2 0 1) . #'end-of-buffer) 
 
-;;;;;;; 3 
-;;;;;;;; 3--1 
-  ((3 -1 -4) . #'avy-act-follow-in-new-horizontal-window) 
-  ((3 -1 4) . #'avy-act-follow-in-new-vertical-window) 
+;;;;;;; 4 
+;;;;;;;; 4--1 
+  ((4 -1 -4) . #'avy-act-follow-in-new-horizontal-window) 
+  ((4 -1 4) . #'avy-act-follow-in-new-vertical-window) 
 
-;;;;;;;; 3-0 
-  ((3 0 1) . #'quit-window) 
-  ((3 0 2) . #'d-follow-or-open) 
+;;;;;;;; 4-0 
+  ((4 0 1) . #'quit-window) 
+  ((4 0 2) . #'d-follow-or-open) 
 
-;;;;;;; 6 
-;;;;;;;; 6--1 
-  ((6 -1 -4) . #'d-emacs-new-horizontal-window-and-buffer) 
-  ((6 -1 4) . #'d-emacs-new-vertical-window-and-buffer))
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 -4) . #'d-emacs-new-horizontal-window-and-buffer) 
+  ((8 -1 4) . #'d-emacs-new-vertical-window-and-buffer))
 
 ;;;; help-map
 `(help-map 
 ;;;;; Coordinates
-;;;;;;; 3
-;;;;;;;; 3--1
-  ((3 -1 3) . #'d-free-places-from-regexps) 
+;;;;;;; 4
+;;;;;;;; 4--1
+  ((4 -1 3) . #'d-free-places-from-regexps) 
 
-;;;;;;;; 3-0 
-((3 0 -3) . #'d-emacs-coords-draw-placevals-from-coordrx) 
-((3 0 -2) . #'d-emacs-coords-draw-keyboard-layer) 
-((3 0 2) . #'d-draw-bindlist-layer) 
-((3 0 3) . #'d-draw-bindings-from-regexps))
+;;;;;;;; 4-0 
+  ((4 0 -3) . #'d-emacs-coords-draw-placevals-from-coordrx) 
+  ((4 0 -2) . #'d-emacs-coords-draw-keyboard-layer) 
+  ((4 0 2) . #'d-draw-bindlist-layer) 
+  ((4 0 3) . #'d-draw-bindings-from-regexps))
 
 ;;;; isearch-mode-map
 `(isearch-mode-map 
@@ -131,10 +131,10 @@
 ;;;;;;;; 0-0
   ((0 0 -6) . #'cdlatex-math-symbol) 
 
-;;;;;;; 7 
-;;;;;;;; 7-0 
-  ((7 0 -5) . #'d-insert-normpair-yas-snippet) 
-  ((7 0 5) . #'d-insert-othernormpair-yas-snippet) 
+;;;;;;; 6 
+;;;;;;;; 6-0 
+  ((6 0 -5) . #'d-insert-normpair-yas-snippet) 
+  ((6 0 5) . #'d-insert-othernormpair-yas-snippet) 
 
 ;;;;;; C- 
 ;;;;;;; C-0 
@@ -145,38 +145,38 @@
 ;;;;;;;; C-1-0 
   (("C-" . (1 0 2)) . #'d-emacs-move-right-or-exit) 
 
-;;;;;;; C-8 
-;;;;;;;; C-8-0 
-  (("C-" . (8 0 -4)) . #'previous-matching-history-element) 
-  (("C-" . (8 0 -3)) . #'previous-history-element) 
-  (("C-" . (8 0 3)) . #'next-history-element) 
-  (("C-" . (8 0 4)) . #'next-matching-history-element) 
+;;;;;;; C-7 
+;;;;;;;; C-7-0 
+  (("C-" . (7 0 -4)) . #'previous-matching-history-element) 
+  (("C-" . (7 0 -3)) . #'previous-history-element) 
+  (("C-" . (7 0 3)) . #'next-history-element) 
+  (("C-" . (7 0 4)) . #'next-matching-history-element) 
 
-;;;;;;;; C-8-1 
-  (("C-" . (8 1 2)) . #'minibuffer-complete-and-exit) 
+;;;;;;;; C-7-1 
+  (("C-" . (7 1 2)) . #'minibuffer-complete-and-exit) 
 
 ;;;;;; s- 
-;;;;;;; s-3 
-;;;;;;;; s-3-0 
-  (("s-" . (3 0 -4)) . #'minibuffer-complete-history) 
-  (("s-" . (3 0 4)) . #'minibuffer-complete-defaults))
+;;;;;;; s-4 
+;;;;;;;; s-4-0 
+  (("s-" . (4 0 -4)) . #'minibuffer-complete-history) 
+  (("s-" . (4 0 4)) . #'minibuffer-complete-defaults))
 
 ;;;; minibuffer-local-isearch-map
 `(minibuffer-local-isearch-map 
 ;;;;; Coordinates
 ;;;;;; C-
-;;;;;;; C-3
-;;;;;;;; C-3-0
-  (("C-" . (3 0 2)) . #'isearch-complete-edit) 
+;;;;;;; C-4
+;;;;;;;; C-4-0
+  (("C-" . (4 0 2)) . #'isearch-complete-edit) 
 
-;;;;;;;; C-3-1 
-  (("C-" . (3 1 2)) . #'isearch-yank-char-in-minibuffer) 
+;;;;;;;; C-4-1 
+  (("C-" . (4 1 2)) . #'isearch-yank-char-in-minibuffer) 
 
 ;;;;;; s-C- 
-;;;;;;; s-C-3 
-;;;;;;;; s-C-3-0 
-  (("s-C-" . (3 0 -4)) . #'isearch-reverse-exit-minibuffer) 
-  (("s-C-" . (3 0 4)) . #'isearch-forward-exit-minibuffer))
+;;;;;;; s-C-4 
+;;;;;;;; s-C-4-0 
+  (("s-C-" . (4 0 -4)) . #'isearch-reverse-exit-minibuffer) 
+  (("s-C-" . (4 0 4)) . #'isearch-forward-exit-minibuffer))
 
 ;;;; query-replace-map
 `(query-replace-map 
@@ -186,9 +186,9 @@
   ((1 0 -2) . #'skip) 
   ((1 0 2) . #'act) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 1) . #'exit) 
+;;;;;;; 4 
+;;;;;;;; 4-0 
+  ((4 0 1) . #'exit) 
 
 ;;;;;; C- 
 ;;;;;;; C-1 
@@ -204,27 +204,37 @@
   ((1 0 -2) . #'widget-backward) 
   ((1 0 2) . #'widget-forward) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 1) . #'bury-buffer) 
-  ((3 0 2) . #'widget-button-press))
+;;;;;;; 4 
+;;;;;;;; 4-0 
+  ((4 0 1) . #'bury-buffer) 
+  ((4 0 2) . #'widget-button-press))
 
 ;;;; rectangle-mark-mode-map
 `(rectangle-mark-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 1
-;;;;;;;; 1-0
+;;;;;;;; 1--1
+  ((1 -1 -3) . #'delete-rectangle) 
+  ((1 -1 -2) . #'rectangle-exchange-point-and-mark) 
+  ((1 -1 2) . #'clear-rectangle) 
+
+;;;;;;;; 1-0 
+  ((1 0 -3) . #'replace-rectangle) 
   ((1 0 -2) . #'string-rectangle) 
-  ((1 0 2) . #'string-insert-rectangle)
-  ((1 1 -3) . #'copy-rectangle-as-kill)
-  ((1 1 3) . #'yank-rectangle)
-  ((1 -1 -2) . #'rectangle-exchange-point-and-mark)
-  ((1 -1 2) . #'clear-rectangle)
-  ((2 1 -3) . #'kill-rectangle)
-  ((1 -1 -3) . #'delete-rectangle)
-  ((1 0 -1) . #'open-rectangle)
-  ((1 0 1) . #'close-rectangle)
-  ((1 0 -3) . #'replace-rectangle)
+  ((1 0 -1) . #'open-rectangle) 
+  ((1 0 1) . #'close-rectangle) 
+  ((1 0 2) . #'string-insert-rectangle) 
+
+;;;;;;;; 1-1 
+  ((1 1 -3) . #'copy-rectangle-as-kill) 
+  ((1 1 3) . #'yank-rectangle) 
+
+;;;;;;; 2 
+;;;;;;;; 2-1 
+  ((2 1 -3) . #'kill-rectangle) 
+
+;;;;;;; 5 
+;;;;;;;; 5-1 
   ((5 1 -3) . #'copy-rectangle-to-register))
 
 ;;;; prog-mode-map
@@ -238,12 +248,12 @@
 `(emacs-lisp-mode-map 
 ;;;;; Coordinates
 ;;;;;; M-
-;;;;;;; M-3
-;;;;;;;; M-3--1
-  (("M-" . (3 -1 -4)) . #'d-emacs-fill-docstrings-in-buffer) 
-  (("M-" . (3 -1 -3)) . #'d-emacs-generate-declare-function) 
-  (("M-" . (3 -1 3)) . #'d-emacs-generate-variable-definition) 
-  (("M-" . (3 -1 4)) . #'d-emacs-fill-current-docstring))
+;;;;;;; M-4
+;;;;;;;; M-4--1
+  (("M-" . (4 -1 -4)) . #'d-emacs-fill-docstrings-in-buffer) 
+  (("M-" . (4 -1 -3)) . #'d-emacs-generate-declare-function) 
+  (("M-" . (4 -1 3)) . #'d-emacs-generate-variable-definition) 
+  (("M-" . (4 -1 4)) . #'d-emacs-fill-current-docstring))
 
 ;;;; debug
 `(debug
@@ -266,8 +276,8 @@
    ((1 1 -2) . #'debugger-frame-clear) 
    ((1 1 0) . #'backtrace-toggle-locals) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
+;;;;;;; 4 
+;;;;;;;; 4-0 
    ((3 0 1) . #'debugger-quit)))
 
 ;;; d-emacs-emacs-bindlists.el ends here

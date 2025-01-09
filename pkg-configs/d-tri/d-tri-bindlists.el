@@ -25,6 +25,8 @@
 ;;; Code:
 
 ;;;; d-tri-mode-map
+
+;;;; d-tri-mode-map
 `(
 ;;;;; Coordinates
 ;;;;;;; 1

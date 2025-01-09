@@ -53,21 +53,21 @@
   ((2 -1 3) . #'image-cut) 
 
 ;;;;;;;; 2-0 
-  ((2 0 -2) . #'image-previous-file) 
   ((2 0 -2) . #'image-decrease-speed) 
+  ((2 0 -2) . #'image-previous-file) 
   ((2 0 -1) . #'image-decrease-size) 
   ((2 0 1) . #'image-increase-size) 
-  ((2 0 2) . #'image-next-file) 
   ((2 0 2) . #'image-increase-speed) 
+  ((2 0 2) . #'image-next-file) 
   ((2 0 5) . #'image-save) 
 
 ;;;;;;;; 2-1 
   ((2 1 -3) . #'image-reset-speed) 
 
-;;;;;;; 3 
-;;;;;;;; 3-0 
-  ((3 0 -2) . #'image-previous-line) 
-  ((3 0 2) . #'image-next-line) 
+;;;;;;; 4 
+;;;;;;;; 4-0 
+  ((4 0 -2) . #'image-previous-line) 
+  ((4 0 2) . #'image-next-line) 
 
 ;;;;;;; 5 
 ;;;;;;;; 5--1 
@@ -86,12 +86,12 @@
   ((5 1 0) . #'image-transform-reset-to-original) 
   ((5 1 2) . #'image-transform-fit-both) 
 
-;;;;;;; 6 
-;;;;;;;; 6--1 
-  ((6 -1 4) . #'image-goto-frame) 
+;;;;;;; 8 
+;;;;;;;; 8--1 
+  ((8 -1 4) . #'image-goto-frame) 
 
-;;;;;;;; 6-0 
-  ((6 0 -2) . #'image-previous-frame) 
-  ((6 0 2) . #'image-next-frame))
+;;;;;;;; 8-0 
+  ((8 0 -2) . #'image-previous-frame) 
+  ((8 0 2) . #'image-next-frame))
 
 ;;; d-emacs-image-bindlists.el ends here

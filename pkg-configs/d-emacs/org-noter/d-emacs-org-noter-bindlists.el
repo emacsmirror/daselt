@@ -51,32 +51,32 @@
 ;;;;;;;; 1-1 
   ((1 1 0) . #'org-noter-sync-current-note) 
 
-;;;;;;; 4 
-;;;;;;;; 4-0 
-  ((4 0 1) . #'org-noter-kill-session) 
+;;;;;;; 3 
+;;;;;;;; 3-0 
+  ((3 0 1) . #'org-noter-kill-session) 
 
 ;;;;;; M- 
-;;;;;;; M-4 
-;;;;;;;; M-4-1 
-  (("M-" . (4 1 0)) . #'org-noter-sync-current-page-or-chapter))
+;;;;;;; M-3 
+;;;;;;;; M-3-1 
+  (("M-" . (3 1 0)) . #'org-noter-sync-current-page-or-chapter))
 
 ;;;; org-noter-notes-mode-map
 `(org-noter-notes-mode-map 
 ;;;;; Coordinates
 ;;;;;; s-
-;;;;;;; s-4
-;;;;;;;; s-4-0
-  (("s-" . (4 0 -3)) . #'org-noter-sync-prev-page-or-chapter) 
-  (("s-" . (4 0 -2)) . #'org-noter-prev-note) 
-  (("s-" . (4 0 2)) . #'org-noter-sync-next-note) 
-  (("s-" . (4 0 3)) . #'org-noter-sync-next-page-or-chapter) 
+;;;;;;; s-3
+;;;;;;;; s-3-0
+  (("s-" . (3 0 -3)) . #'org-noter-sync-prev-page-or-chapter) 
+  (("s-" . (3 0 -2)) . #'org-noter-prev-note) 
+  (("s-" . (3 0 2)) . #'org-noter-sync-next-note) 
+  (("s-" . (3 0 3)) . #'org-noter-sync-next-page-or-chapter) 
 
-;;;;;;;; s-4-1 
-  (("s-" . (4 1 0)) . #'org-noter-sync-current-note) 
+;;;;;;;; s-3-1 
+  (("s-" . (3 1 0)) . #'org-noter-sync-current-note) 
 
 ;;;;;; s-C- 
-;;;;;;; s-C-4 
-;;;;;;;; s-C-4-1 
-  (("s-C-" . (4 1 0)) . #'org-noter-sync-current-page-or-chapter))
+;;;;;;; s-C-3 
+;;;;;;;; s-C-3-1 
+  (("s-C-" . (3 1 0)) . #'org-noter-sync-current-page-or-chapter))
 
 ;;; d-emacs-org-noter-bindlists.el ends here

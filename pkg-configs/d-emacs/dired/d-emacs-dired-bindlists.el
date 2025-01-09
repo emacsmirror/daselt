@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; dired-mode-map
+
+;;;; dired-mode-map
 `(
 ;;;;; Coordinates
 ;;;;;;; 0

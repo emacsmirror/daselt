@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; ekg-notes-mode-map
+
+;;;; ekg-notes-mode-map
 `(ekg-notes-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 4

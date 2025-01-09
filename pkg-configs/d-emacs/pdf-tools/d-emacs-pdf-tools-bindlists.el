@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; pdf-view-mode-map
+
+;;;; pdf-view-mode-map
 `(pdf-view-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -62,6 +64,18 @@
 
 ;;;; pdf-outline
 `(pdf-outline
+  (pdf-outline-minor-mode-map 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+   ((1 0 -1)) 
+
+;;;;;;; 2 
+;;;;;;;; 2--1 
+   ((2 -1 4) . #'pdf-outline))
+
+  
+;;;; pdf-outline-buffer-mode-map
   (pdf-outline-buffer-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -78,28 +92,24 @@
 
 ;;;;;;; 4 
 ;;;;;;;; 4--1 
-   ((3 -1 -4) . #'outline-cycle-buffer) 
-   ((3 -1 4) . #'outline-cycle) 
+   ((4 -1 -4) . #'outline-cycle-buffer) 
+   ((4 -1 4) . #'outline-cycle) 
 
 ;;;;;;;; 4-0 
-   ((3 0 -3) . #'pdf-outline-up-heading) 
-   ((3 0 -2) . #'pdf-outline-display-link) 
-   ((3 0 1) . #'quit-window) 
-   ((3 0 1) . #'pdf-outline-quit) 
-   ((3 0 2) . #'pdf-outline-follow-link-and-quit)) (pdf-outline-minor-mode-map 
+   ((4 0 -3) . #'pdf-outline-up-heading) 
+   ((4 0 -2) . #'pdf-outline-display-link) 
+   ((4 0 1) . #'quit-window) 
+   ((4 0 1) . #'pdf-outline-quit) 
+   ((4 0 2) . #'pdf-outline-follow-link-and-quit)))
+
+;;;; pdf-history
+`(pdf-history
+  (pdf-history-minor-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
-   ((1 0 -1)) 
-
-;;;;;;; 2 
-;;;;;;;; 2--1 
-   ((2 -1 4) . #'pdf-outline)))
-
-`(pdf-history
-  (pdf-history-minor-mode-map
-   ((1 0 -2) . #'pdf-history-backward)
-   ((1 0 2) . #'pdf-history-forward)
-   ((1 0 3) . nil)))
+   ((1 0 -2) . #'pdf-history-backward) 
+   ((1 0 2) . #'pdf-history-forward) 
+   ((1 0 3))))
 
 ;;; d-emacs-pdf-tools-bindlists.el ends here

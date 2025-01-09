@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; flycheck-error-list-mode-map
+
+;;;; flycheck-error-list-mode-map
 `(flycheck-error-list-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 4

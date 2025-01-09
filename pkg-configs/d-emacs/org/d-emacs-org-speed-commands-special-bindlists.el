@@ -25,6 +25,8 @@
 ;;; Code:
 
 ;;;; org-mode-map
+
+;;;; org-mode-map
 `(
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -106,5 +108,4 @@
   ((6 0 -2) org-agenda-set-restriction-lock 'subtree) 
   ((6 0 2) org-agenda-remove-restriction-lock))
 
-(provide 'd-emacs-org-speed-commands-special-bindlists)
 ;;; d-emacs-org-speed-commands-special-bindlists.el ends here

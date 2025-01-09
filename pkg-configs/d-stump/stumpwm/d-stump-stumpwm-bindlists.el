@@ -180,7 +180,6 @@
 
 ;;;; "*run-app-map*"
 `("*run-app-map*" 
-
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -188,7 +187,6 @@
 
 ;;;; "*quit-map*"
 `("*quit-map*" 
-
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -206,7 +204,6 @@
 
 ;;;; "*emacs-map*"
 `("*emacs-map*" 
-
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1

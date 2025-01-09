@@ -25,6 +25,8 @@
 ;;; Code:
 
 ;;;; vertico-map
+
+;;;; vertico-map
 `(vertico-map 
 ;;;;; Coordinates
 ;;;;;; C-

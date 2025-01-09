@@ -33,6 +33,8 @@
 ;;; Code:
 
 ;;;; elgrep-mode-map
+
+;;;; elgrep-mode-map
 `(elgrep-mode-map 
 ;;;;; Coordinates
 ;;;;;;; 4
@@ -43,6 +45,8 @@
 ;;;;;;; C-4 
 ;;;;;;;; C-4-0 
   (("C-" . (4 0 -2)) . #'elgrep-edit-mode))
+
+;;;; elgrep-edit-mode-map
 
 ;;;; elgrep-edit-mode-map
 `(elgrep-edit-mode-map 

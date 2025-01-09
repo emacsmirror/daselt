@@ -297,7 +297,11 @@ there."
                                                                (string-match-p
                                                                 blistrx
                                                                 (symbol-name blistsymb))))))
-         (allcoordsd-emacs-xkb-coordinates)
+         (allcoords (defconst d-emacs-xkb-coordinates
+                      
+                      "All coordinates in `d-emacs-xkb-layout'.
+Saved here to be called in calculations of drawing functions."))
+
          (allmodifiercoordscombinations (apply #'append (mapcar (lambda (coords)
                                                                   (mapcar
                                                                    (lambda (mods)

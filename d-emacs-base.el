@@ -5,6 +5,8 @@
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Keywords: tools
 
+;; This file is part of Daselt.
+
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -20,26 +22,72 @@
 
 ;;; Commentary:
 
-;; Base functions for d-emacs. Mostly for other d-emacs packages.
+;; d-emacs-base is the foundational library for Daselt's Emacs configuration, offering
+;; a comprehensive set of essential functions and constants that support and enhance
+;; various d-emacs packages. This library provides customizable options for debugging
+;; and buffer management, ensuring flexibility and ease of use.
+
+;; Key features include:
+
+;; - **Number Operations:** Utilities for generating and manipulating numerical ranges,
+;;   including functions to create lists of integers with optional exclusions and
+;;   indexing capabilities.
+
+;; - **File Handling:** Functions to manage and manipulate file paths and directories,
+;;   such as retrieving base directory names and filtering symbols in obarrays.
+
+;; - **Region Operations:** Tools for reading and modifying buffer regions, enabling
+;;   seamless interaction with selected text within buffers.
+
+;; - **List Processing:** A variety of list manipulation functions, including filtering
+;;   by predicates, removing elements by index, and performing set-theoretic operations
+;;   like power lists and set equality checks.
+
+;; - **String Manipulation:** Utilities for handling and transforming strings, such as
+;;   escaping characters, removing surrounding brackets, and checking string properties
+;;   like uppercase status.
+
+;; - **Line Operations:** Functions to interact with and manipulate lines within buffers,
+;;   including marking lines, reading current lines, and generating newline characters.
+
+;; - **Logical and Set-Theoretic Operations:** Implements logical predicates and set
+;;   operations to facilitate complex data manipulations and condition checks.
+
+;; - **Comparison Utilities:** Provides functions for comparing strings and other data types
+;;   based on customizable predicates, enabling flexible and accurate comparisons.
+
+;; - **Insertion and Buffer Management:** Tools for capturing inserted text, executing
+;;   functions within specific buffer contexts, and managing window configurations.
+
+;; - **Recursive Processing:** Advanced functions to apply operations recursively on
+;;   nested data structures, supporting deep processing and transformation of complex
+;;   objects.
+
+;; - **Drawing and Window Management:** Functions to control buffer display settings,
+;;   such as maximizing buffer windows and restoring previous window configurations.
+
+;; By offering these versatile and robust utilities, d-emacs-base ensures that other
+;; d-emacs packages can operate efficiently and consistently, promoting modularity,
+;; reusability, and maintainability within the d-emacs ecosystem.
 
 ;;; Code:
 
 ;;;; Customs
 (defcustom d-debug
-    nil
-    "Enable debugging options in Daselt.
+  nil
+  "Enable debugging options in Daselt.
 
 When non-nil, functions will print additional debugging messages."
-    :type 'boolean
-    :group 'Daselt)
+  :type 'boolean
+  :group 'Daselt)
 
 (defcustom d-keep-read-buffers
-                                                      nil
-                                                      "Keep buffers open after d-emacs-functions read them.
+  nil
+  "Keep buffers open after d-emacs-functions read them.
 
 If non-nil, previously read buffers will not be closed."
-                                                      :type 'boolean
-                                                      :group 'Daselt)
+  :type 'boolean
+  :group 'Daselt)
 
 ;;;; General purpose functions
 ;;;;; Numbers

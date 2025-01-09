@@ -50,6 +50,9 @@
              ;; Generate d-emacs-dfk-layout from the current d-emacs-xkb-layout.
              (d-emacs-dfk-import-current-layout)
 
+             ;; Set constants
+             (d-stump--set-translated-emacs-keys)
+             
              ;; Add all files in pkg-configs to the load-path.
              (let ((default-directory  (concat d-emacs-directory "pkg-configs/")))
                (normal-top-level-add-to-load-path '("."))

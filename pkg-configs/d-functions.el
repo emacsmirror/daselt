@@ -2035,12 +2035,26 @@ Return the modified bindlist."
                         bind)))
           blist))
 
+(defun d--change-coords-in-bindlist-during-sorting (blist coordlistlist)
+  "Change coordinates in BLIST according to COORDLISTLIST.
+Return the modified bindlist.
+
+Note that unlike `d--change-coords-in-bindlist' this function does not recurse
+into sub-lists of a bindlist. This is because it should be used as a prefun for
+`d--sort-and-format-bindlist'. `d--sort-and-format-bindlist' already passes on
+prefuns in its recursive calls, so if this function would recurse as well, the
+coordinate change would be applied twice."
+  (mapcar (lambda (bind) (if (d--binding-p bind)
+                        (d--change-coords-in-binding bind coordlistlist)
+                      bind))
+          blist))
+
 (defun d--change-coords-in-binding (bind coordlistlist)
-  "Change coordinates in BIND according to COORDLISTLIST.
+      "Change coordinates in BIND according to COORDLISTLIST.
 Return the modified binding."
-  (if (stringp (car bind))
-      bind
-    (let* ((carcoordsp (d-emacs-coords-p (car bind)))
+      (if (stringp (car bind))
+              bind
+        (let* ((carcoordsp (d-emacs-coords-p (car bind)))
            (cdarcoordsp (unless carcoordsp (d-emacs-coords-p (cdar bind))))
            (origcoords (cond (carcoordsp (car bind))
                              (cdarcoordsp (cdar bind))))

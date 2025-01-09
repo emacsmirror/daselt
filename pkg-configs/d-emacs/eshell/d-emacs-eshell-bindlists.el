@@ -39,7 +39,7 @@
 ;;;;;; C-
 ;;;;;;; C-4
 ;;;;;;;; C-4-0
-   (("C-" . (3 0 -4)) . #'eshell-previous-matching-input) 
-   (("C-" . (3 0 4)) . #'eshell-next-matching-input)))
+   (("C-" . (4 0 -4)) . #'eshell-previous-matching-input) 
+   (("C-" . (4 0 4)) . #'eshell-next-matching-input)))
 
 ;;; d-emacs-eshell-bindlists.el ends here

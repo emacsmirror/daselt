@@ -287,5 +287,38 @@ producing remapped keys that meet the specified conditions."
                              ")")))
     overallstr))
 
+;;;; Constant-setting functions
+(defun d-stump--set-translated-emacs-keys ()
+  "Set `d-stump-emacs-key-translations-alist'"
+  (defconst d-stump-emacs-key-translations-alist
+    (let* ((base-file-path "pkg-configs/d-stump/stumpwm/d-stump-remapped-keys-special-bindlists.el")
+           (user-file-path "pkg-configs/d-stump/stumpwm/d-stump-remapped-keys-user-defined-special-bindlists.el")
+           (file-path (if (file-exists-p (concat d-emacs-directory user-file-path))
+                          user-file-path
+                        base-file-path))
+
+           (blist (car (remq nil (d--act-on-bindlists-in-file
+                                  (concat d-emacs-directory file-path)
+                                  (lambda () (let* ((blist (eval (d-read-region)))
+                                               (head (d-head-if-exists blist)))
+                                          (if (string= head "emacs")
+                                              blist)))))))
+           (body (cdr blist))
+           (transconses
+            (mapcar (lambda (bind)
+                      (cons (d--extract-binding-string bind)
+                            (let* ((val (cdr bind))
+                                   (formval (if (member val
+                                                        d-emacs-xkb-special-key-names)
+                                                (d-emacs-xkb--format-special-key val)
+                                              val)))
+                              formval)))
+                    body)))
+
+      transconses)
+    "Alist of key combinations that are translated by StumpWM before they reach
+Emacs. Automatically generated from the contents of the remapped-keys-file using
+`d-stump--set-translated-emacs-keys'."))
+
 (provide 'd-stump-functions)
 ;;; d-stump-functions.el ends here

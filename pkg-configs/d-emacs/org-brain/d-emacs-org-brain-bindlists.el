@@ -35,18 +35,20 @@
 ;;;; org-brain-select-map
 `(org-brain-select-map 
 ;;;;; Coordinates
-;;;;;;; 6
-;;;;;;;; 6-0
-  ((6 0 -3) . #'org-brain-add-selected-parents) 
-  ((6 0 -2) . #'org-brain-clear-selected) 
-  ((6 0 2) . #'org-brain-add-selected-friendships) 
-  ((6 0 3) . #'org-brain-add-selected-children) 
+;;;;;;; 8
+;;;;;;;; 8-0
+  ((8 0 -3) . #'org-brain-add-selected-parents) 
+  ((8 0 -2) . #'org-brain-clear-selected) 
+  ((8 0 2) . #'org-brain-add-selected-friendships) 
+  ((8 0 3) . #'org-brain-add-selected-children) 
 
-;;;;;;;; 6-1 
-  ((6 1 -3) . #'org-brain-remove-selected-parents) 
-  ((6 1 -2) . #'org-brain-delete-selected-entries) 
-  ((6 1 2) . #'org-brain-remove-selected-friendships) 
-  ((6 1 5) . #'org-brain-remove-selected-children))
+;;;;;;;; 8-1 
+  ((8 1 -3) . #'org-brain-remove-selected-parents) 
+  ((8 1 -2) . #'org-brain-delete-selected-entries) 
+  ((8 1 2) . #'org-brain-remove-selected-friendships) 
+  ((8 1 5) . #'org-brain-remove-selected-children))
+
+;;;; org-brain-visualize-mode-map
 
 ;;;; org-brain-visualize-mode-map
 `(org-brain-visualize-mode-map 

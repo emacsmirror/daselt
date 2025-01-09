@@ -20,18 +20,102 @@
 
 ;;; Commentary:
 
-;;
+;;; Commentary:
+
+;; `d-emacs-coords` is a comprehensive Emacs Lisp library designed to facilitate
+;; the coordinatization and visualization of keyboard layouts. This package
+;; provides a suite of tools for defining, transforming, and rendering
+;; multi-layer keyboard configurations, making it ideal for users who seek to
+;; customize their keyboard mappings or visualize complex key arrangements.
+
+;; **Key Features:**
+
+;; - **Coordinate Management:**  
+;; - **Absolute and Relative Coordinates:** Convert between absolute coordinates
+;; - (specific key positions within layers) and relative coordinates
+;; - (positions relative to a defined midpoint), allowing for flexible layout
+;; - definitions.
+;; - **Layer Shifts:** Define and manage shifts for entire layers or individual
+;; - rows, accommodating variations across different keyboard layers.
+
+;; - **Layer Handling:**  
+;; - **Multi-Layer Support:** Manage multiple keyboard layers, each with its own
+;; - set of coordinate shifts and configurations.
+;; - **Bad Combinations Filtering:** Specify key combinations that may not be
+;; - supported by certain keyboards, ensuring compatibility and preventing
+;; - conflicts.
+
+;; - **Layout Visualization:**  
+;; - **Drawing Functions:** Render keyboard layouts as Emacs tables or Org-mode
+;; - tables, providing a clear and organized view of key arrangements.
+;; - **Dynamic Rendering:** Generate visual representations based on coordinate
+;; - regular expressions or specific layer selections, enabling users to focus
+;; - on particular aspects of their layout.
+
+;; - **Binding Retrieval and Manipulation:**  
+;; - **Key Binding Access:** Retrieve the binding associated with specific
+;; - coordinates, facilitating the customization of key behaviors.
+;; - **Layout Generation:** Automatically generate keyboard layouts from a
+;; - collection of place values, streamlining the process of creating and
+;; - modifying layouts.
+
+;; - **Customization and Extensibility:**  
+;; - **Custom Groups and Widgets:** Define customizable groups and widgets for
+;; - fine-tuning layout parameters, ensuring that the package can be tailored
+;; - to individual preferences and requirements.
+;; - **Integration with Existing Layouts:** Seamlessly integrate with existing
+;; - `d-emacs-dfk-layout` or `d-emacs-xkb-layout` configurations, providing
+;; - flexibility for users with predefined layouts.
+
+;; **Usage Examples:**
+
+;; - **Defining a Layout:**  
+;; Customize the `d-emacs-coords-abs-mid` and `d-emacs-coords-layer-shifts-list`
+;; variables to set the midpoint and layer-specific shifts for your keyboard
+;; layout.
+
+;; - **Visualizing a Layer:** Use `d-emacs-coords-draw-keyboard-layer` to render
+;; a specific layer of your keyboard layout in an Emacs buffer, either as a
+;; standard table or an Org-mode table for enhanced readability.
+
+;; - **Use in Bindlists:** `d-emacs-coords' provides the base for
+;; `d-emacs-binds', which provides utilities to define bindings by positions in
+;; the layout (independently of the symbols they house).
+
+;; - **D-Emacs Mode:** This package is part of the Daselt-project
+;; (https://gitlab.com/nameiwillforget/daselt) and provides necessary
+;; prerequisites for Daselt's Emacs implementation d-emacs.
+
+;; `d-emacs-coords` empowers Emacs users to meticulously design and visualize
+;; their keyboard layouts, offering granular control over key positioning and
+;; layer management. Whether you're crafting a custom ergonomic setup or
+;; experimenting with multi-layer configurations, this package provides the
+;; necessary tools to achieve a tailored and efficient keyboard experience.
+
 
 ;;; Code:
 
 ;;;; Preamble
+(require 'cl-macs)
+(require 'table)
+(require 'org-compat)
+(require 'd-emacs-base)
+
+(declare-function org-table-align "org-table" nil)
+(declare-function d-execute-in-maximized-maybe-temp-buffer "d-emacs-base" (bufname fun))
+(declare-function d-remove-list-index "d-emacs-base" (lst idx))
+(declare-function d-filter-by-predicate "d-emacs-base" (lst pred))
+(declare-function d-string-exists-and-nonempty "d-emacs-base" (str))
+(declare-function d-forall-p "d-emacs-base" (list predicate))
+(declare-function d-add-list-indices "d-emacs-base" (list &optional fromone))
+(declare-function d-cardinal "d-emacs-base" (n &optional fromone))
 
 ;;;; Customs
 (defgroup d-emacs-coords
-    nil
-    "Customization group for d-emacs-coords."
-    :group 'Daselt
-    :prefix "d-emacs-coords-")
+                                                                                                                                                                                                                                                                                                                                                                      nil
+                                                                                                                                                                                                                                                                                                                                                                      "Customization group for d-emacs-coords."
+                                                                                                                                                                                                                                                                                                                                                                      :group 'Daselt
+                                                                                                                                                                                                                                                                                                                                                                      :prefix "d-emacs-coords-")
 
 (define-widget 'coords 'lazy
   "A list of coordinate numbers."
@@ -132,21 +216,17 @@ them in ascending order, otherwise the algorithm will get confused."
   :group 'd-emacs-coords)
 
 (defcustom d-emacs-coords-layer-list
-  '(0 1 2 3 4 5 6 7 8)
-  "Layers in d-emacs-coords-layouts.
+    '(0 1 2 3 4 5 6 7 8)
+    "Layers in d-emacs-coords-layouts.
 The index of a number is supposed to be its level in the xkb-layout, the number
 value the relative layer coordinate.
 Layer 0 is not supposed to be included."
-  :type '(repeat 'natnum)
-  :group 'd-emacs-coords)
-
-(defconst d-emacs-coords-layer-numbers-list
-  (d-cardinal (length d-emacs-coords-layer-list))
-  "Number of layers in d-emacs-coords-layouts.")
+    :type '(repeat 'natnum)
+    :group 'd-emacs-coords)
 
 (defcustom d-emacs-coords-bad-combinations-list
-  nil
-  "A list of key combinations that do not work on your main keyboard(s).
+                                    nil
+                                    "A list of key combinations that do not work on your main keyboard(s).
 
 Some key combinations may not be registered on specific keyboards. Which ones
 varies by model.
@@ -160,8 +240,13 @@ list. If a combination is found, a variant binding is created in which
 
 Key combinations should be specified using conses of prefixes and relative
 Daselt coordinates."
-  :type 'prefix-coords-pair
-  :group 'd-emacs-coords)
+                                    :type 'prefix-coords-pair
+                                    :group 'd-emacs-coords)
+
+;;;; Constants
+(defconst d-emacs-coords-layer-numbers-list
+  (d-cardinal (length d-emacs-coords-layer-list))
+  "Number of layers in d-emacs-coords-layouts.")
 
 ;;;; Coordinates
 ;;;;; Transformations
@@ -181,7 +266,7 @@ Daselt coordinates."
          (layermidrow (nth 0 layermid))
          (layermidcol (nth 1 layermid))
          (shiftedrowshifts (mapcar (lambda (rowshift)
-                                                 (list (+ layerallrowsshift (nth 0 rowshift))
+                                                                                 (list (+ layerallrowsshift (nth 0 rowshift))
                                            (nth 1 rowshift)))
                                    d-emacs-coords-row-shifts-list))
          (layerrowshift (or (nth 2 (car (d-filter-by-predicate
@@ -198,18 +283,18 @@ Daselt coordinates."
          (colposp (natnump col))
          (formplacesinrow (d-filter-by-predicate d-emacs-coords-formal-places-list
                                                  (lambda (coords)
-                                                               (let ((formrow (nth 0 coords)))
+                                                                                               (let ((formrow (nth 0 coords)))
                                                      (= row formrow)))))
          (formplacesonside (d-filter-by-predicate formplacesinrow
                                                   (lambda (coords)
-                                                                (let* ((formcol (nth 1 coords))
+                                                                                                (let* ((formcol (nth 1 coords))
                                                            (formcolposp (natnump formcol)))
                                                       (equal formcolposp colposp)))))
          (col (cl-loop for formplace in (if colposp formplacesonside ; We have to go from 0
                                           (reverse formplacesonside))
                        do (let ((formcol (nth 1 formplace)))
                             (if (<= (abs formcol) (abs col))
-                                                        (setq col (funcall (if colposp #'1+ #'1-)
+                                                                                                                        (setq col (funcall (if colposp #'1+ #'1-)
                                                    col))
                               (cl-return col)))
                        finally return col)) ; We can ignore places outside the span between the column and 0.
@@ -693,24 +778,24 @@ Add STANDARDVAL to empty strings for all places without values.
 
 By default, STANDARDVAL is an empty string."
   (cl-flet ((fiber-by-layout-level (coordslist lev)
-              (d-emacs-fiber-by-property coordslist (lambda (coords) (nth lev coords)) t #'=)))
+                                                  (d-emacs-fiber-by-property coordslist (lambda (coords) (nth lev coords)) t #'=)))
     (let* ((standardval (or standardval ""))
            (coords (mapcar #'car placevals))
            (abscoords (mapcar #'d-emacs-coords-rel-to-abs coords))
            (indices (d-cardinal (length (car coords))))
            (abscoordsbylayer (fiber-by-layout-level abscoords 0))
            (abscoordsbyrow (sort (mapcar (lambda (idxcoordslist)
-                                           (cons (car idxcoordslist)
+                                                                               (cons (car idxcoordslist)
                                                  (fiber-by-layout-level (cdr idxcoordslist) 1)))
                                          abscoordsbylayer)
                                  :key #'car
                                  :lessp #'<))
            (abscoordsrowbounds (mapcar (lambda (idxlayer)
-                                         (cons (car idxlayer)
+                                                                             (cons (car idxlayer)
                                                (sort
                                                 (mapcar (lambda (idxrow)
-                                                          (let* ((cols (mapcar (lambda (coords)
-                                                                                 (car (last coords)))
+                                                                                              (let* ((cols (mapcar (lambda (coords)
+                                                                                                                     (car (last coords)))
                                                                                (cdr idxrow)))
                                                                  (firstcol (apply #'min cols))
                                                                  (lastcol (apply #'max cols)))
@@ -723,7 +808,7 @@ By default, STANDARDVAL is an empty string."
                                        abscoordsbyrow)))
       (d-emacs-coords-run-through abscoordsrowbounds
                                   (lambda (runcoords)
-                                    (alist-get (d-emacs-coords-abs-to-rel runcoords) placevals standardval nil #'equal))))))
+                                                                        (alist-get (d-emacs-coords-abs-to-rel runcoords) placevals standardval nil #'equal))))))
 
 ;;;; Provide
 (provide 'd-emacs-coords)

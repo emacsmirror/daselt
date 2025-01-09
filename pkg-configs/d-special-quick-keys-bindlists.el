@@ -48,6 +48,4 @@
                               finally return runlist))))
          d-quick-key-layers-list))
 
-
-(provide 'd-special-quick-keys-bindlists)
 ;;; d-special-quick-keys-bindlists.el ends here
