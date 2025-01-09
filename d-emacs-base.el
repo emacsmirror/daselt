@@ -503,12 +503,15 @@ The opposite of truncate, but unlike truncate accepts non-floating numbers."
                               (1+ tnum)
                   (1- tnum)))))
 
-(defun d-emacs-namecore (sym pfx sfx)
+(defun d-emacs-namecore (sym &optional pfx sfx)
   "Return the core of the symbol name of SYM.
 This is the part between PFX and SFX."
-  (let ((name (symbol-name sym)))
+  (let ((pfx (or pfx ""))
+        (sfx (or sfx ""))
+        (name (symbol-name sym)))
     (string-match (eval `(rx ,pfx (group (* not-newline)) ,sfx)) name)
     (match-string 1 name)))
+
 ;;;; Recursion
 (defun d-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply functions to elements of OBJ based on condition tests.
@@ -539,7 +542,7 @@ output.
 OBJ can represent structured data such as folders, where elements are evaluated
 and results collected based on hierarchy and matching tests."
   (let* ((recursetest (or recursetest (lambda (idx lst &optional _restargs)
-                                                                  (proper-list-p (nth idx lst)))))
+                                        (proper-list-p (nth idx lst)))))
          (formatfun (or formatfun #'identity))
          (eltcolfun (or eltcolfun (lambda (lst result) (append lst (list result)))))
          (lstcolfun (or lstcolfun #'list))
@@ -552,7 +555,7 @@ and results collected based on hierarchy and matching tests."
 
     ;; This somewhat awkward construction is necessary to allow test1 and the other functions to not need an input corresponding to RESTARGS if RESTARGS is not given.
     (cl-flet* ((apply-with-restargs-if-given (fun arg1 &optional arg2)
-                                           (eval (append `(funcall fun arg1)
+                 (eval (append `(funcall fun arg1)
                                (if arg2 `(arg2))
                                (if restargs `(restargs)))
                        `((fun . ,fun)
@@ -574,13 +577,13 @@ and results collected based on hierarchy and matching tests."
                            do (if debug (message "Fun: %s \nTest: %s \nElement Collection Function: %s"
                                                  fun test eltcolfun))
                            do (if (apply-with-restargs-if-given test idx lst)
-                                                                                      (let ((result (apply-with-restargs-if-given fun elt)))
+                                  (let ((result (apply-with-restargs-if-given fun elt)))
                                     (if debug (message "\nRunlist: %s \nResult: %s" runlist result))
                                     (setq runlist (funcall eltcolfun runlist result))
                                     (unless contt (cl-return)))))
 
                do (if (apply-with-restargs-if-given recursetest idx lst)
-                                                                          (setq runlist
+                      (setq runlist
                             (funcall lstcolfun runlist
                                      (d-funcalls-recursively
                                       elt funtests recursetest formatfun eltcolfun lstcolfun

@@ -526,16 +526,63 @@ Works for definition types in `d-emacs-docstring-functions-list'."
   (let ((buf (current-buffer)))
     (set-buffer (find-file-noselect fname))
     (prog1 (remq nil (mapcar (lambda (deftype)
-                               (save-excursion
-                                 (goto-char (point-min))
-                                 (let (rlist)
+                                                                                 (save-excursion
+                                                                                   (goto-char (point-min))
+                                                                                   (let (rlist)
                                    (while (search-forward (symbol-name deftype) nil t)
                                      (save-excursion
-                                       (beginning-of-defun)
-                                       (push (d-emacs-definition-name) rlist)))
+                                                                                         (beginning-of-defun)
+                                                                                         (push (d-emacs-definition-name) rlist)))
                                    rlist)))
                              d-emacs-docstring-functions-list))
       (set-buffer buf))))
+
+;;;; Replacements
+(defun d-emacs-replace-list-throughout-directory (lst dir fun &optional filetest dirtest allfiles)
+  "Replace occurrences of strings or symbols in files throughout a specified directory.
+
+This function takes a list `lst' of strings or symbols, and for each element,
+it replaces occurrences of the corresponding string in the files found in the
+specified directory `dir'. The replacement is performed using the provided
+function `fun' to determine the replacement string for non-string elements. 
+The function can also utilize optional predicates for filtering files and directories.
+
+Parameters:
+- LST: A list of strings or symbols. If an element is a cons cell (pair), the
+car is treated as a string to be replaced, and the cdr will be used as the
+replacement directly. For symbols, they are first converted to strings.
+- DIR: The directory in which to perform the replacements.
+- FUN: A function that takes an element from `lst' and returns the replacement
+string if the element is not a string or cons cell.
+- FILETEST (optional): A predicate function to determine if a file should be
+processed. Should return non-nil for files that match the criteria.
+- DIRTEST (optional): A predicate function to determine if a directory should be
+processed. Should return non-nil for directories that match the criteria.
+- ALLFILES (optional): If non-nil, indicates that all files should be included
+in the search, regardless of the `filetest' predicate.
+
+Returns:
+A list of the replacement strings corresponding to each element in `lst'.
+
+Example Usage:
+(d-emacs-replace-list-throughout-directory
+ '(old_string1 old_string2 ((old_string3 . new_string3)))
+ /path/to/directory
+ 'some-replacement-function
+ 'file-filter-predicate
+ 'dir-filter-predicate
+ t) ; where t indicates to include all files."
+  (mapcar (lambda (obj)
+            (let* ((ocnsp (consp obj))
+                   (str (if ocnsp (car obj) (if (symbolp obj)
+                                                (symbol-name obj)
+                                              obj)))
+                   (repl (if ocnsp
+                             (cdr obj)
+                           (funcall fun obj))))
+              (d-emacs-replace-string-throughout-directory str repl dir filetest dirtest allfiles)
+              repl))
+          lst))
 
 ;;;; Provide
 (provide 'd-emacs-functions)
