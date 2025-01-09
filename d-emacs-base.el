@@ -73,7 +73,7 @@
 ;;; Code:
 
 ;;;; Customs
-(defcustom d-debug
+(defcustom d-emacs-debug
   nil
   "Enable debugging options in Daselt.
 
@@ -81,7 +81,7 @@ When non-nil, functions will print additional debugging messages."
   :type 'boolean
   :group 'Daselt)
 
-(defcustom d-keep-read-buffers
+(defcustom d-emacs-keep-read-buffers
   nil
   "Keep buffers open after d-emacs-functions read them.
 
@@ -91,7 +91,7 @@ If non-nil, previously read buffers will not be closed."
 
 ;;;; General purpose functions
 ;;;;; Numbers
-(defun d-numbers-between (num1 num2 &optional exclude1 exclude2)
+(defun d-emacs-numbers-between (num1 num2 &optional exclude1 exclude2)
   "Generate a list of integers from num1 to num2, including both.
 With optional arguments EXCLUDE1 and EXCLUDE2, don't include num1
 repectively num2."
@@ -99,32 +99,32 @@ repectively num2."
            to (funcall (if exclude2 #'1- #'identity) num2)
            collect k))
 
-(defun d-cardinal (n &optional fromone)
+(defun d-emacs-cardinal (n &optional fromone)
   "Generate a list of integers from 0 to N-1.
 If optional argument FROMONE is non-nil, return a list starting from 1 to N
 instead."
-  (d-numbers-between 0 n fromone (not fromone)))
+  (d-emacs-numbers-between 0 n fromone (not fromone)))
 
-(defun d-add-list-indices (list &optional fromone)
-                                                          "Cons each element of LIST with its position in LIST.
+(defun d-emacs-index (list &optional fromone)
+  "Cons each element of LIST with its position in LIST.
 If optional argument FROMONE is non-nil, indices start from 1; otherwise, they
 start from 0."
-                                                          (cl-mapcar (lambda (index elt)
-                                                                       (cons index elt))
-             (d-cardinal (length list) fromone) list))
+  (cl-mapcar (lambda (index elt)
+               (cons index elt))
+             (d-emacs-cardinal (length list) fromone) list))
 
 
 ;;;;; Files
-(defun d-containing-directory-base-name (filepath)
-                                                            "Retrieve the base name of the containing directory of FILEPATH.
+(defun d-emacs-containing-directory-base-name (filepath)
+  "Retrieve the base name of the containing directory of FILEPATH.
 This function does not include the full path or trailing slashes in the result."
-                                                            (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
+  (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
 
-(defun d-filter-obarray-by-predicate (predicate)
-              "Filter symbols in the obarray by a given PREDICATE."
-              (let (filtered-symbols)
+(defun d-emacs-filter-obarray (predicate)
+  "Filter symbols in the obarray by a given PREDICATE."
+  (let (filtered-symbols)
     (mapatoms (lambda (sym)
-                            (when (funcall predicate sym)
+                (when (funcall predicate sym)
                   (push sym filtered-symbols))))
     filtered-symbols))
 
@@ -137,17 +137,17 @@ This function does not include the full path or trailing slashes in the result."
   (goto-char (point-max)))
 
 ;;;;; Region operations
-(defun d-read-region (&optional properties)
-                "Read and return the contents of the current region as a Lisp expression.
+(defun d-emacs-read-region (&optional properties)
+  "Read and return the contents of the current region as a Lisp expression.
 The region is defined by the currently selected text in the buffer. Unless
 PROPERTIES is t, read without properties."
-                (let ((beg (region-beginning))
+  (let ((beg (region-beginning))
         (end (region-end)))
     (read (if properties
-                                          (buffer-substring beg end)
-                          (buffer-substring-no-properties beg end)))))
+              (buffer-substring beg end)
+            (buffer-substring-no-properties beg end)))))
 
-(defun d-replace-region-with-arg (arg)
+(defun d-emacs-replace-region (arg)
   "Replace the currently selected region with the content of ARG.
 The text currently in the region is deleted, and ARG is inserted at the end of
 the selection."
@@ -158,13 +158,13 @@ the selection."
     (delete-region beg end)))
 
 ;;;;; Lists
-(defun d-remove-indices (indlst)
+(defun d-emacs-remove-indices (indlst)
   "Remove indices of the elements of INDLST."
   (mapcar (lambda (indelt)
             (cdr indelt))
           indlst))
 
-(defun d-filter-by-predicate (lst pred)
+(defun d-emacs-filter-list (lst pred)
   "Return a new list of elements from LST filtered by PREDICATE.
 The function tests each entry in LST using PRED."
   (remq nil (mapcar (lambda (item)
@@ -218,7 +218,7 @@ same property and whose car is a representative of that property."
                             props)))
     fibration))
 
-(defun d-lisp-file-code (filename)
+(defun d-emacs-lisp-file-code (filename)
   "Extract and return the code section from a Lisp file specified by FILENAME.
 The extraction is done by reading the content between `;;; Code:' and `;;; .*
 ends here'. This function assumes the file follows standard Elisp formatting but
@@ -236,7 +236,7 @@ may work on other Lisp file formats as well."
 If OBJ is already a list, return it unchanged."
   (if (listp obj) obj (list obj)))
 
-(defun d-emacs-mapcar*-or-only (fun &rest objs)
+(defun d-emacs-cl-mapcar-or-only (fun &rest objs)
   "Invoke FUN with elements from the provided Lisp objects OBJS.
 If all objects in OBJS are lists, apply FUN with their elements as arguments
 using `cl-mapcar'. If some OBJS are not lists, they are converted into
@@ -246,17 +246,17 @@ one-element lists before the application."
                    (d-emacs-make-list-if-not obj))
                  objs)))
 
-(defun d-cons-to-list (cns)
+(defun d-emacs-cons-to-list (cns)
   "Convert the cons cell CNS into a list containing its elements.
 This creates a list where the first element is the car of CNS, and the second
 element is its cdr."
   (list (car cns) (cdr cns)))
 
-(defun d-list-to-cons (lst)
+(defun d-emacs-list-to-cons (lst)
   "Convert the list LST into a cons consisting of the first two elements of LST.."
   (cons (car lst) (nth 1 lst)))
 
-(defun d-flatten-until (lst cnd)
+(defun d-emacs-flatten-until (lst cnd)
   "Flatten the list LST until the condition CND becomes true.
 CND should be a function accepting one argument to check flattenings of LST."
   (let ((rlist lst))
@@ -264,7 +264,7 @@ CND should be a function accepting one argument to check flattenings of LST."
              do (setq rlist (apply #'append rlist))
              finally return rlist)))
 
-(defun d-flatten-n-times (lst &optional n)
+(defun d-emacs-flatten-n-times (lst &optional n)
   "Flatten LST N times, concatenating all lists within LST.
 If N is not provided, the function flattens LST once."
   (let ((n (if n n 1))
@@ -273,7 +273,7 @@ If N is not provided, the function flattens LST once."
              do (setq runlst (apply #'append runlst))
              finally return runlst)))
 
-(defun d-reverse-alist-get (key alist &optional default testfn)
+(defun d-emacs-reverse-alist-get (key alist &optional default testfn)
   "Return the car of the first cons in ALIST whose cdr equals KEY.
 If nothing is found, return DEFAULT.
 If TESTFN is given, use it for testing, otherwise use `equal'."
@@ -283,7 +283,7 @@ If TESTFN is given, use it for testing, otherwise use `equal'."
         (throw 'found (car item))))
     default))
 
-(defun d-sexp-end-position (&optional beg)
+(defun d-emacs-sexp-end-position (&optional beg)
   "Return the ending position of the sexp beginning at BEG.
 If BEG is not given, it is set using `point'."
   (let ((beg (or beg (point))))
@@ -293,7 +293,7 @@ If BEG is not given, it is set using `point'."
       (point))))
 
 ;;;;; Strings
-(defun d--escape-chars-in-str (str)
+(defun d-emacs--escape-chars-in-str (str)
   "Escape characters in STR that are defined in `d-escape-kbd-regexps-list'.
 This function modifies instances of the defined regex patterns."
   (let ((escaped-char-str
@@ -306,26 +306,26 @@ This function modifies instances of the defined regex patterns."
                   finally return str)))
     (if escaped-char-str escaped-char-str str)))
 
-(defun d-remove-surrounding-brackets (str)
+(defun d-emacs-remove-surrounding-brackets (str)
   "Remove the initial and final bracket in STR."
   (let ((inibrapos (string-search "\(" str))
         (finbrapos (- (string-search "\)" (reverse str)))))
     (substring str (1+ inibrapos) (1- finbrapos))))
 
-(defun d-remove-text-properties-from-string (str)
+(defun d-emacs-remove-text-properties-from-string (str)
   "Return a new string based on STR with all text properties removed."
   (let ((no-prop-str (copy-sequence str)))
     (set-text-properties 0 (length no-prop-str) nil no-prop-str)
     no-prop-str))
 
-(defun d-string-exists-and-nonempty (str)
+(defun d-emacs-string-exists-and-nonempty (str)
   "Return t if STR exists and is not empty."
   (and str (not (string-empty-p
                  str))))
 
 
 ;; Taken from s.el
-(defun d-uppercase-p (str)
+(defun d-emacs-uppercase-p (str)
   "Return t if all letters in STR are uppercase."
   (declare (side-effect-free t))
   (let ((case-fold-search nil))
@@ -333,7 +333,7 @@ This function modifies instances of the defined regex patterns."
 
 ;;;;; Lines
 ;; Taken from min,sc-cmds.el (Icicle library).
-(defun d-mark-line (&optional arg)
+(defun d-emacs-mark-line (&optional arg)
   "Put mark at end of line, point at beginning.
 A numeric prefix ARG means move forward (backward if negative) that
 many lines, thus marking a line other than the one point was
@@ -344,49 +344,49 @@ originally in."
   (push-mark nil t t)
   (goto-char (line-end-position)))
 
-(defun d-read-line ()
+(defun d-emacs-read-line ()
   "Read the current line."
   (buffer-substring-no-properties (line-beginning-position)
                                   (line-end-position)))
 
-(defun d-generate-newlines (k)
+(defun d-emacs-generate-newlines (k)
   "Generate a string containing K newlines."
   (cl-loop for i from 1 to k
            concat "\n"))
 
-(defun d-surround-by-newlines (k l str)
+(defun d-emacs-surround-by-newlines (k l str)
   "Prepend STR with K newlines and append it with L newlines."
-  (concat (d-generate-newlines k) str (d-generate-newlines l)))
+  (concat (d-emacs-generate-newlines k) str (d-emacs-generate-newlines l)))
 
-(defun d-prepend-newlines (k str)
+(defun d-emacs-prepend-newlines (k str)
   "Prepend K newlines before STR."
-  (d-surround-by-newlines k 0 str))
+  (d-emacs-surround-by-newlines k 0 str))
 
-(defun d-append-newlines (k str)
+(defun d-emacs-append-newlines (k str)
   "Append K newlines before STR."
-  (d-surround-by-newlines 0 k str))
+  (d-emacs-surround-by-newlines 0 k str))
 
-(defun d-search-at-line-start (str)
+(defun d-emacs-search-at-line-start (str)
   "Search for an occurrence of STR at the start of a line.
-Unlike normal `search-forward', `d-search-at-line-start' returns nil if no match
+Unlike normal `search-forward', `d-emacs-search-at-line-start' returns nil if no match
 is found and does not cause an error."
   (re-search-forward (eval `(rx line-start ,str)) nil t))
 
 ;;;;; Logical and set-theoretic operations
-(defun d-forall-p (list predicate)
+(defun d-emacs-forall-p (list predicate)
   "Return LIST if all elements satisfy PREDICATE; otherwise, return nil."
   (cl-loop for elt in list
            do (if (not (funcall predicate elt))
                   (cl-return nil))
            finally return t))
 
-(defun d-exists-p (list predicate)
+(defun d-emacs-exists-p (list predicate)
   "Return LIST if at least one element satisfies PREDICATE.
 Otherwise return nil."
   (cl-loop for elt in list
            do (if (funcall predicate elt) (cl-return t))))
 
-(defun d-complement (list1 list2 &optional compfun)
+(defun d-emacs-complement (list1 list2 &optional compfun)
   "Return a new list containing elements of LIST1 that are not in LIST2.
 The operationis non-destructive, preserving the original lists. Use COMPFUN for
 comparisons, defaulting to `equal'."
@@ -394,21 +394,21 @@ comparisons, defaulting to `equal'."
                   (cl-member element list2 :test (or compfun #'equal)))
                 list1))
 
-(defun d-powerlist (list &optional elt)
+(defun d-emacs-powerlist (list &optional elt)
             "Generate the power list of SET represented by LIST.
 Returns a list of all sublists of LIST with elements ordered like in LIST. ELT
 is used for recursion and should normally not be set by the user."
             (let ((powerlist (list nil))
         (cutlist list))
     (if elt (mapcar (lambda (sublist) (append (list elt) sublist))
-                    (d-powerlist (cl-loop for index from 0 to (cl-position elt list)
+                    (d-emacs-powerlist (cl-loop for index from 0 to (cl-position elt list)
                                           do (setq cutlist (remq (nth index list) cutlist))
                                           finally return cutlist)))
       (cl-loop for elt in list
-               do (setq powerlist (append powerlist (d-powerlist list elt)))
+               do (setq powerlist (append powerlist (d-emacs-powerlist list elt)))
                finally return powerlist))))
 
-(defun d-setequal (list1 list2 &optional elttest)
+(defun d-emacs-setequal (list1 list2 &optional elttest)
   "Return t if LIST1 has the same elements as LIST2.
 
 ELTTEST is the test used for element comparison. It defaults to `equal'."
@@ -417,7 +417,7 @@ ELTTEST is the test used for element comparison. It defaults to `equal'."
        (cl-subsetp
         list2 list1 :test elttest)))
 
-(defun d-remove-list-index (lst idx)
+(defun d-emacs-remove-list-index (lst idx)
                           "Remove the element at index IDX from LST and return the resulting list.
 The operation does not modify the original list."
                           (let (runlst)
@@ -427,17 +427,17 @@ The operation does not modify the original list."
              finally return runlst)))
 
 ;;;;; Comparison
-(defun d-string-shorter-or-samep (str1 str2)
+(defun d-emacs-string-shorter-or-samep (str1 str2)
   "Return t if STR1 is shorter than or equal in length to STR2."
   (<= (length str1)
       (length str2)))
 
-(defun d-string-longer-or-samep (str1 str2)
+(defun d-emacs-string-longer-or-samep (str1 str2)
   "Return t if STR1 is longer than or equal in length to STR2."
   (>= (length str1)
       (length str2)))
 
-(defun d-compare-if-decidable (test arg1 arg2)
+(defun d-emacs-compare-if-decidable (test arg1 arg2)
   "Compare ARG1 and ARG2 using the function TEST.
 If TEST takesone argument, return `(t)' if only ARG1 satisfies TEST, `(nil)' if
 only ARG2 does, or nil if both or neither do. If TEST takes more arguments,
@@ -463,25 +463,25 @@ around and provide output like in the one-argument case."
              '(nil))
             (t nil)))))
 
-(defun d-compare-by-sequential-predicates (arg1 arg2 &rest predicates)
+(defun d-emacs-compare-by-sequential-predicates (arg1 arg2 &rest predicates)
   "Compare ARG1 and ARG2 using the sequence of PREDICATES.
 Return (t) if ARG1 fulfills the i-th predicate and ARG2 doesn't, return (nil) if
 ARG2 fulfills the i-th predicate and ARG1 doesn't. If both or neither fulfill
 the i-th predicate, compare using the next predicate. If both or neither fulfill
 all predicates, return nil."
   (cl-loop for pred in predicates
-           do (let ((compval (d-compare-if-decidable pred arg1 arg2)))
+           do (let ((compval (d-emacs-compare-if-decidable pred arg1 arg2)))
                 (if compval (cl-return compval)))))
 
 ;;;;; Insertion
-(defun d-capture-inserted-text (fn &rest args)
+(defun d-emacs-capture-inserted-text (fn &rest args)
             "Capture the text inserted by FN called with ARGS and return it as a string."
             (with-temp-buffer
               (apply fn args)
               (buffer-string)))
 
 
-(defun d-froundout (num)
+(defun d-emacs-froundout (num)
   "Round NUM to the nearest integer whose value is higher and return as a float.
 The opposite of ftruncate, but unlike ftruncate accepts non-floating numbers."
   (let* ((num (float num))
@@ -492,7 +492,7 @@ The opposite of ftruncate, but unlike ftruncate accepts non-floating numbers."
           (1+ tnum)
         (1- tnum)))))
 
-(defun d-roundout (num)
+(defun d-emacs-roundout (num)
   "Round NUM to the nearest integer whose value is higher and return as an integer.
 The opposite of truncate, but unlike truncate accepts non-floating numbers."
   (let* ((num (float num))
@@ -513,7 +513,7 @@ This is the part between PFX and SFX."
     (match-string 1 name)))
 
 ;;;; Recursion
-(defun d-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
+(defun d-emacs-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply functions to elements of OBJ based on condition tests.
 
 This function processes OBJ using FORMATFUN to produce a list LST. If FORMATFUN
@@ -526,7 +526,7 @@ FUNTESTS is a list of cons cells where each cell contains a function and a test
 TEST returns non-nil (using optional RESTARGS if provided), FUNCTION is applied
 to ELT, and the result is collected into RUNLIST using ELTCOLFUN.
 
-If RECURSETEST returns non-nil for an element ELT, `d-funcalls-recursively' is
+If RECURSETEST returns non-nil for an element ELT, `d-emacs-funcalls-recursively' is
 applied to ELT with the same original parameters, allowing for deep processing
 of nested structures.
 
@@ -585,21 +585,21 @@ and results collected based on hierarchy and matching tests."
                do (if (apply-with-restargs-if-given recursetest idx lst)
                       (setq runlist
                             (funcall lstcolfun runlist
-                                     (d-funcalls-recursively
+                                     (d-emacs-funcalls-recursively
                                       elt funtests recursetest formatfun eltcolfun lstcolfun
                                       restargs restargfun contt debug))))
                
                finally return runlist))))
 
-(defun d-funcall-recursively (obj fun test  &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
+(defun d-emacs-funcall-recursively (obj fun test  &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply FUN to elements that satisfy TEST.
 This wraps the contouring of arguments and collections found in
-`d-funcalls-recursively'.
+`d-emacs-funcalls-recursively'.
 See there for further explanation."
-  (d-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
+  (d-emacs-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
 
 ;;;; Drawing
-(defun d-execute-in-maximized-maybe-temp-buffer (bufname fun)
+(defun d-emacs-with-max-buffer-maybe-return (bufname fun)
   "Execute FUN in the buffer BUFNAME.
 Maximize the created buffer window and ask whether to restore the previous
 window configuration."

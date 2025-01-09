@@ -31,23 +31,23 @@
        (prog1 (d--act-on-bindlists-in-file
                filepath
                (lambda () (let ((blist (d--extract-bindlist)))
-                       (mapcar (lambda (binding)
-                                 (list (string-to-char
-                                        (d--extract-binding-string binding))
-                                       (cdr binding)))
-                               blist))))
-         (unless (or d-debug d-keep-read-buffers) (kill-buffer (get-file-buffer filepath))))))
+                            (mapcar (lambda (binding)
+                                      (list (string-to-char
+                                             (d--extract-binding-string binding))
+                                            (cdr binding)))
+                                    blist))))
+         (unless (or d-emacs-debug d-emacs-keep-read-buffers) (kill-buffer (get-file-buffer filepath))))))
 
 `(cdlatex-math-modify-alist-default
   . ,(let ((filepath (concat d-emacs-directory "pkg-configs/d-emacs/cdlatex/d-emacs-cdlatex-special-math-modify-bindlists.el")))
        (prog1 (d--act-on-bindlists-in-file
                filepath
                (lambda () (let ((blist (d--extract-bindlist)))
-                       (mapcar (lambda (binding)
-                                 (cons (string-to-char
-                                        (d--extract-binding-string binding))
-                                       (cdr binding)))
-                               blist))))
-         (unless (or d-debug d-keep-read-buffers) (kill-buffer (get-file-buffer filepath))))))
+                            (mapcar (lambda (binding)
+                                      (cons (string-to-char
+                                             (d--extract-binding-string binding))
+                                            (cdr binding)))
+                                    blist))))
+         (unless (or d-emacs-debug d-emacs-keep-read-buffers) (kill-buffer (get-file-buffer filepath))))))
 
  ;;; d-emacs-cdlatex-constants.el ends here

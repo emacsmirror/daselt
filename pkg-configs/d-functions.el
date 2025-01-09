@@ -49,13 +49,13 @@
 (defvar d-emacs-key-translations-alist)
 (defvar d-emacs-translate-keys)
 (defvar d-emacs-directory)
-(defvar d-debug)
-(defvar d-keep-read-buffers)
+(defvar d-emacs-debug)
+(defvar d-emacs-keep-read-buffers)
 (defvar d-escape-kbd-regexps-list)
 (defvar d-emacs-xkb-layout)
 
 ;;;; General purpose functions
-(defun d-cardinal (n &optional fromone)
+(defun d-emacs-cardinal (n &optional fromone)
                 "Generate a list of integers from 0 to N-1.
 If optional argument FROMONE is non-nil, return a list starting from 1 to N
 instead."
@@ -63,20 +63,20 @@ instead."
                                              collect k)
           (if fromone (list n))))
 
-(defun d-add-list-indices (list &optional fromone)
+(defun d-emacs-index (list &optional fromone)
   "Cons each element of LIST with its position in LIST.
 If optional argument FROMONE is non-nil, indices start from 1; otherwise, they
 start from 0."
   (cl-mapcar (lambda (index elt)
-               (cons index elt))
-             (d-cardinal (length list) fromone) list))
+                 (cons index elt))
+             (d-emacs-cardinal (length list) fromone) list))
 
-(defun d-containing-directory-base-name (filepath)
+(defun d-emacs-containing-directory-base-name (filepath)
   "Retrieve the base name of the containing directory of FILEPATH.
 This function does not include the full path or trailing slashes in the result."
   (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
 
-(defun d-filter-obarray-by-predicate (predicate)
+(defun d-emacs-filter-obarray (predicate)
   "Filter symbols in the obarray by a given PREDICATE."
   (let (filtered-symbols)
     (mapatoms (lambda (sym)
@@ -85,7 +85,7 @@ This function does not include the full path or trailing slashes in the result."
     filtered-symbols))
 
 ;;;;; Region operations
-(defun d-read-region (&optional properties)
+(defun d-emacs-read-region (&optional properties)
   "Read and return the contents of the current region as a Lisp expression.
 The region is defined by the currently selected text in the buffer. Unless
 PROPERTIES is t, read without properties."
@@ -95,7 +95,7 @@ PROPERTIES is t, read without properties."
               (buffer-substring beg end)
             (buffer-substring-no-properties beg end)))))
 
-(defun d-replace-region-with-arg (arg)
+(defun d-emacs-replace-region (arg)
   "Replace the currently selected region with the content of ARG.
 The text currently in the region is deleted, and ARG is inserted at the end of
 the selection."
@@ -106,13 +106,13 @@ the selection."
     (delete-region beg end)))
 
 ;;;;; Lists
-(defun d-remove-indices (indlst)
+(defun d-emacs-remove-indices (indlst)
   "Remove indices of the elements of INDLST."
   (mapcar (lambda (indelt)
             (cdr indelt))
           indlst))
 
-(defun d-filter-by-predicate (lst pred)
+(defun d-emacs-filter-list (lst pred)
   "Return a new list of elements from LST filtered by PREDICATE.
 The function tests each entry in LST using PRED."
   (remq nil (mapcar (lambda (item)
@@ -120,7 +120,7 @@ The function tests each entry in LST using PRED."
                           item))
                     lst)))
 
-(defun d-lisp-file-code (filename)
+(defun d-emacs-lisp-file-code (filename)
   "Extract and return the code section from a Lisp file specified by FILENAME.
 The extraction is done by reading the content between `;;; Code:' and `;;; .*
 ends here'. This function assumes the file follows standard Elisp formatting but
@@ -138,7 +138,7 @@ may work on other Lisp file formats as well."
 If OBJ is already a list, return it unchanged."
   (if (listp obj) obj (list obj)))
 
-(defun d-emacs-mapcar*-or-only (fun &rest objs)
+(defun d-emacs-cl-mapcar-or-only (fun &rest objs)
   "Invoke FUN with elements from the provided Lisp objects OBJS.
 If all objects in OBJS are lists, apply FUN with their elements as arguments
 using `cl-mapcar'. If some OBJS are not lists, they are converted into
@@ -148,13 +148,13 @@ one-element lists before the application."
                    (d-emacs-make-list-if-not obj))
                  objs)))
 
-(defun d-cons-to-list (cns)
+(defun d-emacs-cons-to-list (cns)
   "Convert the cons cell CNS into a list containing its elements.
 This creates a list where the first element is the car of CNS, and the second
 element is its cdr."
   (list (car cns) (cdr cns)))
 
-(defun d-flatten-until (lst cnd)
+(defun d-emacs-flatten-until (lst cnd)
   "Flatten the list LST until the condition CND becomes true.
 CND should be a function accepting one argument to check flattenings of LST."
   (let ((rlist lst))
@@ -162,7 +162,7 @@ CND should be a function accepting one argument to check flattenings of LST."
              do (setq rlist (apply #'append rlist))
              finally return rlist)))
 
-(defun d-flatten-n-times (lst &optional n)
+(defun d-emacs-flatten-n-times (lst &optional n)
   "Flatten LST N times, concatenating all lists within LST.
 If N is not provided, the function flattens LST once."
   (let ((n (if n n 1))
@@ -171,7 +171,7 @@ If N is not provided, the function flattens LST once."
              do (setq runlst (apply #'append runlst))
              finally return runlst)))
 
-(defun d-reverse-alist-get (key alist &optional default)
+(defun d-emacs-reverse-alist-get (key alist &optional default)
   "Return the car of the first cons in ALIST whose cdr equals KEY.
 If nothing is found, return DEFAULT."
   (catch 'found
@@ -180,7 +180,7 @@ If nothing is found, return DEFAULT."
         (throw 'found (car item))))
     default))
 
-(defun d-sexp-end-position (&optional beg)
+(defun d-emacs-sexp-end-position (&optional beg)
   "Return the ending position of the sexp beginning at BEG.
 If BEG is not given, it is set using `point'."
   (let ((beg (or beg (point))))
@@ -190,7 +190,7 @@ If BEG is not given, it is set using `point'."
       (point))))
 
 ;;;;; Strings
-(defun d--escape-chars-in-str (str)
+(defun d-emacs--escape-chars-in-str (str)
   "Escape characters in STR that are defined in `d-escape-kbd-regexps-list'.
 This function modifies instances of the defined regex patterns."
   (let ((escaped-char-str
@@ -203,26 +203,26 @@ This function modifies instances of the defined regex patterns."
                   finally return str)))
     (if escaped-char-str escaped-char-str str)))
 
-(defun d-remove-surrounding-brackets (str)
+(defun d-emacs-remove-surrounding-brackets (str)
   "Remove the initial and final bracket in STR."
   (let ((inibrapos (string-search "\(" str))
         (finbrapos (- (string-search "\)" (reverse str)))))
     (substring str (1+ inibrapos) (1- finbrapos))))
 
-(defun d-remove-text-properties-from-string (str)
+(defun d-emacs-remove-text-properties-from-string (str)
   "Return a new string based on STR with all text properties removed."
   (let ((no-prop-str (copy-sequence str)))
     (set-text-properties 0 (length no-prop-str) nil no-prop-str)
     no-prop-str))
 
-(defun d-string-exists-and-nonempty (str)
+(defun d-emacs-string-exists-and-nonempty (str)
                                                 "Return t if STR exists and is not empty."
                                                 (and str (not (string-empty-p
                  str))))
 
 
 ;; Taken from s.el
-(defun d-uppercase-p (str)
+(defun d-emacs-uppercase-p (str)
                         "Return t if all letters in STR are uppercase."
                         (declare (side-effect-free t))
                         (let ((case-fold-search nil))
@@ -230,7 +230,7 @@ This function modifies instances of the defined regex patterns."
 
 ;;;;; Lines
 ;; Taken from min,sc-cmds.el (Icicle library).
-(defun d-mark-line (&optional arg)
+(defun d-emacs-mark-line (&optional arg)
   "Put mark at end of line, point at beginning.
 A numeric prefix ARG means move forward (backward if negative) that
 many lines, thus marking a line other than the one point was
@@ -241,49 +241,49 @@ originally in."
   (push-mark nil t t)
   (goto-char (line-end-position)))
 
-(defun d-read-line ()
+(defun d-emacs-read-line ()
                                                                                             "Read the current line."
                                                                                             (buffer-substring-no-properties (line-beginning-position)
                                   (line-end-position)))
 
-(defun d-generate-newlines (k)
+(defun d-emacs-generate-newlines (k)
   "Generate a string containing K newlines."
   (cl-loop for i from 1 to k
            concat "\n"))
 
-(defun d-surround-by-newlines (k l str)
+(defun d-emacs-surround-by-newlines (k l str)
   "Prepend STR with K newlines and append it with L newlines."
-  (concat (d-generate-newlines k) str (d-generate-newlines l)))
+  (concat (d-emacs-generate-newlines k) str (d-emacs-generate-newlines l)))
 
-(defun d-prepend-newlines (k str)
+(defun d-emacs-prepend-newlines (k str)
   "Prepend K newlines before STR."
-  (d-surround-by-newlines k 0 str))
+  (d-emacs-surround-by-newlines k 0 str))
 
-(defun d-append-newlines (k str)
+(defun d-emacs-append-newlines (k str)
   "Append K newlines before STR."
-  (d-surround-by-newlines 0 k str))
+  (d-emacs-surround-by-newlines 0 k str))
 
-(defun d-search-at-line-start (str)
+(defun d-emacs-search-at-line-start (str)
   "Search for an occurrence of STR at the start of a line.
-Unlike normal `search-forward', `d-search-at-line-start' returns nil if no match
+Unlike normal `search-forward', `d-emacs-search-at-line-start' returns nil if no match
 is found and does not cause an error."
   (re-search-forward (eval `(rx line-start ,str)) nil t))
 
 ;;;;; Logical and set-theoretic operations
-(defun d-forall-p (list predicate)
+(defun d-emacs-forall-p (list predicate)
                                                                               "Return LIST if all elements satisfy PREDICATE; otherwise, return nil."
                                                                               (cl-loop for elt in list
            do (if (not (funcall predicate elt))
                                                                                                                                                                           (cl-return nil))
            finally return t))
 
-(defun d-exists-p (list predicate)
+(defun d-emacs-exists-p (list predicate)
   "Return LIST if at least one element satisfies PREDICATE.
 Otherwise return nil."
   (cl-loop for elt in list
            do (if (funcall predicate elt) (cl-return t))))
 
-(defun d-complement (list1 list2 &optional compfun)
+(defun d-emacs-complement (list1 list2 &optional compfun)
   "Return a new list containing elements of LIST1 that are not in LIST2.
 The operationis non-destructive, preserving the original lists. Use COMPFUN for
 comparisons, defaulting to `equal'."
@@ -291,21 +291,21 @@ comparisons, defaulting to `equal'."
                   (cl-member element list2 :test (or compfun #'equal)))
                 list1))
 
-(defun d-powerlist (list &optional elt)
+(defun d-emacs-powerlist (list &optional elt)
   "Generate the power list of SET represented by LIST.
 Returns a list of all sublists of LIST with elements ordered like in LIST. ELT
 is used for recursion and should normally not be set by the user."
   (let ((powerlist (list nil))
         (cutlist list))
     (if elt (mapcar (lambda (sublist) (append (list elt) sublist))
-                    (d-powerlist (cl-loop for index from 0 to (cl-position elt list)
+                    (d-emacs-powerlist (cl-loop for index from 0 to (cl-position elt list)
                                           do (setq cutlist (remq (nth index list) cutlist))
                                           finally return cutlist)))
       (cl-loop for elt in list
-               do (setq powerlist (append powerlist (d-powerlist list elt)))
+               do (setq powerlist (append powerlist (d-emacs-powerlist list elt)))
                finally return powerlist))))
 
-(defun d-remove-list-index (lst idx)
+(defun d-emacs-remove-list-index (lst idx)
   "Remove the element at index IDX from LST and return the resulting list.
 The operation does not modify the original list."
   (let (runlst)
@@ -315,17 +315,17 @@ The operation does not modify the original list."
              finally return runlst)))
 
 ;;;;; Comparison
-(defun d-string-shorter-or-samep (str1 str2)
+(defun d-emacs-string-shorter-or-samep (str1 str2)
   "Return t if STR1 is shorter than or equal in length to STR2."
   (<= (length str1)
       (length str2)))
 
-(defun d-string-longer-or-samep (str1 str2)
+(defun d-emacs-string-longer-or-samep (str1 str2)
   "Return t if STR1 is longer than or equal in length to STR2."
   (>= (length str1)
       (length str2)))
 
-(defun d-compare-if-decidable (test arg1 arg2)
+(defun d-emacs-compare-if-decidable (test arg1 arg2)
   "Compare ARG1 and ARG2 using the function TEST.
 If TEST takesone argument, return `(t)' if only ARG1 satisfies TEST, `(nil)' if
 only ARG2 does, or nil if both or neither do. If TEST takes more arguments,
@@ -351,18 +351,18 @@ around and provide output like in the one-argument case."
              '(nil))
             (t nil)))))
 
-(defun d-compare-by-sequential-predicates (arg1 arg2 &rest predicates)
+(defun d-emacs-compare-by-sequential-predicates (arg1 arg2 &rest predicates)
   "Compare ARG1 and ARG2 using the sequence of PREDICATES.
 Return (t) if ARG1 fulfills the i-th predicate and ARG2 doesn't, return (nil) if
 ARG2 fulfills the i-th predicate and ARG1 doesn't. If both or neither fulfill
 the i-th predicate, compare using the next predicate. If both or neither fulfill
 all predicates, return nil."
   (cl-loop for pred in predicates
-           do (let ((compval (d-compare-if-decidable pred arg1 arg2)))
+           do (let ((compval (d-emacs-compare-if-decidable pred arg1 arg2)))
                 (if compval (cl-return compval)))))
 
 ;;;;; Insertion
-(defun d-capture-inserted-text (fn &rest args)
+(defun d-emacs-capture-inserted-text (fn &rest args)
   "Capture the text inserted by FN called with ARGS and return it as a string."
   (with-temp-buffer
     (apply fn args)
@@ -370,7 +370,7 @@ all predicates, return nil."
 
 
 ;;;; Recursion
-(defun d-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
+(defun d-emacs-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply functions to elements of OBJ based on condition tests.
 
 This function processes OBJ using FORMATFUN to produce a list LST. If FORMATFUN
@@ -383,7 +383,7 @@ FUNTESTS is a list of cons cells where each cell contains a function and a test
 TEST returns non-nil (using optional RESTARGS if provided), FUNCTION is applied
 to ELT, and the result is collected into RUNLIST using ELTCOLFUN.
 
-If RECURSETEST returns non-nil for an element ELT, `d-funcalls-recursively' is
+If RECURSETEST returns non-nil for an element ELT, `d-emacs-funcalls-recursively' is
 applied to ELT with the same original parameters, allowing for deep processing
 of nested structures.
 
@@ -442,18 +442,18 @@ and results collected based on hierarchy and matching tests."
                do (if (apply-with-restargs-if-given recursetest idx lst)
                       (setq runlist
                             (funcall lstcolfun runlist
-                                     (d-funcalls-recursively
+                                     (d-emacs-funcalls-recursively
                                       elt funtests recursetest formatfun eltcolfun lstcolfun
                                       restargs restargfun contt debug))))
                
                finally return runlist))))
 
-(defun d-funcall-recursively (obj fun test  &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
+(defun d-emacs-funcall-recursively (obj fun test  &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply FUN to elements that satisfy TEST.
 This wraps the contouring of arguments and collections found in
-`d-funcalls-recursively'.
+`d-emacs-funcalls-recursively'.
 See there for further explanation."
-  (d-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
+  (d-emacs-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
 
 ;;;;; Directories and files
 (defun d-recurse-through-directory (dir funtests &optional dirtest lstcolfun allfiles sortfun contt)
@@ -475,13 +475,13 @@ structure. - ALLFILES: Include hidden files if set to non-nil. - SORTFUN: A
 sorting function for directory contents, applied if provided. - CONT: If
 non-nil, continue applying tests even after the first match.
 
-The behavior is achieved by using the `d-funcalls-recursively' function, which
+The behavior is achieved by using the `d-emacs-funcalls-recursively' function, which
 handles collecting results and determines whether to recurse further into
 directory contents. The results are built into a list reflecting the processed
 structure of DIR.
 
-CONTT is as in `d-funcalls-recursively'."
-  (d-funcalls-recursively
+CONTT is as in `d-emacs-funcalls-recursively'."
+  (d-emacs-funcalls-recursively
    dir
    funtests
    (lambda (idx lst)
@@ -573,28 +573,28 @@ options."
   "Sort FILELIST based on a series of comparison tests.
 
 This function orders the files in FILELIST using several tests defined in
-`d-compare-by-sequential-predicates'. The sorting is determined thus:
+`d-emacs-compare-by-sequential-predicates'. The sorting is determined thus:
 
 1. Directories come last.
 2. User-defined files come later (`d--user-defined-file-p').
 3. Evaluation files come earliest possible (`d--eval-file-p').
 4. Longer-named files come before shorter ones."
   (sort filelist :lessp (lambda (fname1 fname2)
-                          (let ((compval (d-compare-by-sequential-predicates
+                          (let ((compval (d-emacs-compare-by-sequential-predicates
                                           fname1 fname2
                                           (lambda (fname)
                                             (not (file-directory-p fname)))
                                           #'d--user-defined-file-p
                                           #'d--eval-file-p
-                                          #'d-string-longer-or-samep)))
+                                          #'d-emacs-string-longer-or-samep)))
                             (if compval
                                 (car compval))))))
 
 (defun d--execute-and-maybe-kill-file-buffer (filename fun)
   "Execute FUN with FILEPATH as an argument.
-Kill the buffer corresponding to FILENAME unless D-KEEP-READ-BUFFERS is t."
+Kill the buffer corresponding to FILENAME unless D-EMACS-KEEP-READ-BUFFERS is t."
   (prog1 (funcall fun filename)
-    (unless d-keep-read-buffers (kill-buffer (find-file-noselect filename)))))
+    (unless d-emacs-keep-read-buffers (kill-buffer (find-file-noselect filename)))))
 
 (defun d--act-on-pkg-files-by-type-and-maybe-kill (funtypes &optional subdir customt)
   "Wrapper around `d--execute-on-pkg-files-by-type'.
@@ -619,7 +619,7 @@ See `d--execute-on-pkg-files-by-type' for further documentation."
 
 (defun d-require-file (filepath)
   "Find file with FILEPATH and evaluate the corresponding buffer."
-  (with-eval-after-load (intern (d-containing-directory-base-name filepath))
+  (with-eval-after-load (intern (d-emacs-containing-directory-base-name filepath))
     (require (intern (file-name-base filepath)))))
 
 ;;;;; Bindlists
@@ -660,7 +660,7 @@ Parameters: - BLIST: The list or structure containing potential bindings. - FUN:
 The function to apply to each binding. - NOOUTPUT: If non-nil, do not collect
 the output in a list.
 
-The function uses `d-funcall-recursively' to manage traversal: - It checks if
+The function uses `d-emacs-funcall-recursively' to manage traversal: - It checks if
 each element is a binding using `d--binding-p'. - Elements that are not atoms
 and do not qualify as bindings are further recursed into as lists. - If NOOUTPUT
 is nil, collected results are combined using `cons'.
@@ -668,7 +668,7 @@ is nil, collected results are combined using `cons'.
 The results are conditionally collected based on whether NOOUTPUT is set. Head
 elements of lists are determined using `d-head-if-exists' and added to RESTARGS
 so they can be used by FUN."
-  (d-funcall-recursively blist
+  (d-emacs-funcall-recursively blist
                          fun
                          (lambda (idx lst &optional _heads)
                            (let ((elt (nth idx lst)))
@@ -698,7 +698,7 @@ Parameters: - LIST: The structure containing cons cells and lists. - FUN: The
 function to be applied to each non-list cons cell. - LSTCOLFUN: An optional
 function to collect results; defaults to `append'.
 
-The function uses `d-funcall-recursively' to handle traversal: - It identifies
+The function uses `d-emacs-funcall-recursively' to handle traversal: - It identifies
 and applies FUN to cons cells that are not proper lists. - Recursion occurs into
 elements that are proper lists.
 
@@ -706,7 +706,7 @@ Results are collected using the specified LSTCOLFUN function, with a default
 behavior of concatenating results via `append', which should return them in a
 flat list."
   (let ((lstcolfun (or lstcolfun #'append)))
-    (d-funcall-recursively list
+    (d-emacs-funcall-recursively list
                            fun
                            (lambda (idx lst)
                              (let ((elt (nth idx lst)))
@@ -847,7 +847,7 @@ another binding form."
        (or (d--binding-location-p cns)
            (d--recursively-check-if-binding-cons-p (car cns))
            (if (proper-list-p (cdr cns))
-               (d-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
+               (d-emacs-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
 
 (defun d--binding-suffix-form-p (cns)
             "Return t if CNS looks like a binding in suffix form.
@@ -962,7 +962,7 @@ contains any other binding forms."
   (and (consp cns)
        (d--binding-location-p cns)
        (not (if (proper-list-p (cdr cns))
-                (d-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
+                (d-emacs-exists-p (cdr cns) #'d--recursively-check-if-binding-cons-p)))))
 
 (defun d--standard-file-p (filename)
   "Check if the FILENAME corresponds to a standard file.
@@ -1045,7 +1045,7 @@ MODLIST is not specified, `d-modifiers-list' is used."
                                                       "-")
                                               prefix)
                               indmodifier))
-                        (d-add-list-indices modlist))))))
+                        (d-emacs-index modlist))))))
 
 (defun d-index-and-sort-modifiers (mods &optional indexed modlist)
   "Index the modifiers in MODS based on their position in MODLIST and sort them.
@@ -1054,8 +1054,8 @@ If INDEXED is t, assume the MODS are already indexed and don't index them again.
   (let* ((modlist (or modlist d-modifiers-list))
          (indmods (if indexed
                       mods
-                    (d-filter-by-predicate (d-add-list-indices modlist)
-                                           (lambda (indmod) (member (cdr indmod) mods))))))
+                    (d-emacs-filter-list (d-emacs-index modlist)
+                                         (lambda (indmod) (member (cdr indmod) mods))))))
     (sort indmods
           :lessp (lambda (indmod1 indmod2)
                    (< (car indmod1)
@@ -1129,7 +1129,7 @@ are available."
   (let* ((matches (d--get-layout-matches-for-binding-string str))
 
          ;; Throw away 0-layer matches if another one exists.
-         (redmatches (d-filter-by-predicate matches
+         (redmatches (d-emacs-filter-list matches
                                             (lambda (match)
                                               (let* ((coords (car match))
                                                      (laycoord (car coords)))
@@ -1221,7 +1221,7 @@ If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
   (let* ((indmods (caaar elbind))
          (prefix (unless (not (caaar elbind))
                    (d-string-together-modifiers
-                    (d-remove-indices indmods))))
+                    (d-emacs-remove-indices indmods))))
          (suffix (cdaar elbind))
          (haspfx (and prefix (stringp prefix)
                       (not (string-empty-p prefix))))
@@ -1308,9 +1308,9 @@ following rules: If one of them is capitalized and the other isn't, the one that
 is capitalized comes last. Otherwise, it compares them according to their
 constituent character codes."
 
-  (d-compare-by-sequential-predicates
+  (d-emacs-compare-by-sequential-predicates
    suffix1 suffix2
-   #'d-string-shorter-or-samep
+   #'d-emacs-string-shorter-or-samep
    (lambda (sfx)
      (string= sfx (upcase sfx)))
    #'string<))
@@ -1340,7 +1340,7 @@ the sorting order."
 
     ;; Look if suffixes exist in one case but not the other.
     (cl-flet ((true-and-not (val1 val2)
-                (d-compare-if-decidable (lambda (vval1 vval2)
+                (d-emacs-compare-if-decidable (lambda (vval1 vval2)
                                           (and vval1 (not vval2)))
                                         val1 val2)))
 
@@ -1472,7 +1472,7 @@ bindings are reduced."
 
                                        (indmods (caaar binding))
                                        (prefix (d-string-together-modifiers
-                                                (d-remove-indices indmods)))
+                                                (d-emacs-remove-indices indmods)))
                                        (haspfx (hasstr prefix))
                                        
                                        (suffix (cdaar binding))
@@ -1513,7 +1513,7 @@ bindings are reduced."
                                      ;; (prefix1 (d-string-together-modifiers
                                      ;;           (mapcar (lambda (indmod) (nth 1 indmod)) indmods2)))
                                      (prefix2 (d-string-together-modifiers
-                                               (d-remove-indices indmods2)))
+                                               (d-emacs-remove-indices indmods2)))
                                      (suffix1 (cdaar binding1))
                                      (suffix2 (cdaar binding2))
                                      (hassfx1 (hasstr suffix1))
@@ -1544,15 +1544,15 @@ bindings are reduced."
                                 (if (or (and (not eqmatch) coordsonly)
                                         (and (not eqhssfx) (not coordsonly)))
                                     (setq runlst (append runlst
-                                                         (list (d-generate-newlines 2)
+                                                         (list (d-emacs-generate-newlines 2)
                                                                (format
                                                                 ";;;;; Coordinates")))))
 
                                 (if (not eqpfx)
                                     (setq runlst (append
                                                   runlst
-                                                  (if (d-string-exists-and-nonempty prefix2)
-                                                      (list (d-generate-newlines
+                                                  (if (d-emacs-string-exists-and-nonempty prefix2)
+                                                      (list (d-emacs-generate-newlines
                                                              (if (or (and (not eqmatch)
                                                                           coordsonly)
                                                                      (and (not eqhssfx)
@@ -1571,7 +1571,7 @@ bindings are reduced."
                                     
                                     (setq runlst (append runlst
                                                          (if layer2
-                                                             (list (d-generate-newlines (if (and eqpfx
+                                                             (list (d-emacs-generate-newlines (if (and eqpfx
                                                                                                  eqmatch)
                                                                                             2
                                                                                           1))
@@ -1585,7 +1585,7 @@ bindings are reduced."
                                              (and (not hassfx1) (not hassfx2))))
                                     (setq runlst (append runlst
                                                          (if row2
-                                                             (list (d-generate-newlines (if (and eqpfx
+                                                             (list (d-emacs-generate-newlines (if (and eqpfx
                                                                                                  eqlay)
                                                                                             2
                                                                                           1))
@@ -1596,7 +1596,7 @@ bindings are reduced."
                                                                     row2))))))
 
                                 (setq runlst (append runlst
-                                                     (list (d-generate-newlines 1)
+                                                     (list (d-emacs-generate-newlines 1)
                                                            binding2)))))
                             ))
                      finally return runlst)))))
@@ -1635,7 +1635,7 @@ COORDSONLY, PREFUN and MODLIST are passed forward to
          (formattedblist
           (d--sort-and-format-bindlist blist coordsonly prefun modlist))
          (formattedstring (d--format-bindlist-into-string-before-insertion formattedblist)))
-    (d-replace-region-with-arg formattedstring)
+    (d-emacs-replace-region formattedstring)
     (unless (eobp) (forward-char))))
 
 (defun d--format-bindlist-into-string-before-insertion (blist &optional headname)
@@ -1724,7 +1724,7 @@ used."
                                             (if filename
                                                     (concat
                                                  (format "%s-mode-map"
-                                                         (d-containing-directory-base-name
+                                                         (d-emacs-containing-directory-base-name
                                                           filename))))))))
                               str-with-line-breaks-after-head)))
     finalstring))
@@ -1781,16 +1781,16 @@ coordinates)."
   (let* ((elbind (d--elaborate-on-binding binding))
          (coords (cdar elbind))
          (sfx (cdaar elbind))
-         (mods (d-remove-indices (caaar elbind)))
+         (mods (d-emacs-remove-indices (caaar elbind)))
          (pfx (if coords ; If the binding is unmatched, then it has already its modifiers in its suffix.
                   (d-string-together-modifiers mods)
                 ""))
          (coordval (if coords (d-emacs-coords-binding coords)))
          (newsfx ;; Let's put an error check here.
-          (let ((newsfx (if (d-string-exists-and-nonempty sfx)
+          (let ((newsfx (if (d-emacs-string-exists-and-nonempty sfx)
                             sfx
                           (if coords coordval))))
-            (if (d-string-exists-and-nonempty newsfx)
+            (if (d-emacs-string-exists-and-nonempty newsfx)
                 newsfx
               (error (if coords (format "Coordinates %s in binding %s have no match in %s."
                                         coords binding (d-emacs-coords--dfk-or-xkb-layout))
@@ -1857,7 +1857,7 @@ coordinates)."
 
                           (if doubleval doublestr)
 
-                          (if (d-string-exists-and-nonempty stumpdoublebind)
+                          (if (d-emacs-string-exists-and-nonempty stumpdoublebind)
                               stumpdoublebind)))
         (if translate transstr non-translated-string)))))
 
@@ -1899,7 +1899,7 @@ coordinates)."
 If NOCONSTRUCT is t, extract only bindlists that are not constructed.
 Constructed bindlists are distinguished by the fact that it is necessary to
 evaluate them twice."
-  (let* ((evalregion (eval (d-read-region))))
+  (let* ((evalregion (eval (d-emacs-read-region))))
     (if (d--bindlist-p evalregion)
         evalregion
       (unless noconstruct
@@ -1907,7 +1907,7 @@ evaluate them twice."
 
 (defun d--extract-constant-cons ()
   "Extract a constant in a daselt-constants-file by evaluating the region."
-  (eval (d-read-region)))
+  (eval (d-emacs-read-region)))
 
 (defalias 'd--extract-advicelist 'd--extract-constant-cons
   "Extract an advicelist in a daselt-advicelist-file by evaluating the region.")
@@ -1915,12 +1915,12 @@ evaluate them twice."
 ;;;;; Generation
 (defun d--generate-define-key-strings-from-marked-bindlist ()
   "Create a `define-key' string for each binding in the currently marked bindlist."
-  (let* ((blist (eval (d-read-region)))
+  (let* ((blist (eval (d-emacs-read-region)))
          (map (car blist))
          (body (cdr blist)))
     (mapcar (lambda (binding)
               (concat "(define-key " map " (kbd \""
-                      (d--escape-chars-in-str (d--extract-binding-string binding))
+                      (d-emacs--escape-chars-in-str (d--extract-binding-string binding))
                       "\"\) "
                       (let ((bindval (cdr binding)))
                         (if (stringp bindval)
@@ -1937,7 +1937,7 @@ evaluate them twice."
   "Save BLIST as a variable.
 Works similarly to `d-emacs--with-eval-backup-and-apply-bindlist' but does not
 include a call to `d-emacs--apply-binding'."
-  (let* ((pkgname (d-containing-directory-base-name (buffer-file-name)))
+  (let* ((pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
          ;; (pkgsymb (intern pkgname))
          (mapsymbdefaultname (concat pkgname "-mode-map"))
          
@@ -1983,7 +1983,7 @@ include a call to `d-emacs--apply-binding'."
               (set (intern (concat prefix namecore "-bindlist"))
                    blist))
           
-          (d-funcalls-recursively
+          (d-emacs-funcalls-recursively
            blist
            `(((lambda (bblist &optional heads)
                 (let* ((namecore (name-if-symbol bblist)))
@@ -2089,10 +2089,10 @@ COORDLIST, the function returns the original coordinate value from ORIGCOORDS."
                                                   coordlist)))
                            finally return (cdr indcoord))
                 (cdr indcoord))))
-          (d-add-list-indices origcoords)))
+          (d-emacs-index origcoords)))
 
 ;;;; Drawing
-(defun d-execute-in-maximized-maybe-temp-buffer (bufname fun)
+(defun d-emacs-with-max-buffer-maybe-return (bufname fun)
   "Execute FUN in the buffer BUFNAME.
 Maximize the created buffer window and ask whether to restore the previous
 window configuration."
@@ -2121,19 +2121,19 @@ matched against all modifiers in a binding. If the regexp string starts with
 `^', the binding is matched by the regexp if and only if no modifier in the
 binding matches the string."
   (let* ((case-fold-search nil)
-         (pblist (d-filter-by-predicate blist #'d--binding-p))
+         (pblist (d-emacs-filter-list blist #'d--binding-p))
          (elblist (mapcar (lambda (bind)
                             (d--elaborate-on-binding bind))
                           pblist))
-         (purelblist (d-filter-by-predicate elblist (lambda (bind)
+         (purelblist (d-emacs-filter-list elblist (lambda (bind)
                                                       (not (d--string-binding-p bind))))))
 
-    (d-filter-by-predicate purelblist
+    (d-emacs-filter-list purelblist
                            (lambda (elbind)
                              (cl-flet* ((ispositive (modrx)
                                           (not (string-match-p (rx string-start "^")
                                                                modrx))))
-                               (let* ((elbindmods (d-remove-indices
+                               (let* ((elbindmods (d-emacs-remove-indices
                                                    (caaar elbind)))
                                       (modstrs (mapcar #'char-to-string elbindmods)))
                                  (if (equal modrxs '(nil))
@@ -2196,10 +2196,10 @@ found in the RX match."
           blistpieces)
       (while (re-search-forward rx end t)
         (let ((map (let ((maprxstr (if mappos (match-string mappos))))
-                     (if (d-string-exists-and-nonempty maprxstr)
+                     (if (d-emacs-string-exists-and-nonempty maprxstr)
                          (read maprxstr)
                        (if mapdefaultfun (funcall mapdefaultfun)))))
-              (key (if keypos (d-remove-text-properties-from-string
+              (key (if keypos (d-emacs-remove-text-properties-from-string
                                (match-string keypos))))
               (val (if valpos (read (match-string valpos))))
               (conses (if consespos (read (concat "(" (match-string consespos) ")")))))
@@ -2314,14 +2314,14 @@ Uses `d-special-quick-keys-bindlist' as the basis for generation."
                                          filepath
                                          (lambda () (let ((blist (d--extract-bindlist)))
                                                  (remq nil (mapcar (lambda (bind)
-                                                                     (let ((sig (d--extract-binding-string bind)))
+                                                                         (let ((sig (d--extract-binding-string bind)))
                                                                        (if (= 1 (length sig))
-                                                                           (string-to-char
+                                                                                   (string-to-char
                                                                             sig))))
                                                                    blist)))))))
 
                     (let ((filebuffer (get-file-buffer filepath))) ; `get-file-buffer' can get tripped up by symlinks.
-                      (unless (or d-debug d-keep-read-buffers (not filebuffer))
+                      (unless (or d-emacs-debug d-emacs-keep-read-buffers (not filebuffer))
                         (kill-buffer filebuffer)))))
 
          runlist
@@ -2329,8 +2329,8 @@ Uses `d-special-quick-keys-bindlist' as the basis for generation."
                                 do (setq runlist
                                          (append runlist
                                                  (list (if (cl-evenp n)
-                                                           (nth (1+ n) keylist)
-                                                         (nth (1- n) keylist)))))
+                                                                   (nth (1+ n) keylist)
+                                                             (nth (1- n) keylist)))))
                                 finally return runlist))
 
          (keystring (mapconcat #'char-to-string keylist))
@@ -2339,15 +2339,15 @@ Uses `d-special-quick-keys-bindlist' as the basis for generation."
                               (mapconcat #'char-to-string permutedlist))))
 
     (defvar d-quick-key-list keylist
-      "Quick key list for Daselt.
+          "Quick key list for Daselt.
 Auto-generated using `d--generate-quick-key-variables.'")
 
     (defvar d-quick-key-string keystring
-      "Quick key string for Daselt.
+          "Quick key string for Daselt.
 Auto-generated using `d--generate-quick-key-variables.'")
 
     (defvar d-quick-key-string-cons keystringpair
-      "Quick key string pair for Daselt.
+          "Quick key string pair for Daselt.
 Auto-generated using `d--generate-quick-key-variables.'")))
 
 (provide 'd-functions)

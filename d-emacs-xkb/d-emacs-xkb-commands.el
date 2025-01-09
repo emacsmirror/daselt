@@ -36,7 +36,7 @@
 (declare-function d-emacs-coords-layer-list "d-emacs-xkb-functions" (placevals &optional drawfull runcoords org))
 (declare-function d--binding-p "d-functions" (cns))
 (declare-function d-emacs-coords-coordinatize-layout "d-emacs-xkb-functions" (layout &optional extt))
-(declare-function d-flatten-until "d-functions" (lst cnd))
+(declare-function d-emacs-flatten-until "d-functions" (lst cnd))
 (declare-function d-emacs-coords-placevals-matching-coordrx "d-emacs-xkb-functions" (placevals coordrx))
 
 (defvar d-emacs-coords-key-coords)
@@ -66,7 +66,7 @@ buffer, depending on the invocation context."
   (let* ((coordrxlst (list coordrx1 coordrx2 coordrx3))
          (coordrx (mapconcat #'identity coordrxlst " "))
          (placevals (d-emacs-coords-placevals-matching-coordrx
-                     (d-flatten-until
+                     (d-emacs-flatten-until
                       (d-emacs-coords-coordinatize-layout
                        (symbol-value d-emacs-xkb-extended-layout)
                        t)
@@ -105,7 +105,7 @@ With a prefix argument, draw the coordinates of the 0-th key."
     (let* ((coords (if extt
                        d-emacs-xkb-key-0-coords
                      d-emacs-coords-key-coords))
-           (flatcoords (d-flatten-until
+           (flatcoords (d-emacs-flatten-until
                         coords
                         (lambda (lst)
                           (d-emacs-coords-p (car lst)))))

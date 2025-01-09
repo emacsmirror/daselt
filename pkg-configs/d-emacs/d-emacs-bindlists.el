@@ -329,7 +329,7 @@
   (("M-" . (1 0 5)) . #'org-brain-visualize) 
 
 ;;;;;;;; M-1-1 
-  (("M-" . (1 1 -5)) . #'d-emacs-backward-mark-line) 
+  (("M-" . (1 1 -5)) . #'d-emacs-backward-emacs-mark-line) 
   (("M-" . (1 1 -3)) . #'avy-kill-ring-save-region) 
   (("M-" . (1 1 -2)) . #'ekg-capture) 
   (("M-" . (1 1 0)) . (d-emacs-dynamic-binding "C-x")) 

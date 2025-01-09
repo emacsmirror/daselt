@@ -26,7 +26,7 @@
 ;;;; Preamble
 (require 'cl-macs)
 
-(declare-function d-read-region "d-functions" (&optional properties))
+(declare-function d-emacs-read-region "d-functions" (&optional properties))
 (declare-function checkdoc-recursive-edit "checkdoc" (msg))
 (declare-function checkdoc-error-unfixable "checkdoc" (cl-x))
 (declare-function checkdoc-error-text "checkdoc" (cl-x))
@@ -34,13 +34,13 @@
 (declare-function checkdoc-error-start "checkdoc" (cl-x))
 (declare-function d-emacs-coords-binding "d-emacs-xkb-functions" (coords &optional extlayout))
 (declare-function d-emacs-minor-mode-key-binding "d-emacs-commands" (key))
-(declare-function d-reverse-alist-get "d-functions" (key alist &optional default))
+(declare-function d-emacs-reverse-alist-get "d-functions" (key alist &optional default))
 (declare-function d-recurse-through-directory "d-functions" (dir funtests &optional dirtest lstcolfun allfiles sortfun contt))
 (declare-function d--act-on-pkg-files-by-type-and-maybe-kill "d-functions" (funtypes &optional subdir customt))
-(declare-function d-exists-p "d-functions" (list predicate))
+(declare-function d-emacs-exists-p "d-functions" (list predicate))
 (declare-function d--extract-binding-string "d-functions" (binding &optional translate csectoshft doublebind))
 (declare-function d--recursively-act-on-bindings "d-functions" (blist fun &optional nooutput))
-(declare-function d-containing-directory-base-name "d-functions" (filepath))
+(declare-function d-emacs-containing-directory-base-name "d-functions" (filepath))
 
 (defvar d-emacs-docstring-functions-list)
 (defvar checkdoc--help-buffer)
@@ -84,22 +84,22 @@ backup is made, indicating that a prior backup exists.
 
 The keymap's symbol (MAP) can only be evaluated within `with-eval-after-load',
 as bindings should apply after the relevant features are loaded."
-  (let* ((pkgname (d-containing-directory-base-name (buffer-file-name)))
+  (let* ((pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
          (pkgsymb (intern pkgname))
          (mapsymbdefault (intern (concat pkgname "-mode-map"))))
 
     (d--recursively-act-on-bindings
      blist
      (lambda (bind &optional heads)
-       (let* ((headpairt (= (length heads) 2))
+         (let* ((headpairt (= (length heads) 2))
               (evalcnd (if headpairt
-                           (car heads)
-                         pkgsymb))
+                               (car heads)
+                           pkgsymb))
               (mapsymb (if headpairt
-                           (car (last heads))
-                         (if heads
-                             (car heads)
-                           mapsymbdefault)))
+                               (car (last heads))
+                           (if heads
+                                 (car heads)
+                             mapsymbdefault)))
               (backupsymb (intern (concat "d-emacs-" (symbol-name mapsymb) "-backup"))))
 
          (with-eval-after-load evalcnd
@@ -117,18 +117,18 @@ as bindings should apply after the relevant features are loaded."
 The binding value is evaluated and assigned to the corresponding keys."
   (let* ((orig-binding-strings (d--extract-binding-string binding t t t))
          (binding-strings (mapcar (lambda (bstr)
-                                    (alist-get bstr
+                                      (alist-get bstr
                                                d-emacs-replace-binding-strings-alist
                                                bstr))
                                   orig-binding-strings))
          (value (cdr binding)))
     (mapcar (lambda (bstr)
-              (define-key map (kbd bstr) (eval value))
-              (if (d-exists-p d-emacs-coords-bad-combinations-list
+                (define-key map (kbd bstr) (eval value))
+                (if (d-emacs-exists-p d-emacs-coords-bad-combinations-list
                               (lambda (combination)
-                                (string= (d--extract-binding-string (cons combination nil))
+                                  (string= (d--extract-binding-string (cons combination nil))
                                          bstr)))
-                  (define-key map
+                      (define-key map
                               (kbd (string-replace
                                     "H-" "s-M-"
                                     (string-replace "C-" "A-" bstr)))
@@ -146,19 +146,19 @@ EVALCOND is given either as the head of the list if its car is a head
 (meaninig not a cons) or by the name of the containing directory."
                        (let* ((adlist (d--extract-advicelist))
                               (head (unless (consp (car adlist)) (car adlist)))
-                              (pkgname (d-containing-directory-base-name (buffer-file-name)))
+                              (pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
                               (pkgsymb (intern pkgname))
                               (evalcond (if head head pkgsymb))
                               (radlist (if head (cdr adlist) adlist)))
                          (with-eval-after-load evalcond
                            (mapcar (lambda (adv)
-                                     (let ((symbs (car adv))
+                                       (let ((symbs (car adv))
                                            (how (cadr adv))
                                            (funs (caddr adv))
                                            (props (cadddr adv)))
                                        (mapcar (lambda (symb)
-                                                 (mapcar (lambda (fun)
-                                                           (apply
+                                                   (mapcar (lambda (fun)
+                                                             (apply
                                                             (remq nil
                                                                   (list #',(intern (concat "advice-" str))
                                                                         symb ,(if addp `how) fun ,(if addp `props)))))
@@ -205,13 +205,13 @@ If no match is found, call DEFAULT."
 Replacemets are specified in `d-emacs-special-read-answer-bindlist'. To be
 wrapped around `read-multiple-choice'."
   (let* ((keylst (mapcar (lambda (bind)
-                           (cons (cdr bind)
+                             (cons (cdr bind)
                                  (string-to-char
                                   (d--extract-binding-string bind))))
                          d-emacs-special-read-answer-bindlist))
 
          (newchoices (mapcar (lambda (choice) ; We translate forward…
-                               (let* ((choicekey (car choice))
+                                 (let* ((choicekey (car choice))
 
                                       (newkey (alist-get choicekey keylst choicekey))
                                       (newchoice (cons newkey
@@ -223,7 +223,7 @@ wrapped around `read-multiple-choice'."
 
          (carret (car choicereturn)) ; And back.
          (transcarret (char-to-string
-                       (d-reverse-alist-get
+                       (d-emacs-reverse-alist-get
                         carret keylst carret)))
          (transret (cons transcarret (cdr choicereturn))))
     transret))
@@ -251,16 +251,16 @@ These are specified in `d-emacs-special-read-answer-bindlist'. Wraps around
 These are specified in `d-emacs-special-read-answer-bindlist'. Wraps around
 `read-char-choice'."
   (let* ((keylst (mapcar (lambda (bind)
-                           (cons (cdr bind)
+                             (cons (cdr bind)
                                  (string-to-char
                                   (d--extract-binding-string bind))))
                          d-emacs-special-read-answer-bindlist))
          (trans (mapcar (lambda (char)
-                          (let ((ret (alist-get char keylst char nil #'=)))
+                            (let ((ret (alist-get char keylst char nil #'=)))
                             ret))
                         chars))
          (answer (funcall fun prompt trans inhibit-keyboard-quit))
-         (retrans (d-reverse-alist-get answer keylst nil #'=)))
+         (retrans (d-emacs-reverse-alist-get answer keylst nil #'=)))
     retrans))
 
 ;;;; Rebinder functions, taken from Abdulla Bubshait's rebinder package: https://github.com/darkstego/rebinder.el
@@ -498,13 +498,13 @@ Works for `defun', `defmacro', `defconst', `defcustom', `defalias' and `defun*'.
   (beginning-of-defun)
   (forward-char)
   (let* ((first-symbol (progn (mark-sexp)
-                              (prog1 (d-read-region)
+                              (prog1 (d-emacs-read-region)
                                 (deactivate-mark))))
          (commentfourthgroup d-emacs-docstring-functions-list)
          (types (append commentfourthgroup)))
     (when (member first-symbol types)
       (let ((place (if (member first-symbol commentfourthgroup)
-                       3)))
+                           3)))
         (forward-sexp place)
         (search-forward "\"")
         (backward-char)))))
@@ -514,11 +514,11 @@ Works for `defun', `defmacro', `defconst', `defcustom', `defalias' and `defun*'.
   "If point is within a definition, move to the beginning of the docstring.
 Works for definition types in `d-emacs-docstring-functions-list'."
   (mark-defun)
-  (let* ((defn (d-read-region))
+  (let* ((defn (d-emacs-read-region))
          (first-symbol (nth 0 defn))
          (name (nth 1 defn)))
     (if (member first-symbol d-emacs-docstring-functions-list)
-        name)))
+            name)))
 
 (defun d-emacs-definition-names-in-file (fname)
   "Return the names of definitions in FNAME, listed according to definition type.
@@ -553,7 +553,7 @@ car is treated as a string to be replaced, and the cdr will be used as the
 replacement directly. For symbols, they are first converted to strings.
 - DIR: The directory in which to perform the replacements.
 - FUN: A function that takes an element from `lst' and returns the replacement
-string if the element is not a string or cons cell.
+string if the element is not a cons cell.
 - FILETEST (optional): A predicate function to determine if a file should be
 processed. Should return non-nil for files that match the criteria.
 - DIRTEST (optional): A predicate function to determine if a directory should be
@@ -572,17 +572,19 @@ Example Usage:
  'file-filter-predicate
  'dir-filter-predicate
  t) ; where t indicates to include all files."
-  (mapcar (lambda (obj)
-            (let* ((ocnsp (consp obj))
-                   (str (if ocnsp (car obj) (if (symbolp obj)
-                                                (symbol-name obj)
-                                              obj)))
-                   (repl (if ocnsp
-                             (cdr obj)
-                           (funcall fun obj))))
-              (d-emacs-replace-string-throughout-directory str repl dir filetest dirtest allfiles)
-              repl))
-          lst))
+  (cl-flet ((obj-or-name (obj) (if (symbolp obj)
+                                   (symbol-name obj)
+                                 obj)))
+    (mapcar (lambda (obj)
+              (let* ((ocnsp (consp obj))
+                     (str (if ocnsp (obj-or-name (car obj))
+                            (obj-or-name obj)))
+                     (repl (if ocnsp
+                               (cdr obj)
+                             (funcall fun obj))))
+                (d-emacs-replace-string-throughout-directory str repl dir filetest dirtest allfiles)
+                repl))
+            lst)))
 
 ;;;; Provide
 (provide 'd-emacs-functions)

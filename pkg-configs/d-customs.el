@@ -67,14 +67,14 @@ distribution."
   :group 'Daselt)
 
 (defcustom d-quick-key-layers-list
-  (d-cardinal 7 t)
+  (d-emacs-cardinal 7 t)
   "List of key layers for generating quick-key selection bindlists.
 
 Used by `d-special-quick-keys-bindlists` to create constants for quick-key 
 selection mechanisms."
   :type 'boolean)
 
-(defcustom d-debug
+(defcustom d-emacs-debug
   nil
   "Enable debugging options in Daselt.
 
@@ -82,7 +82,7 @@ When non-nil, functions will print additional debugging messages."
   :type 'boolean
   :group 'Daselt)
 
-(defcustom d-keep-read-buffers
+(defcustom d-emacs-keep-read-buffers
   nil
   "Keep buffers open when starting `d-emacs-mode`.
 

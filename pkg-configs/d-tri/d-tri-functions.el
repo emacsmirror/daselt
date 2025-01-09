@@ -40,7 +40,7 @@
                                           (d--elaborate-on-binding bind))
                                         blist))
                        (strlist (mapcar (lambda (elbind)
-                                          (let* ((mods (d-remove-indices (caaar elbind)))
+                                          (let* ((mods (d-emacs-remove-indices (caaar elbind)))
                                                  (coords (cdar elbind))
                                                  (sfx (if coords
                                                           (d-emacs-coords-binding coords)

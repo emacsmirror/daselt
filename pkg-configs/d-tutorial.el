@@ -56,7 +56,7 @@ Let's start with the basic navigation shortcuts. To move point (the Emacs cursor
 
 "))
 
-(d-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 0 t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 0 t)
 
 "
 This is a Daselt-keyboard-diagram. It displays the modifiers in the Daselt-layout and should be read in the following way:
@@ -92,13 +92,13 @@ The signals (symbols and function signals) on this layer are generally constant 
 ** Layer *1* and Coordinates
 
 "
-(d-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 1 t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 1 t)
 
 "
 Here you can see the first layer of Daselt's layout. Notice the empty cells in the middle of the upper two rows and next to the key in the middle of the lower row. These exist due to the peculiar shape of a standard keyboard, in which the middle of the upper two rows is in-between two other keys while there is a key right in the middle of the lowest row (the B-key in QWERTY). This allows us to describe Daselt's bindings using an assignment of coordinates to each key given by the row the key is in and its distance from the middle of the keyboard. The coordinates of the keys are shown in the next diagram:
 
 "
-(d-capture-inserted-text #'d-emacs-coords-draw-key-coordinates nil t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-key-coordinates nil t)
 
 "
 The coordinates are chosen in such a way that all keys with the same /place coordinate/ (meaning the last coordinate) are in a column so that they can be pressed with the same finger: *1* and *2* with the index finger, *3* with the middle finger, *4* with the ring finger and *5* and *6* with the little finger (same for negative values).
@@ -108,7 +108,7 @@ From these key coordinates we can create coordinates for each signal in Daselt's
 ** Layer 2
 
 "
-(d-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 2 t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 2 t)
 "
 As already mentioned, this layer consists mostly of uppercase variants of lowercase letters. The big exception are *Backspace* and *Return*, which are also on this layer to make them easier to apply. Note however that because these are on the layer that is shifted to by applying Shift, they are automatically endowed with shift modifiers, so programs will interpret them as *S(hift)-Backspace* and *S-Return*, which in some programs makes a difference (in Emacs differences only arise in mode-specific bindings). I haven't really found anything I can do against that so sometimes you might need to use normal _Backspace_ and _Enter_." (unless (eq d-emacs-xkb-layout 'd-emacs-xkb-main-layout) " Moreover, the only position I could give these bindings is on punctuation signs, which depending on your layout might not be on ideal keys. If that is the case, just view these keys as a free bonus — you don't need to use them but you can if you want.
 
@@ -119,14 +119,14 @@ You can lock the second layer, like pressing _CapsLock_ would in QWERTY, by hold
 ** Layer 3
 
 "
-(d-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 3 t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 3 t)
 
 "
 This layer houses punctuation marks, brackets and other special signs, most of which are in ASCII.
 
 ** Layer 4
 "
-(d-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 4 t)
+(d-emacs-capture-inserted-text #'d-emacs-coords-draw-keyboard-layer 4 t)
 "
 As you can see, this layer houses numbers, calculation signs and \"backup\" arrow keys. The placement of numbers is probably the least intuitive aspect of the layout. It is a design compromise and might take  a while to learn, but there is a system: lower numbers were given better positions than higher ones and even numbers are on the left while odd ones are on the right. Overall, this makes the typing of small numbers fairly easy while that of larger numbers is still workable though, admittedly, a bit cumbersome. To further alleviate this, a bash script ~d-toggle-layer-lock~ is in the ~scripts~ folder of Daselt, which allows for locking any layer using ~xdotools~. The binding of this script to keys in StumpWM is still work in progress because it runs into the [[https://github.com/stumpwm/stumpwm/wiki][Problems Stump has with XKB]]. Binding it to keys in other window managers might be easier though.
 
@@ -140,7 +140,7 @@ Note also that, if you choose to not return to the previous window configuration
  Here we can see the *C-1*-layer, the most basic layer:
 "
 (let ((current-prefix-arg t))
-  (d-capture-inserted-text #'d-draw-bindlist-layer 'd-emacs-d-emacs-mode-map-bindlist "1" "C" "^s" "^M" "^S" "^H"))
+  (d-emacs-capture-inserted-text #'d-draw-bindlist-layer 'd-emacs-d-emacs-mode-map-bindlist "1" "C" "^s" "^M" "^S" "^H"))
 
 "
 Depending on your screen, this layer might be too large to display completely without line breaks unless you scale down your font size, which you can do using *C-(7 -1 -1)*.

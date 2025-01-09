@@ -32,7 +32,7 @@
 (require 'd-emacs-xkb-functions)
 
 (defconst d-emacs-coords-layer-numbers-list
-  (d-cardinal 8 t)
+  (d-emacs-cardinal 8 t)
   "Number of layers in d-emacs-xkb-layouts.")
 
 (defconst d-emacs-xkb-special-key-names
@@ -110,8 +110,8 @@ Generated automatically." layout))))
                                                (list 0 (car indrow) (car indplace)))))
                               (list (nth 1 fullcoords)
                                     (nth 2 fullcoords))))
-                          (d-add-list-indices (cdr indrow))))
-                (d-add-list-indices (car (symbol-value d-emacs-xkb-layout))))
+                          (d-emacs-index (cdr indrow))))
+                (d-emacs-index (car (symbol-value d-emacs-xkb-layout))))
         "This is the coordinate system of keys of d-emacs-xkb.
 Generated from the first layer of the main layout.")
 
@@ -123,15 +123,15 @@ Generated from the first layer of the main layout.")
                                                t)))
                               (list (nth 1 fullcoords)
                                     (nth 2 fullcoords))))
-                          (d-add-list-indices (cdr indrow))))
-                (d-add-list-indices (car (symbol-value d-emacs-xkb-extended-layout))))
+                          (d-emacs-index (cdr indrow))))
+                (d-emacs-index (car (symbol-value d-emacs-xkb-extended-layout))))
         "This is the extended coordinate system of keys of d-emacs-xkb.
 Generated from the first layer of the main layout.")
 
       (defconst d-emacs-xkb-layer-boundaries
-        (let* ((allcoords (d-flatten-until d-emacs-coords-key-coords
-                                           (lambda (lst) ; Flatten until the first entry is a coordinate.
-                                             (d-emacs-coords-p (car lst)))))
+        (let* ((allcoords (d-emacs-flatten-until d-emacs-coords-key-coords
+                                                 (lambda (lst) ; Flatten until the first entry is a coordinate.
+                                                   (d-emacs-coords-p (car lst)))))
                (allrows (mapcar (lambda (coords)
                                   (car coords))
                                 allcoords))
@@ -146,9 +146,9 @@ Generated from the first layer of the main layout.")
         coordinates in `d-emacs-coords-key-coords`.")
 
       (defconst d-emacs-xkb-layer-0-boundaries
-        (let* ((allcoords (d-flatten-until d-emacs-xkb-extended-key-coords
-                                           (lambda (lst) ; Flatten until the first entry is a coordinate.
-                                             (d-emacs-coords-p (car lst)))))
+        (let* ((allcoords (d-emacs-flatten-until d-emacs-xkb-extended-key-coords
+                                                 (lambda (lst) ; Flatten until the first entry is a coordinate.
+                                                   (d-emacs-coords-p (car lst)))))
                (allrows (mapcar (lambda (coords)
                                   (car coords))
                                 allcoords))
@@ -169,7 +169,7 @@ Generated from the first layer of the main layout.")
                                       (append (list layer) place))
                                     row))
                           d-emacs-coords-key-coords))
-                (d-cardinal 8 t))
+                (d-emacs-cardinal 8 t))
         "The coordinates of all places in normal d-emacs-xkb-layers.
 Saved here for lookup in help-commands.")
 

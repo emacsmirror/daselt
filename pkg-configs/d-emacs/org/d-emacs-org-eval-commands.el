@@ -70,7 +70,7 @@ that number of levels are gone up."
                      (finquote (concat "#+begin_quote\n"
                                        quote
                                        "\n#+end_quote")))
-                (d-replace-region-with-arg finquote))))
+                (d-emacs-replace-region finquote))))
     (save-excursion
       ;; Go up lists as long as possible or until a quote is found.
       (let ((endloop)

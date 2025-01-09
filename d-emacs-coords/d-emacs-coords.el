@@ -102,13 +102,13 @@
 (require 'd-emacs-base)
 
 (declare-function org-table-align "org-table" nil)
-(declare-function d-execute-in-maximized-maybe-temp-buffer "d-emacs-base" (bufname fun))
-(declare-function d-remove-list-index "d-emacs-base" (lst idx))
-(declare-function d-filter-by-predicate "d-emacs-base" (lst pred))
-(declare-function d-string-exists-and-nonempty "d-emacs-base" (str))
-(declare-function d-forall-p "d-emacs-base" (list predicate))
-(declare-function d-add-list-indices "d-emacs-base" (list &optional fromone))
-(declare-function d-cardinal "d-emacs-base" (n &optional fromone))
+(declare-function d-emacs-with-max-buffer-maybe-return "d-emacs-base" (bufname fun))
+(declare-function d-emacs-remove-list-index "d-emacs-base" (lst idx))
+(declare-function d-emacs-filter-list "d-emacs-base" (lst pred))
+(declare-function d-emacs-string-exists-and-nonempty "d-emacs-base" (str))
+(declare-function d-emacs-forall-p "d-emacs-base" (list predicate))
+(declare-function d-emacs-index "d-emacs-base" (list &optional fromone))
+(declare-function d-emacs-cardinal "d-emacs-base" (n &optional fromone))
 
 ;;;; Customs
 (defgroup d-emacs-coords
@@ -245,7 +245,7 @@ Daselt coordinates."
 
 ;;;; Constants
 (defconst d-emacs-coords-layer-numbers-list
-  (d-cardinal (length d-emacs-coords-layer-list))
+  (d-emacs-cardinal (length d-emacs-coords-layer-list))
   "Number of layers in d-emacs-coords-layouts.")
 
 ;;;; Coordinates
@@ -269,7 +269,7 @@ Daselt coordinates."
                                                                                  (list (+ layerallrowsshift (nth 0 rowshift))
                                            (nth 1 rowshift)))
                                    d-emacs-coords-row-shifts-list))
-         (layerrowshift (or (nth 2 (car (d-filter-by-predicate
+         (layerrowshift (or (nth 2 (car (d-emacs-filter-list
                                          d-emacs-coords-layer-row-shifts-list
                                          (lambda (shift) (and (= layer (nth 0 shift))
                                                          (= row (nth 1 shift)))))))
@@ -277,15 +277,15 @@ Daselt coordinates."
          (rowshift (+ (car (alist-get row shiftedrowshifts '(0))) layerrowshift))
          (rowmid (+ layermidcol rowshift))
          (layer (nth layer d-emacs-coords-layer-list))
-         (row (d-roundout (- row layermidrow)))
-         (col (d-roundout (- col rowmid)))
+         (row (d-emacs-roundout (- row layermidrow)))
+         (col (d-emacs-roundout (- col rowmid)))
          ;; We still have to account for formal places and midpoints between two keys.
          (colposp (natnump col))
-         (formplacesinrow (d-filter-by-predicate d-emacs-coords-formal-places-list
+         (formplacesinrow (d-emacs-filter-list d-emacs-coords-formal-places-list
                                                  (lambda (coords)
                                                                                                (let ((formrow (nth 0 coords)))
                                                      (= row formrow)))))
-         (formplacesonside (d-filter-by-predicate formplacesinrow
+         (formplacesonside (d-emacs-filter-list formplacesinrow
                                                   (lambda (coords)
                                                                                                 (let* ((formcol (nth 1 coords))
                                                            (formcolposp (natnump formcol)))
@@ -310,11 +310,11 @@ ROW and COL should be in relative coordinates."
           (let* ((col (car (last coords)))
                  (row (nth (- (length coords) 2) coords))
                  (colposp (natnump col))
-                 (formplacesinrow (d-filter-by-predicate d-emacs-coords-formal-places-list
+                 (formplacesinrow (d-emacs-filter-list d-emacs-coords-formal-places-list
                                                          (lambda (coords)
                                                            (let ((formrow (nth 0 coords)))
                                                              (= row formrow)))))
-                 (formplacesonside (d-filter-by-predicate formplacesinrow
+                 (formplacesonside (d-emacs-filter-list formplacesinrow
                                                           (lambda (coords)
                                                             (let* ((formcol (nth 1 coords))
                                                                    (formcolposp (natnump formcol)))
@@ -347,13 +347,13 @@ ROW and COL should be in relative coordinates."
          (layermidrow (nth 0 layermid))
          (layermidcol (nth 1 layermid))
          (row (truncate (+ row layermidrow)))
-         (layerrowshift (or (nth 2 (car (d-filter-by-predicate
+         (layerrowshift (or (nth 2 (car (d-emacs-filter-list
                                          d-emacs-coords-layer-row-shifts-list
                                          (lambda (shift) (and (= layer (nth 0 shift))
                                                          (= row (nth 1 shift)))))))
                             0))
          (shiftedrowshifts (mapcar (lambda (rowshift)
-                                     (list (+ layerallrowsshift (nth 0 rowshift))
+                                       (list (+ layerallrowsshift (nth 0 rowshift))
                                            (nth 1 rowshift)))
                                    d-emacs-coords-row-shifts-list))
          (rowshift (+ (car (alist-get row shiftedrowshifts '(0))) layerrowshift))
@@ -369,15 +369,15 @@ ROW and COL should be in relative coordinates."
 Resulting layout places are pairs of coordinates and their corresponding key
 symbol."
       (mapcar (lambda (laynum)
-                              (mapcar (lambda (indrow)
-                                        (mapcar (lambda (indsymb)
-                                                  (cons (d-emacs-coords-abs-to-rel
+                                  (mapcar (lambda (indrow)
+                                            (mapcar (lambda (indsymb)
+                                                      (cons (d-emacs-coords-abs-to-rel
                                        (list laynum
                                              (car indrow)
                                              (car indsymb)))
                                       (cdr indsymb)))
-                              (d-add-list-indices (cdr indrow))))
-                    (d-add-list-indices (nth laynum layout))))
+                              (d-emacs-index (cdr indrow))))
+                    (d-emacs-index (nth laynum layout))))
           d-emacs-coords-layer-numbers-list))
 
 ;;;;; Layers
@@ -398,7 +398,7 @@ Remove the layer coordinate from each coordinate list."
   "Return t if LIST is a valid d-emacs-coords coordinate list.
 This means it consists entirely of numbers."
   (and (proper-list-p list)
-       (d-forall-p list #'numberp)))
+       (d-emacs-forall-p list #'numberp)))
 
 ;;;;; Boundaries
 (defun d-emacs-coords-boundaries (coordslist)
@@ -411,12 +411,12 @@ Returns two coords:
 - The second is made out of all maxima.
 
 Assumes all coords in COORDSLIST have the same length."
-  (d-list-to-cons (mapcar (lambda (extremum)
-                            (mapcar (lambda (idx)
-                                      (apply extremum (mapcar (lambda (coords)
-                                                                (nth idx coords))
+  (d-emacs-list-to-cons (mapcar (lambda (extremum)
+                              (mapcar (lambda (idx)
+                                        (apply extremum (mapcar (lambda (coords)
+                                                                  (nth idx coords))
                                                               coordslist)))
-                                    (d-cardinal (length (car coordslist)))))
+                                    (d-emacs-cardinal (length (car coordslist)))))
                           (list #'min #'max))))
 
 ;;;;; Bindings
@@ -444,7 +444,7 @@ The 0-th layer is the value of the symbol bound to `d-emacs-xkb-layer-0', which 
                                 (nth (nth 0 abscoords) layout))))
          (lastbindpart (if unsplitbind (car (last (split-string unsplitbind "/")))))
          (bind (if (and (not wholebinds)
-                        (d-string-exists-and-nonempty lastbindpart))
+                        (d-emacs-string-exists-and-nonempty lastbindpart))
                    lastbindpart
                  unsplitbind)))
     bind))
@@ -467,21 +467,21 @@ The traversal is depth-first, expanding across the X dimension before proceeding
 
 This function is particularly useful for processing or analyzing grid-like structures where an operation needs to be applied across a range of coordinates, optionally utilizing additional context carried through RUNCOORDS."
   (if (consp bounds)
-      (if (and (d-emacs-coords-p (car bounds))
+          (if (and (d-emacs-coords-p (car bounds))
                (d-emacs-coords-p (cdr bounds)))
-          (let ((minima (car bounds))
+              (let ((minima (car bounds))
                 (maxima (cdr bounds)))
             (if (and minima maxima)
-                (mapcar
+                    (mapcar
                  (lambda (rightmost)
-                   (d-emacs-coords-run-through (cons (cdr minima)
+                     (d-emacs-coords-run-through (cons (cdr minima)
                                                      (cdr maxima))
                                                fun
                                                (append runcoords (list rightmost))))
-                 (d-numbers-between (car minima) (car maxima)))
+                 (d-emacs-numbers-between (car minima) (car maxima)))
               (funcall fun runcoords)))
         (mapcar (lambda (bboundscons)
-                  (let ((runcoord (car bboundscons))
+                    (let ((runcoord (car bboundscons))
                         (bbounds (cdr bboundscons)))
                     (d-emacs-coords-run-through bbounds fun (append runcoords
                                                                     (list runcoord)))))
@@ -513,8 +513,8 @@ If it is undefined, use `d-emacs-xkb-layout' instead."
 ;;;;; Regexp matching
 (defun d-emacs-coords-placevals-matching-coordrx (placevals coordrx)
   "Retrieve all place values in PLACEVALS whose coordinates match COORDRX."
-  (d-filter-by-predicate placevals (lambda (placeval)
-                                                                         (let ((coords (car placeval)))
+  (d-emacs-filter-list placevals (lambda (placeval)
+                                                                           (let ((coords (car placeval)))
                                        (string-match-p coordrx (format "%s" coords))))))
 
 (defun d-emacs-coords-placevals-matching-indexed-rx (placevals idx coordrx)
@@ -523,16 +523,16 @@ If it is undefined, use `d-emacs-xkb-layout' instead."
          (coordcard (length testcoords))
          (runrx "")
          (finalrx (if (= coordcard 1)
-                                          coordrx
-                              (cl-loop for runidx from 0 to (1- coordcard)
+                                              coordrx
+                                (cl-loop for runidx from 0 to (1- coordcard)
                              do (setq runrx (concat runrx
                                                     (if (= idx runidx)
-                                                                            coordrx
-                                                                "[^ ]*")
+                                                                                coordrx
+                                                                  "[^ ]*")
                                                     (unless (= runidx (1- coordcard))
                                                       " ")))
                              finally return runrx))))
-    (if d-debug (message "Unindexed rx: %s" finalrx))
+    (if d-emacs-debug (message "Unindexed rx: %s" finalrx))
     (d-emacs-coords-placevals-matching-coordrx
      placevals
      finalrx)))
@@ -544,7 +544,7 @@ Return the modified list."
   (mapcar (lambda (placeval)
               (let ((coords (car placeval))
                   (val (cdr placeval)))
-              (cons (d-remove-list-index coords idx)
+              (cons (d-emacs-remove-list-index coords idx)
                     val)))
           placevals))
 
@@ -682,9 +682,9 @@ documentation."
   "Execute `d-emacs-coords-draw-placevals' in a maximized temporary buffer.
 All arguments are forwarded to `d-emacs-coords-draw-placevals'. See there for more
 documentation."
-  (d-execute-in-maximized-maybe-temp-buffer
+  (d-emacs-with-max-buffer-maybe-return
    "*daselt-layout*" (lambda () (d-emacs-coords-draw-placevals placevals bounds runcoords org)
-                             (org-mode))))
+                               (org-mode))))
 
 ;;;;;; Drawing Commands
 
@@ -714,7 +714,7 @@ buffer, depending on the invocation context."
          (coordrxlst (list coordrx1 coordrx2 coordrx3))
          (coordrx (mapconcat #'identity coordrxlst " "))
          (placevals (d-emacs-coords-placevals-matching-coordrx
-                     (d-flatten-until
+                     (d-emacs-flatten-until
                       (d-emacs-coords-coordinatize-layout
                        layout)
                       (lambda (lst) (d--binding-p (car lst))))
@@ -762,10 +762,10 @@ By default, LAYER is the first layer of `d-emacs-dfk-layout' or
   (interactive)
   (let* ((layer (or layer (car (d-emacs-coords-coordinatize-layout
                                 (symbol-value (d-emacs-coords--dfk-or-xkb-layout))))))
-         (placevals (d-flatten-until (d-emacs-coords-run-through
+         (placevals (d-emacs-flatten-until (d-emacs-coords-run-through
                                       (d-emacs-coords-boundaries
                                        (mapcar #'car (apply #'append layer)))
-                                      (lambda (coords) (cons coords (d-remove-surrounding-brackets
+                                      (lambda (coords) (cons coords (d-emacs-remove-surrounding-brackets
                                                                 (format "%s" (cdr coords))))))
                                      (lambda (lst) (d-emacs-coords-p (caar lst))))))
     (d-emacs-coords-draw-placevals placevals nil nil org)))
@@ -778,24 +778,24 @@ Add STANDARDVAL to empty strings for all places without values.
 
 By default, STANDARDVAL is an empty string."
   (cl-flet ((fiber-by-layout-level (coordslist lev)
-                                                  (d-emacs-fiber-by-property coordslist (lambda (coords) (nth lev coords)) t #'=)))
+                                                    (d-emacs-fiber-by-property coordslist (lambda (coords) (nth lev coords)) t #'=)))
     (let* ((standardval (or standardval ""))
            (coords (mapcar #'car placevals))
            (abscoords (mapcar #'d-emacs-coords-rel-to-abs coords))
-           (indices (d-cardinal (length (car coords))))
+           (indices (d-emacs-cardinal (length (car coords))))
            (abscoordsbylayer (fiber-by-layout-level abscoords 0))
            (abscoordsbyrow (sort (mapcar (lambda (idxcoordslist)
-                                                                               (cons (car idxcoordslist)
+                                                                                 (cons (car idxcoordslist)
                                                  (fiber-by-layout-level (cdr idxcoordslist) 1)))
                                          abscoordsbylayer)
                                  :key #'car
                                  :lessp #'<))
            (abscoordsrowbounds (mapcar (lambda (idxlayer)
-                                                                             (cons (car idxlayer)
+                                                                               (cons (car idxlayer)
                                                (sort
                                                 (mapcar (lambda (idxrow)
-                                                                                              (let* ((cols (mapcar (lambda (coords)
-                                                                                                                     (car (last coords)))
+                                                                                                (let* ((cols (mapcar (lambda (coords)
+                                                                                                                       (car (last coords)))
                                                                                (cdr idxrow)))
                                                                  (firstcol (apply #'min cols))
                                                                  (lastcol (apply #'max cols)))
@@ -808,7 +808,7 @@ By default, STANDARDVAL is an empty string."
                                        abscoordsbyrow)))
       (d-emacs-coords-run-through abscoordsrowbounds
                                   (lambda (runcoords)
-                                                                        (alist-get (d-emacs-coords-abs-to-rel runcoords) placevals standardval nil #'equal))))))
+                                                                          (alist-get (d-emacs-coords-abs-to-rel runcoords) placevals standardval nil #'equal))))))
 
 ;;;; Provide
 (provide 'd-emacs-coords)

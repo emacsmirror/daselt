@@ -46,7 +46,7 @@ with a newly generated init. "
 
          ;; Remove initial and final bracket.
          (bindingstring
-          (d-remove-surrounding-brackets
+          (d-emacs-remove-surrounding-brackets
            (format
             "%s" 
             
@@ -65,12 +65,12 @@ with a newly generated init. "
               "d-stump/")))))
 
          ;; Get all lisp-code from init files. Again we have to remove initial and final brackets.
-         (otherstring (d-remove-surrounding-brackets
+         (otherstring (d-emacs-remove-surrounding-brackets
                        (format "%s"
                                (remq nil
                                      (flatten-list
                                       (d--act-on-pkg-files-by-type-and-maybe-kill
-                                       `((d-lisp-file-code . (nil "init")))
+                                       `((d-emacs-lisp-file-code . (nil "init")))
                                        "d-stump/"))))))
 
          (remappedstring (format "%s" (list 'define-remapped-keys ))))
@@ -191,7 +191,7 @@ EXCP-BINDINGS."
   (apply #'append ; Append bindings of all exceptions.
          (mapcar
           (lambda (excp)
-            (d-flatten-until
+            (d-emacs-flatten-until
              (remq nil
                    (d--act-on-pkg-files-by-type-and-maybe-kill
                     `(((lambda (file)
@@ -279,7 +279,7 @@ producing remapped keys that meet the specified conditions."
                          (concat (d-stump--format-remap-bindlist-code
                                   non-excp-binds modes head)
                                  "\n"))))))
-            (reverse (d-powerlist d-stump-remap-exceptions-alist)))))
+            (reverse (d-emacs-powerlist d-stump-remap-exceptions-alist)))))
          
          (remapped-keys-str (d-stump--format-remap-list-code remapped-keys-list))
          (overallstr (concat "(define-remapped-keys `"
@@ -299,7 +299,7 @@ producing remapped keys that meet the specified conditions."
 
            (blist (car (remq nil (d--act-on-bindlists-in-file
                                   (concat d-emacs-directory file-path)
-                                  (lambda () (let* ((blist (eval (d-read-region)))
+                                  (lambda () (let* ((blist (eval (d-emacs-read-region)))
                                                (head (d-head-if-exists blist)))
                                           (if (string= head "emacs")
                                               blist)))))))

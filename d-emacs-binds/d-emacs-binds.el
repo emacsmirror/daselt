@@ -53,7 +53,7 @@ MODLIST is not specified, `d-modifiers-list' is used."
                                                       "-")
                                               prefix)
                               indmodifier))
-                        (d-add-list-indices modlist))))))
+                        (d-emacs-index modlist))))))
 
 (defun d-index-and-sort-modifiers (mods &optional indexed modlist)
   "Index the modifiers in MODS based on their position in MODLIST and sort them.
@@ -62,8 +62,8 @@ If INDEXED is t, assume the MODS are already indexed and don't index them again.
   (let* ((modlist (or modlist d-modifiers-list))
          (indmods (if indexed
                       mods
-                    (d-filter-by-predicate (d-add-list-indices modlist)
-                                           (lambda (indmod) (member (cdr indmod) mods))))))
+                    (d-emacs-filter-list (d-emacs-index modlist)
+                                         (lambda (indmod) (member (cdr indmod) mods))))))
     (sort indmods
           :lessp (lambda (indmod1 indmod2)
                    (< (car indmod1)
@@ -137,7 +137,7 @@ are available."
   (let* ((matches (d--get-layout-matches-for-binding-string str))
 
          ;; Throw away 0-layer matches if another one exists.
-         (redmatches (d-filter-by-predicate matches
+         (redmatches (d-emacs-filter-list matches
                                             (lambda (match)
                                               (let* ((coords (car match))
                                                      (laycoord (car coords)))
@@ -229,7 +229,7 @@ If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
   (let* ((indmods (caaar elbind))
          (prefix (unless (not (caaar elbind))
                    (d-string-together-modifiers
-                    (d-remove-indices indmods))))
+                    (d-emacs-remove-indices indmods))))
          (suffix (cdaar elbind))
          (haspfx (and prefix (stringp prefix)
                       (not (string-empty-p prefix))))
@@ -316,9 +316,9 @@ following rules: If one of them is capitalized and the other isn't, the one that
 is capitalized comes last. Otherwise, it compares them according to their
 constituent character codes."
 
-  (d-compare-by-sequential-predicates
+  (d-emacs-compare-by-sequential-predicates
    suffix1 suffix2
-   #'d-string-shorter-or-samep
+   #'d-emacs-string-shorter-or-samep
    (lambda (sfx)
      (string= sfx (upcase sfx)))
    #'string<))
@@ -348,7 +348,7 @@ the sorting order."
 
     ;; Look if suffixes exist in one case but not the other.
     (cl-flet ((true-and-not (val1 val2)
-                (d-compare-if-decidable (lambda (vval1 vval2)
+                (d-emacs-compare-if-decidable (lambda (vval1 vval2)
                                           (and vval1 (not vval2)))
                                         val1 val2)))
 
@@ -480,7 +480,7 @@ bindings are reduced."
 
                                        (indmods (caaar binding))
                                        (prefix (d-string-together-modifiers
-                                                (d-remove-indices indmods)))
+                                                (d-emacs-remove-indices indmods)))
                                        (haspfx (hasstr prefix))
                                        
                                        (suffix (cdaar binding))
@@ -521,7 +521,7 @@ bindings are reduced."
                                      ;; (prefix1 (d-string-together-modifiers
                                      ;;           (mapcar (lambda (indmod) (nth 1 indmod)) indmods2)))
                                      (prefix2 (d-string-together-modifiers
-                                               (d-remove-indices indmods2)))
+                                               (d-emacs-remove-indices indmods2)))
                                      (suffix1 (cdaar binding1))
                                      (suffix2 (cdaar binding2))
                                      (hassfx1 (hasstr suffix1))
@@ -552,15 +552,15 @@ bindings are reduced."
                                 (if (or (and (not eqmatch) coordsonly)
                                         (and (not eqhssfx) (not coordsonly)))
                                     (setq runlst (append runlst
-                                                         (list (d-generate-newlines 2)
+                                                         (list (d-emacs-generate-newlines 2)
                                                                (format
                                                                 ";;;;; Coordinates")))))
 
                                 (if (not eqpfx)
                                     (setq runlst (append
                                                   runlst
-                                                  (if (d-string-exists-and-nonempty prefix2)
-                                                      (list (d-generate-newlines
+                                                  (if (d-emacs-string-exists-and-nonempty prefix2)
+                                                      (list (d-emacs-generate-newlines
                                                              (if (or (and (not eqmatch)
                                                                           coordsonly)
                                                                      (and (not eqhssfx)
@@ -579,7 +579,7 @@ bindings are reduced."
                                     
                                     (setq runlst (append runlst
                                                          (if layer2
-                                                             (list (d-generate-newlines (if (and eqpfx
+                                                             (list (d-emacs-generate-newlines (if (and eqpfx
                                                                                                  eqmatch)
                                                                                             2
                                                                                           1))
@@ -593,7 +593,7 @@ bindings are reduced."
                                              (and (not hassfx1) (not hassfx2))))
                                     (setq runlst (append runlst
                                                          (if row2
-                                                             (list (d-generate-newlines (if (and eqpfx
+                                                             (list (d-emacs-generate-newlines (if (and eqpfx
                                                                                                  eqlay)
                                                                                             2
                                                                                           1))
@@ -604,7 +604,7 @@ bindings are reduced."
                                                                     row2))))))
 
                                 (setq runlst (append runlst
-                                                     (list (d-generate-newlines 1)
+                                                     (list (d-emacs-generate-newlines 1)
                                                            binding2)))))
                             ))
                      finally return runlst)))))
@@ -643,7 +643,7 @@ COORDSONLY, PREFUN and MODLIST are passed forward to
          (formattedblist
           (d--sort-and-format-bindlist blist coordsonly prefun modlist))
          (formattedstring (d--format-bindlist-into-string-before-insertion formattedblist)))
-    (d-replace-region-with-arg formattedstring)
+    (d-emacs-replace-region formattedstring)
     (unless (eobp) (forward-char))))
 
 (defun d--format-bindlist-into-string-before-insertion (blist &optional headname)
@@ -732,7 +732,7 @@ used."
                                             (if filename
                                                 (concat
                                                  (format "%s-mode-map"
-                                                         (d-containing-directory-base-name
+                                                         (d-emacs-containing-directory-base-name
                                                           filename))))))))
                               str-with-line-breaks-after-head)))
     finalstring))
@@ -789,16 +789,16 @@ coordinates)."
   (let* ((elbind (d--elaborate-on-binding binding))
          (coords (cdar elbind))
          (sfx (cdaar elbind))
-         (mods (d-remove-indices (caaar elbind)))
+         (mods (d-emacs-remove-indices (caaar elbind)))
          (pfx (if coords ; If the binding is unmatched, then it has already its modifiers in its suffix.
                   (d-string-together-modifiers mods)
                 ""))
          (coordval (if coords (d-emacs-coords-binding coords)))
          (newsfx ;; Let's put an error check here.
-          (let ((newsfx (if (d-string-exists-and-nonempty sfx)
+          (let ((newsfx (if (d-emacs-string-exists-and-nonempty sfx)
                             sfx
                           (if coords coordval))))
-            (if (d-string-exists-and-nonempty newsfx)
+            (if (d-emacs-string-exists-and-nonempty newsfx)
                 newsfx
               (error (if coords (format "Coordinates %s in binding %s have no match in %s."
                                         coords binding (d-emacs-coords--dfk-or-xkb-layout))
@@ -865,7 +865,7 @@ coordinates)."
 
                           (if doubleval doublestr)
 
-                          (if (d-string-exists-and-nonempty stumpdoublebind)
+                          (if (d-emacs-string-exists-and-nonempty stumpdoublebind)
                               stumpdoublebind)))
         (if translate transstr non-translated-string)))))
 
@@ -907,7 +907,7 @@ coordinates)."
 If NOCONSTRUCT is t, extract only bindlists that are not constructed.
 Constructed bindlists are distinguished by the fact that it is necessary to
 evaluate them twice."
-  (let* ((evalregion (eval (d-read-region))))
+  (let* ((evalregion (eval (d-emacs-read-region))))
     (if (d--bindlist-p evalregion)
         evalregion
       (unless noconstruct
@@ -915,7 +915,7 @@ evaluate them twice."
 
 (defun d--extract-constant-cons ()
   "Extract a constant in a daselt-constants-file by evaluating the region."
-  (eval (d-read-region)))
+  (eval (d-emacs-read-region)))
 
 (defalias 'd--extract-advicelist 'd--extract-constant-cons
   "Extract an advicelist in a daselt-advicelist-file by evaluating the region.")
@@ -923,12 +923,12 @@ evaluate them twice."
 ;;;;; Generation
 (defun d--generate-define-key-strings-from-marked-bindlist ()
   "Create a `define-key' string for each binding in the currently marked bindlist."
-  (let* ((blist (eval (d-read-region)))
+  (let* ((blist (eval (d-emacs-read-region)))
          (map (car blist))
          (body (cdr blist)))
     (mapcar (lambda (binding)
               (concat "(define-key " map " (kbd \""
-                      (d--escape-chars-in-str (d--extract-binding-string binding))
+                      (d-emacs--escape-chars-in-str (d--extract-binding-string binding))
                       "\"\) "
                       (let ((bindval (cdr binding)))
                         (if (stringp bindval)
@@ -945,7 +945,7 @@ evaluate them twice."
   "Save BLIST as a variable.
 Works similarly to `d-emacs--with-eval-backup-and-apply-bindlist' but does not
 include a call to `d-emacs--apply-binding'."
-  (let* ((pkgname (d-containing-directory-base-name (buffer-file-name)))
+  (let* ((pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
          ;; (pkgsymb (intern pkgname))
          (mapsymbdefaultname (concat pkgname "-mode-map"))
          
@@ -991,7 +991,7 @@ include a call to `d-emacs--apply-binding'."
               (set (intern (concat prefix namecore "-bindlist"))
                    blist))
           
-          (d-funcalls-recursively
+          (d-emacs-funcalls-recursively
            blist
            `(((lambda (bblist &optional heads)
                 (let* ((namecore (name-if-symbol bblist)))
@@ -1097,10 +1097,10 @@ COORDLIST, the function returns the original coordinate value from ORIGCOORDS."
                                                   coordlist)))
                            finally return (cdr indcoord))
                 (cdr indcoord))))
-          (d-add-list-indices origcoords)))
+          (d-emacs-index origcoords)))
 
 ;;;; Drawing
-(defun d-execute-in-maximized-maybe-temp-buffer (bufname fun)
+(defun d-emacs-with-max-buffer-maybe-return (bufname fun)
   "Execute FUN in the buffer BUFNAME.
 Maximize the created buffer window and ask whether to restore the previous
 window configuration."
@@ -1110,7 +1110,7 @@ window configuration."
         bufname
         nil
         (lambda (_a _b) (if (yes-or-no-p "Restore previous window configuration? ")
-                            (set-window-configuration windconf)))
+                       (set-window-configuration windconf)))
       (funcall fun))))
 
 
@@ -1129,30 +1129,30 @@ matched against all modifiers in a binding. If the regexp string starts with
 `^', the binding is matched by the regexp if and only if no modifier in the
 binding matches the string."
   (let* ((case-fold-search nil)
-         (pblist (d-filter-by-predicate blist #'d--binding-p))
+         (pblist (d-emacs-filter-list blist #'d--binding-p))
          (elblist (mapcar (lambda (bind)
                             (d--elaborate-on-binding bind))
                           pblist))
-         (purelblist (d-filter-by-predicate elblist (lambda (bind)
-                                                      (not (d--string-binding-p bind))))))
+         (purelblist (d-emacs-filter-list elblist (lambda (bind)
+                                                    (not (d--string-binding-p bind))))))
 
-    (d-filter-by-predicate purelblist
-                           (lambda (elbind)
-                             (cl-flet* ((ispositive (modrx)
-                                          (not (string-match-p (rx string-start "^")
-                                                               modrx))))
-                               (let* ((elbindmods (d-remove-indices
-                                                   (caaar elbind)))
-                                      (modstrs (mapcar #'char-to-string elbindmods)))
-                                 (if (equal modrxs '(nil))
-                                     t
-                                   (cl-every
-                                    (lambda (modrx)
-                                      (if (ispositive modrx)
-                                          (cl-member modrx modstrs :test #'string-match-p)
-                                        (not (cl-member modrx modstrs
-                                                        :test #'string-match-p))))
-                                    modrxs))))))))
+    (d-emacs-filter-list purelblist
+                         (lambda (elbind)
+                           (cl-flet* ((ispositive (modrx)
+                                        (not (string-match-p (rx string-start "^")
+                                                             modrx))))
+                             (let* ((elbindmods (d-emacs-remove-indices
+                                                 (caaar elbind)))
+                                    (modstrs (mapcar #'char-to-string elbindmods)))
+                               (if (equal modrxs '(nil))
+                                   t
+                                 (cl-every
+                                  (lambda (modrx)
+                                    (if (ispositive modrx)
+                                        (cl-member modrx modstrs :test #'string-match-p)
+                                      (not (cl-member modrx modstrs
+                                                      :test #'string-match-p))))
+                                  modrxs))))))))
 
 (provide 'd-emacs-binds)
 ;;; d-emacs-binds.el ends here

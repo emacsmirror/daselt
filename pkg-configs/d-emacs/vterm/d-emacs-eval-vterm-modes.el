@@ -34,8 +34,8 @@
             ("<XF86Launch5>" #'vterm-copy-mode))
   (if d-vterm-insert-mode
       (progn (d-vterm-configure-insert
-              (d-complement d-C-key-combinations-list
-                            d-vterm-insert-exclude-key-combinations-list))
+              (d-emacs-complement d-C-key-combinations-list
+                                  d-vterm-insert-exclude-key-combinations-list))
              (add-to-list 'emulation-mode-map-alists
                           `((d-vterm-insert-mode . ,d-vterm-insert-mode-map))))))
 

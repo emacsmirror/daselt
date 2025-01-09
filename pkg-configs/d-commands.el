@@ -40,33 +40,33 @@
                   (&optional coordsonly prefun modlist))
 (declare-function d--delete-duplicate-comment-lines "../d-functions.el"
                   ())
-(declare-function d-filter-obarray-by-predicate "d-functions.el"
+(declare-function d-emacs-filter-obarray "d-functions.el"
                   (predicate))
-(declare-function d-filter-by-predicate "d-functions.el"
+(declare-function d-emacs-filter-list "d-functions.el"
                   (lst predicate))
 (declare-function d--pick-pkg-file-by-type "d-functions.el"
                   (type &optional subdir nodefault))
-(declare-function d-powerlist "d-functions.el"
+(declare-function d-emacs-powerlist "d-functions.el"
                   (list &optional elt))
-(declare-function d-complement "d-functions.el"
+(declare-function d-emacs-complement "d-functions.el"
                   (list1 list2 &optional compfun))
 (declare-function d-emacs-coords-placevals-matching-indexed-rx "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (placevals idx coordrx))
 (declare-function d-emacs-coords-draw-placevals "d-functions.el"
                   (placevals &optional drawfull runcoords org))
-(declare-function d-execute-in-maximized-maybe-temp-buffer "d-functions.el"
+(declare-function d-emacs-with-max-buffer-maybe-return "d-functions.el"
                   (buffername function))
 (declare-function d--bindlist-symb-p "d-functions.el"
                   (symb))
-(declare-function d-flatten-until "d-functions.el"
+(declare-function d-emacs-flatten-until "d-functions.el"
                   (lst cnd))
 (declare-function d-emacs-coords-p "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (list))
 (declare-function d-string-together-modifiers "d-functions.el"
                   (modifiers))
-(declare-function d-string-exists-and-nonempty "d-functions.el"
+(declare-function d-emacs-string-exists-and-nonempty "d-functions.el"
                   (str))
-(declare-function d-filter-by-predicate "d-functions.el"
+(declare-function d-emacs-filter-list "d-functions.el"
                   (lst predicate))
 (declare-function d-emacs-coords-extract-value-string "d-emacs-xkb/d-emacs-xkb-functions.el"
                   (val))
@@ -82,7 +82,7 @@
                   (&optional noconstruct))
 (declare-function d--save-bindlist-as-variable "d-functions.el"
                   (bindlist))
-(declare-function d-read-region "d-functions.el"
+(declare-function d-emacs-read-region "d-functions.el"
                   ())
 
 ;;;; Bindlists-files
@@ -139,7 +139,7 @@ The default for DIR is `d-emacs-pkg-configs-dir'."
     (search-forward "\(")
     (backward-char)
     (mark-sexp)
-    (let ((tuttext (eval (d-read-region))))
+    (let ((tuttext (eval (d-emacs-read-region))))
       (pop-to-buffer "*daselt-tutorial*")
       (delete-minibuffer-contents)
       (org-mode)

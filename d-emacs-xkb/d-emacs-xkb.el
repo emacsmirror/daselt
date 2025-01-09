@@ -60,11 +60,11 @@
 ;;;; Preamble
 (require 'd-emacs-base)
 
-(declare-function d-mark-line "d-emacs-base" (&optional arg))
-(declare-function d-uppercase-p "d-emacs-base" (str))
-(declare-function d-cardinal "d-emacs-base" (n &optional fromone))
+(declare-function d-emacs-mark-line "d-emacs-base" (&optional arg))
+(declare-function d-emacs-uppercase-p "d-emacs-base" (str))
+(declare-function d-emacs-cardinal "d-emacs-base" (n &optional fromone))
 
-(defvar d-keep-read-buffers)
+(defvar d-emacs-keep-read-buffers)
 
 ;;;; Customs
 (defgroup d-emacs-xkb
@@ -130,7 +130,7 @@ Has to be adapted for different layouts."
           :group 'd-emacs-xkb)
 
 (defcustom d-emacs-xkb-layer-numbers-list
-  (d-cardinal 8 t)
+  (d-emacs-cardinal 8 t)
   "Layers of the xkb-layout you want to import."
   :type 'natnum
   :group 'd-emacs-xkb)
@@ -159,20 +159,20 @@ Return a form suitable for Emacs."
                   (concat "<" (replace-regexp-in-string "_" "-" (downcase str)) ">"))
 
 (defun d-emacs-xkb--format-xkb-signal-name (rawsigname)
-    "Format the signal name RAWSIGNAME read by d-emacs-xkb into a form usable by
+  "Format the signal name RAWSIGNAME read by d-emacs-xkb into a form usable by
 Emacs.
 Removes spaces and NoSymbol's, converts Unicode characters, converts keypad
 signal names, and replaces other signal names with their Emacs equivalents."
-    (let ((signame rawsigname))
+  (let ((signame rawsigname))
     (if rawsigname
-            (progn
-            ;; Remove tabs, spaces and commas if they exist.
-            (setq signame (replace-regexp-in-string "\t" "" signame))
-            (setq signame (remove ?\  signame))
-            (setq signame (remove ?, signame))
+        (progn
+          ;; Remove tabs, spaces and commas if they exist.
+          (setq signame (replace-regexp-in-string "\t" "" signame))
+          (setq signame (remove ?\  signame))
+          (setq signame (remove ?, signame))
 
-            ;; Remove NoSymbol's.
-            (cond
+          ;; Remove NoSymbol's.
+          (cond
            ((string= signame "NoSymbol")
             (setq signame nil))
 
@@ -186,15 +186,15 @@ signal names, and replaces other signal names with their Emacs equivalents."
             (setq signame (char-to-string (char-from-name signame t))))
 
            ;; If the string starts with a U, is longer than one symbol and all letters are uppercase it's safe to assume it's the code of a unicode symbol and convert it to that symbol.
-           ((and (d-uppercase-p signame) (string-match-p "U" (substring signame 0 1))
+           ((and (d-emacs-uppercase-p signame) (string-match-p "U" (substring signame 0 1))
                  (> (length signame) 1))
             (setq signame (char-to-string (string-to-number (substring signame 1) 16))))
 
            ;; If it's a Greek letter, create the corresponding name and use it for insertion. Uppercase first.
            ((string-match-p "Greek" signame)
             (setq signame (let ((letter (nth 1 (split-string signame "_"))))
-                            (if (d-uppercase-p letter)
-                                    (char-to-string
+                            (if (d-emacs-uppercase-p letter)
+                                (char-to-string
                                  (char-from-name (concat "greek capital letter " letter) t))
                               (char-to-string
                                (char-from-name (concat "greek small letter " letter) t))))))
@@ -202,9 +202,9 @@ signal names, and replaces other signal names with their Emacs equivalents."
            ;; Replace other symbols
            (t (cl-loop for cand in d-emacs-xkb-remaining-char-mappings
                        do (if (equal (car cand) signame)
-                                  (setq signame (cdr cand)))))
+                              (setq signame (cdr cand)))))
            )
-            signame)
+          signame)
       nil)))
 
 (defun d-emacs-xkb--inherit-from-parent-map (beg end laynum rownum key)
@@ -218,7 +218,7 @@ string, in which case the string is assumed to be its name.
 This works only if the parent map appears earlier in the file."
   (goto-char beg)
   (if (search-forward "include" end t)
-      (progn (d-mark-line)
+      (progn (d-emacs-mark-line)
              (let* ((includelinelist (remove "" (split-string (remove ?\" (buffer-substring-no-properties (region-beginning) (region-end)))
                                                               "\\(\(\\|\)\\|[ ]+\\|\_\\)" t)))
                     (parent (nth 2 includelinelist))
@@ -270,7 +270,7 @@ layer number LAYNUM."
                                                (d-emacs-xkb--inherit-from-parent-map
                                                 beg end laynum rowidx
                                                 keynum)))))
-                                     (d-cardinal rowlength t)))
+                                     (d-emacs-cardinal rowlength t)))
                          
                          (let ((binding (d-emacs-xkb--format-xkb-signal-name
                                          (d-emacs-xkb--get-key-binding
@@ -278,7 +278,7 @@ layer number LAYNUM."
                            (list (or binding
                                      (d-emacs-xkb--inherit-from-parent-map
                                       beg end laynum rowidx eltnum))))))))
-          (d-add-list-indices d-emacs-xkb-rowlist))) 
+          (d-emacs-index d-emacs-xkb-rowlist))) 
 
 (defun d-emacs-xkb--generate-layouts ()
   "Generate lists from layouts defined in the d-emacs-xkb file.
@@ -289,7 +289,7 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
     (goto-char (point-min))
     (while (search-forward "xkb_symbols" nil t)
       (let ((linebeg (prog2 (beginning-of-line) (point))))
-        (progn (d-mark-line)
+        (progn (d-emacs-mark-line)
                (let ((laynameful
                       (nth 1 (split-string
                               (buffer-substring (region-beginning) (region-end)) " "))))
@@ -304,7 +304,7 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
                                      (mapcar (lambda (laynum)
                                                (d-emacs-xkb--generate-layer laybeg layend laynum))
                                              d-emacs-xkb-layer-numbers-list))))))))))
-    (unless (or d-debug d-keep-read-buffers) (kill-buffer dxkbbuf))))
+    (unless (or d-emacs-debug d-emacs-keep-read-buffers) (kill-buffer dxkbbuf))))
 
 ;;;; Generated Constants
 (d-emacs-xkb--generate-layouts)

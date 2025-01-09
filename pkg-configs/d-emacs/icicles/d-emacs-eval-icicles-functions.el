@@ -45,12 +45,12 @@ in this directory that contain `customs' in their name."
                    (setopt--set
                     head
                     (append
-                     (d-filter-by-predicate (symbol-value head)
-                                            (lambda (ici) (let ((icikey (car ici)))
-                                                       (or (symbolp icikey)
-                                                           (string-match-p
-                                                            "mouse" (key-description
-                                                                     icikey))))))
+                     (d-emacs-filter-list (symbol-value head)
+                                          (lambda (ici) (let ((icikey (car ici)))
+                                                          (or (symbolp icikey)
+                                                              (string-match-p
+                                                               "mouse" (key-description
+                                                                        icikey))))))
                      (mapcar
                       (lambda (bind)
                         (let ((val (eval (cdr bind))))
@@ -74,7 +74,7 @@ in this directory that contain `customs' in their name."
                        body))
              ))))
       . (lambda (filepath) (and (d--bindlists-p filepath)
-                           (string-match-p "customs" (file-name-base filepath))))))
+                                (string-match-p "customs" (file-name-base filepath))))))
    (concat "d-emacs/icicles/")))
 
 (defun d-emacs-icicles--reset-key-customs-from-backups ()

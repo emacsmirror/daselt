@@ -543,7 +543,7 @@ an ISO-Level-5-Shift key, it is endowed with one of the signals of
 these keys when held.")
 
 (defconst d-emacs-dfk-modifier-coords-alist
-  (let ((symbols (d-filter-obarray-by-predicate
+  (let ((symbols (d-emacs-filter-obarray
                   (lambda (sym)
                     (string-match-p (rx "d-emacs-dfk-" (group not-newline) "-coords")
                                     (symbol-name sym))))))
@@ -669,7 +669,7 @@ extension in FNAME."
 
 (defun d-emacs-dfk-coords-modifier (coords)
   "Return the modifier that a pair of key coords represents if there is one."
-  (d-reverse-alist-get
+  (d-emacs-reverse-alist-get
    coords
    d-emacs-dfk-modifier-coords-alist
    nil
@@ -681,11 +681,11 @@ extension in FNAME."
 (defun d-emacs-dfk-levels-to-layer (levs)
   "Return the layer that is reached through LEVS."
   (let ((levnum (length levs)))
-    (d-reverse-alist-get
+    (d-emacs-reverse-alist-get
      levs
      (alist-get levnum d-emacs-dfk-layers-by-length #'equal)
      nil
-     #'d-setequal)))
+     #'d-emacs-setequal)))
 
 (cl-defun d-emacs-dfk-datum-to-string (dtm)
   "Convert a d-emacs-dfk-datum into a string."
@@ -720,7 +720,7 @@ Based on the customs in `d-emacs-dfk'."
            (intern (concat "d-emacs-dfk-" (number-to-string num) "-coords")))
 
          (disc-mod-strs (str)
-           (let ((dmods (d-filter-by-predicate
+           (let ((dmods (d-emacs-filter-list
                          d-emacs-dfk-discrete-modifiers-list
                          (lambda (cns1) (string= str (caar cns1))))))
              (mapcar (lambda (dmodcns)
