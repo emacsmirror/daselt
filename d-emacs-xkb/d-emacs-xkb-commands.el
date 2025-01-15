@@ -1,4 +1,4 @@
-;;;  d-emacs-xkb-commands.el --- Commands for Daselt's xkb module              -*- lexical-binding: t; -*-
+;;;  d-emacs-xkb-commands.el -- Commands for Daselt's xkb module              -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Alexander Prähauser
 
@@ -34,9 +34,9 @@
 (declare-function d-emacs-read-multiple-choice-base "d-emacs-functions" (prompt choices &optional help-string show-help long-form))
 (declare-function d-emacs-coords-draw-placevals "d-emacs-xkb-functions" (placevals &optional drawfull runcoords org))
 (declare-function d-emacs-coords-layer-list "d-emacs-xkb-functions" (placevals &optional drawfull runcoords org))
-(declare-function d--binding-p "d-functions" (cns))
+(declare-function d-emacs-bind-p "d-emacs-base" (cns))
 (declare-function d-emacs-coords-coordinatize-layout "d-emacs-xkb-functions" (layout &optional extt))
-(declare-function d-emacs-flatten-until "d-functions" (lst cnd))
+(declare-function d-emacs-flatten-until "d-emacs-base" (lst cnd))
 (declare-function d-emacs-coords-placevals-matching-coordrx "d-emacs-xkb-functions" (placevals coordrx))
 
 (defvar d-emacs-coords-key-coords)
@@ -70,7 +70,7 @@ buffer, depending on the invocation context."
                       (d-emacs-coords-coordinatize-layout
                        (symbol-value d-emacs-xkb-extended-layout)
                        t)
-                      (lambda (lst) (d--binding-p (car lst))))
+                      (lambda (lst) (d-emacs-bind-p (car lst))))
                      coordrx)))
 
     (funcall (if (called-interactively-p 'any)

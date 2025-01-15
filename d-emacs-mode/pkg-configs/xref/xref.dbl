@@ -1,0 +1,15 @@
+(xref--xref-buffer-mode-map 
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -3) . #'xref-prev-line) 
+ ((4 0 -2) . #'xref-show-location-at-point) 
+ ((4 0 -4) . #'xref-prev-group) 
+ ((4 0 4) . #'xref-next-group) 
+ ((4 0 2) . #'xref-goto-xref) 
+ ((4 0 3) . #'xref-next-line) 
+ ((4 0 1) . #'xref-query-replace-in-results) 
+
+;;;;;;;; 4-1 
+ ((4 1 -2) . #'xref-quit-and-pop-marker-stack) 
+ ((4 1 2) . #'xref-quit-and-goto-xref))

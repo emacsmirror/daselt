@@ -1,0 +1,20 @@
+(apply #'append
+       (mapcar
+        (lambda (layer)
+          (mapcar (lambda (coords)
+                    (cons (append (list layer) coords) nil))
+                  (let ((runlist))
+                    (cl-loop for rightside in d-emacs-mode-quick-key-coords-base-list
+                             for index from 0
+                             for leftside = (list (car rightside)
+                                                  (- (nth 1 rightside)))
+                             do (setq runlist
+                                      (append
+                                       runlist
+                                       (if (= 0 (nth 1 rightside)) ;If in the middle, just return unduplicated.
+                                           (list rightside)
+                                         (if (cl-evenp index)
+                                             (list leftside rightside)
+                                           (list rightside leftside)))))
+                             finally return runlist))))
+        d-emacs-mode-quick-key-layers-list))

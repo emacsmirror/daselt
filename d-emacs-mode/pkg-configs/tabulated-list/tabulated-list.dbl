@@ -1,0 +1,16 @@
+(
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -3) . #'previous-line) 
+ ((1 0 -2) . #'tabulated-list-previous-column) 
+ ((1 0 2) . #'tabulated-list-next-column) 
+ ((1 0 3) . #'next-line) 
+
+;;;;;;;; 1-1 
+ ((1 1 0) . #'tabulated-list-sort) 
+
+;;;;;;; 4 
+;;;;;;;; 4--1 
+ ((4 -1 -2) . #'tabulated-list-narrow-current-column) 
+ ((4 -1 2) . #'tabulated-list-widen-current-column))

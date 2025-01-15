@@ -1,0 +1,55 @@
+;;; d-emacs-eww.el -- d-emacs commands for eww  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; 
+
+;;; Code:
+
+(defun d-emacs-eww-search-in-new-tab ()
+  "Search in a new buffer/tab."
+  (interactive)
+  (let ((buf (generate-new-buffer "eww")))
+    (tab-bar-new-tab)
+    (switch-to-buffer buf)
+    (eww-mode)
+    (call-interactively #'eww-search-words)))
+
+(defun d-emacs-eww-search-in-new-vertical-window ()
+  "Search in a new vertical window."
+  (interactive)
+  (let ((buf (generate-new-buffer "eww")))
+    (split-window-right)
+    (switch-to-buffer buf)
+    (eww-mode)
+    (call-interactively #'eww-search-words)))
+
+(defun d-emacs-eww-search-in-new-horizontal-window ()
+  "Search in a new horizontal window."
+  (interactive)
+  (let ((buf (generate-new-buffer "eww")))
+    (split-window-below)
+    (switch-to-buffer buf)
+    (eww-mode)
+    (call-interactively #'eww-search-words)))
+
+(provide 'd-emacs-eww)
+;;; d-emacs-eww.el ends here

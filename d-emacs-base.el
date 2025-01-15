@@ -1,4 +1,4 @@
-;;; d-emacs-base.el --- Base functions and constants for d-emacs  -*- lexical-binding: t; -*-
+;;; d-emacs-base.el -- Base functions and constants for d-emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
@@ -73,23 +73,48 @@
 ;;; Code:
 
 ;;;; Customs
+(defgroup d-emacs
+                    nil
+                    "Customization group for d-emacs."
+                    :group 'Convenience
+                    :group 'External
+                    :prefix "d-")
+
 (defcustom d-emacs-debug
-  nil
-  "Enable debugging options in Daselt.
+                                            nil
+                                            "Enable debugging options in Daselt.
 
 When non-nil, functions will print additional debugging messages."
-  :type 'boolean
-  :group 'Daselt)
+                                            :type 'boolean
+                                            :group 'd-emacs)
 
-(defcustom d-emacs-keep-read-buffers
-  nil
-  "Keep buffers open after d-emacs-functions read them.
 
-If non-nil, previously read buffers will not be closed."
-  :type 'boolean
-  :group 'Daselt)
+;;;; Constants
+(defconst d-emacs-definition-types-list
+  '(defun defmacro defconst defcustom defun* defalias defgroup define-derived-mode defvar-keymap)
+  "List of definition macros for which `d-emacs-beginning-of-docstring' works.")
 
-;;;; General purpose functions
+;;;; Functions
+;;;;; General
+(defun d-emacs-definition-name ()
+  "If point is within a definition, move to the beginning of the docstring.
+Works for definition types in `d-emacs-definition-types-list'."
+  (mark-defun) 
+  (condition-case nil
+      (let* ((defn (d-emacs-read-region))
+             (first-symbol (nth 0 defn))
+             (name (nth 1 defn)))
+        (if (member first-symbol d-emacs-definition-types-list)
+            name))
+    (error (display-warning
+            :warning
+            (if (region-active-p)
+                (format "Could not read %s"
+                        (buffer-substring-no-properties
+                         (region-beginning)
+                         (region-end)))
+              (format "Tried to read inactive region at %s" (point)))))))
+
 ;;;;; Numbers
 (defun d-emacs-numbers-between (num1 num2 &optional exclude1 exclude2)
   "Generate a list of integers from num1 to num2, including both.
@@ -133,8 +158,27 @@ This function does not include the full path or trailing slashes in the result."
   (goto-char (point-min)))
 
 (defun d-emacs-goto-max ()
-  "Go to `point-max'."
-  (goto-char (point-max)))
+                          "Go to `point-max'."
+                          (goto-char (point-max)))
+
+
+(defun d-emacs-definition-names-in-file (fname)
+  "Return the names of definitions in FNAME, listed according to definition type.
+Works for definition types in `d-emacs-definition-types-list'."
+  (let ((buf (current-buffer)))
+    (set-buffer (find-file-noselect fname))
+    (prog1 (remq nil (mapcar (lambda (deftype)
+                               (remq nil
+                                     (save-excursion
+                                       (d-emacs-goto-min)
+                                       (let (rlist)
+                                         (while (search-forward (symbol-name deftype) nil t)
+                                           (save-excursion
+                                             (beginning-of-defun)
+                                             (push (d-emacs-definition-name) rlist)))
+                                         rlist))))
+                             d-emacs-definition-types-list))
+      (set-buffer buf))))
 
 ;;;;; Region operations
 (defun d-emacs-read-region (&optional properties)
@@ -144,8 +188,8 @@ PROPERTIES is t, read without properties."
   (let ((beg (region-beginning))
         (end (region-end)))
     (read (if properties
-              (buffer-substring beg end)
-            (buffer-substring-no-properties beg end)))))
+                          (buffer-substring beg end)
+                  (buffer-substring-no-properties beg end)))))
 
 (defun d-emacs-replace-region (arg)
   "Replace the currently selected region with the content of ARG.
@@ -294,10 +338,10 @@ If BEG is not given, it is set using `point'."
 
 ;;;;; Strings
 (defun d-emacs--escape-chars-in-str (str)
-  "Escape characters in STR that are defined in `d-escape-kbd-regexps-list'.
+  "Escape characters in STR that are defined in `d-emacs-bind-escape-kbd-regexps-list'.
 This function modifies instances of the defined regex patterns."
   (let ((escaped-char-str
-         (cl-loop for rx in d-escape-kbd-regexps-list
+         (cl-loop for rx in d-emacs-bind-escape-kbd-regexps-list
                   if (string-match-p rx str)
                   return (replace-regexp-in-string rx
                                                    "\\\\\\1"
@@ -331,6 +375,97 @@ This function modifies instances of the defined regex patterns."
   (let ((case-fold-search nil))
     (not (string-match-p "[[:lower:]]" str))))
 
+;;;;; Filling
+(defun d-emacs-fill-current-docstring ()
+  "Fill the docstring of the current definition.
+Works for definitions in `d-emacs-definition-types-list'.
+Works for the definition point is in."
+  (interactive)
+  (cl-flet ((fill-rest (beg &optional end)
+                    (progn (forward-char)
+                     (let ((fillbeg (if (< (line-beginning-position) beg)
+                                                    beg
+                                            (beginning-of-line)
+                                            (delete-horizontal-space)
+                                            (point))))
+                       (fill-region fillbeg (or end (progn (goto-char beg)
+                                                           (forward-sexp)
+                                                           (point))))))))
+    (save-excursion
+            (d-emacs-beginning-of-docstring)
+            (d-emacs--fill-string-at-point-like-docstring))))
+
+(defun d-emacs--fill-string-at-point-like-docstring ()
+  "Fill the string at point like it's a docstring.
+
+Return the filled string."
+  (cl-flet ((fill-rest (beg &optional end)
+              (progn (forward-char)
+                     (let ((fillbeg (if (< (line-beginning-position) beg)
+                                        beg
+                                      (beginning-of-line)
+                                      (delete-horizontal-space)
+                                      (point))))
+                       (fill-region fillbeg (or end (progn (goto-char beg)
+                                                           (forward-sexp)
+                                                           (point))))))))
+    (let ((beg (point))
+          (end (d-emacs-sexp-end-position)))
+      (unless (and (<= end (line-end-position))
+                   (<= (- end beg) 80)) ; If only one small line, leave alone.
+        (forward-line)
+        (fill-region beg (min end (line-end-position)))
+        (let ((lineend (line-end-position))
+              (end (save-excursion (goto-char beg)
+                                   (forward-sexp)
+                                   (point))))
+          (goto-char beg)
+          (cl-loop while (re-search-forward (rx (any ".!?"))
+                                            lineend
+                                            t) ; Look if it contains a potential sentence end.
+                   do (if (looking-at "\n") ; Fill rest if already at line end.
+                          (progn (forward-char)
+                                 (cl-return (fill-rest beg end)))
+                        (when (looking-at (rx space)) ; Check that it's a sentence end.
+                          (delete-horizontal-space)
+                          (unless (looking-at "\n")
+                            (insert "\n"))
+                          (cl-return (fill-rest beg))))
+
+                   finally do ; Only called if no sentence end is found.
+                   (fill-region beg end))
+          (prog1 (progn (goto-char beg) ; Return the docstring.
+                        (mark-sexp)
+                        (buffer-substring (region-beginning)
+                                          (region-end)))
+            (end-of-defun)))))))
+
+(defun d-emacs-fill-string-like-docstring (str)
+  (with-temp-buffer
+    (insert (concat "\"" str "\""))
+    (d-emacs-goto-min)
+    (d-emacs--fill-string-at-point-like-docstring)
+    (buffer-substring (1+ (point-min)) (1- (point-max)))))
+
+(defun d-emacs-fill-docstrings-in-buffer ()
+                    "Fill the docstrings in the current buffer.
+Works for functions, macros, constants, and customs. If the first line in the
+region is a full sentence, insert a new line at the end and re-fill the rest."
+                    (interactive)
+                    (save-excursion
+                            (goto-char (point-min))
+                            (while (re-search-forward 
+            (eval `(rx line-start
+                       (* space)
+                       "("
+                       ,(append '(or) 
+                                (mapcar #'symbol-name d-emacs-definition-types-list))
+                       (+ space)
+                       (1+ (not (any space)))))
+            nil t)
+      (d-emacs-fill-current-docstring)
+      (end-of-defun))))
+
 ;;;;; Lines
 ;; Taken from min,sc-cmds.el (Icicle library).
 (defun d-emacs-mark-line (&optional arg)
@@ -363,21 +498,16 @@ originally in."
   (d-emacs-surround-by-newlines k 0 str))
 
 (defun d-emacs-append-newlines (k str)
-  "Append K newlines before STR."
-  (d-emacs-surround-by-newlines 0 k str))
+      "Append K newlines before STR."
+      (d-emacs-surround-by-newlines 0 k str))
 
-(defun d-emacs-search-at-line-start (str)
-  "Search for an occurrence of STR at the start of a line.
-Unlike normal `search-forward', `d-emacs-search-at-line-start' returns nil if no match
-is found and does not cause an error."
-  (re-search-forward (eval `(rx line-start ,str)) nil t))
 
 ;;;;; Logical and set-theoretic operations
 (defun d-emacs-forall-p (list predicate)
   "Return LIST if all elements satisfy PREDICATE; otherwise, return nil."
   (cl-loop for elt in list
            do (if (not (funcall predicate elt))
-                  (cl-return nil))
+                                                                          (cl-return nil))
            finally return t))
 
 (defun d-emacs-exists-p (list predicate)
@@ -427,15 +557,15 @@ The operation does not modify the original list."
              finally return runlst)))
 
 ;;;;; Comparison
-(defun d-emacs-string-shorter-or-samep (str1 str2)
-  "Return t if STR1 is shorter than or equal in length to STR2."
-  (<= (length str1)
-      (length str2)))
+(defun d-emacs-leq-p (seq1 seq2)
+  "Return t if SEQ1 is shorter than or equal in length to SEQ2."
+  (<= (length seq1)
+      (length seq2)))
 
-(defun d-emacs-string-longer-or-samep (str1 str2)
-  "Return t if STR1 is longer than or equal in length to STR2."
-  (>= (length str1)
-      (length str2)))
+(defun d-emacs-geq-p (seq1 seq2)
+  "Return t if SEQ1 is longer than or equal in length to SEQ2."
+  (>= (length seq1)
+      (length seq2)))
 
 (defun d-emacs-compare-if-decidable (test arg1 arg2)
   "Compare ARG1 and ARG2 using the function TEST.
@@ -512,7 +642,7 @@ This is the part between PFX and SFX."
     (string-match (eval `(rx ,pfx (group (* not-newline)) ,sfx)) name)
     (match-string 1 name)))
 
-;;;; Recursion
+;;;;; Recursion
 (defun d-emacs-funcalls-recursively (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
   "Recursively apply functions to elements of OBJ based on condition tests.
 
@@ -592,25 +722,147 @@ and results collected based on hierarchy and matching tests."
                finally return runlist))))
 
 (defun d-emacs-funcall-recursively (obj fun test  &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug)
-  "Recursively apply FUN to elements that satisfy TEST.
+                                "Recursively apply FUN to elements that satisfy TEST.
 This wraps the contouring of arguments and collections found in
 `d-emacs-funcalls-recursively'.
 See there for further explanation."
-  (d-emacs-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
+                                (d-emacs-funcalls-recursively obj `((,fun . ,test)) recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
 
-;;;; Drawing
-(defun d-emacs-with-max-buffer-maybe-return (bufname fun)
+;;;;; Conses
+(defun d-recursively-act-on-proper-conses (list fun &optional lstcolfun)
+    "Recursively apply FUN to all non-list cons cells in LIST.
+
+This function traverses through LIST and applies the function FUN to each cons
+cell that is not considered a proper list. The goal is to process individual
+cons cells while ignoring proper lists composed of them.
+
+Parameters: - LIST: The structure containing cons cells and lists. - FUN: The
+function to be applied to each non-list cons cell. - LSTCOLFUN: An optional
+function to collect results; defaults to `append'.
+
+The function uses `d-emacs-funcall-recursively' to handle traversal: - It identifies
+and applies FUN to cons cells that are not proper lists. - Recursion occurs into
+elements that are proper lists.
+
+Results are collected using the specified LSTCOLFUN function, with a default
+behavior of concatenating results via `append', which should return them in a
+flat list."
+    (let ((lstcolfun (or lstcolfun #'append)))
+    (d-emacs-funcall-recursively list
+                                 fun
+                                 (lambda (idx lst)
+                                     (let ((elt (nth idx lst)))
+                                     (and (consp elt) ; Check element is a cons
+                                          (not (proper-list-p elt))))) ; and not a proper list
+
+                                 (lambda (idx lst) (proper-list-p (nth idx lst)))
+                                 nil
+                                 (lambda (lst result)
+                                     (if result
+                                           (push result lst)
+                                       lst))
+                                 lstcolfun)))
+
+(defun d-recursive-get-cons (obj allist &optional testfn reverse)
+  "This function applies itself to each element ELT contained in ALLIST.
+If ELT is a list, it applies itself to that list. For each ELT that is a cons
+but not a proper list, it tests whether OBJ matches the car of that cons. It
+returns the list of matches. Matching is done using TESTFN or, if none is given,
+using equal. If REVERSE is t cdrs are tested instead of cars."
+  (d-recursively-act-on-proper-conses
+   allist
+   (lambda (cns) (if (funcall (if testfn testfn #'equal)
+                         obj
+                         (funcall (if reverse #'cdr #'car) cns))
+                cns))))
+
+;;;;; Drawing
+(defun d-emacs-bind-with-max-buffer-maybe-return (bufname fun)
   "Execute FUN in the buffer BUFNAME.
 Maximize the created buffer window and ask whether to restore the previous
 window configuration."
   (let ((display-buffer-alist '((".*" display-buffer-full-frame)))
         (windconf (current-window-configuration)))
     (with-current-buffer-window
-        bufname
-        nil
-        (lambda (_a _b) (if (yes-or-no-p "Restore previous window configuration? ")
-                       (set-window-configuration windconf)))
+                                bufname
+                                nil
+                                (lambda (_a _b) (if (yes-or-no-p "Restore previous window configuration? ")
+                                               (set-window-configuration windconf)))
       (funcall fun))))
 
+;;;;; Macros
+;;;;;; Function-generation
+(defmacro d-emacs-def-by-forms (templates &rest mappings)
+  "Define families of functions based on TEMPLATES.
+
+TEMPLATES should be a list of function-definition-templates starting with
+backquotes that evaluate to function definitions when all placeholders are
+bound.
+
+Each element of MAPPINGS should be a cons cell where the car is a placeholder
+symbol used in the TEMPLATES and the cdr is a list of values to substitute.
+
+During macro expansion, each template is duplicated for each set of
+substitutions from MAPPINGS with each placeholder replaced with the
+corresponding value."
+  (let* ((substitutions (mapcar #'car mappings))
+         (substcard (d-emacs-cardinal (length substitutions)))
+         (value-lists (mapcar #'cdr mappings))
+         (lengths-set (let ((unique-lengths (delete-dups (mapcar #'length
+                                                                 value-lists))))
+                        (if (= (length unique-lengths) 1)
+                            (car unique-lengths)
+                          (error "All substitution lists must have the same length"))))
+         (defun-list
+          (mapcan
+           (lambda (template)
+             (let* ((template-list (mapcar (lambda (defun-num)
+                                             (let ((context (mapcar
+                                                             (lambda (subst-num)
+                                                               (cons (nth subst-num
+                                                                          substitutions)
+                                                                     (nth defun-num
+                                                                          (nth subst-num
+                                                                               value-lists))))
+                                                             substcard)))
+                                               (eval template context)))
+                                           (d-emacs-cardinal lengths-set))))
+               template-list))
+           templates)))
+    (append '(progn) defun-list)))
+
+(defmacro d-emacs-def-by-forms-by-variables (templates &rest mappings)
+  "Like `d-emacs-def-by-forms' but each cdr of mappings should be a variable name or
+otherwise evaluate to a list.
+
+See `d-emacs-def-by-forms' for more documentation."
+  (let ((newmappings (mapcar (lambda (mapping)
+                               (cons (car mapping) (eval (cdr mapping))))
+                             mappings)))
+    `(d-emacs-def-by-forms ,templates ,@newmappings)))
+
+;;;;; Commands
+(defun d-emacs-trim-line-ends ()
+  "Remove whitespace at the end of each line in the current buffer."
+  (interactive)
+  (save-excursion (d-emacs-goto-min)
+                  (while (re-search-forward (rx (+ blank) line-end) nil t)
+                    (replace-match ""))))
+
+(defun d-emacs-search-at-line-start (str &optional withcomments)
+  "Search for an occurrence of STR at the start of a line.
+Unlike normal `search-forward', `d-emacs-search-at-line-start' returns nil if no
+match is found and does not cause an error.
+
+If WITHCOMMENTS is t, also include occurences that are commented out."
+  (interactive "MSearch for string: ")
+  (re-search-forward (rx-to-string
+                      (remq nil `(: line-start
+                                    ,(if withcomments '(* (syntax comment-delimiter)))
+                                    ,(if withcomments '(* blank))
+                                    (literal ,str))))
+                     (if (region-active-p) (region-end) nil)
+                     t))
+;;;; Provide
 (provide 'd-emacs-base)
 ;;; d-emacs-base.el ends here

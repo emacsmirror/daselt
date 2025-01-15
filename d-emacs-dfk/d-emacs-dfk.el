@@ -1,4 +1,4 @@
-;;; d-emacs-dfk.el --- Creation of dual-function-keys configurations from a d-emacs-coords-layer and integration into layouts  -*- lexical-binding: t; -*-
+;;; d-emacs-dfk.el -- Creation of dual-function-keys configurations from a d-emacs-coords-layer and integration into layouts  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
@@ -143,10 +143,10 @@
                   ,(nth 1 d-emacs-dfk-non-locking-5-coords))))
 
      ;; 8
-     ((-1 -6) . ("f11" . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+     ((-1 -6) . ("f11" . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
                           ,(nth 0 d-emacs-dfk-locking-3-coords)
                           ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
-     ((-1 6) . ("f11" . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
+     ((-1 6) . ("f11" . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
                          ,(nth 1 d-emacs-dfk-locking-3-coords)
                          ,(nth 0 d-emacs-dfk-non-locking-5-coords)))))
   "Form to generate the d-dfk layouts.
@@ -201,7 +201,7 @@ Keys are chosen to solve the following problems:
 (defgroup d-emacs-dfk
   nil
   "Custom group for d-emacs-dfk."
-  :group 'Daselt)
+  :group 'd-emacs)
 
 (defcustom d-emacs-dfk-outside-mods
   nil

@@ -1,4 +1,4 @@
-;;; d-emacs-xkb.el --- Create and draw a coordinate system from an xkb-layout -*- lexical-binding: t; -*-
+;;; d-emacs-xkb.el -- Create and draw a coordinate system from an xkb-layout -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Alexander Prähauser
 
@@ -64,14 +64,14 @@
 (declare-function d-emacs-uppercase-p "d-emacs-base" (str))
 (declare-function d-emacs-cardinal "d-emacs-base" (n &optional fromone))
 
-(defvar d-emacs-keep-read-buffers)
+(defvar d-emacs-dirs-keep-read-buffers nil)
 
 ;;;; Customs
 (defgroup d-emacs-xkb
-                  nil
-                  "Customization group for d-emacs-xkb."
-                  :group 'Daselt
-                  :prefix "d-emacs-xkb-")
+  nil
+  "Customization group for d-emacs-xkb."
+  :group 'd-emacs
+  :prefix "d-emacs-xkb-")
 
 (defcustom d-emacs-xkb-file
         "/usr/share/X11/xkb/symbols/dxkb"
@@ -304,7 +304,7 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
                                      (mapcar (lambda (laynum)
                                                (d-emacs-xkb--generate-layer laybeg layend laynum))
                                              d-emacs-xkb-layer-numbers-list))))))))))
-    (unless (or d-emacs-debug d-emacs-keep-read-buffers) (kill-buffer dxkbbuf))))
+    (unless (or d-emacs-debug d-emacs-dirs-keep-read-buffers) (kill-buffer dxkbbuf))))
 
 ;;;; Generated Constants
 (d-emacs-xkb--generate-layouts)
@@ -320,7 +320,7 @@ and processes them with `d-emacs-xkb--generate-layer' to define the layout."
   'd-emacs-xkb-main-layout
   "The keyboard-layout you're using.
 Should be one of the layouts in the `d-emacs-xkb-file'."
-  :group 'Daselt
+  :group 'd-emacs-xkb
   :type 'symbol
   :options d-emacs-xkb-layouts)
 

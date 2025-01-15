@@ -1,4 +1,4 @@
-;;; d-emacs-xkb-constants.el --- Constants for Daselt's Xkb module              -*- lexical-binding: t; -*-
+;;; d-emacs-xkb-constants.el -- Constants for Daselt's Xkb module              -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Alexander Prähauser
 

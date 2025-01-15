@@ -1,0 +1,8 @@
+(when d-emacs-bind-translate-choices
+  '(((read-answer) :around (d-emacs--translate-read-answer))
+    ((read-multiple-choice) :around (d-emacs--translate-read-multiple-choice))
+    ((read-char-choice) :around (d-emacs--translate-read-char-choice))
+    ((checkdoc-interactive-loop) :override (d-emacs-checkdoc-interactive-loop))))
+
+(when d-emacs-mode-keep-tab-bar-status
+  `((,d-emacs-mode-tab-bar-status-functions :around (d-emacs-mode-keep-tab-bar-status))))

@@ -1,0 +1,144 @@
+
+;;;; dired-mode-map
+`(
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-2
+ ((0 2 0) . #'hydra-dired-quick-sort/body)
+
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -5) . #'dired-do-chmod)
+ ((1 -1 -4) . #'avy-act-follow-in-new-tab)
+ ((1 -1 -3) . #'dired-unmark)
+ ((1 -1 -2) . #'dired-undo)
+ ((1 -1 -1) . #'dired-do-chown)
+ ((1 -1 1) . #'dired-mode-regexp-menu)
+ ((1 -1 2) . #'dired-redo)
+ ((1 -1 3) . #'dired-mark)
+ ((1 -1 4) . #'avy-act-follow)
+ ((1 -1 5) . #'dired-omit-mode)
+
+;;;;;;;; 1-0
+ ((1 0 -5) . #'dired-do-hardlink)
+ ((1 0 -4) . #'image-dired-display-thumb)
+ ((1 0 -3) . #'scroll-down-command)
+ ((1 0 -2) . #'dired-up-directory)
+ ((1 0 -1) . #'find-name-dired)
+ ((1 0 1) . #'find-name-dired)
+ ((1 0 2) . #'dired-find-file)
+ ((1 0 3) . #'scroll-up-command)
+ ((1 0 5) . #'dired-do-symlink)
+
+;;;;;;;; 1-1
+ ((1 1 -6) . #'dired-get-size)
+ ((1 1 -5) . #'dired-do-kill-lines)
+ ((1 1 -3) . #'dired-hide-details-mode)
+ ((1 1 -2) . #'revert-buffer)
+ ((1 1 2) . #'dired-do-shell-command)
+ ((1 1 3) . #'dired-copy-filename-as-kill)
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 -5) . #'dired-unmark-backward)
+ ((2 -1 -4) . #'dired-find-alternate-file)
+ ((2 -1 -3) . #'dired-unmark-all-files)
+ ((2 -1 3) . #'dired-mark-files-regexp)
+
+;;;;;;;; 2-0
+ ((2 0 -4) . #'image-dired-display-thumbs)
+ ((2 0 3) . #'dired-do-rename)
+
+;;;;;;;; 2-1
+ ((2 1 -5) . #'dired-do-compress)
+ ((2 1 -2) . #'dired-do-redisplay)
+ ((2 1 0) . #'image-dired-dired-display-external)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -4) . #'dired-create-directory)
+ ((3 -1 -3) . #'dired-flag-file-deletion)
+
+;;;;;;;; 3-0
+ ((3 0 -3) . #'dired-hide-all)
+
+;;;;;;;; 3-1
+ ((3 1 3) . #'image-dired-dired-toggle-marked-thumbs)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -5) . #'dired-do-byte-compile)
+ ((4 -1 -4) . #'dired-do-load)
+ ((4 -1 -3) . #'dired-do-delete)
+ ((4 -1 2) . #'dired-goto-file)
+ ((4 -1 3) . #'dired-mark-sexp)
+ ((4 -1 5) . #'bmkp-dired-jump)
+
+;;;;;;;; 4-0
+ ((4 0 -5) . #'dired-do-info)
+ ((4 0 -4) . #'dired-do-run-mail)
+ ((4 0 -3) . #'dired-hide-subdir)
+ ((4 0 2) . #'dired-find-file-other-window)
+ ((4 0 3) . #'dired-insert-subdir)
+ ((4 0 4) . #'quit-window)
+ ((4 0 5) . #'browse-url-of-dired-file)
+
+;;;;;;;; 4-1
+ ((4 1 -6) . #'dired-show-file-type)
+ ((4 1 -3) . #'dired-do-touch)
+ ((4 1 3) . #'dired-flag-backup-files)
+ ((4 1 5) . #'dired-copy-file-recursive)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -2) . #'dired-mode-mark-menu)
+ ((5 -1 4) . #'dired-do-chgrp)
+
+;;;;;;;; 5-0
+ ((5 0 -1) . #'dired-do-find-regexp)
+ ((5 0 1) . #'dired-do-find-regexp-and-replace)
+
+;;;;;;;; 5-1
+ ((5 1 2) . #'dired-do-async-shell-command)
+ ((5 1 5) . #'image-dired-delete-tag)
+
+;;;;;;; 6
+;;;;;;;; 6--1
+ ((6 -1 -3) . #'dired-display-file)
+ ((6 -1 3) . #'dired-mark-suffix)
+
+;;;;;;;; 6-0
+ ((6 0 -3) . #'dired-tree-up)
+ ((6 0 -2) . #'dired-prev-marked-file)
+ ((6 0 2) . #'dired-next-marked-file)
+ ((6 0 3) . #'dired-tree-down)
+ ((6 0 4) . #'dired-goto-subdir)
+ ((6 0 5) . #'dired-do-relsymlink)
+
+;;;;;;;; 6-1
+ ((6 1 -2) . #'dired-prev-subdir)
+ ((6 1 0) . #'dired-toggle-marks)
+ ((6 1 2) . #'dired-next-subdir)
+ ((6 1 5) . #'dired-smart-shell-command)
+
+;;;;;;; 8
+;;;;;;;; 8--1
+ ((8 -1 -4) . #'dired-do-print)
+ ((8 -1 -2) . #'d-dired-do-flagged-delete)
+
+;;;;;;;; 8-0
+ ((8 0 -2) . #'image-dired-dired-edit-comment-and-tags)
+ ((8 0 1) . #'elgrep-menu)
+ ((8 0 2) . #'image-dired-dired-display-image)
+
+;;;;;;;; 8-1
+ ((8 1 -3) . #'image-dired-mark-tagged-files)
+ ((8 1 -2) . #'image-dired-tag-files)
+ ((8 1 2) . #'image-dired-dired-comment-files)
+ ((8 1 4) . #'image-dired-jump-thumbnail-buffer)
+ ((8 1 5) . #'image-dired-dired-edit-comment-and-tags)
+
+;;;;;; M-
+;;;;;;; M-4
+;;;;;;;; M-4--1
+ (("M-" . (4 -1 -3)) . #'d-dired-permanentely-delete))

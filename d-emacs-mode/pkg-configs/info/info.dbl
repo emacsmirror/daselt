@@ -1,0 +1,46 @@
+
+;;;; Info-mode-map
+`(Info-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'avy-act-follow-in-new-tab)
+ ((1 -1 -3) . #'Info-up)
+ ((1 -1 -2) . #'Info-prev)
+ ((1 -1 -1) . #'Info-top-node)
+ ((1 -1 1) . #'Info-final-node)
+ ((1 -1 2) . #'Info-next)
+ ((1 -1 4) . #'avy-act-follow)
+
+;;;;;;;; 1-0
+ ((1 0 -5) . #'Info-follow-nearest-node)
+ ((1 0 -3) . #'Info-scroll-up)
+ ((1 0 -3) . #'Info-scroll-down)
+ ((1 0 -3) . #'d-emacs-scroll-chunk-down)
+ ((1 0 -2) . #'Info-prev-reference)
+ ((1 0 2) . #'Info-next-reference)
+ ((1 0 3) . #'d-emacs-scroll-chunk-up)
+ ((1 0 5) . #'Info-save-current-node)
+
+;;;;;;;; 1-1
+ ((1 1 -2) . #'Info-last-menu-item)
+ ((1 1 2) . #'Info-next-menu-item)
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 -4) . #'Info-toc)
+ ((2 -1 4) . #'Info-toc-outline)
+
+;;;;;;;; 2-0
+ ((2 0 -2) . #'Info-history-back)
+ ((2 0 2) . #'Info-history-forward)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 2) . #'d-emacs-C-3-0-2)
+ ((4 0 4) . #'quit-window)
+
+;;;;;;; 8
+;;;;;;;; 8-0
+ ((8 0 -2) . #'d-emacs-in-new-buffer-Info-prev)
+ ((8 0 2) . #'d-emacs-in-new-buffer-Info-next))

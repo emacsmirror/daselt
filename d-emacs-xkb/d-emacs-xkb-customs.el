@@ -1,4 +1,4 @@
-;;; d-emacs-xkb-customs.el --- Daselt's Emacs module customization options        -*- lexical-binding: t; -*-
+;;; d-emacs-xkb-customs.el -- Daselt's Emacs module customization options        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Alexander Prähauser
 
@@ -30,7 +30,7 @@
 (defgroup d-emacs-xkb
   nil
   "Customization group for d-emacs-xkb."
-  :group 'Daselt
+  :group d-emacs
   :prefix "d-emacs-xkb-")
 
 (defcustom d-emacs-xkb-file
@@ -54,12 +54,12 @@
 (require 'd-emacs-xkb-constants)
 
 (defcustom d-emacs-xkb-layout
-    'd-emacs-xkb-main-layout
-    "The keyboard-layout you're using.
+  'd-emacs-xkb-main-layout
+  "The keyboard-layout you're using.
 Should be one of the variants of Daselt in the `d-emacs-xkb-file'."
-    :group 'Daselt
-    :type 'symbol
-    :options d-emacs-xkb-layouts)
+  :group d-emacs
+  :type 'symbol
+  :options d-emacs-xkb-layouts)
 
 (defcustom d-emacs-coords-bad-combinations-list
   nil
@@ -68,7 +68,7 @@ Should be one of the variants of Daselt in the `d-emacs-xkb-file'."
 Some key combinations may not be registered on specific keyboards. Which ones
 varies by model.
 
-When `d-emacs--apply-binding' is executed, it checks each combination in this
+When `d-emacs-bind-apply-binding' is executed, it checks each combination in this
 list. If a combination is found, a variant binding is created in which
 
 - the C-modifier is replaced with an A-modifier.

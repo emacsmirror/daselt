@@ -1,0 +1,13 @@
+(
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0--2
+ ((0 -2 -4) . #'cdlatex-math-modify) 
+
+;;;;;;;; 0-0 
+ ((0 0 -6) . #'cdlatex-math-symbol) 
+
+;;;;;; M- 
+;;;;;;; M-3 
+;;;;;;;; M-3--1 
+ (("M-" . (3 -1 2)) . #'cdlatex-item))

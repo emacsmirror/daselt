@@ -1,0 +1,8 @@
+(eshell-hist-mode
+ (eshell-hist-mode-map 
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
+  (("C-" . (4 0 -1)) . #'eshell-previous-matching-input) 
+  (("C-" . (4 0 1)) . #'eshell-next-matching-input)))

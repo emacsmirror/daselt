@@ -1,4 +1,4 @@
-;;; d-emacs.el --- d-emacs main file                 -*- lexical-binding: t; -*-
+;;; d-emacs.el -- d-emacs main file                 -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
@@ -24,32 +24,35 @@
 
 ;;; Code:
 
-
-(require 'd-functions nil t)
-(require 'd-constants nil t)
-(require 'd-customs nil t)
-(require 'd-commands nil t)
-(require 'd-modes nil t)
-(require 'd-macroexpansions nil t)
-(require 'd-dfk-customs nil t)
+(require 'd-emacs-base nil t)
 (require 'd-emacs-coords nil t)
 (require 'd-emacs-xkb nil t)
 (require 'd-emacs-dfk nil t)
-(require 'd-emacs-functions nil t) 
-(require 'd-emacs-customs nil t)
-(require 'd-emacs-constants nil t)
-(require 'd-emacs-commands nil t)
-(require 'd-emacs-maps nil t)
-(require 'd-emacs-modes nil t)
-(require 'd-stump-customs nil t)
-(require 'd-stump-constants nil t)
-(require 'd-stump-functions nil t)
-(require 'd-lua-constants nil t)
-(require 'd-lua-customs nil t)
-(require 'd-lua-commands nil t)
-(require 'd-lua-functions nil t)
-(require 'd-tri-customs nil t)
-(require 'd-tri-functions nil t)
+(require 'd-emacs-bind nil t)
+(require 'd-emacs-dirs nil t)
+(require 'd-emacs-stump nil t)
+(require 'd-emacs-mode nil t)
+;; (require 'd-emacs-base nil t)
+;; (require 'd-constants nil t)
+;; (require 'd-customs nil t)
+;; (require 'd-commands nil t)
+;; (require 'd-modes nil t)
+;; (require 'd-macroexpansions nil t)
+;; (require 'd-dfk-customs nil t)
+;; (require 'd-stump-functions nil t)
+;; (require 'd-emacs-functions nil t) 
+;; (require 'd-emacs-customs nil t)
+;; (require 'd-emacs-constants nil t)
+;; (require 'd-emacs-commands nil t)
+;; (require 'd-emacs-maps nil t)
+;; (require 'd-stump-customs nil t)
+;; (require 'd-stump-constants nil t)
+;; (require 'd-lua-constants nil t)
+;; (require 'd-lua-customs nil t)
+;; (require 'd-lua-commands nil t)
+;; (require 'd-lua-functions nil t)
+;; (require 'd-tri-customs nil t)
+;; (require 'd-tri-functions nil t)
 
 (provide 'd-emacs)
 ;;; d-emacs.el ends here

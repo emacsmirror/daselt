@@ -1,0 +1,16 @@
+((
+;;;;; Strings
+  ("ESC") 
+  ("RET") 
+
+;;;;; Coordinates 
+;;;;;; H- 
+;;;;;;; H-1 
+  (("H-" . (1 0 1)))) 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -3) "resize-direction up") 
+ ((1 0 -2) "resize-direction left") 
+ ((1 0 2) "resize-direction right") 
+ ((1 0 3) "resize-direction down"))

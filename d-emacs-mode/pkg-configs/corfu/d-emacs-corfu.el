@@ -1,0 +1,33 @@
+;;; d-emacs-corfu.el -- d-emacs-code for Corfu  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; 
+
+;;; Code:
+
+(if (and d-emacs-mode-put-d-emacs-mode-map-into-emulation
+         d-emacs-corfu)
+    (add-to-list 'emulation-mode-map-alists
+                 `((completion-in-region-mode . ,corfu-map))))
+
+(provide 'd-emacs-corfu)
+;;; d-emacs-corfu.el ends here

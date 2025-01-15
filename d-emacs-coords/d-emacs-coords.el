@@ -1,4 +1,4 @@
-;;; d-emacs-coords.el --- Tools for the coordinatization and drawing of layouts  -*- lexical-binding: t; -*-
+;;; d-emacs-coords.el -- Tools for the coordinatization and drawing of layouts  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
@@ -17,8 +17,6 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
 
 ;;; Commentary:
 
@@ -79,7 +77,7 @@
 ;; standard table or an Org-mode table for enhanced readability.
 
 ;; - **Use in Bindlists:** `d-emacs-coords' provides the base for
-;; `d-emacs-binds', which provides utilities to define bindings by positions in
+;; `d-emacs-bind', which provides utilities to define bindings by positions in
 ;; the layout (independently of the symbols they house).
 
 ;; - **D-Emacs Mode:** This package is part of the Daselt-project
@@ -102,7 +100,7 @@
 (require 'd-emacs-base)
 
 (declare-function org-table-align "org-table" nil)
-(declare-function d-emacs-with-max-buffer-maybe-return "d-emacs-base" (bufname fun))
+(declare-function d-emacs-bind-with-max-buffer-maybe-return "d-emacs-base" (bufname fun))
 (declare-function d-emacs-remove-list-index "d-emacs-base" (lst idx))
 (declare-function d-emacs-filter-list "d-emacs-base" (lst pred))
 (declare-function d-emacs-string-exists-and-nonempty "d-emacs-base" (str))
@@ -112,10 +110,10 @@
 
 ;;;; Customs
 (defgroup d-emacs-coords
-                                                                                                                                                                                                                                                                                                                                                                      nil
-                                                                                                                                                                                                                                                                                                                                                                      "Customization group for d-emacs-coords."
-                                                                                                                                                                                                                                                                                                                                                                      :group 'Daselt
-                                                                                                                                                                                                                                                                                                                                                                      :prefix "d-emacs-coords-")
+  nil
+  "Customization group for d-emacs-coords."
+  :group 'd-emacs
+  :prefix "d-emacs-coords-")
 
 (define-widget 'coords 'lazy
   "A list of coordinate numbers."
@@ -225,13 +223,13 @@ Layer 0 is not supposed to be included."
     :group 'd-emacs-coords)
 
 (defcustom d-emacs-coords-bad-combinations-list
-                                    nil
-                                    "A list of key combinations that do not work on your main keyboard(s).
+  nil
+  "A list of key combinations that do not work on your main keyboard(s).
 
 Some key combinations may not be registered on specific keyboards. Which ones
 varies by model.
 
-When `d-emacs--apply-binding' is executed, it checks each combination in this
+When `d-emacs-bind-apply-binding' is executed, it checks each combination in this
 list. If a combination is found, a variant binding is created in which
 
 - the C-modifier is replaced with an A-modifier.
@@ -240,8 +238,8 @@ list. If a combination is found, a variant binding is created in which
 
 Key combinations should be specified using conses of prefixes and relative
 Daselt coordinates."
-                                    :type 'prefix-coords-pair
-                                    :group 'd-emacs-coords)
+  :type 'prefix-coords-pair
+  :group 'd-emacs-coords)
 
 ;;;; Constants
 (defconst d-emacs-coords-layer-numbers-list
@@ -682,9 +680,9 @@ documentation."
   "Execute `d-emacs-coords-draw-placevals' in a maximized temporary buffer.
 All arguments are forwarded to `d-emacs-coords-draw-placevals'. See there for more
 documentation."
-  (d-emacs-with-max-buffer-maybe-return
+  (d-emacs-bind-with-max-buffer-maybe-return
    "*daselt-layout*" (lambda () (d-emacs-coords-draw-placevals placevals bounds runcoords org)
-                               (org-mode))))
+                                       (org-mode))))
 
 ;;;;;; Drawing Commands
 
@@ -717,12 +715,12 @@ buffer, depending on the invocation context."
                      (d-emacs-flatten-until
                       (d-emacs-coords-coordinatize-layout
                        layout)
-                      (lambda (lst) (d--binding-p (car lst))))
+                      (lambda (lst) (d-emacs-bind-p (car lst))))
                      coordrx)))
 
     (funcall (if (called-interactively-p 'any)
-                 #'d-emacs-coords-draw-placevals-in-temp-buffer
-               #'d-emacs-coords-draw-placevals)
+                             #'d-emacs-coords-draw-placevals-in-temp-buffer
+                     #'d-emacs-coords-draw-placevals)
              placevals)))
 
 (defun d-emacs-coords-draw-keyboard-layer (laynum &optional org layout)

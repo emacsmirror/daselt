@@ -1,0 +1,11 @@
+(
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
+ (("C-" . (4 0 -3)) . doremi-up-keys) 
+ (("C-" . (4 0 -4)) . doremi-boost-up-keys) 
+ (("C-" . (4 0 4)) . doremi-boost-down-keys) 
+ (("C-" . (4 0 3)) . doremi-down-keys))
+
+(provide 'd-emacs-doremi-special-customs-bindlists.el)

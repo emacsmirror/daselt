@@ -1,0 +1,17 @@
+(
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-0
+ ((0 0 -6) . #'vterm-copy-mode) 
+
+;;;;;; C- 
+;;;;;;; C-1 
+;;;;;;;; C-1-1 
+ (("C-" . (1 1 0)) . #'d-vterm-insert))
+
+;;;; vterm-copy-mode-map
+(vterm-copy-mode-map 
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-0
+ ((0 0 -6) . #'vterm-copy-mode))

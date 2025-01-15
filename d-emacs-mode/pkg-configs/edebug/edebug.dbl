@@ -1,0 +1,154 @@
+(
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'edebug-eval-expression) 
+ ((1 -1 -2) . #'edebug-previous-result) 
+ ((1 -1 -1) . #'edebug-where) 
+ ((1 -1 1) . #'edebug-view-outside) 
+ ((1 -1 2) . #'edebug-pop-to-backtrace) 
+ ((1 -1 4) . #'edebug-visit-eval-list) 
+
+;;;;;;;; 1-0 
+ ((1 0 -3) . #'edebug-go-mode) 
+ ((1 0 -2) . #'edebug-trace-mode) 
+ ((1 0 2) . #'edebug-step-mode) 
+ ((1 0 3) . #'edebug-continue-mode) 
+
+;;;;;;;; 1-1 
+ ((1 1 -2) . #'abort-recursive-edit) 
+ ((1 1 2) . #'edebug-instrument-callee) 
+
+;;;;;;; 2 
+;;;;;;;; 2--1 
+ ((2 -1 1) . #'edebug-bounce-point) 
+
+;;;;;;;; 2-0 
+ ((2 0 -3) . #'edebug-Go-nonstop-mode) 
+ ((2 0 -2) . #'edebug-Trace-fast-mode) 
+ ((2 0 2) . #'edebug-next-mode) 
+ ((2 0 3) . #'edebug-Continue-fast-mode) 
+
+;;;;;;;; 2-1 
+ ((2 1 -2) . #'top-level) 
+ ((2 1 2) . #'edebug-stop) 
+
+;;;;;;; 3 
+;;;;;;;; 3--1 
+ ((3 -1 -4) . #'edebug-eval-last-sexp) 
+
+;;;;;;;; 3-0 
+ ((3 0 -3) . #'edebug-step-out) 
+ ((3 0 2) . #'edebug-forward-sexp) 
+ ((3 0 2) . #'edebug-goto-here) 
+ ((3 0 3) . #'edebug-step-in) 
+
+;;;;;;;; 3-1 
+ ((3 1 -2) . #'edebug-top-level-nonstop) 
+
+;;;;;;; 4 
+;;;;;;;; 4--1 
+ ((4 -1 1) . #'edebug-toggle-save-windows) 
+ ((4 -1 2) . #'edebug-toggle-disable-breakpoint) 
+
+;;;;;;;; 4-0 
+ ((4 0 -4) . #'edebug-set-global-break-condition) 
+ ((4 0 -2) . #'edebug-set-breakpoint) 
+ ((4 0 2) . #'edebug-unset-breakpoint) 
+ ((4 0 3) . #'edebug-next-breakpoint) 
+
+;;;;;;; 5 
+;;;;;;;; 5-0 
+ ((5 0 -3) . #'edebug-set-conditional-breakpoint) 
+ ((5 0 2) . #'edebug-unset-breakpoints))
+
+;;;; edebug-global-map
+(edebug-global-map 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'edebug-eval-expression) 
+ ((1 -1 -2) . #'edebug-previous-result) 
+ ((1 -1 -1) . #'edebug-where) 
+ ((1 -1 1) . #'edebug-view-outside) 
+ ((1 -1 2) . #'edebug-pop-to-backtrace) 
+ ((1 -1 4) . #'edebug-visit-eval-list) 
+
+;;;;;;;; 1-0 
+ ((1 0 -3) . #'edebug-go-mode) 
+ ((1 0 -2) . #'edebug-step-mode) 
+ ((1 0 2) . #'edebug-trace-mode) 
+ ((1 0 3) . #'edebug-continue-mode) 
+
+;;;;;;;; 1-1 
+ ((1 1 -2) . #'abort-recursive-edit) 
+ ((1 1 2) . #'edebug-instrument-callee) 
+
+;;;;;;; 2 
+;;;;;;;; 2--1 
+ ((2 -1 1) . #'edebug-bounce-point) 
+
+;;;;;;;; 2-0 
+ ((2 0 -3) . #'edebug-Go-nonstop-mode) 
+ ((2 0 -2) . #'edebug-next-mode) 
+ ((2 0 2) . #'edebug-Trace-fast-mode) 
+ ((2 0 3) . #'edebug-Continue-fast-mode) 
+
+;;;;;;;; 2-1 
+ ((2 1 -2) . #'top-level) 
+
+;;;;;;; 3 
+;;;;;;;; 3--1 
+ ((3 -1 -4) . #'edebug-eval-last-sexp) 
+
+;;;;;;;; 3-0 
+ ((3 0 -3) . #'edebug-step-out) 
+ ((3 0 2) . #'edebug-forward-sexp) 
+ ((3 0 2) . #'edebug-goto-here) 
+ ((3 0 3) . #'edebug-step-in) 
+
+;;;;;;;; 3-1 
+ ((3 1 -2) . #'edebug-top-level-nonstop) 
+
+;;;;;;; 4 
+;;;;;;;; 4--1 
+ ((4 -1 1) . #'edebug-toggle-save-windows) 
+ ((4 -1 2) . #'edebug-toggle-disable-breakpoint) 
+
+;;;;;;;; 4-0 
+ ((4 0 -4) . #'edebug-set-global-break-condition) 
+ ((4 0 -2) . #'edebug-set-breakpoint) 
+ ((4 0 2) . #'edebug-unset-breakpoint) 
+ ((4 0 3) . #'edebug-next-breakpoint) 
+
+;;;;;;; 5 
+;;;;;;;; 5-0 
+ ((5 0 -3) . #'edebug-set-conditional-breakpoint) 
+ ((5 0 2) . #'edebug-unset-breakpoints))
+
+;;;; edebug-backtrace-mode-map
+(edebug-backtrace-mode-map 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'edebug-backtrace-hide-instrumentation) 
+ ((1 -1 2) . #'backtrace-goto-source) 
+ ((1 -1 4) . #'edebug-backtrace-show-instrumentation))
+
+;;;; edebug-eval-mode-map
+(edebug-eval-mode-map 
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -3) . #'edebug-delete-eval-item) 
+ ((1 -1 4) . #'edebug-where) 
+
+;;;;;;;; 1-1 
+ ((1 1 -2) . #'edebug-update-eval-list) 
+
+;;;;;;; 3 
+;;;;;;;; 3--1 
+ ((3 -1 -4) . #'edebug-eval-last-sexp) 
+ ((3 -1 4) . #'edebug-eval-print-last-sexp))
+
+(provide 'd-emacs-edebug-bindlist)
