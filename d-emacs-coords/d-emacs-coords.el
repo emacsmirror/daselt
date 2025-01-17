@@ -3,6 +3,10 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Package-Requires: ((avy "0.5.0") (back-button "0.6.8") (emacs "29.1"))
+;; Version: 1.0
+;; Keywords: tools, convenience
+;; URL: 
 ;; Keywords: tools
 
 ;; This program is free software; you can redistribute it and/or modify

@@ -135,15 +135,15 @@ instead."
 If optional argument FROMONE is non-nil, indices start from 1; otherwise, they
 start from 0."
   (cl-mapcar (lambda (index elt)
-               (cons index elt))
+                                                                   (cons index elt))
              (d-emacs-cardinal (length list) fromone) list))
 
 
 ;;;;; Files
 (defun d-emacs-containing-directory-base-name (filepath)
-  "Retrieve the base name of the containing directory of FILEPATH.
+                                      "Retrieve the base name of the containing directory of FILEPATH.
 This function does not include the full path or trailing slashes in the result."
-  (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
+                                      (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
 
 (defun d-emacs-filter-obarray (predicate)
   "Filter symbols in the obarray by a given PREDICATE."
@@ -163,22 +163,23 @@ This function does not include the full path or trailing slashes in the result."
 
 
 (defun d-emacs-definition-names-in-file (fname)
-  "Return the names of definitions in FNAME, listed according to definition type.
+                                                "Return the names of definitions in FNAME, listed according to definition type.
 Works for definition types in `d-emacs-definition-types-list'."
-  (let ((buf (current-buffer)))
+                                                (let ((buf (current-buffer)))
     (set-buffer (find-file-noselect fname))
     (prog1 (remq nil (mapcar (lambda (deftype)
-                               (remq nil
+                                                                             (remq nil
                                      (save-excursion
-                                       (d-emacs-goto-min)
-                                       (let (rlist)
+                                                                                     (d-emacs-goto-min)
+                                                                                     (let (rlist)
                                          (while (search-forward (symbol-name deftype) nil t)
                                            (save-excursion
-                                             (beginning-of-defun)
-                                             (push (d-emacs-definition-name) rlist)))
+                                                                                           (beginning-of-defun)
+                                                                                           (push (d-emacs-definition-name) rlist)))
                                          rlist))))
                              d-emacs-definition-types-list))
       (set-buffer buf))))
+
 
 ;;;;; Region operations
 (defun d-emacs-read-region (&optional properties)
@@ -188,8 +189,8 @@ PROPERTIES is t, read without properties."
   (let ((beg (region-beginning))
         (end (region-end)))
     (read (if properties
-                          (buffer-substring beg end)
-                  (buffer-substring-no-properties beg end)))))
+                                                                                                                                  (buffer-substring beg end)
+                                                                      (buffer-substring-no-properties beg end)))))
 
 (defun d-emacs-replace-region (arg)
   "Replace the currently selected region with the content of ARG.
@@ -217,21 +218,21 @@ The function tests each entry in LST using PRED."
                     lst)))
 
 (defun d-emacs-preimage (lst fun obj &optional keepobj eqpred)
-  "Return a list containing all elements of LST mapped to OBJ by FUN.
+      "Return a list containing all elements of LST mapped to OBJ by FUN.
 
 If KEEPOBJ is t, return instead a cons whose car is OBJ and whose
 cdr are all elements mapped to it.
 
 EQPRED is the predicate used to find out equality. By default it is
 #'equal."
-  (let* ((eqpred (or eqpred #'equal))
+      (let* ((eqpred (or eqpred #'equal))
          (result (delq nil (mapcar (lambda (element)
-                                     (when (funcall eqpred (funcall fun element) obj)
+                                         (when (funcall eqpred (funcall fun element) obj)
                                        element))
                                    lst))))
     (if keepobj
-        (cons obj result)
-      result)))
+                (cons obj result)
+          result)))
 
 (defun d-emacs-image (lst fun &optional eqpred)
   "Return the list of all results of FUN applied to elements of LST.
@@ -242,7 +243,7 @@ default."
     (cl-remove-duplicates (mapcar fun lst) :test eqpred)))
 
 (defun d-emacs-fiber-by-property (lst propfun &optional keepprops eqpred)
-  "Fiber the elements of LST according to PROP.
+              "Fiber the elements of LST according to PROP.
 
 PROPFUN should be a function that can be applied to the elements of LST.
 
@@ -253,26 +254,60 @@ Use EQPRED to compare the outputs of PROP. By default, EQPRED is #'equal.
 
 If KEEPPROPS is t, return a list of conses whose cdr are lists with the
 same property and whose car is a representative of that property."
-  (let* ((eqpred (or eqpred #'equal))
+              (let* ((eqpred (or eqpred #'equal))
          (props (d-emacs-image lst propfun eqpred))
          (fibration (mapcar (lambda (prop)
-                              (let ((fiber (d-emacs-preimage
+                                          (let ((fiber (d-emacs-preimage
                                             lst propfun prop keepprops eqpred)))
                                 fiber))
                             props)))
     fibration))
 
+(defun d-emacs-global-sections (llist)
+  "Given a LLIST of lists, return the global sections of LLIST.
+
+That means, the return value is the list of all lists whose first entry is an
+element of the first element of LLIST, whose second entry is an element of the
+second element of LLIST and so on."
+  (unless (proper-list-p llist)
+    (error "Wrong-type input, expected a list"))
+  (mapc (lambda (elt)
+          (if (atom elt)
+              (error "Wrong-type input, expected a list of lists")))
+        llist)
+  (mapcan (lambda (elt)
+            (if (cdr llist)
+                (mapcar (lambda (section)
+                          (append (list elt) section))
+                        (d-emacs-global-sections (cdr llist)))
+              (list (list elt))))
+          (car llist)))
+
+(defun d-emacs-recursive-sections (obj)
+  "If OBJ if not a list, put two brackets around it.
+
+Otherwise, make each element of OBJ that is not a list into one and flatten each
+element that is a list. Then apply `d-emacs-global-sections' around it."
+  (if (proper-list-p obj)
+      (let ((formattedlist (mapcar (lambda (elt)
+                                     (if (and elt (proper-list-p elt))
+                                         (flatten-list elt)
+                                       (list elt)))
+                                   obj)))
+        (d-emacs-global-sections formattedlist))
+    (list (list obj))))
+
 (defun d-emacs-lisp-file-code (filename)
-  "Extract and return the code section from a Lisp file specified by FILENAME.
+                    "Extract and return the code section from a Lisp file specified by FILENAME.
 The extraction is done by reading the content between `;;; Code:' and `;;; .*
 ends here'. This function assumes the file follows standard Elisp formatting but
 may work on other Lisp file formats as well."
-  (set-buffer (find-file-noselect filename))
-  (goto-char (point-min))
-  (let ((region-beg (prog2 (re-search-forward ";;; Code:")
-                        (match-end 0)))
+                    (set-buffer (find-file-noselect filename))
+                    (goto-char (point-min))
+                    (let ((region-beg (prog2 (re-search-forward ";;; Code:")
+                                                            (match-end 0)))
         (region-end (prog2 (re-search-forward ";;; .*? ends here")
-                        (match-beginning 0))))
+                                                            (match-beginning 0))))
     (buffer-substring-no-properties region-beg region-end)))
 
 (defun d-emacs-make-list-if-not (obj)
@@ -370,30 +405,38 @@ This function modifies instances of the defined regex patterns."
 
 ;; Taken from s.el
 (defun d-emacs-uppercase-p (str)
-  "Return t if all letters in STR are uppercase."
-  (declare (side-effect-free t))
-  (let ((case-fold-search nil))
+                        "Return t if all letters in STR are uppercase."
+                        (declare (side-effect-free t))
+                        (let ((case-fold-search nil))
     (not (string-match-p "[[:lower:]]" str))))
 
+(defun d-emacs-concat-with-separators (separator &rest strs)
+  "Concatenate STRS, inserting SEPARATOR between them."
+  (mapconcat #'identity strs separator))
+(defun d-emacs-intern-from-parts (&rest parts)
+  "Concatenate strings PARTS, inserting an `-' separator between each.
+
+Make the result a symbol."
+  (intern (apply #'d-emacs-concat-with-separators "-" parts)))
 ;;;;; Filling
 (defun d-emacs-fill-current-docstring ()
-  "Fill the docstring of the current definition.
+                                                                  "Fill the docstring of the current definition.
 Works for definitions in `d-emacs-definition-types-list'.
 Works for the definition point is in."
-  (interactive)
-  (cl-flet ((fill-rest (beg &optional end)
-                    (progn (forward-char)
+                                                                  (interactive)
+                                                                  (cl-flet ((fill-rest (beg &optional end)
+                                                                                    (progn (forward-char)
                      (let ((fillbeg (if (< (line-beginning-position) beg)
-                                                    beg
-                                            (beginning-of-line)
-                                            (delete-horizontal-space)
-                                            (point))))
+                                                                                                                                                                                    beg
+                                                                                                            (beginning-of-line)
+                                                                                                            (delete-horizontal-space)
+                                                                                                            (point))))
                        (fill-region fillbeg (or end (progn (goto-char beg)
                                                            (forward-sexp)
                                                            (point))))))))
     (save-excursion
-            (d-emacs-beginning-of-docstring)
-            (d-emacs--fill-string-at-point-like-docstring))))
+                                                                            (d-emacs-beginning-of-docstring)
+                                                                            (d-emacs--fill-string-at-point-like-docstring))))
 
 (defun d-emacs--fill-string-at-point-like-docstring ()
   "Fill the string at point like it's a docstring.
@@ -635,11 +678,14 @@ The opposite of truncate, but unlike truncate accepts non-floating numbers."
 
 (defun d-emacs-namecore (sym &optional pfx sfx)
   "Return the core of the symbol name of SYM.
-This is the part between PFX and SFX."
+
+This is the part between PFX and SFX.
+
+If SYM does not have a PFX or SFX, ignore them."
   (let ((pfx (or pfx ""))
         (sfx (or sfx ""))
         (name (symbol-name sym)))
-    (string-match (eval `(rx ,pfx (group (* not-newline)) ,sfx)) name)
+    (string-match (eval `(rx (? ,pfx) (group (* not-newline)) (? ,sfx))) name)
     (match-string 1 name)))
 
 ;;;;; Recursion
@@ -804,9 +850,22 @@ symbol used in the TEMPLATES and the cdr is a list of values to substitute.
 
 During macro expansion, each template is duplicated for each set of
 substitutions from MAPPINGS with each placeholder replaced with the
-corresponding value."
+corresponding value.
+
+If a tuple of nth elements of MAPPINGS contains lists of elements, then
+a copy of each template is generated for each combination of atomic elements
+of these lists. For instance, if there are two TEMPLATES
+
+`(obj1 a b)'
+`(obj2 c (d (e f)))'
+
+then template insertions are generated with
+obj1 → a, obj → c
+obj1 → b, obj → d
+obj1 → b, obj → e
+obj1 → b, obj → f."
   (let* ((substitutions (mapcar #'car mappings))
-         (substcard (d-emacs-cardinal (length substitutions)))
+         (substitution-cardinal (d-emacs-cardinal (length substitutions)))
          (value-lists (mapcar #'cdr mappings))
          (lengths-set (let ((unique-lengths (delete-dups (mapcar #'length
                                                                  value-lists))))
@@ -814,35 +873,49 @@ corresponding value."
                             (car unique-lengths)
                           (error "All substitution lists must have the same length"))))
          (defun-list
-          (mapcan
-           (lambda (template)
-             (let* ((template-list (mapcar (lambda (defun-num)
-                                             (let ((context (mapcar
-                                                             (lambda (subst-num)
-                                                               (cons (nth subst-num
-                                                                          substitutions)
-                                                                     (nth defun-num
-                                                                          (nth subst-num
-                                                                               value-lists))))
-                                                             substcard)))
-                                               (eval template context)))
-                                           (d-emacs-cardinal lengths-set))))
-               template-list))
-           templates)))
+          (cl-remove-duplicates
+           (mapcan
+            (lambda (template)
+              (let* ((template-list
+                      (mapcan
+                       (lambda (defun-num)
+                         (let* ((nth-values (mapcar
+                                             (lambda (subst-num)
+                                               (nth defun-num
+                                                    (nth subst-num
+                                                         value-lists)))
+                                             substitution-cardinal))
+                                (extended-values (d-emacs-recursive-sections nth-values))
+                                (contexts (mapcar
+                                           (lambda (extended-value)
+                                             (mapcar (lambda (subst-num)
+                                                       (cons (nth subst-num
+                                                                  substitutions)
+                                                             (nth subst-num
+                                                                  extended-value)))
+                                                     substitution-cardinal))
+                                           extended-values)))
+                           (mapcar (lambda (context)
+                                     (eval template context))
+                                   contexts)))
+                       (d-emacs-cardinal lengths-set))))
+                template-list))
+            templates)
+           :test #'equal)))
     (append '(progn) defun-list)))
 
 (defmacro d-emacs-def-by-forms-by-variables (templates &rest mappings)
-  "Like `d-emacs-def-by-forms' but each cdr of mappings should be a variable name or
+    "Like `d-emacs-def-by-forms' but each cdr of mappings should be a variable name or
 otherwise evaluate to a list.
 
 See `d-emacs-def-by-forms' for more documentation."
-  (let ((newmappings (mapcar (lambda (mapping)
-                               (cons (car mapping) (eval (cdr mapping))))
+    (let ((newmappings (mapcar (lambda (mapping)
+                                 (cons (car mapping) (eval (cdr mapping))))
                              mappings)))
     `(d-emacs-def-by-forms ,templates ,@newmappings)))
 
 ;;;;; Commands
-(defun d-emacs-trim-line-ends ()
+(defun d-emacs-trim-lines ()
   "Remove whitespace at the end of each line in the current buffer."
   (interactive)
   (save-excursion (d-emacs-goto-min)
@@ -850,13 +923,13 @@ See `d-emacs-def-by-forms' for more documentation."
                     (replace-match ""))))
 
 (defun d-emacs-search-at-line-start (str &optional withcomments)
-  "Search for an occurrence of STR at the start of a line.
+          "Search for an occurrence of STR at the start of a line.
 Unlike normal `search-forward', `d-emacs-search-at-line-start' returns nil if no
 match is found and does not cause an error.
 
 If WITHCOMMENTS is t, also include occurences that are commented out."
-  (interactive "MSearch for string: ")
-  (re-search-forward (rx-to-string
+          (interactive "MSearch for string: ")
+          (re-search-forward (rx-to-string
                       (remq nil `(: line-start
                                     ,(if withcomments '(* (syntax comment-delimiter)))
                                     ,(if withcomments '(* blank))

@@ -1184,9 +1184,9 @@ coordinates)."
             body)))
 
 ;;;;; Saving
-(defun d-emacs-bind-save-bindlist-as-variable (blist &optional pfx)
+(defun d-emacs-bind-save-bindlists-in-file  (blist &optional pfx)
   "Save BLIST as a variable.
-Works similarly to `d-emacs-bind-with-eval-backup-and-apply-bindlist' but does not
+Works similarly to `d-emacs-bind-with-eval-apply-bindlist' but does not
 include a call to `d-emacs-bind-apply-binding'.
 
 PFX is the prefix given to the saved bindlists. It is `d-emacs-' by default."
@@ -1197,50 +1197,50 @@ PFX is the prefix given to the saved bindlists. It is `d-emacs-' by default."
          (pkgdirnameparts (split-string pkgdirname "/"))
          (pfx (or pfx "d-emacs-")))
     (if (not (d-emacs-bind-head blist))
-        (let* ((filepath (buffer-file-name))
+            (let* ((filepath (buffer-file-name))
                (filename (file-name-nondirectory filepath))
                (filenamebase (file-name-base filepath))
                (symbname (if (string-match-p "special" filename)
-                             (substring filenamebase 0 -1)
-                           (concat pfx
+                                 (substring filenamebase 0 -1)
+                             (concat pfx
                                    (if (string-match-p "user-defined" filename)
-                                       "user-defined-"
-                                     "")
+                                           "user-defined-"
+                                       "")
                                    mapsymbdefaultname
                                    "-bindlist"))))
           (set (intern symbname)
                blist))
 
       (cl-flet* ((head-over-body (bblist)
-                   (and (d-emacs-bind-head bblist)
+                     (and (d-emacs-bind-head bblist)
                         (or (stringp (car bblist))  ; Let's ensure the head is a symbol
                             (symbolp (car bblist))) ; or string.
                         (not (d-emacs-bind-head (cdr bblist)))))
 
                  (name-if-symbol (elt)
-                   (if (symbolp elt)
-                       (symbol-name elt)
-                     elt)))
+                     (if (symbolp elt)
+                           (symbol-name elt)
+                       elt)))
 
         (if (head-over-body blist)
-            (let ((namecore (name-if-symbol (car blist))))
+                (let ((namecore (name-if-symbol (car blist))))
               (set (intern (concat pfx namecore "-bindlist"))
                    blist))
           
           (d-emacs-funcalls-recursively
            blist
            `(((lambda (bblist &optional heads)
-                (let* ((namecore (name-if-symbol bblist)))
+                  (let* ((namecore (name-if-symbol bblist)))
                   (set (intern (concat pfx namecore "-bindlist"))
                        bblist)))
               .
               (lambda (bblist &optional heads)
-                (and (d-emacs-bind-head bblist)
+                  (and (d-emacs-bind-head bblist)
                      (or (stringp (car bblist))  ; Let's ensure the head is a symbol
                          (symbolp (car bblist))) ; or string.
                      (not (d-emacs-bind-head (cdr bblist)))))))
            (lambda (idx lst &optional _heads)
-             (let ((elt (nth idx lst)))
+               (let ((elt (nth idx lst)))
                (and (not (atom elt))
                     (not (d-emacs-bind-p elt)))))))))))
 
@@ -1299,8 +1299,8 @@ so they can be used by FUN."
 
 
 
-(defun d-emacs-bind-with-eval-backup-and-apply-bindlist (blist &optional backuppfx)
-      "Rebind keys in a given keymap after evaluating an associated condition.
+(defun d-emacs-bind-with-eval-apply-bindlist (blist &optional backuppfx)
+        "Rebind keys in a given keymap after evaluating an associated condition.
 The rebinding is specified by the bindlist BLIST, which has structurally two
 forms:
 
@@ -1323,22 +1323,22 @@ no backup is made, indicating that a prior backup exists. BACKUPPFX is
 
 The keymap's symbol (MAP) can only be evaluated within `with-eval-after-load',
 as bindings should apply after the relevant features are loaded."
-      (let* ((pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
+        (let* ((pkgname (d-emacs-containing-directory-base-name (buffer-file-name)))
          (pkgsymb (intern pkgname))
          (mapsymbdefault (intern (concat pkgname "-mode-map"))))
 
     (d-emacs-bind-act-on-bindings
      blist
      (lambda (bind &optional heads)
-           (let* ((headpairt (= (length heads) 2))
+             (let* ((headpairt (= (length heads) 2))
               (evalcnd (if headpairt
-                                   (car heads)
-                             pkgsymb))
+                                       (car heads)
+                               pkgsymb))
               (mapsymb (if headpairt
-                                   (car (last heads))
-                             (if heads
-                                     (car heads)
-                               mapsymbdefault)))
+                                       (car (last heads))
+                               (if heads
+                                         (car heads)
+                                 mapsymbdefault)))
               (backuppfx (or backuppfx "d-emacs-"))
               (backupsymb (intern (concat backuppfx (symbol-name mapsymb) "-backup"))))
 

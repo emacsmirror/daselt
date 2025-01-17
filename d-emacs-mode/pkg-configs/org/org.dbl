@@ -1,6 +1,5 @@
-
 ;;;; org-mode-map
-`(
+(
 ;;;;; Coordinates
 ;;;;;;; 0
 ;;;;;;;; 0-0
@@ -71,8 +70,8 @@
  (("M-" . (7 0 -1)) . #'org-fold-hide-sublevels)
  (("M-" . (7 0 1)) . #'org-fold-show-all)
  (("M-" . (7 0 2)) . #'org-fold-show-entry)
- (("M-" . (7 0 3)) . #'org-fold-show-children)
  (("M-" . (7 0 3)) . #'org-end-of-item)
+ (("M-" . (7 0 4)) . #'org-fold-show-children)
 
 ;;;;;; M-C-
 ;;;;;;; M-C-4

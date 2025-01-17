@@ -1,16 +1,11 @@
-
-;;;; global-map
-`
-;;;; global-map
-`
-;;;; global-map
 (global-map
 ;;;;; Coordinates
 ;;;;;; C-
 ;;;;;;; C-1
 ;;;;;;;; C-1-0
  (("C-" . (1 0 -4)) . #'scroll-down-command)
- (("C-" . (1 0 4)) . #'scroll-up-command))
+ (("C-" . (1 0 4)) . #'scroll-up-command)
+ (("M-" . (4 -1 2))))
 
 ;;;; function-key-map
 (function-key-map
