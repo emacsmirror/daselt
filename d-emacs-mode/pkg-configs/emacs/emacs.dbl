@@ -1,3 +1,4 @@
+;;;; global-map
 (global-map
 ;;;;; Coordinates
 ;;;;;; C-
@@ -5,29 +6,29 @@
 ;;;;;;;; C-1-0
  (("C-" . (1 0 -4)) . #'scroll-down-command)
  (("C-" . (1 0 4)) . #'scroll-up-command)
+
+;;;;;; M-
+;;;;;;; M-4
+;;;;;;;; M-4--1
  (("M-" . (4 -1 2))))
 
 ;;;; function-key-map
 (function-key-map
 ;;;;; Strings
-  ("<f7>" . #'event-apply-hyper-modifier)
+ ("<f7>" . #'event-apply-hyper-modifier)
 
 ;;;;; Coordinates
 ;;;;;;; 0
-  ((0 1 -7) . #'event-apply-alt-modifier)
+ ((0 1 -7) . #'event-apply-alt-modifier)
 
 ;;;;;;;; 0-2
-  ((0 2 -1) . #'event-apply-meta-modifier)
+ ((0 2 -1) . #'event-apply-meta-modifier)
 
 ;;;;;; C-
 ;;;;;;; C-0
 ;;;;;;;; C-0-2
-  (("C-" . (0 2 -1)) . #'event-apply-super-modifier))
+ (("C-" . (0 2 -1)) . #'event-apply-super-modifier))
 
-;;;; button-buffer-map
-`
-;;;; button-buffer-map
-`
 ;;;; button-buffer-map
 (button-buffer-map
 ;;;;; Coordinates
@@ -73,10 +74,6 @@
  ((8 -1 4) . #'d-emacs-new-vertical-window-and-buffer))
 
 ;;;; help-map
-`
-;;;; help-map
-`
-;;;; help-map
 (help-map
 ;;;;; Coordinates
 ;;;;;;; 4
@@ -86,8 +83,8 @@
 ;;;;;;;; 4-0
  ((4 0 -3) . #'d-emacs-coords-draw-placevals-from-coordrx)
  ((4 0 -2) . #'d-emacs-coords-draw-keyboard-layer)
- ((4 0 2) . #'d-draw-bindlist-layer)
- ((4 0 3) . #'d-draw-bindings-from-regexps))
+ ((4 0 2) . #'d-emacs-bind-draw-bindlist-layer)
+ ((4 0 3) . #'d-emacs-bind-emacs-bind-draw-bindings-from-regexps))
 
 ;;;; isearch-mode-map
 (isearch-mode-map
@@ -98,10 +95,6 @@
  (("C-" . (1 0 -1)) . #'isearch-repeat-backward)
  (("C-" . (1 0 1)) . #'isearch-repeat-forward))
 
-;;;; minibuffer-local-map
-`
-;;;; minibuffer-local-map
-`
 ;;;; minibuffer-local-map
 (minibuffer-local-map
 ;;;;; Coordinates
@@ -157,10 +150,6 @@
  (("s-C-" . (4 0 4)) . #'isearch-forward-exit-minibuffer))
 
 ;;;; query-replace-map
-`
-;;;; query-replace-map
-`
-;;;; query-replace-map
 (query-replace-map
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -192,10 +181,9 @@
  ((4 0 2) . #'widget-button-press))
 
 ;;;; rectangle-mark-mode-map
-`
-;;;; rectangle-mark-mode-map
-`
-;;;; rectangle-mark-mode-map
+
+;;;; rect
+(rect
 (rectangle-mark-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -221,7 +209,7 @@
 
 ;;;;;;; 5
 ;;;;;;;; 5-1
- ((5 1 -3) . #'copy-rectangle-to-register))
+ ((5 1 -3) . #'copy-rectangle-to-register)))
 
 ;;;; prog-mode-map
 (prog-mode-map
@@ -231,28 +219,29 @@
  ((5 -1 4) . #'d-emacs-mode-insert-lambda-string))
 
 ;;;; emacs-lisp-mode-map
-`
-;;;; emacs-lisp-mode-map
-`
-;;;; emacs-lisp-mode-map
 (emacs-lisp-mode-map
 ;;;;; Coordinates
 ;;;;;; M-
 ;;;;;;; M-4
 ;;;;;;;; M-4--1
- (("M-" . (4 -1 -4)) . #'d-emacs-fill-docstrings-in-buffer)
+ (("M-" . (4 -1 -4)) . #'d-emacs-base-fill-docstrings-in-buffer)
  (("M-" . (4 -1 -3)) . #'d-emacs-generate-declare-function)
  (("M-" . (4 -1 2)) . #'emacs-lisp-macroexpand)
  (("M-" . (4 -1 3)) . #'d-emacs-generate-variable-definition)
- (("M-" . (4 -1 4)) . #'d-emacs-fill-current-docstring))
+ (("M-" . (4 -1 4)) . #'d-emacs-base-fill-current-docstring)
+
+;;;;;;;; M-4-1
+ (("M-" . (4 1 -2)) . #'elisp-byte-compile-buffer)
+ (("M-" . (4 1 2)) . #'emacs-lisp-native-compile)
+
+;;;;;; M-C-
+;;;;;;; M-C-4
+;;;;;;;; M-C-4-1
+ (("M-C-" . (4 1 2)) . #'emacs-lisp-native-compile-and-load))
 
 (custom-mode-map
  ((4 0 4) . #'Custom-buffer-done))
 
-;;;; debug
-`
-;;;; debug
-`
 ;;;; debug
 (debug
 (debugger-mode-map

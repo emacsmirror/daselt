@@ -1,9 +1,12 @@
-;;; d-emacs-dfk.el -- Creation of dual-function-keys configurations from a d-emacs-coords-layer and integration into layouts  -*- lexical-binding: t; -*-
+;;; d-emacs-dfk.el --- Creation of dual-function-keys configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Keywords: tools
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
+;; Keywords: tools, external
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-dfk/
 
 ;; This file is part of Daselt.
 
@@ -56,23 +59,26 @@
 ;; - **Discrete Modifier Handling**: Supports discrete modifiers, allowing certain
 ;; keys to act as standalone modifiers without affecting other keybindings.
 
-;; Usage:
-
-;; Users can define their dual-function keybindings using predefined coordinate
-;; systems and customize various aspects such as tap durations, double-tap
-;; intervals, and key translations. The package includes utility functions to
-;; generate standard configurations and integrate them into the user's preferred
-;; keyboard layout. By configuring these settings, users can optimize their
-;; keyboard interactions for both efficiency and functionality within Emacs.
-
 ;; Overall, d-emacs-dfk.el provides a robust framework for enhancing keyboard
 ;; interactions in Emacs through dual-function keys, offering both flexibility and
 ;; ease of integration for users looking to customize their editing environment.
 
-;; 
+;; Usage:
+
+;; The main two functions of this package are `d-emacs-dfk-generate-config' and
+;; `d-emacs-dfk-generate-layer-0-placevals'. The first generates a config based
+;; on the bindform in the symbol value of the symbol stored in
+;; `d-emacs-dfk-bindform-symbol'. The default is
+;; `d-emacs-dfk-default-bindlist-form'. The second generates a list of placevals
+;; from the same bindform that can be used to form a d-emacs-coords-layer. This
+;; is done through `d-emacs-dfk-import-layout' and
+;; `d-emacs-dfk-import-current-layout'. Both `d-emacs-dfk-generate-config' and
+;; `d-emacs-dfk-generate-layer-0-placevals' can be tailored through the customs
+;; in the group `d-emacs-dfk'.
 
 ;;; Code:
 ;;;; Preamble
+(defvar d-emacs-xkb-layout)
 (require 'd-emacs-coords)
 
 
@@ -95,8 +101,8 @@
 
      ;; Alt
      ,(unless (string= d-emacs-dfk-keyboard-layout-type "ansi")
-        '((1 -7) . ("f8" . "f8")))
-     ((1 7) . ("f8" . "f8"))
+        `((1 -7) . ("f8" . ,(nth 0 d-emacs-dfk-H-coords))))
+     ((1 7) . ("f8" . ,(nth 0 d-emacs-dfk-H-coords)))
 
      ;; Shift and discrete Meta
      ((2 -1) . ("f15" . ,(nth 0 d-emacs-dfk-locking-2-coords)))
@@ -218,7 +224,7 @@ Currently supported options are ansi and iso."
   :group 'd-emacs-dfk
   :options '("ansi" "iso"))
 
-(defcustom d-emacs-dfk-special-bindlist-form
+(defcustom d-emacs-dfk-bindform-symbol
   'd-emacs-dfk-default-bindlist-form
   "Symbol of the bindlist form used to generate the
 d-emacs-dfk-config.
@@ -247,57 +253,57 @@ https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-cod
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-C-coords
-  '((-2 -2) (-2 2) (2 3))
-  "Coordinates for keys that are used for Ctrl-signals.
+              '((-2 -2) (-2 2) (2 3))
+              "Coordinates for keys that are used for Ctrl-signals.
 
 These are not the keys that are actually used as Ctrl-keys but the
 keys whose signals are used. In other words, if a key in the
-`d-emacs-dfk-special-bindlist-form' is used as a Ctrl key, it is
+`d-emacs-dfk-bindform-symbol' is used as a Ctrl key, it is
 endowed with one of the signals of these keys when held."
-  :type '(repeat coords)
-  :group 'd-emacs-dfk)
+              :type '(repeat coords)
+              :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-M-coords
-  '((-2 0))
-  "Coordinates for keys that are used for Meta-signals.
+          '((-2 0))
+          "Coordinates for keys that are used for Meta-signals.
 
 These are not the keys that are actually used as Meta-keys but the
 keys whose signals are used. In other words, if a key in the
-`d-emacs-dfk-special-bindlist-form' is used as a Meta key, it is
+`d-emacs-dfk-bindform-symbol' is used as a Meta key, it is
 endowed with one of the signals of these keys when held."
-  :type '(repeat coords)
-  :group 'd-emacs-dfk)
+          :type '(repeat coords)
+          :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-H-coords
-  '((-2 6))
-  "Coordinates for keys that are used for Hyper-signals.
+      '((-2 6))
+      "Coordinates for keys that are used for Hyper-signals.
 
 These are not the keys that are actually used as Hyper-keys but the
 keys whose signals are used. In other words, if a key in the
-`d-emacs-dfk-special-bindlist-form' is used as a Hyper key, it is
+`d-emacs-dfk-bindform-symbol' is used as a Hyper key, it is
 endowed with one of the signals of these keys when held."
-  :type '(repeat coords)
-  :group 'd-emacs-dfk)
+      :type '(repeat coords)
+      :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-s-coords
-  '((-2 5))
-  "Coordinates for keys that are used for Super-signals.
+    '((-2 5))
+    "Coordinates for keys that are used for Super-signals.
 
 These are not the keys that are actually used as Super-keys but the
 keys whose signals are used. In other words, if a key in the
-`d-emacs-dfk-special-bindlist-form' is used as a Super key, it is
+`d-emacs-dfk-bindform-symbol' is used as a Super key, it is
 endowed with one of the signals of these keys when held."
-  :type '(repeat coords)
-  :group 'd-emacs-dfk)
+    :type '(repeat coords)
+    :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-locking-2-coords
-  '((0 7))
-  "Coordinates for keys that are used for Shift-signals that lock.
+          '((0 7))
+          "Coordinates for keys that are used for Shift-signals that lock.
 
 By default these are added to the `d-emacs-dfk-2-coords'. See there for more
 information."
-  :type '(repeat coords)
-  :group 'd-emacs-dfk)
+          :type '(repeat coords)
+          :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-non-locking-2-coords
   '((1 -7) (1 7))
@@ -319,10 +325,10 @@ See there for more information."
 
 (defcustom d-emacs-dfk-non-locking-3-coords
   '((0 -6) (-2 -5))
-  "Coordinates for keys that are used for ISO-Level-3-Shift-signals that don't lock.
+  "Coordinates for keys used for ISO-Level-3-Shift-signals that don't lock.
 
-By default these are added to the `d-emacs-dfk-2-coords'.
-See there for more information."
+By default these are added to the `d-emacs-dfk-2-coords'. See there for more
+information."
   :type '(repeat coords)
   :group 'd-emacs-dfk)
 
@@ -371,7 +377,7 @@ row has to be specified in `d-emacs-dfk-special-codes-list'."
 
 Add a place to this list if its code can't be calculated by adding or
 subtracting from the midpoint of the row."
-  :type '(repeat (cons 'coords natnum))
+  :type '(repeat (cons coords natnum))
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-tap-time
@@ -451,7 +457,7 @@ in one of the d-emacs-dfk-coords-lists or in the layout specified by
   :group 'd-emacs-dfk)
 
 (defcustom d-emacs-dfk-special-signal-translations-list
-  '(("f14" . "<XF86Launch5>") ("f15" . "<XF86Launch6>") ("scrolllock" . "<scrolllock>") ("f8" . "<f8>"))
+  '(("f14" . "<XF86Launch5>") ("f15" . "<XF86Launch6>") ("scrolllock" . "Compose"))
   "List of key signals that have to be translated to be used by Emacs.
 
 This arises because the key names used by `input-event-names' are different from
@@ -504,46 +510,48 @@ Each element of this list is supposed to be a CONS.
 These are inherited from xkb.")
 
 (defconst d-emacs-dfk-layers-by-length
-  (sort (d-emacs-fiber-by-property d-emacs-dfk-layer-level-shifts
-                                   (lambda (lst) (length (cdr lst))) t)
-        :lessp (lambda (cns1 cns2) (< (car cns1) (car cns2)))))
+  (sort (d-emacs-base-fiber-by-property d-emacs-dfk-layer-level-shifts
+                                        (lambda (lst) (length (cdr lst))) t)        
+        (lambda (cns1 cns2) (< (car cns1) (car cns2)))))
 
 (defconst d-emacs-dfk-modifiers
   '('C 'M 'H 's)
   "The modifiers used by d-emacs-dfk.
-Note that S(hift) is not among these modifiers because it counts as a level shift.")
+
+Note that S(hift) is not among these modifiers because it counts as a level
+shift.")
 
 (defconst d-emacs-dfk-2-coords
-  (append d-emacs-dfk-locking-2-coords d-emacs-dfk-non-locking-2-coords)
-  "Coordinates for keys that are used for Shift-signals.
+      (append d-emacs-dfk-locking-2-coords d-emacs-dfk-non-locking-2-coords)
+      "Coordinates for keys that are used for Shift-signals.
 
 These are not the keys that are actually used as Shift-keys but the
 keys whose signals are used. In other words, if a key in the
-`d-emacs-dfk-special-bindlist-form' is used as a Shift key, it is
+`d-emacs-dfk-bindform-symbol' is used as a Shift key, it is
 endowed with one of the signals of these keys when held.")
 
 (defconst d-emacs-dfk-3-coords
-  (append d-emacs-dfk-locking-3-coords d-emacs-dfk-non-locking-3-coords)
-  "Coordinates for keys that are used for ISO-Level-3-Shift-signals.
+    (append d-emacs-dfk-locking-3-coords d-emacs-dfk-non-locking-3-coords)
+    "Coordinates for keys that are used for ISO-Level-3-Shift-signals.
 
 These are not the keys that are actually used as
 ISO-Level-3-Shift-keys but the keys whose signals are used. In other
-words, if a key in the `d-emacs-dfk-special-bindlist-form' is used as
+words, if a key in the `d-emacs-dfk-bindform-symbol' is used as
 an ISO-Level-3-Shift key, it is endowed with one of the signals of
 these keys when held.")
 
 (defconst d-emacs-dfk-5-coords
-  (append d-emacs-dfk-locking-5-coords d-emacs-dfk-non-locking-5-coords)
-  "Coordinates for keys that are used for ISO-Level-5-Shift-signals.
+    (append d-emacs-dfk-locking-5-coords d-emacs-dfk-non-locking-5-coords)
+    "Coordinates for keys that are used for ISO-Level-5-Shift-signals.
 
 These are not the keys that are actually used as
 ISO-Level-5-Shift-keys but the keys whose signals are used. In other
-words, if a key in the `d-emacs-dfk-special-bindlist-form' is used as
+words, if a key in the `d-emacs-dfk-bindform-symbol' is used as
 an ISO-Level-5-Shift key, it is endowed with one of the signals of
 these keys when held.")
 
 (defconst d-emacs-dfk-modifier-coords-alist
-  (let ((symbols (d-emacs-filter-obarray
+  (let ((symbols (d-emacs-base-filter-obarray
                   (lambda (sym)
                     (string-match-p (rx "d-emacs-dfk-" (group not-newline) "-coords")
                                     (symbol-name sym))))))
@@ -562,18 +570,26 @@ these keys when held.")
 ;;;; Functions
 (defun d-emacs-dfk--calculate-coords-code (coords)
   "Calculate the keycode corresponding to COORDS."
-  (number-to-string
-   (or (alist-get coords d-emacs-dfk-special-codes-list
-                  (let* ((row (car coords))
-                         (col (d-emacs-coords--remove-formal-places coords)))
-                    (+ col (funcall (if (<= 0 col) #'floor #'ceiling)
-                                    (alist-get row d-emacs-dfk-row-mid-codes-list))))
-                  nil #'equal))))
+  (declare (ftype
+            ;; (function ((list number)) integer) ; Compiler complains.
+            (function (list) integer))
+           (side-effect-free t))
+  (alist-get coords d-emacs-dfk-special-codes-list
+             (let* ((row (car coords))
+                    (col (d-emacs-coords--remove-formal-places coords)))
+               (+ col (funcall (if (<= 0 col) #'floor #'ceiling)
+                               (alist-get row d-emacs-dfk-row-mid-codes-list))))
+             nil #'equal))
 
 (defun d-emacs-dfk--convert-datum (datum)
   "Extract the `dual-function-keys'-info from an info DATUM.
 
 DATUM can be either a string or `d-emacs-coords'-coordinates."
+  (declare (ftype (function ((or string list
+                                 ;; (list number) ; Compiler complains.
+                                 ))
+                            string))
+           (side-effect-free t))
   (cond ((stringp datum)
          (upcase (concat "key_" datum)))
         ((d-emacs-coords-p datum)
@@ -582,42 +598,48 @@ DATUM can be either a string or `d-emacs-coords'-coordinates."
                 (keyname (if d-emacs-dfk-insert-names
                              (let ((buf (current-buffer)))
                                (progn (set-buffer (find-file-noselect eventcodes))
-                                      (d-emacs-goto-min)
+                                      (d-emacs-base-goto-min)
                                       (search-forward "* Keys and buttons")
                                       (re-search-forward (eval `(rx (+ space) ,keycode)))
                                       (let* ((line (thing-at-point 'line))
                                              (linesplit (split-string line (rx (+ space)))))
                                         (prog1 (nth 1 linesplit)
                                           (set-buffer buf))))))))
-           (or keyname keycode)))))
+           (or keyname (number-to-string keycode))))))
 
 (defun d-emacs-dfk--datum-p (obj)
-  "Check if OBJ is a datum."
+  "Check if OBJ is a datum.
+
+A datum here is either a string, d-emacs-coordinates or a list of coordinates."
+  (declare (ftype (function (t) boolean))
+           (pure t))
   (and obj
        (or (stringp obj)
-           (d-emacs-coords-p obj))))
+           (d-emacs-coords-p obj)
+           (list (d-emacs-coords-p obj)))))
 
-(defun d-emacs-dfk-generate-config (&optional blist fname)
+(defun d-emacs-dfk-generate-config (&optional blist filename)
   "Generate a `dual-function-keys' configuration from BLIST.
 
-Write the config to FNAME in `d-emacs-dfk-directory'. By default, FNAME is
+Write the config to FILENAME in `d-emacs-dfk-directory'. By default, FILENAME is
 generated from `d-emacs-dfk-outside-mods' and
 `d-emacs-dfk-keyboard-layout-type'. It is not necessary to include the `.yaml'
-extension in FNAME."
+extension in FILENAME."
+  (declare (ftype (function (&optional list string) string)))
   (interactive)
-  (let ((blist (or blist (eval (symbol-value d-emacs-dfk-special-bindlist-form))))
-        (fname (or fname (concat "d-dfk"
-                                 (if d-emacs-dfk-outside-mods "-out")
-                                 (concat "-" d-emacs-dfk-keyboard-layout-type)))))
-    (cl-flet ((convertdatumlist (data taporhold)
-                (concat
-                 "\["
-                 (mapconcat (lambda (datum)
-                              (d-emacs-dfk--convert-datum
-                               datum))
-                            data
-                            ", ")
-                 "\]")))
+  (let ((blist (or blist (remq nil (eval (symbol-value d-emacs-dfk-bindform-symbol)))))
+        (filename (or filename (concat d-emacs-dfk-directory
+                                       "d-dfk"
+                                       (if d-emacs-dfk-outside-mods "-out")
+                                       (concat "-" d-emacs-dfk-keyboard-layout-type)
+                                       ".yaml"))))
+    (cl-flet ((convertdatumlist (data)
+                (concat "\[" (mapconcat (lambda (datum)
+                                          (d-emacs-dfk--convert-datum
+                                           datum))
+                                        data
+                                        ", ")
+                        "\]")))
 
       (with-temp-buffer
         (when (or d-emacs-dfk-tap-time
@@ -646,20 +668,21 @@ extension in FNAME."
                              (error "Ill-formatted translation %s" trans)))
                  (tapstr (if (d-emacs-dfk--datum-p tapdata)
                              (d-emacs-dfk--convert-datum tapdata)
-                           (convertdatumlist tapdata "tap")))
+                           (convertdatumlist tapdata)))
                  (holdstr (if (d-emacs-dfk--datum-p holddata)
                               (d-emacs-dfk--convert-datum holddata)
-                            (convertdatumlist holddata "hold"))))
+                            (convertdatumlist holddata))))
             (insert (format "  - KEY: %s
     TAP: %s
     HOLD: %s
 
 " inistr tapstr holdstr))))
 
-        (write-file (concat d-emacs-dfk-directory fname ".yaml"))))))
+        (write-file filename)))))
 
 (defun d-emacs-dfk-generate-standard-configs ()
   "Generate all supported configs for `d-dfk'."
+  (declare (ftype (function () string)))
   (interactive)
   (dolist (tval '(nil t))
     (dolist (lay d-emacs-dfk-supported-layout-types)
@@ -669,7 +692,12 @@ extension in FNAME."
 
 (defun d-emacs-dfk-coords-modifier (coords)
   "Return the modifier that a pair of key coords represents if there is one."
-  (d-emacs-reverse-alist-get
+  (declare (ftype (function (list
+                             ;; (list number) ; Compiler complains.
+                             )
+                            (or void integer)))
+           (side-effect-free t))
+  (d-emacs-base-reverse-alist-get
    coords
    d-emacs-dfk-modifier-coords-alist
    nil
@@ -680,15 +708,23 @@ extension in FNAME."
 
 (defun d-emacs-dfk-levels-to-layer (levs)
   "Return the layer that is reached through LEVS."
+  (declare (ftype (function ((list integer)) integer))
+           (side-effect-free t))
   (let ((levnum (length levs)))
-    (d-emacs-reverse-alist-get
+    (d-emacs-base-reverse-alist-get
      levs
      (alist-get levnum d-emacs-dfk-layers-by-length #'equal)
      nil
-     #'d-emacs-setequal)))
+     #'d-emacs-base-setequal)))
 
 (cl-defun d-emacs-dfk-datum-to-string (dtm)
   "Convert a d-emacs-dfk-datum into a string."
+  (declare (ftype (function ((or string list
+                                 ;; (list number) ; Compiler complains.
+                                 ))
+                            string)))
+  (unless (d-emacs-dfk--datum-p dtm)
+    (error "Expected a d-emacs-dfk-datum"))
   (if (stringp dtm)
       (alist-get dtm
                  d-emacs-dfk-special-signal-translations-list
@@ -713,14 +749,18 @@ extension in FNAME."
   "Return the placevals for layer 0 for `d-emacs-coords'.
 
 Based on the customs in `d-emacs-dfk'."
-  (let ((origblist (eval (symbol-value d-emacs-dfk-special-bindlist-form))))
+  (declare (ftype (function () list
+                            ;; (list (cons (list number) t)) ; Compiler complains.
+                            )))
+  (let ((origblist (remq nil (eval (symbol-value d-emacs-dfk-bindform-symbol)))))
     
     (cl-flet*
         ((coords-of-level (num)
            (intern (concat "d-emacs-dfk-" (number-to-string num) "-coords")))
 
+         ;; Find out if there are discrete modifiers on the key
          (disc-mod-strs (str)
-           (let ((dmods (d-emacs-filter-list
+           (let ((dmods (d-emacs-base-filter-list
                          d-emacs-dfk-discrete-modifiers-list
                          (lambda (cns1) (string= str (caar cns1))))))
              (mapcar (lambda (dmodcns)
@@ -775,7 +815,7 @@ the name of LAYSYM is of the form `PFX-CORE-layout'.
 
 PFX is `d-emacs-xkb-' by default."
   (let* ((pfx (or pfx "d-emacs-xkb-"))
-         (namecore (d-emacs-namecore laysym pfx "-layout"))
+         (namecore (d-emacs-base-namecore laysym pfx "-layout"))
          (dfkname (intern (concat "d-emacs-dfk-" namecore "-layout"))))
     `(let ((layer0layout (d-emacs-coords-layout-from-placevals
                           (d-emacs-dfk-generate-layer-0-placevals))))
@@ -784,6 +824,7 @@ PFX is `d-emacs-xkb-' by default."
 
 (defmacro d-emacs-dfk-import-current-layout ()
   "Import the layout that is currently specified in `d-emacs-xkb-layout'.
+
 Set the result as the value of `d-emacs-dfk-layout'."
   `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))
 

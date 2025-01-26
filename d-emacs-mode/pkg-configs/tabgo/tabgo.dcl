@@ -1,1 +1,1 @@
-((tabgo-tab-bar-keys . d-quick-key-string))
+((tabgo-tab-bar-keys . d-emacs-mode-quick-key-string))

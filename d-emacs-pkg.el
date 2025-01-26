@@ -1,1 +1,1 @@
-(define-package  d-emacs 0.8 ((emacs "28.0")))
+(define-package  d-emacs 1 ((emacs "29.1")))

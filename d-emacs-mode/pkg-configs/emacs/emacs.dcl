@@ -3,7 +3,7 @@
          (concat d-emacs-dirs-pkg-configs-directory
                  "emacs/special-answers.dbl")
          (lambda ()
-           (let ((blist (d-emacs-read-region)))
+           (let ((blist (d-emacs-base-read-region)))
              (append
               ;; We have to replace the bindings of lower levels that have possibly been used with bindings in higher levels that have not because they are not in other keyboard layouts.
               (mapcar (lambda (bind)

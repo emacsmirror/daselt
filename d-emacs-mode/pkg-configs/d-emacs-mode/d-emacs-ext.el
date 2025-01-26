@@ -1,0 +1,1 @@
+/home/alex/projects/d-emacs/d-emacs-mode/pkg-configs/d-emacs-mode/d-emacs-ext.del

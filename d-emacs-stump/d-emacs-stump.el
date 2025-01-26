@@ -5,6 +5,8 @@
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Keywords: tools, external
 
+;; This file is part of Daselt.
+
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -20,21 +22,53 @@
 
 ;;; Commentary:
 
-;;
+;; d-emacs-stump an Emacs package designed to streamline the integration
+;; between Emacs and the StumpWM window manager. It automates the generation of
+;; StumpWM configuration files based on d-emacs-bindlists, allowing users
+;; to define and manage keybindings, modules, and custom settings within Emacs,
+;; and provides a standard-configuration in its `pkg-configs'-directory.
+
+;; Key Features:
+;; - **Automatic Configuration Generation**: Transforms d-emacs-bind-bindlists 
+;;   into StumpWM-compatible initialization files.
+
+;; - **Modular Support**: Includes configurations of modules such as binwarp,
+;;   spatial-groups, swm-emacs, winner-mode, clipboard-history, and more, which
+;;   can be selectively enabled or disabled.
+
+;; - **Customizable Options**: Users can specify the initialization directory,
+;;   keymaps to include, and toggle the use of contrib functions.
+
+;; - **Advanced Key Remapping**: Provides mechanisms to define exceptional key
+;;   bindings and manage complex key remapping scenarios based on specific modes
+;;   or conditions.
+
+;; - **Extensible Architecture**: Easily accommodates additional modules and
+;;   custom keybinding configurations through pkg-config files.
+
+;; By leveraging d-emacs-stump.el, users can maintain a consistent and efficient
+;; workflow between Emacs and StumpWM, ensuring that their window management
+;; configurations are both powerful and easy to manage from within their Emacs
+;; environment.
+
+;; Usage:
+;; The main function is `d-emacs-stump-generate-init'. Its output can be
+;; configured using d-stumps `pkg-configs'-directory and the options in the
+;; group `d-emacs-stump'.
 
 ;;; Code:
 ;;;; Preamble
-(declare-function d-emacs-flatten-until "d-emacs-base" (lst cnd))
+(declare-function d-emacs-base-flatten-until "d-emacs-base" (lst cnd))
 (declare-function d-emacs-bind-p "d-emacs-bind" (cns))
 (declare-function d-emacs-xkb--format-special-key "d-emacs-xkb" (str))
-(declare-function d-emacs-powerlist "d-emacs-base" (list &optional elt))
+(declare-function d-emacs-base-powerlist "d-emacs-base" (list &optional elt))
 (declare-function d-emacs-bind-string "d-emacs-bind" (binding &optional translate csectoshft doublebind))
 (declare-function d-emacs-bind-head "d-emacs-bind" (list))
-(declare-function d-emacs-read-region "d-emacs-base" (&optional properties))
+(declare-function d-emacs-base-read-region "d-emacs-base" (&optional properties))
 (declare-function d-emacs-dirs-act-on-sexps-in-file "nil" (filepath function &optional untangle))
 (declare-function d-emacs-dirs--act-on-pkg-files-by-type-and-maybe-kill "nil" (funtypes &optional dir customt))
 (declare-function d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill "d-emacs-dirs" (funtypes &optional dir customt))
-(declare-function d-emacs-remove-surrounding-brackets "d-emacs-base" (str))
+(declare-function d-emacs-base-remove-surrounding-brackets "d-emacs-base" (str))
 (declare-function d-emacs-dirs-create-pkg-customization-options-by-variable "d-emacs-dirs" (&optional dirvar pfx))
 
 (defvar d-emacs-xkb-special-key-names)
@@ -114,39 +148,44 @@ representing a mode for which key remappings should be suspended."
 
 ;;;; Functions
 ;;;;; Main function
-(defun d-emacs-stump--generate-init ()
+(defun d-emacs-stump-generate-init (&optional filename)
   "Generate a d-emacs-stump initialization file from the files in
-`d-emacs-stump-pkg-configs-directory'."
+`d-emacs-stump-pkg-configs-directory'.
+
+Call the resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
+  (declare (ftype (function (&optional string) string)))
+  (interactive)
   (let* ((print-level nil)
          (print-length nil)
+         (filename (or filename "d-stump.lisp"))
          (filebuf (find-file-noselect (concat d-emacs-stump-init-directory
-                                              "d-stump.lisp")))
+                                              filename)))
          ;; Generate keybinds from regular bindlists.
          (bindingstring
-          (d-emacs-remove-surrounding-brackets
+          (d-emacs-base-remove-surrounding-brackets
            (format
             "%s"
             (flatten-list
              (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
               `(((lambda (filename)
                    (set-buffer (find-file-noselect filename))
-                   (d-emacs-goto-min)
+                   (d-emacs-base-goto-min)
                    (d-emacs-dirs-act-on-sexps-in-file
                     filename
                     (lambda ()
                       (d-emacs-bind--generate-define-key-strings-from-bindlist
-                       (d-emacs-read-region)))
+                       (d-emacs-base-read-region)))
                     t))
                  . ("dbl" "regular")))
               d-emacs-stump-pkg-configs-directory)))))
 
          ;; Get all lisp-code from init files. Again we have to remove initial and final brackets.
-         (otherstring (d-emacs-remove-surrounding-brackets
+         (otherstring (d-emacs-base-remove-surrounding-brackets
                        (format "%s"
                                (remq nil
                                      (flatten-list
                                       (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
-                                       `((d-emacs-lisp-file-code . (nil "init")))
+                                       `((d-emacs-base-lisp-file-code . (nil "init")))
                                        d-emacs-stump-pkg-configs-directory)))))))
     (set-buffer filebuf)
     (delete-region (point-min) (point-max))
@@ -156,33 +195,59 @@ representing a mode for which key remappings should be suspended."
     (d-emacs-stump--generate-keymaps-code)
     (insert bindingstring)
     (insert otherstring)
-    (if d-emacs-stump-iresize (insert (d-emacs-stump--generate-iresize-map-code)))
-    (if d-emacs-stump-binwarp (insert (d-emacs-stump--generate-binwarp-mode-code)))
-    (insert (d-emacs-stump--generate-remap-list-code))))
+    (if d-emacs-stump-iresize (d-emacs-stump--generate-iresize-map-code))
+    (if d-emacs-stump-binwarp (d-emacs-stump--generate-binwarp-mode-code))
+    (d-emacs-stump--generate-remap-list-code)
+    (save-buffer)))
+
+;;;;;; Generation for other layouts
+(defun d-emacs-stump-generate-all-inits ()
+  "Execute `d-emacs-stump-generate-init' for each layout in `d-emacs-xkb-layouts'.
+
+Add in layer 0 to each layout first, just to be sure."
+  (declare (ftype (function ()
+                            ;; (list string) ; Compiler complains.
+                            list)))
+  (d-emacs-coords-for-layouts-in (lambda (layoutsym)
+                                   (let ((namecore (d-emacs-base-namecore
+                                                    layoutsym "d-emacs-dfk-" "-layout")))
+                                     (d-emacs-stump-generate-init (concat "d-stump-" namecore
+                                                                          ".lisp"))))
+                                 (mapcar (lambda (layoutsym) (eval `(d-emacs-dfk-import-layout ,layoutsym)))
+                                         d-emacs-xkb-layouts)))
 
 ;;;;; Modules
 (defun d-emacs-stump--generate-module-code ()
   "Generate code to load modules in `d-emacs-stump-modules'.
 
 A module is loaded if and only if its corresponding custom is set to t."
-  (mapcar (lambda (module)
-            (if (intern (concat "d-emacs-stump-" module))
-                (insert (format "(load-module \"%s\")\n" module))))
-          d-emacs-stump-modules))
+  (declare (ftype (function ()
+                            ;; void  ; Compiler complains.
+                            t)))
+  (mapc (lambda (module)
+          (if (intern (concat "d-emacs-stump-" module))
+              (insert (format "(load-module \"%s\")\n" module))))
+        d-emacs-stump-modules))
 
 (defun d-emacs-stump--generate-keymaps-code ()
   "Generate code to initialize keymaps.
 
 Each keymap in `d-emacs-stump-keymaps' is initialized."
-  (mapcar (lambda (map)
-            (insert (format "(defparameter %s (make-sparse-keymap))\n" map)))
-          d-emacs-stump-keymaps))
+  (declare (ftype (function ()
+                            ;; void  ; Compiler complains.
+                            t)))
+  (mapc (lambda (map)
+          (insert (format "(defparameter %s (make-sparse-keymap))\n" map)))
+        d-emacs-stump-keymaps))
 
 (defun d-emacs-stump--generate-iresize-map-code ()
   "This function generates the code for the iresize map."
+  (declare (ftype (function ()
+                            ;; void  ; Compiler complains.
+                            t)))
   (let* ((blist (car (d-emacs-dirs-act-on-sexps-in-file
                       (concat d-emacs-stump-pkg-configs-directory "iresize/iresize-special.dbl")
-                      (lambda () (d-emacs-read-region)))))
+                      (lambda () (d-emacs-base-read-region)))))
          (head (d-emacs-bind-head blist))
          (body (cdr blist)))
     (cl-flet* ((kbd-car (bind) `(kbd ,(d-emacs-bind-string bind)))
@@ -190,20 +255,23 @@ Each keymap in `d-emacs-stump-keymaps' is initialized."
                                              (cons (kbd-car bind)
                                                    (cdr bind)))
                                            bblist)))
-      (format "%S\n\n" (append `(define-interactive-keymap)
-                               `((iresize tile-group))
-                               `((:on-enter #'setup-iresize
-                                            :on-exit #'resize-unhide
-                                            :abort-if #'abort-resize-p
-                                            :exit-on ,(mapcar (lambda (bind) (kbd-car bind)) head)))
-                               (kbd-conss body))))))
+      (insert (format "%S\n\n" (append `(define-interactive-keymap)
+                                       `((iresize tile-group))
+                                       `((:on-enter #'setup-iresize
+                                                    :on-exit #'resize-unhide
+                                                    :abort-if #'abort-resize-p
+                                                    :exit-on ,(mapcar (lambda (bind) (kbd-car bind)) head)))
+                                       (kbd-conss body)))))))
 
 (defun d-emacs-stump--generate-binwarp-mode-code ()
   "Generate the code for the binwarp mode."
+  (declare (ftype (function ()
+                            ;; void  ; Compiler complains.
+                            t)))
   (let* ((blist (car (d-emacs-dirs-act-on-sexps-in-file
                       (concat d-emacs-stump-pkg-configs-directory
                               "binwarp/binwarp-special.dbl")
-                      (lambda () (d-emacs-read-region)))))
+                      (lambda () (d-emacs-base-read-region)))))
          (head (d-emacs-bind-head blist))
          (headhead (d-emacs-bind-head head))
          (headbody (cdr head))
@@ -213,18 +281,19 @@ Each keymap in `d-emacs-stump-keymaps' is initialized."
                                              (list (kbd-car bind)
                                                    (cdr bind)))
                                            bblist)))
-      (format "%S\n\n" (append `(binwarp:define-binwarp-mode binwarp-mode ,headhead)
-                               `((:map *top-map*
-                                       :redefine-bindings t
-                                       :exit-keys ,(mapcar (lambda (bind) (kbd-car bind)) headbody)))
-                               (kbd-lists body))))))
+      (insert (format "%S\n\n" (append `(binwarp:define-binwarp-mode binwarp-mode ,headhead)
+                                       `((:map *top-map*
+                                               :redefine-bindings t
+                                               :exit-keys ,(mapcar (lambda (bind) (kbd-car bind)) headbody)))
+                                       (kbd-lists body)))))))
 
 ;;;;; Remapped Keys
 (defun d-emacs-stump--exceptional-bindings ()
   "Return exceptional bindings from the marked bindlist.
 
 This includes the head escape bindings."
-  (let* ((blist (d-emacs-read-region))
+  (declare (ftype (function () list)))
+  (let* ((blist (d-emacs-base-read-region))
          (head (d-emacs-bind-head blist))
          (headhead (d-emacs-bind-head head))
          (headbinds (if head
@@ -237,8 +306,13 @@ This includes the head escape bindings."
 (defun d-emacs-stump--non-exceptional-bindings (excp-bindings)
   "Given a list of exceptional bindings EXCP-BINDINGS, return the
 non-exceptional-bindings in a marked bindlist.
+
 These are those that are not in EXCP-BINDINGS."
-  (let* ((blist (d-emacs-read-region))
+  (declare (ftype
+            ;; (function ((list t)) (list cons)) ; Compiler complains.
+            (function (list) list))
+           (side-effect-free t))
+  (let* ((blist (d-emacs-base-read-region))
          (head (d-emacs-bind-head blist))
          (body (if head (cdr blist) blist))
          (non-excp-binds (remq nil (mapcar
@@ -246,11 +320,8 @@ These are those that are not in EXCP-BINDINGS."
                                       (unless (cl-member
                                                bind excp-bindings
                                                :test (lambda (bind excpbind)
-                                                       (string=
-                                                        (d-emacs-bind-string
-                                                         bind)
-                                                        (d-emacs-bind-string
-                                                         excpbind))))
+                                                       (string= (d-emacs-bind-string bind)
+                                                                (d-emacs-bind-string excpbind))))
                                         (cons (d-emacs-bind-string bind)
                                               (cdr bind))))
                                     body))))
@@ -258,10 +329,13 @@ These are those that are not in EXCP-BINDINGS."
 
 (defun d-emacs-stump--excp-bindings (excps)
   "Return exceptional bindings from a list of exceptions EXCPS."
+  (declare (ftype (function (t)
+                            ;; (list cons) ; Compiler complains.
+                            t)))
   (apply #'append ; Append bindings of all exceptions.
          (mapcar
           (lambda (excp)
-            (d-emacs-flatten-until
+            (d-emacs-base-flatten-until
              (remq nil
                    (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
                     `(((lambda (file)
@@ -276,6 +350,8 @@ These are those that are not in EXCP-BINDINGS."
 
 (defun d-emacs-stump--format-remap-list-code (lst)
   "Format a list of remapped keys LST into a string suitable for Lisp."
+  (declare (ftype (function (string) string))
+           (pure t))
   ;; (replace-regexp-in-string
   ;;  (rx (one-or-more (and (zero-or-more space) "\n" (zero-or-more space)))) "\n"
   (string-replace
@@ -292,11 +368,15 @@ These are those that are not in EXCP-BINDINGS."
         "\n\"" "\n"
         (format "%S" lst))))))))
 
-
 (defun d-emacs-stump--format-remap-bindlist-code (binds modes &optional head)
   "Format bindings BINDS for use in a remap list, including optional HEAD list.
 
 MODES are included for conditional mappings."
+  (declare (ftype (function (
+                             ;; (list cons) ; Compiler complains.
+                             list string &optional string)
+                            string))
+           (pure t))
   (concat (string-replace "\",\" " ","
                           (format
                            "%S"
@@ -323,6 +403,9 @@ It processes each bindlist in `D-EMACS-STUMP-REMAPPED-KEYS-SPECIAL-BINDLISTS`
 and combines them with the exceptions defined in
 `d-emacs-stump-remap-exceptions-alist`, producing remapped keys that meet the
 specified conditions."
+  (declare (ftype (function () 
+                            ;; void  ; Compiler complains.
+                            t)))
   (let* ((base-file-path (concat d-emacs-stump-pkg-configs-directory
                                  "stumpwm/remapped-keys-special.dbl"))
          (user-file-path (concat d-emacs-stump-pkg-configs-directory
@@ -343,7 +426,7 @@ specified conditions."
 
                 (d-emacs-dirs-act-on-sexps-in-file
                  file-path
-                 (lambda () (let* ((blist (d-emacs-read-region))
+                 (lambda () (let* ((blist (d-emacs-base-read-region))
                               (head (d-emacs-bind-head blist))
                               (non-excp-binds (d-emacs-stump--non-exceptional-bindings
                                                excp-bindings)))
@@ -351,17 +434,23 @@ specified conditions."
                          (concat (d-emacs-stump--format-remap-bindlist-code
                                   non-excp-binds modes head)
                                  "\n"))))))
-            (reverse (d-emacs-powerlist d-emacs-stump-remap-exceptions-alist)))))
+            (reverse (d-emacs-base-powerlist d-emacs-stump-remap-exceptions-alist)))))
 
          (remapped-keys-str (d-emacs-stump--format-remap-list-code remapped-keys-list))
          (overallstr (concat "(define-remapped-keys `"
                              remapped-keys-str
                              ")")))
-    overallstr))
+    (insert overallstr)))
 
 ;;;;;; Retrieve Emacs translations
 (defun d-emacs-stump-translated-emacs-keys ()
-  "Set `d-emacs-stump-emacs-key-translations-alist'."
+  "Return the key translations from Stump to Emacs.
+
+Used for `d-emacs--emacs-key-translations-alist'."
+  (declare (ftype (function ()
+                            ;; (list (cons string string)) ; Compiler complains.
+                            t))
+           (side-effect-free t))
   (let* ((base-file-path (concat d-emacs-stump-pkg-configs-directory
                                  "stumpwm/remapped-keys-special.dbl"))
          (user-file-path (concat d-emacs-stump-pkg-configs-directory
@@ -371,7 +460,7 @@ specified conditions."
                       base-file-path))
          (blist (car (remq nil (d-emacs-dirs-act-on-sexps-in-file
                                 file-path
-                                (lambda () (let* ((blist (d-emacs-read-region))
+                                (lambda () (let* ((blist (d-emacs-base-read-region))
                                              (head (d-emacs-bind-head blist)))
                                         (if (string= head "emacs")
                                             blist)))))))

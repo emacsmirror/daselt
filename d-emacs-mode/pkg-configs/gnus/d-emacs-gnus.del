@@ -1,9 +1,12 @@
-;;; d-emacs.el -- d-emacs main file                 -*- lexical-binding: t; -*-
+;;; d-emacs-gnus.del -- d-emacs-commands for gnus  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
 ;; Keywords: tools
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-mode/
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,18 +23,14 @@
 
 ;;; Commentary:
 
-;; Main file for d-emacs. Only loads other files.
+;;
 
 ;;; Code:
 
-(require 'd-emacs-base nil t)
-(require 'd-emacs-coords nil t)
-(require 'd-emacs-xkb nil t)
-(require 'd-emacs-dfk nil t)
-(require 'd-emacs-bind nil t)
-(require 'd-emacs-dirs nil t)
-(require 'd-emacs-stump nil t)
-(require 'd-emacs-mode nil t)
+(defun d-emacs-gnus-group-select-group-t ()
+  "Run `gnus-group-select-group' with t as ARG."
+  (interactive)
+  (gnus-group-select-group t))
 
-(provide 'd-emacs)
-;;; d-emacs.el ends here
+(provide 'd-emacs-gnus)
+;;; d-emacs-gnus.del ends here

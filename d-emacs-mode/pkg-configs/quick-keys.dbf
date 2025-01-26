@@ -1,4 +1,5 @@
 (apply #'append
+       '(quick-keys)
        (mapcar
         (lambda (layer)
           (mapcar (lambda (coords)

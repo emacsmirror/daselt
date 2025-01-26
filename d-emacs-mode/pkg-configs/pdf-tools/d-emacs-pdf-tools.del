@@ -1,9 +1,12 @@
-;;; d-emacs.el -- d-emacs main file                 -*- lexical-binding: t; -*-
+;;; d-emacs-pdf-tools.del -- d-emacs-commands for pdf-tools  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
 ;; Keywords: tools
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-mode/
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,18 +23,19 @@
 
 ;;; Commentary:
 
-;; Main file for d-emacs. Only loads other files.
+;;
 
 ;;; Code:
 
-(require 'd-emacs-base nil t)
-(require 'd-emacs-coords nil t)
-(require 'd-emacs-xkb nil t)
-(require 'd-emacs-dfk nil t)
-(require 'd-emacs-bind nil t)
-(require 'd-emacs-dirs nil t)
-(require 'd-emacs-stump nil t)
-(require 'd-emacs-mode nil t)
+(defun d-emacs-pdf-view-scroll-chunk-up ()
+  "Scroll up a chunk when reading a pdf."
+  (interactive)
+  (pdf-view-previous-line-or-previous-page 10))
 
-(provide 'd-emacs)
-;;; d-emacs.el ends here
+(defun d-emacs-pdf-view-scroll-chunk-down ()
+  "Scroll down a chunk when reading a pdf."
+  (interactive)
+  (pdf-view-next-line-or-next-page 10))
+
+(provide 'd-emacs-pdf-tools)
+;;; d-emacs-pdf-tools.del ends here

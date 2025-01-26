@@ -1,2 +1,2 @@
 ((avy-escape-chars . '(?))
-(avy-keys . d-quick-key-list))
+(avy-keys . d-emacs-mode-quick-key-list))
