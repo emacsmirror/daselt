@@ -1276,6 +1276,7 @@ coordinates)."
     ;; If on the second layer and csectoshft is t, and if either C is a modifier or there either are no mods and the length of the retained sfx is 1, replace the obtained sfx with its downcased variant and add S-modifier.
     (if (and csectoshft
              coordval
+             (not (d-emacs-base-string-exists-and-nonempty sfx)) ; If the binding is given by a binding string, we don't want to shift it.
              (not (cl-member coordval
                              d-emacs-bind-no-shift-list
                              :test #'string=))
