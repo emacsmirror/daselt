@@ -115,11 +115,7 @@
   :group 'd-emacs-stump)
 
 (defcustom d-emacs-stump-pkg-configs-directory
-  (condition-case nil
-      (concat (file-name-directory
-               (buffer-file-name))
-              "pkg-configs/")
-    (error nil))
+  nil
   "Pkg-configs directory for `d-emacs-stump'.
 
 This is the directory all `dbl' and `dcn' files for the d-emacs-stump-config
@@ -154,6 +150,8 @@ representing a mode for which key remappings should be suspended."
 
 Call the resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
   (declare (ftype (function (&optional string) string)))
+  (unless (bound-and-true-p d-emacs-stump-pkg-configs-directory)
+    (error "Please set d-emacs-stump-pkg-configs-directory"))
   (interactive)
   (let* ((print-level nil)
          (print-length nil)
