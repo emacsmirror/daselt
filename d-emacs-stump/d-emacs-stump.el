@@ -114,13 +114,15 @@
   :type 'boolean
   :group 'd-emacs-stump)
 
+
+;;;;; Set pkg-configs directory
 (defun d-emacs-stump--pkg-configs-directory-test (dir)
   "Test whether DIR looks like d-emacs-stump's pkg-configs-directory."
   (declare (ftype (function (str) boolean))
            (pure t))
   (and dir
        (file-exists-p dir)
-       (file-exists-p (concat dir "d-emacs-stump/"))))
+       (file-exists-p (concat dir "stumpwm"))))
 
 (defcustom d-emacs-stump-pkg-configs-directory
   (let* ((use-file-dialog nil) ; Dialog box doesn't let you select folder (or I was doing something wrong).
@@ -137,6 +139,28 @@ should be in."
   :type 'directory
   :group 'd-emacs-stump)
 
+(defun d-emacs-stump--find-pkg-configs-directory ()
+  "Find d-emacs-stump's pkg-configs-directory.
+
+Set the corresponding option so it's saved for future sessions.
+
+If the option already points to something that looks like the right directory,
+don't do anything."
+  (declare (ftype (function () string)))
+  (unless (d-emacs-stump--pkg-configs-directory-test d-emacs-stump-pkg-configs-directory)
+    (condition-case nil (let ((current-pkg-dir
+                               (concat (file-name-directory
+                                        (buffer-file-name))
+                                       "pkg-configs/")))
+                          (if (d-emacs-stump--pkg-configs-directory-test current-pkg-dir)
+                              (customize-save-variable 'd-emacs-stump-pkg-configs-directory
+                                                       current-pkg-dir)
+                            (d-emacs-stump--pkg-configs-directory-enter-manually)))
+      (error (d-emacs-stump--pkg-configs-directory-enter-manually)))))
+
+(d-emacs-stump--find-pkg-configs-directory)
+
+;;;;; Customization options
 (d-emacs-dirs-create-pkg-customization-options-by-variable
  d-emacs-stump-pkg-configs-directory d-emacs-stump
  (lambda (pkg)
