@@ -498,15 +498,15 @@ If MODLIST is provided, it sorts against that instead of
   (cl-check-type prefix string)
   (let ((sorted (d-emacs-bind-index-and-sort-modifiers (d-emacs-bind-index-prefix-modifiers prefix modlist) t)))
     (if keepindices
-        (if sorted sorted "") ; Let's return the empty string if there aren't any modifiers.
+        (if sorted sorted) ; Let's return nothing if there aren't any modifiers.
       (d-emacs-base-remove-indices sorted))))
 
-  (defun d-emacs-bind-modifiers-to-string (mods)
-    "Concatenate the given list of MODS into a prefix."
-    (declare (ftype (function (list
-                               ;; (list integer) ; Compiler complains.
-                               )
-                              string))
+(defun d-emacs-bind-modifiers-to-string (mods)
+  "Concatenate the given list of MODS into a prefix."
+  (declare (ftype (function (list
+                             ;; (list integer) ; Compiler complains.
+                             )
+                            string))
            (pure t))
   (let ((modchain (mapconcat #'char-to-string (reverse mods) "-")))
     (if (d-emacs-base-string-exists-and-nonempty modchain)
