@@ -825,7 +825,7 @@ documentation."
                               (constname (symbol-name constsymb))
                               (backupname (concat pfx constname "-backup"))
                               (backupsymb (intern backupname)))
-                         (when (eval `(bound-and-true-p ,(symbol-value backupsymb)))
+                         (when (eval `(bound-and-true-p ,backupsymb))
                            (setopt--set constsymb (symbol-value backupsymb))
                            (put constsymb 'variable-documentation
                                 (get backupsymb 'variable-documentation))
