@@ -1083,7 +1083,7 @@ With a prefix argument, only regular bindlists files are considered."
 
 ;;;;; Macros
 (defmacro d-emacs-dirs-create-pkg-customization-options (&optional dir group deffun)
-    "Create Boolean customization options from the folders in DIR.
+  "Create Boolean customization options from the folders in DIR.
 
 By default, DIR is `d-emacs-dirs-pkg-configs-directory'.
 
@@ -1091,19 +1091,19 @@ The group for the options is GROUP, which is `d-emacs' by default. All options
 are prefixed with `GROUP-'.
 
 DEFFUN should evaluate to a condition that determines whether a generated custom
-is enabled by default. Its default is `package-installed-p'."
-    (let* ((dir (or dir d-emacs-dirs-pkg-configs-directory))
+is enabled by default. Its default is `featurep'."
+  (let* ((dir (or dir d-emacs-dirs-pkg-configs-directory))
          (group (or group 'd-emacs))
          (pfx (concat (symbol-name group) "-"))
-         (deffun (or deffun (lambda (pkg) (let ((val (package-installed-p pkg)))
+         (deffun (or deffun (lambda (pkg) (let ((val (featurep pkg)))
                                        (if val t)))))
          (customlist (mapcar (lambda (pkg)
-                                                                                                       `(defcustom ,(intern (concat pfx (symbol-name pkg)))
-                                                                                                          ,(funcall deffun pkg)
-                                                                                                          ,(d-emacs-base-fill-string-like-docstring
+                               `(defcustom ,(intern (concat pfx (symbol-name pkg)))
+                                  ,(funcall deffun pkg)
+                                  ,(d-emacs-base-fill-string-like-docstring
                                     (format "Set to t to have `d-emacs-dirs-act-on-pkg-files-by-type' recurse into the %sdirectory whose name is %s." pfx pkg))
-                                                                                                          :type 'boolean
-                                                                                                          :group ',group))
+                                  :type 'boolean
+                                  :group ',group))
                              (d-emacs-dirs-recurse-through-directory
                               dir
                               `(((lambda (filepath) (intern (file-name-base filepath)))
