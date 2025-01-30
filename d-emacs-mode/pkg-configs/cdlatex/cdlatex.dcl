@@ -1,5 +1,5 @@
 ((cdlatex-math-symbol-alist-default
-  . (let ((filepath (concat d-emacs-dirs-pkg-configs-directory "cdlatex/cdlatex-special-math-modify.dbl")))
+  . (let ((filepath (concat d-emacs-dirs-pkg-configs-directory "cdlatex/cdlatex-special-math-symbol.dbl")))
       (prog1 (d-emacs-dirs-act-on-sexps-in-file
               filepath
               (lambda () (let ((blist (d-emacs-base-read-region)))

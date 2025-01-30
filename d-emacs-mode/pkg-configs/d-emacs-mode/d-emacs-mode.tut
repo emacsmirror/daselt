@@ -145,7 +145,7 @@ Combinations using other modifiers usually fall into the same layer-specific par
 
 - *s* is in-between the two: it can easiest be applied discretely, by holding down _Space_ and tapping an _Alt_ key, but it can still fairly easily be applied continuously by holding down either _2_ or _0_ in the number row (or your keyboard equivalent). It is thus used both for discrete and for contiuous commands, in particular variants of commands that are on a *C*-layer. For instance, *C-(2 -1 -3)* houses ~backward-kill-word~ while ~*s-(2 -1 -3)*~ houses ~backward-kill-paragraph~.
 
-- *H* is used for StumpWM commands or other window-manager- or desktop-environment-specific commands. There are some exceptions to this, on higher layers, but probably the only ones you'll be using daily are commands concerning Emacs windows, which are on *H-2* and *H-8*.
+- *H* is used for StumpWM commands or other window-manager- or desktop-environment-specific commands. There are some exceptions to this, on higher layers, but probably the only ones you'll be using daily are commands concerning Emacs windows, which are on *H-2* and *H-8*. The idea behind this is that the main layout has an *H*-modifier at (1 1 0) that can be applied with a thumb, so that you can use your other fingers to move between and split windows. If you're not using *H-1* for shortcuts in your window manager or desktop environment you might want to move these bindings there at some point using a [[user-generated bindlist][user-generated bindlists]].
 
 - *A* is used for bad key combinations.
 
@@ -169,6 +169,9 @@ The assumption here is that the first option is impossible or unwanted. In this 
 ")
 
 "
+** Prefix Keys
+Emacs features three important prefix keys: *C-c*, *C-x* and *C-h*. As already mentioned, *C-h* has been put onto *C-(1 0 -5)*. *C-c* has been put onto *C-(2 1 0)* so it can be tapped with both hands. *C-x* is on *M-(2 1 0)* but has decreased in importance because the most important commands it houses have been put onto keys in the layout.
+
 ** The Position of the ~d-emacs-mode-map~
 Daselt uses the ~d-emacs-mode-map~ as a global shortcut map that supersedes most other maps because it is put into ~emulation-mode-map-alists~. You can turn this off by disabling the option ~d-emacs-mode-put-d-emacs-mode-map-into-emulation~. In that case, the bindings on layers *5-8*, which contain symbols not usually found in a layout, will continue to be usable but those on lower layers will be shadowed by keymaps in lists above ~minor-mode-map-alist~. It is generally recommended to leave ~d-emacs-mode-put-d-emacs-mode-map-into-emulation~ true, since the ~d-emacs-mode-map~ was designed with the assumption of its bindings being globally valid. An in-between approach is also possible by setting ~d-emacs-mode-globalize-d-emacs-mode-map~ to t, which sets ~global-map~ to the value of ~d-emacs-mode-map~ while ~d-emacs-mode~ is on. This means that the ~d-emacs-mode-map~ is above most keymaps but can be overridden by ~minor-mode-override-map-alist~.
 
