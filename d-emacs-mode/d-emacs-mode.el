@@ -109,12 +109,12 @@ selection mechanisms."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-show-tutorial
-                                                                                                                t
-                                                                                                                "Show the Daselt tutorial when `d-emacs-mode' is started.
+  t
+  "Show the Daselt tutorial when `d-emacs-mode' is started.
 
 If non-nil, the tutorial will be displayed upon entering the mode."
-                                                                                                                :type 'boolean
-                                                                                                                :group 'd-emacs-mode)
+  :type 'boolean
+  :group 'd-emacs-mode)
 
 
 ;; This is a custom mostly to have it saved between sessions.
@@ -128,12 +128,12 @@ d-emacs-mode is installed."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-keep-tab-bar-status
-    nil
-    "If t, keep the tab bar disabled when commands like `tab-new' are used.
+  nil
+  "If t, keep the tab bar disabled when commands like `tab-new' are used.
 
 Uses advice."
-    :type 'boolean
-    :group 'd-emacs-mode)
+  :type 'boolean
+  :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-include-imitation-commands
                                         (not (bound-and-true-p d-emacs-stump))
@@ -145,7 +145,7 @@ combinations."
                                         :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-redaselt
-  "main"
+  (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
   "Have the `redaselt' shell script run with this string as arguments when
 `d-emacs-mode' starts.
 
@@ -157,8 +157,23 @@ this off."
 (defcustom d-emacs-mode-undaselt
   nil
   "Have the `undaselt' shell script run with these arguments when `d-emacs-mode'
-ends."
+ends.
+
+You can use this to specify the layout you're using outside of Daselt, if any.
+
+Note that the default of the `undaselt' script is `en us'."
   :type 'string
+  :group 'd-emacs-mode)
+
+(defcustom d-emacs-mode-redaselt-time
+  1
+  "The time the redaselt-script should wait between (re)starting udevmon and
+setting the xkb-layout.
+
+You only need to set this by hand if the current amount of time is too little
+for your computer to properly start up udevmon. In that case, the layout will
+not be set."
+  :type 'number
   :group 'd-emacs-mode)
 
 ;;;;; Maps
@@ -319,6 +334,23 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
       (error (progn (setq display-buffer-alist display-buffer-alist-backup)
                     (error (error-message-string report)))))))
 
+(defun d-emacs-mode-redaselt ()
+  "Run the `redaselt'-bash-script to switch your keyboard layout.
+
+The keyboard-layout loaded is the d-xkb-variant specified in `d-emacs-mode-redaselt'."
+  (interactive)
+  (async-shell-command (concat "redaselt "
+                               d-emacs-mode-redaselt
+                               (number-to-string d-emacs-mode-redaselt-time))))
+
+(defun d-emacs-mode-undaselt ()
+  "Run the `redaselt'-bash-script to switch your keyboard layout.
+
+The keyboard-layout loaded is the d-xkb-variant specified by
+`d-emacs-xkb-layout'."
+  (interactive)
+  (async-shell-command (concat "undaselt "
+                               d-emacs-mode-undaselt)))
 
 ;;;;; The pkg-configs-issue
 (defun d-emacs-mode--pkg-configs-directory-test (dir)
@@ -434,7 +466,7 @@ to reduce the startup time."
 
         (if d-emacs-mode-redaselt
             (if (file-exists-p "/usr/share/X11/xkb/symbols/dxkb")
-                (async-shell-command (concat "redaselt " d-emacs-mode-redaselt))
+                (d-emacs-mode-redaselt)
               (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/'")))
         
         ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
@@ -535,8 +567,7 @@ to reduce the startup time."
     (d-emacs-dirs--reset-backed-up-variables)
 
     ;; Restore the keyboard layout.
-    (if d-emacs-mode-undaselt
-        (async-shell-command (concat "undaselt " d-emacs-mode-undaselt)))))
+    (if d-emacs-mode-undaselt (d-emacs-mode-undaselt))))
 
 ;;;; Provide
 (provide 'd-emacs-mode)
