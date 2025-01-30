@@ -198,17 +198,17 @@ If non-nil, previously read buffers will not be closed."
 
 ;;;; Constants
 (defconst d-emacs-dirs-pkg-type-modifiers-list
-                                '("user-defined" "special")
-                                "Type modifiers that files in `d-emacs-dirs-pkg-configs-directory ' can have.")
+                                        '("user-defined" "special")
+                                        "Type modifiers that files in `d-emacs-dirs-pkg-configs-directory ' can have.")
 
 (defconst d-emacs-dirs-supported-type-data-list
-          `(("del" "lispcode" ("trim-lines-of" "fill-docstrings-of") ("byte-compile" "load-elc-or"))
+  `(("del" "lispcode" ("trim-lines-of" "fill-docstrings-of" "add-el-symlink-for") ("byte-compile" "load-elc-or"))
     ("dal" "advicelists" ("add"))
     ("dbl" "bindlists" ("apply" "save" "sort-and-format"))
     ("dcl" "constantlists" ("set"))
     ("daf" "adviceforms" ("add"))
     ("dbf" "bindforms" ("apply" "save")))
-          "List of supported data types along with their save operations.
+  "List of supported data types along with their save operations.
 
 Each element should be a list consisting of
 
@@ -267,22 +267,22 @@ the processed structure of DIR."
    dir
    funtests
    (lambda (idx lst)
-     (and (file-directory-p (nth idx lst))
+             (and (file-directory-p (nth idx lst))
           (if dirtest (funcall dirtest (nth idx lst)) t)))
    (lambda (directory)
-     (let ((maybesorted (directory-files directory t
+             (let ((maybesorted (directory-files directory t
                                          (if allfiles
-                                             (rx (or (: (not ".") (* not-newline))
+                                                             (rx (or (: (not ".") (* not-newline))
                                                      (: "." (+ (not ".")))))
                                            "\\`[^.]"
                                            ) sortfun)))
        (if sortfun
-           (funcall sortfun maybesorted)
-         maybesorted)))
+                           (funcall sortfun maybesorted)
+                 maybesorted)))
    (lambda (lst result)
-     (if result
-         (append lst (list result))
-       lst))
+             (if result
+                         (append lst (list result))
+               lst))
    lstcolfun
    nil
    nil
@@ -567,27 +567,39 @@ If the base name of FILEPATH contains the string `-init-', skip the eval conditi
         filepath #',(intern (concat (symbol-name operation) "-lispcode-in-file"))))))
  (operation d-emacs-dirs-fill-docstrings-of d-emacs-dirs-trim-lines-of d-emacs-dirs-byte-compile d-emacs-dirs-load-elc-or))
 
+(defun d-emacs-dirs-add-el-symlink-for-lispcode-in-file (fname)
+  "Add a symlink to FNAME from an eponymous name with an el-extension.
+
+This way, Emacs's help functions can still find definitions in FNAME while you
+can open the file as a del-file so that the save hooks are in place.
+
+If an el-file with that name already exists, no new link is added."
+  (declare (ftype (function (string) t)))
+  (let ((el-name (concat (file-name-sans-extension fname) ".el")))
+    (unless (file-exists-p el-name)
+      (f-symlink fname el-name))))
+
 ;;;;;; dbl
 (defun d-emacs-dirs--delete-duplicate-comment-lines ()
-  "Delete duplicate comment lines separated by blank lines in current buffer."
-  (declare (ftype (function () void)))
-  (save-excursion
-    (d-emacs-base-goto-min)
-    (while (not (eobp))
+                                                      "Delete duplicate comment lines separated by blank lines in current buffer."
+                                                      (declare (ftype (function () void)))
+                                                      (save-excursion
+                                                        (d-emacs-base-goto-min)
+                                                        (while (not (eobp))
       (let* ((curline (thing-at-point 'line t))
              (curpos (line-end-position))
              (curtrimline (string-trim curline))
              (nextline "")
              (nexttrimline ""))
         (if (string-match-p (rx string-start ";") curtrimline)
-            (cl-loop while (and (not (eobp))
+                                                                                                                    (cl-loop while (and (not (eobp))
                                 (not (string-match-p (rx string-start (not ";"))
                                                      nexttrimline)))
                      do (progn (forward-line)
                                (setq nextline (thing-at-point 'line t))
                                (setq nexttrimline (string-trim nextline))
                                (if (string= curtrimline nexttrimline)
-                                   (delete-region curpos (line-end-position))))))
+                                                                                                                                           (delete-region curpos (line-end-position))))))
         (goto-char curpos)
         (unless (eobp)
           (forward-line))))))
@@ -1098,12 +1110,12 @@ is enabled by default. Its default is `featurep'."
          (deffun (or deffun (lambda (pkg) (let ((val (featurep pkg)))
                                        (if val t)))))
          (customlist (mapcar (lambda (pkg)
-                               `(defcustom ,(intern (concat pfx (symbol-name pkg)))
-                                  ,(funcall deffun pkg)
-                                  ,(d-emacs-base-fill-string-like-docstring
+                                                 `(defcustom ,(intern (concat pfx (symbol-name pkg)))
+                                                    ,(funcall deffun pkg)
+                                                    ,(d-emacs-base-fill-string-like-docstring
                                     (format "Set to t to have `d-emacs-dirs-act-on-pkg-files-by-type' recurse into the %sdirectory whose name is %s." pfx pkg))
-                                  :type 'boolean
-                                  :group ',group))
+                                                    :type 'boolean
+                                                    :group ',group))
                              (d-emacs-dirs-recurse-through-directory
                               dir
                               `(((lambda (filepath) (intern (file-name-base filepath)))
