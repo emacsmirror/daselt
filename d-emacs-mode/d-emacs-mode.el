@@ -339,9 +339,10 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 
 The keyboard-layout loaded is the d-xkb-variant specified in `d-emacs-mode-redaselt'."
   (interactive)
-  (async-shell-command (concat "redaselt "
-                               d-emacs-mode-redaselt
-                               (number-to-string d-emacs-mode-redaselt-time))))
+  (async-shell-command (d-emacs-base-concat-with-separators " "
+                                                            "redaselt"
+                                                            d-emacs-mode-redaselt
+                                                            (number-to-string d-emacs-mode-redaselt-time))))
 
 (defun d-emacs-mode-undaselt ()
   "Run the `redaselt'-bash-script to switch your keyboard layout.
