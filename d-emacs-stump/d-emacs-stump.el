@@ -143,6 +143,17 @@ should be in."
   :type 'directory
   :group 'd-emacs-stump)
 
+(defun d-emacs-stump--pkg-configs-directory-enter-manually ()
+  "Specify manually where the pkg-configs-directory is."
+  (declare (ftype (function () string)))
+  (let* ((use-file-dialog nil) ; Dialog box doesn't let you select folder (or I was doing something wrong).
+         (filename (read-file-name "Please point d-emacs-stump to its pkg-configs directory (in the directory where d-emacs-stump is installed, include trailing backslash): "
+                                   nil nil
+                                   #'d-emacs-stump--pkg-configs-directory-test)))
+    (customize-save-variable 'd-emacs-stump-pkg-configs-directory
+                             filename)
+    filename))
+
 (defun d-emacs-stump--find-pkg-configs-directory ()
   "Find d-emacs-stump's pkg-configs-directory.
 
@@ -192,9 +203,9 @@ representing a mode for which key remappings should be suspended."
 
 Call the resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
   (declare (ftype (function (&optional string) string)))
+  (interactive)
   (unless (bound-and-true-p d-emacs-stump-pkg-configs-directory)
     (error "Please set d-emacs-stump-pkg-configs-directory"))
-  (interactive)
   (let* ((print-level nil)
          (print-length nil)
          (filename (or filename "d-stump.lisp"))
