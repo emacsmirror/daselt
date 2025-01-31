@@ -1,9 +1,12 @@
-;;; d-emacs-tri.el -- d-tri functions           -*- lexical-binding: t; -*-
+;;; d-emacs-tri.el --- Functions to generate Tridactyl configs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Keywords: tools
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
+;; Keywords: tools, external
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-tri/
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

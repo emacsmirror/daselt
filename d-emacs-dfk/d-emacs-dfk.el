@@ -218,6 +218,7 @@ Keys are chosen to solve the following problems:
 (defcustom d-emacs-dfk-keyboard-layout-type
   "iso"
   "Type of the keyboard layout.
+
 This is how the keys on your keyboard are a arrranged.
 Currently supported options are ansi and iso."
   :type 'string
@@ -226,10 +227,10 @@ Currently supported options are ansi and iso."
 
 (defcustom d-emacs-dfk-bindform-symbol
   'd-emacs-dfk-default-bindlist-form
-  "Symbol of the bindlist form used to generate the
-d-emacs-dfk-config.
-The value of this symbol should be a form that evaluates to a bindlist
-with the following format:
+  "Symbol of the bindlist form used to generate the d-emacs-dfk-config.
+
+The value of this symbol should be a form that evaluates to a bindlist with the
+following format:
 
 - it should be headless.
 
@@ -237,18 +238,18 @@ with the following format:
 
   - consist of KEY coordinates describing a key.
 
-  - be a string that becomes a key-definition according to
-`input-event-codes' once it is upcased and `KEY_' is added at the
-beginning of the string. You can look up key definitions at
+  - be a string that becomes a key-definition according to `input-event-codes'
+once it is upcased and `KEY_' is added at the beginning of the string. You can
+look up key definitions at
 https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h.
 
 - each cdr should be a cons consisting of
 
-  - a car that is either a coordinate or description or a list of
-    them. This is what KEY sends when it is tapped.
+  - a car that is either a coordinate or description or a list of them. This is
+    what KEY sends when it is tapped.
 
-  - a cdr with the same specifications as the car. This is what KEY
-    sends when it is held."
+  - a cdr with the same specifications as the car. This is what KEY sends when
+    it is held."
   :type 'symbol
   :group 'd-emacs-dfk)
 
@@ -420,6 +421,7 @@ Otherwise, the time should be given in Milliseconds."
 (defcustom d-emacs-dfk-insert-names
   nil
   "Replace keycodes with keynames.
+
 If you set to t, `d-emacs-dfk' expects a copy of
 `https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/uapi/linux/input-event-codes.h'
 called `input-event-codes.h' in your `d-emacs-dfk-directory'."
@@ -511,7 +513,7 @@ These are inherited from xkb.")
 
 (defconst d-emacs-dfk-layers-by-length
   (sort (d-emacs-base-fiber-by-property d-emacs-dfk-layer-level-shifts
-                                        (lambda (lst) (length (cdr lst))) t)        
+                                        (lambda (lst) (length (cdr lst))) t)
         (lambda (cns1 cns2) (< (car cns1) (car cns2)))))
 
 (defconst d-emacs-dfk-modifiers
@@ -691,7 +693,7 @@ extension in FILENAME."
         (d-emacs-dfk-generate-config)))))
 
 (defun d-emacs-dfk-coords-modifier (coords)
-  "Return the modifier that a pair of key coords represents if there is one."
+  "Return the modifier that a pair of key COORDS represents if there is one."
   (declare (ftype (function (list
                              ;; (list number) ; Compiler complains.
                              )
@@ -718,7 +720,7 @@ extension in FILENAME."
      #'d-emacs-base-setequal)))
 
 (cl-defun d-emacs-dfk-datum-to-string (dtm)
-  "Convert a d-emacs-dfk-datum into a string."
+  "Convert a d-emacs-dfk-datum DTM into a string."
   (declare (ftype (function ((or string list
                                  ;; (list number) ; Compiler complains.
                                  ))

@@ -225,7 +225,7 @@ here.
 
 Each element should be a three-coordinate list. The first coordinate is the
 layer. The second coordinate is the row. The third is the row shift. These
-should all be given in absolute coordinates. "
+should all be given in absolute coordinates."
   :type '(repeat coords)
   :group 'd-emacs-coords)
 
@@ -370,7 +370,7 @@ Daselt coordinates."
 
 (defun d-emacs-coords--remove-formal-places (coords)
   "Return COL with the places between COL and the mid of ROW
-                    removed.
+removed.
 
 ROW and COL should be in relative coordinates."
   (declare (ftype (function (list) number))
@@ -404,7 +404,7 @@ ROW and COL should be in relative coordinates."
 ;;;;;; Coordinatization
 (defun d-emacs-coords-coordinatize-layout (layout)
   "Add relative coordinates to every element of the d-emacs-coords-layout
-  LAYOUT.
+LAYOUT.
 
 Resulting layout places are pairs of coordinates and their corresponding key
 symbol."
@@ -482,7 +482,7 @@ Assumes all coords in COORDSLIST have the same length."
 (defun d-emacs-coords-binding (coords &optional layout wholebinds)
   "Retrieve the value of LAYOUT at COORDS.
 
-The default of LAYOUT is the symbol-value of `d-emacs-dfk-layout' or
+The default of LAYOUT is the `symbol-value' of `d-emacs-dfk-layout' or
 `d-emacs-xkb-layout' if the first is undefined.
 
 COORDS should contain three numbers:
@@ -697,6 +697,7 @@ Return the modified list."
 ;;;;;; Drawing
 (defun d-emacs-coords-draw-placevals (placevals &optional bounds runcoords org noupperrow)
   "Draw a keyboard layout from PLACEVALS.
+
 PLACEVALS is a list of cons cells containing coordinates and a value.
 
 Each PLACEVAL is a cons cell where the car is a pair of coordinates and the cdr
@@ -709,7 +710,7 @@ are calculated using the given placevals.
 RUNCOORDS is used for recursive calls and typically should not be manually
 specified.
 
-If ORG is non-nil, output is formatted as an org-mode table.
+If ORG is non-nil, output is formatted as an `org-mode' table.
 
 NOUPPERROW is only of importance if ORG is t. Then it removes the upper row of
 the org table, which indexes coordinates."
@@ -847,7 +848,7 @@ prompted to enter three regular expressions.
 - If all three COORDRXs are variable, layers containing matches are drawn
   sequentially.
 
-The default for LAYOUT is the symbol-value of `d-emacs-dfk-layout' or
+The default for LAYOUT is the `symbol-value' of `d-emacs-dfk-layout' or
 `d-emacs-xkb-layout' if that is undefined.
 
 The resulting matches are drawn either in the current buffer or a temporary
@@ -878,7 +879,7 @@ buffer, depending on the invocation context."
 (defun d-emacs-coords-draw-keyboard-layer (laynum &optional org layout)
   "Draw the layer of LAYOUT with LAYNUM.
 
-The default for LAYOUT is the symbol-value of `d-emacs-dfk-layout' or
+The default for LAYOUT is the `symbol-value' of `d-emacs-dfk-layout' or
 `d-emacs-xkb-layout' if that is undefined.
 
 If ORG is t, draw an org-table."
@@ -911,7 +912,9 @@ If ORG is t, draw an org-table."
   "Draw the coordinates of LAYER.
 
 By default, LAYER is the first layer of `d-emacs-dfk-layout' or
-`d-emacs-xkb-layout' if `d-emacs-dfk-layout' is undefined."
+`d-emacs-xkb-layout' if `d-emacs-dfk-layout' is undefined.
+
+Use an org table if ORG is t."
   (declare (ftype (function (&optional (list (list t)) boolean)
                             void)))
   (interactive)
@@ -928,7 +931,7 @@ By default, LAYER is the first layer of `d-emacs-dfk-layout' or
 
 ;;;;;; Layout Generation
 (defun d-emacs-coords-layout-from-placevals (placevals &optional standardval)
-  "Generate a layout from a family of placevals.
+  "Generate a layout from a family of PLACEVALS.
 
 Add STANDARDVAL to empty strings for all places without values.
 

@@ -6,7 +6,7 @@
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-coords/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-base/
 
 ;; This file is part of Daselt.
 
@@ -111,7 +111,7 @@ from index 0).")
 ;;;; Functions
 ;;;;; Numbers
 (defun d-emacs-base-numbers-between (num1 num2 &optional exclude1 exclude2)
-  "Generate a list of integers from num1 to num2, including both.
+  "Generate a list of integers from NUM1 to NUM2, including both.
 
 With optional arguments EXCLUDE1 and EXCLUDE2, don't include num1 repectively
 num2."
@@ -151,8 +151,7 @@ This function does not include the full path or trailing slashes in the result."
   (file-name-nondirectory (directory-file-name (file-name-parent-directory filepath))))
 
 (defun d-emacs-base-definition-names-in-file (filename)
-  "Return the names of definitions in FILENAME, listed according to definition
-  type.
+  "Return the names of definitions in FILENAME, listed by definition type.
 
 Works for definition types in `d-emacs-base-definition-types-list'."
   (declare (ftype (function (string) void)))
@@ -570,6 +569,7 @@ Return the filled string."
             (end-of-defun)))))))
 
 (defun d-emacs-base-fill-string-like-docstring (str)
+  "Fill STR like it's a docstring."
   (declare (ftype (function (string) string))
            (pure t))
   (with-temp-buffer
@@ -697,7 +697,7 @@ effects."
   "Remove the element at index IDX from LST and return the resulting list.
 
 The operation does not modify the original list."
-  (declare (ftype (function (list integer) list)) 
+  (declare (ftype (function (list integer) list))
            (pure t))
   (let (runlst)
     (cl-loop for runidx from 0 to (1- (length lst))
@@ -795,8 +795,7 @@ The opposite of ftruncate, but unlike ftruncate accepts non-floating numbers."
         (1- tnum)))))
 
 (defun d-emacs-base-roundout (num)
-  "Round NUM to the nearest integer whose value is higher and return as an
-  integer.
+  "Round NUM to the nearest integer whose value is higher and return integer.
 
 The opposite of truncate, but unlike truncate accepts non-floating numbers."
   (declare (ftype (function (number) integer))
@@ -1130,7 +1129,7 @@ See `d-emacs-base-def-by-forms' for more documentation."
 
 Works for definition types in `d-emacs-base-definition-types-list'."
   (declare (ftype (function () string)))
-  (mark-defun) 
+  (mark-defun)
   (condition-case nil
       (let* ((defn (d-emacs-base-read-region))
              (first-symbol (nth 0 defn))
@@ -1195,13 +1194,12 @@ properties."
   (remove-text-properties (point-min) (point-max) '(invisible nil)))
 
 (defun d-emacs-base-restore-invisible-text-properties (regions)
-  "Restore `invisible' text properties to the regions specified."
+  "Restore `invisible' text properties to the REGIONS specified."
   (dolist (region regions)
     (add-text-properties (nth 0 region) (nth 1 region) `(invisible ,(nth 2 region)))))
 
 (defmacro d-emacs-base-with-all-visible (&rest body)
-  "Execute BODY with all text visible, restoring previous invisibility
-afterwards."
+  "Execute BODY with all text visible, restoring invisibility afterwards."
   `(let ((saved-overlays (d-emacs-base-save-invisible-overlays))
          (saved-regions (d-emacs-base-save-invisible-regions)))
      (unwind-protect
@@ -1247,11 +1245,11 @@ rest."
   (save-excursion
     (d-emacs-base-with-all-visible
      (goto-char (point-min))
-     (while (re-search-forward 
+     (while (re-search-forward
              (eval `(rx line-start
                         (* space)
                         "("
-                        ,(append '(or) 
+                        ,(append '(or)
                                  (mapcar #'symbol-name d-emacs-base-definition-types-list))
                         (+ space)
                         (1+ (not (any space)))))

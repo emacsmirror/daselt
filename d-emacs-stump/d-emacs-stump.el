@@ -3,7 +3,10 @@
 ;; Copyright (C) 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
 ;; Keywords: tools, external
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-stump/
 
 ;; This file is part of Daselt.
 
@@ -29,7 +32,7 @@
 ;; and provides a standard-configuration in its `pkg-configs'-directory.
 
 ;; Key Features:
-;; - **Automatic Configuration Generation**: Transforms d-emacs-bind-bindlists 
+;; - **Automatic Configuration Generation**: Transforms d-emacs-bind-bindlists
 ;;   into StumpWM-compatible initialization files.
 
 ;; - **Modular Support**: Includes configurations of modules such as binwarp,
@@ -91,10 +94,10 @@
   :prefix "d-emacs-stump-")
 
 (defcustom d-emacs-stump
-            nil
-            "Non-nil means StumpWM integration with d-emacs-stump is active."
-            :type 'boolean
-            :group 'd-emacs-stump)
+  nil
+  "Non-nil means StumpWM integration with d-emacs-stump is active."
+  :type 'boolean
+  :group 'd-emacs-stump)
 
 (defcustom d-emacs-stump-init-directory
   "~/.stumpwm.d/d-stump/"
@@ -115,7 +118,7 @@
   :group 'd-emacs-stump)
 
 
-;;;;; Set pkg-configs directory
+;;;;; Set-configs directory
 (defun d-emacs-stump--pkg-configs-directory-test (dir)
   "Test whether DIR looks like d-emacs-stump's pkg-configs-directory."
   (declare (ftype (function (str) boolean))
@@ -439,7 +442,7 @@ It processes each bindlist in `D-EMACS-STUMP-REMAPPED-KEYS-SPECIAL-BINDLISTS`
 and combines them with the exceptions defined in
 `d-emacs-stump-remap-exceptions-alist`, producing remapped keys that meet the
 specified conditions."
-  (declare (ftype (function () 
+  (declare (ftype (function ()
                             ;; void  ; Compiler complains.
                             t)))
   (let* ((base-file-path (concat d-emacs-stump-pkg-configs-directory

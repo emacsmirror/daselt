@@ -6,7 +6,7 @@
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-tri/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-xkb/
 
 ;; This file is part of Daselt.
 
@@ -108,7 +108,7 @@ or includes special keys. In this case:
   counted in the row length.
 
 For example, ISO layouts contain an additional key in the lower key row
-(the B-row) next to the left Shift key named `LSGT'. Thus, the entry for
+\(the B-row) next to the left Shift key named `LSGT'. Thus, the entry for
 this row in the default value of `d-emacs-xkb-rowlist' is a list containing
 the strings `LSGT` and `B`. Since there is no number at the beginning of the
 list, the number of keys in the row without the special key `LSGT` is taken
@@ -312,7 +312,7 @@ layer number LAYNUM."
                            (list (or binding
                                      (d-emacs-xkb--inherit-from-parent-map
                                       beg end laynum rowidx eltnum))))))))
-          (d-emacs-base-index d-emacs-xkb-rowlist))) 
+          (d-emacs-base-index d-emacs-xkb-rowlist)))
 
 (defun d-emacs-xkb-generate-layouts ()
   "Generate lists from layouts defined in the `d-emacs-xkb-file'.
@@ -370,7 +370,7 @@ the file have the same number of layers."
     (d-emacs-xkb-generate-layouts)
 
   ;; Generate layout constants.
-  (error "No valid layout file has been provided yet. Please remedy this by setting the custom `d-emacs-xkb-file', then running `d-emacs-xkb-generate-layouts' and `d-emacs-xkb-set-layouts-list' again."))
+  (error "No valid layout file has been provided yet. Please remedy this by setting the custom `d-emacs-xkb-file', then running `d-emacs-xkb-generate-layouts' and `d-emacs-xkb-set-layouts-list' again"))
 
 (d-emacs-xkb-set-layouts-list)
 

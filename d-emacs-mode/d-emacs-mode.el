@@ -6,7 +6,7 @@
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-bind/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-mode/
 
 ;; This file is part of Daselt.
 
@@ -136,13 +136,13 @@ Uses advice."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-include-imitation-commands
-                                        (not (bound-and-true-p d-emacs-stump))
-                                        "Include the imitation commands on keys C-(1 0 [-2-2]) in `d-emacs-mode-map'.
+  (not (bound-and-true-p d-emacs-stump))
+  "Include the imitation commands on keys C-(1 0 [-2-2]) in `d-emacs-mode-map'.
 
 Unnecessary if you are using a program like StumpWM to translate these key
 combinations."
-                                        :type 'boolean
-                                        :group 'd-emacs-mode)
+  :type 'boolean
+  :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-redaselt
   (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
@@ -347,7 +347,7 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
   "Run the `redaselt'-bash-script to switch your keyboard layout.
 
 The keyboard-layout loaded is the d-xkb-variant specified in
-`d-emacs-mode-redaselt'."
+the option `d-emacs-mode-redaselt'."
   (interactive)
   (async-shell-command (d-emacs-base-concat-with-separators " "
                                                             "redaselt"
@@ -433,7 +433,7 @@ to reduce the startup time."
                   d-emacs-mode-pkg-configs-directory))
 
         ;; `d-emacs-mode' without translated keys is borderline unusable.
-        (setq d-emacs-bind-translate-keys t) 
+        (setq d-emacs-bind-translate-keys t)
 
         ;; Find out if it's an ansi keyboard
         (unless (or (not d-emacs-mode-show-tutorial)
@@ -486,7 +486,7 @@ to reduce the startup time."
           (if (eq (symbol-value 'd-emacs-xkb-layout)
                   'd-emacs-xkb-main-layout)
               (setopt d-emacs-dfk-outside-mods nil)
-            (setopt d-emacs-dfk-outside-mods t)))        
+            (setopt d-emacs-dfk-outside-mods t)))
 
         ;; Generate d-emacs-dfk-layout from the d-emacs-xkb-layout.
         (d-emacs-dfk-import-current-layout)
@@ -546,7 +546,7 @@ to reduce the startup time."
               )
           (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `((d-emacs-dirs-with-eval-load-elc-or-lispcode-in-file .  "del")
-             (d-emacs-dirs-save-and-with-eval-apply-bindlists-in-file 
+             (d-emacs-dirs-save-and-with-eval-apply-bindlists-in-file
               . ("dbl" "regular"))
 
              ;; Do rebinding before other operations, that way if something goes wrong, at least the layout is defined.

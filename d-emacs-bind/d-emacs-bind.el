@@ -117,28 +117,25 @@ in your `d-emacs-xkb-layout' and `d-emacs-dfk-layout'.")
 
 ;;;; Constants
 (defconst d-emacs-bind-modifiers-list
-                                  (list ?C ?H ?M ?S ?s ?A)
-                                  "List of modifiers in their standard order in
-                                  Daselt.
+  (list ?C ?H ?M ?S ?s ?A)
+  "List of modifiers in their standard order in Daselt.
 
 Note that this is different from the standard order of modifiers in Emacs.")
 
 (defconst d-emacs-bind-discrete-modifiers-list
-    (list ?M ?s ?A)
-    "List of discrete modifiers in their standard order in Daselt.")
-
-
+  (list ?M ?s ?A)
+  "List of discrete modifiers in their standard order in Daselt.")
 
 (defconst d-emacs-bind-layers-to-shift-list
-    '(2 8)
-    "Layers to which a shift modifier should be added when `d-emacs-bind-string'
+  '(2 8)
+  "Layers to which a shift modifier should be added when `d-emacs-bind-string'
 is called with CSECTOSHFT set.")
 
 (defconst d-emacs-bind-no-shift-list
   '("'")
   "List of strings on layers in `d-emacs-bind-layers-to-shift-list' that should
 not be replaced by their downcased version with a shift modifier when
-`d-emacs-bind-string' is called with `csectoshft' set to t.") 
+`d-emacs-bind-string' is called with `csectoshft' set to t.")
 
 
 ;;;; Customs
@@ -222,8 +219,8 @@ suffixes."
   :group 'd-emacs-bind)
 
 (defcustom d-emacs-bind-outside-translations-alist
-                nil
-                "Alist of key combinations that are translated from outside to Emacs.
+  nil
+  "Alist of key combinations that are translated from outside to Emacs.
 
 Automatically generated from the contents of the remapped-keys-file.
 
@@ -231,8 +228,8 @@ If you have d-emacs-stump, you can use `d-stump-translated-emacs-keys' to set
 this.
 
 Automatically set when starting `d-emacs-mode' if `d-stump' is t."
-                :type '(alist :key-type string :value-type string)
-                :group 'd-emacs-bind)
+  :type '(alist :key-type string :value-type string)
+  :group 'd-emacs-bind)
 
 
 (defcustom d-emacs-bind-no-shift-if-string-list
@@ -355,7 +352,7 @@ d-emacs-xkb coordinate list."
   "Return t if CNS looks like a binding in prefix-suffix-coords-form.
 
 This means its car is cons whose car is a cons of two strings and whose cdr is
-either nil or a cns for which d-emacs-coords-p is t, and it is either not a
+either nil or a cns for which `d-emacs-coords-p' is t, and it is either not a
 proper list or its second element is not a binding."
   (declare (ftype (function (cons) boolean))
            (pure t))
@@ -366,15 +363,15 @@ proper list or its second element is not a binding."
            (d-emacs-coords-p (cdar cns)))))
 
 (defun d-emacs-bind-elaborate-form-p (cns)
-      "Return t if CNS looks like a binding in elaborate form.
+  "Return t if CNS looks like a binding in elaborate form.
 
 This means its car is cons whose car is a cons of a list and a string and whose
-cdr is either nil or a cns for which d-emacs-coords-p is t, and it is either not
-a proper list or its second element is not a binding."
-      (declare (ftype (function (cons) boolean))
+cdr is either nil or a cns for which `d-emacs-coords-p' is t, and it is either
+not a proper list or its second element is not a binding."
+  (declare (ftype (function (cons) boolean))
            (pure t))
-      (cl-check-type cns cons)
-      (and (consp (car cns)) (consp (caar cns))
+  (cl-check-type cns cons)
+  (and (consp (car cns)) (consp (caar cns))
        (listp (caaar cns)) (stringp (cdaar cns))
        (or (not (cdar cns))
            (d-emacs-coords-p (cdar cns)))))
@@ -635,7 +632,7 @@ match is found, the suffix is converted into an elaborate binding."
 If the binding is given by a binding string, it extracts the prefix, the suffix
 and its corresponding coordinates from the string by matching the end of the
 string against the symbols in the layout. If no matching suffix in the layout
-given by d-emacs-xkb-layout is found, it tries to extract modifiers from the
+given by `d-emacs-xkb-layout' is found, it tries to extract modifiers from the
 string and returns the string along with the extracted modifiers and nil in
 place of coordinates.
 
@@ -881,7 +878,7 @@ there for the sorting order."
 (defun d-emacs-bind-sort-and-format-bindlist (blist &optional coordsonly prefun modlist)
   "Sort a d-emacs-xkb bindlist BLIST and format the result.
 
-Key combinations that are not matched by the layout in d-emacs-xkb-layout are
+Key combinations that are not matched by the layout in `d-emacs-xkb-layout' are
 put at the very top (because they are most likely errors or depreciated).
 
 Modifiers are ordered according to their order in MODLIST
@@ -901,7 +898,7 @@ Keys are ordered according to their layer, row and place in the row.
 With optional argument COORDSONLY, the function translates bindings that are
 given by a binding string into ones given by coordinates if that is possible,
 i.e. if the end of the binding string corresponds to a signal in the
-d-emacs-xkb-layout.
+`d-emacs-xkb-layout'.
 
 PREFUN is a function that is applied to the bindlist after it is transformed
 into an elaborate bindlist. This is useful to apply functions that should act on
@@ -1079,7 +1076,7 @@ bindings are reduced."
                                                            ";;;;;; %s"
                                                            prefix2))))))
 
-                              (if (and (or (not eqpfx)                                           
+                              (if (and (or (not eqpfx)
                                            (and (not eqlay)
                                                 ;; This clause is for the specific case that function keys are on a shift-layer.
                                                 (or coordsonly
@@ -1358,8 +1355,7 @@ coordinates)."
 
 ;;;;;; Generation
 (defun d-emacs-bind--generate-define-key-strings-from-bindlist (blist)
-  "Create a `define-key' string for each binding in the currently marked
-bindlist."
+  "Create a `define-key' string for each binding in BLIST."
   (declare (ftype (function (list) (list string)))
            (side-effect-free t))
   (let* ((map (car blist))
@@ -1378,7 +1374,7 @@ bindlist."
 
 ;;;;; Saving
 (defun d-emacs-bind--set-bindlist-symbol (sym blist filename)
-  "Set SYM to BLIST and mention its setting place in documentation."               
+  "Set SYM to BLIST and mention its setting place FILENAME in documentation."
   (declare (ftype (function (symbol list string) symbol)))
   (set sym blist)
   (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
@@ -1565,7 +1561,7 @@ no backup is made, indicating that a prior backup exists. BACKUPPFX is
 If WITHEVAL is t, the bindlist will still be applied without evaluation if it is
 in a file with `-init-' in its base name. Be careful, if the map the bindlist is
 applied to is not loaded, application will throw an error."
-  (declare (ftype (function (list &optional string boolean) 
+  (declare (ftype (function (list &optional string boolean)
                             ;; void  ; Compiler complains.
                             t)))
   (let* ((pkgname (d-emacs-base-containing-directory-base-name (buffer-file-name)))
@@ -1770,7 +1766,7 @@ modifiers of the layer."
                                   (d-emacs-bind--elbinds-matching-modifier-regexps
                                    (symbol-value blistsymb) mods)))
                     0
-                    laycoord)))    
+                    laycoord)))
     (funcall
      (if (called-interactively-p 'any)
          #'d-emacs-coords-draw-placevals-in-temp-buffer

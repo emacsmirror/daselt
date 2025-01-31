@@ -262,27 +262,27 @@ the processed structure of DIR."
                              (function (list) list)
                              ;; (function (list string) (list string)) ; SORTFUN  ; Compiler complains.
                              boolean) ; CONTT
-                            t))) 
+                            t)))
   (d-emacs-base-funcalls-recursively
    dir
    funtests
    (lambda (idx lst)
-             (and (file-directory-p (nth idx lst))
+     (and (file-directory-p (nth idx lst))
           (if dirtest (funcall dirtest (nth idx lst)) t)))
    (lambda (directory)
-             (let ((maybesorted (directory-files directory t
+     (let ((maybesorted (directory-files directory t
                                          (if allfiles
-                                                             (rx (or (: (not ".") (* not-newline))
+                                             (rx (or (: (not ".") (* not-newline))
                                                      (: "." (+ (not ".")))))
                                            "\\`[^.]"
                                            ) sortfun)))
        (if sortfun
-                           (funcall sortfun maybesorted)
-                 maybesorted)))
+           (funcall sortfun maybesorted)
+         maybesorted)))
    (lambda (lst result)
-             (if result
-                         (append lst (list result))
-               lst))
+     (if result
+         (append lst (list result))
+       lst))
    lstcolfun
    nil
    nil
@@ -401,7 +401,7 @@ This loads the code of all regular files in
   (declare (ftype (function (list
                              ;; (list (cons (function (string) t) ; Compiler complains.
                              ;;             (or string list
-                             ;;                 (list string) 
+                             ;;                 (list string)
                              ;;                 (function (string) boolean))))
                              &optional string boolean (function (list) list)
                              ;; (function ((list string) (list string))) ; Compiler complains.
@@ -462,7 +462,7 @@ is t."
 Wraps functions in FUNTYPES in
 `d-emacs-dirs--execute-and-maybe-kill-file-buffer'. Convert errors produced by
 them into warnings, then send them to `d-act-on-pkg-files-by-type'. See
-``d-act-on-pkg-files-by-type'.' for further documentation."
+`d-act-on-pkg-files-by-type'. for further documentation."
   (let ((newfuntypes (mapcar (lambda (funtype)
                                (let ((fun (car funtype))
                                      (type (cdr funtype)))
@@ -642,7 +642,7 @@ replace matching binding strings with prefix-coords pairs."
 
 (defun d-emacs-dirs-with-eval-apply-bindlist (blist &optional backuppfx)
   "A wrapper around `d-emacs-dirs-with-eval-apply-bindlist' which sets WITHEVAL
-  to t.
+to t.
 
 Evaluation can still be stopped by putting `-init-' into the base file name of
 the containing file.
@@ -686,7 +686,7 @@ PFX is the prefix for the save and backup variables."
   (let ((blistfile (or blistfile (buffer-file-name))))
     (d-emacs-dirs-act-on-sexps-in-file
      blistfile
-     (lambda () 
+     (lambda ()
        (let ((blist (d-emacs-base-read-region)))
          (cl-flet ((apply-from-symbol (symbol)
                      (d-emacs-dirs-with-eval-apply-bindlist (symbol-value symbol))))
@@ -698,18 +698,18 @@ PFX is the prefix for the save and backup variables."
     nil))
 
 (defun d-emacs-dirs-with-eval-reset-bindlists-in-file (&optional blistfile backuppfx)
-                              "Backup and bind all the bindlists in the file BLISTFILE.
+  "Backup and bind all the bindlists in the file BLISTFILE.
 
 BLISTFILE can be selected interactively from available bindlists in
 `d-emacs-directory/pkg-configs/d-emacs/'. If BLISTFILE is nil, defaults to the
 current buffer's file name. BACKUPPFX is forwarded to
 `d-emacs-dirs-with-eval-apply-bindlist'."
-                              (declare (ftype (function (&optional string string) void)))
-                              (interactive  (list (d-emacs-dirs--pick-pkg-file-by-type '("dbl" "regular"))))
-                              (let ((blistfile (or blistfile (buffer-file-name)))
+  (declare (ftype (function (&optional string string) void)))
+  (interactive  (list (d-emacs-dirs--pick-pkg-file-by-type '("dbl" "regular"))))
+  (let ((blistfile (or blistfile (buffer-file-name)))
         (backuppfx (or backuppfx "d-emacs-")))
     (cl-flet ((restorefun (blist)
-                                            (let* ((map (or (d-emacs-bind-head blist)
+                (let* ((map (or (d-emacs-bind-head blist)
                                 (d-emacs-base-intern-from-parts
                                  (d-emacs-base-containing-directory-base-name
                                   blistfile)
@@ -731,10 +731,10 @@ current buffer's file name. BACKUPPFX is forwarded to
                               (evalcond (if double-head-p (d-emacs-bind-head blist))))
                          (d-emacs-bind-with-eval-unless-init
                           blistfile (if double-head-p
-                                                                                                (lambda (blist) (mapcar #'restorefun (cdr blist)))
-                                                                  (lambda (blist) (restorefun blist)))
+                                        (lambda (blist) (mapcar #'restorefun (cdr blist)))
+                                      (lambda (blist) (restorefun blist)))
                           evalcond))))))
-                              nil)
+  nil)
 
 ;;;;;; dbf
 (defun d-emacs-dirs-save-bindforms-in-file (&optional bformfile pfx)
@@ -810,8 +810,8 @@ condition. Otherwise, the name of the containing directory is used."
   nil)
 
 (defun d-emacs-dirs-with-eval-reset-constantlists-in-file (&optional constfile pfx)
-  "For each constant in a constantlist in this file, reset the constant if a
-  backup exists.
+  "For each constant in a constantlist in CONSTFILE, reset the constant if a
+backup exists.
 
 The backup should be a variable of the form PFX-CONSTNAME-backup.
 
@@ -965,7 +965,7 @@ how it is if it is matched.
 
 If you don't want to change a coordinate, you can feed the function nil instead
 of a COORDLIST. The optional arguments are directly forwarded to
-d-emacs-dirs--sort-and-format-bindlists, see the documentation there for their
+`d-emacs-dirs--sort-and-format-bindlists', see the documentation there for their
 function.
 
 MODLIST, COORDSONLY and DIRECTORY are forwarded to
@@ -1126,7 +1126,7 @@ is enabled by default. Its default is `featurep'."
 
 (defmacro d-emacs-dirs-create-pkg-customization-options-by-variable (&optional dirvar pfx defval)
   "Like `d-emacs-dirs-create-pkg-customization-options', but DIRVAR should be a
-  variable containing a directory path.
+variable containing a directory path.
 
 See `d-emacs-dirs-create-pkg-customization-options' for more documentation."
   `(d-emacs-dirs-create-pkg-customization-options ,(symbol-value dirvar) ,pfx ,defval))
@@ -1467,7 +1467,7 @@ and, if so, calls it with the name of the current file. Otherwise, it calls `d-e
 
 (defmacro d-emacs-dirs-create-save-customized-modes-by-variable (typelistsym &optional pfx defaultvalfun)
   "Like `d-emacs-dirs-create-save-customized-modes', but TYPELISTSYM should be a
-          symbol bound to a typelist.
+symbol bound to a typelist.
 
 See `d-emacs-dirs-create-save-customized-modes' for more documentation."
   (remq nil `(d-emacs-dirs-create-save-customized-modes ,(symbol-value typelistsym) ,pfx ,defaultvalfun)))
