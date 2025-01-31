@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 
-;; This package provides the function `d-emacs-tri-generate-config', whichcan
+;; This package provides the function `d-emacs-tri-generate-config', which can
 ;; generate a Tridactyl-keyconfig from a d-emacs-bindlist, and bindlist
 ;; housing Daselt's standard Tridactyl config.
 
