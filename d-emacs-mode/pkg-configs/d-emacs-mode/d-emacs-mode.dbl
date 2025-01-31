@@ -228,16 +228,16 @@
 ;;;;;; H-
 ;;;;;;; H-2
 ;;;;;;;; H-2-0
- (("H-" . (2 0 -5)) . #'winner-undo)
- (("H-" . (2 0 -4)) . #'delete-other-windows)
- (("H-" . (2 0 -3)) . #'windmove-up)
- (("H-" . (2 0 -2)) . #'windmove-left)
- (("H-" . (2 0 -1)) . #'split-window-below)
- (("H-" . (2 0 1)) . #'split-window-right)
- (("H-" . (2 0 2)) . #'windmove-right)
- (("H-" . (2 0 3)) . #'windmove-down)
- (("H-" . (2 0 4)) . #'delete-window)
- (("H-" . (2 0 5)) . #'winner-redo)
+ (("H-" . (2 0 -5)) unless d-emacs-mode-exchange-H-2-H-6 #'winner-undo)
+ (("H-" . (2 0 -4)) unless d-emacs-mode-exchange-H-2-H-6 #'delete-other-windows)
+ (("H-" . (2 0 -3)) unless d-emacs-mode-exchange-H-2-H-6 #'windmove-up)
+ (("H-" . (2 0 -2)) unless d-emacs-mode-exchange-H-2-H-6 #'windmove-left)
+ (("H-" . (2 0 -1)) unless d-emacs-mode-exchange-H-2-H-6 #'split-window-below)
+ (("H-" . (2 0 1)) unless d-emacs-mode-exchange-H-2-H-6 #'split-window-right)
+ (("H-" . (2 0 2)) unless d-emacs-mode-exchange-H-2-H-6 #'windmove-right)
+ (("H-" . (2 0 3)) unless d-emacs-mode-exchange-H-2-H-6 #'windmove-down)
+ (("H-" . (2 0 4)) unless d-emacs-mode-exchange-H-2-H-6 #'delete-window)
+ (("H-" . (2 0 5)) unless d-emacs-mode-exchange-H-2-H-6 #'winner-redo)
 
 ;;;;;;;; H-2-1
  (("H-" . (2 1 -3)) . #'icicle-switch-to/from-minibuffer)
@@ -258,6 +258,19 @@
 ;;;;;;;; H-5-0
  (("H-" . (5 0 -1)) . #'swiper-all-thing-at-point)
  (("H-" . (5 0 1)) . #'swiper-thing-at-point)
+
+;;;;;;; H-6
+;;;;;;;; H-6-0
+ (("H-" . (6 0 -5)) . (if d-emacs-mode-exchange-H-2-H-6 #'winner-undo))
+ (("H-" . (6 0 -4)) . (if d-emacs-mode-exchange-H-2-H-6 #'delete-other-windows))
+ (("H-" . (6 0 -3)) . (if d-emacs-mode-exchange-H-2-H-6 #'windmove-up))
+ (("H-" . (6 0 -2)) . (if d-emacs-mode-exchange-H-2-H-6 #'windmove-left))
+ (("H-" . (6 0 -1)) . (if d-emacs-mode-exchange-H-2-H-6 #'split-window-below))
+ (("H-" . (6 0 1)) . (if d-emacs-mode-exchange-H-2-H-6 #'split-window-right))
+ (("H-" . (6 0 2)) . (if d-emacs-mode-exchange-H-2-H-6 #'windmove-right))
+ (("H-" . (6 0 3)) . (if d-emacs-mode-exchange-H-2-H-6 #'windmove-down))
+ (("H-" . (6 0 4)) . (if d-emacs-mode-exchange-H-2-H-6 #'delete-window))
+ (("H-" . (6 0 5)) . (if d-emacs-mode-exchange-H-2-H-6 #'winner-redo))
 
 ;;;;;;; H-7
 ;;;;;;;; H-7-0

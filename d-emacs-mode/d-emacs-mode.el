@@ -155,15 +155,15 @@ this off."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-undaselt
-  nil
-  "Have the `undaselt' shell script run with these arguments when `d-emacs-mode'
+    nil
+    "Have the `undaselt' shell script run with these arguments when `d-emacs-mode'
 ends.
 
 You can use this to specify the layout you're using outside of Daselt, if any.
 
 Note that the default of the `undaselt' script is `en us'."
-  :type 'string
-  :group 'd-emacs-mode)
+    :type 'string
+    :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-redaselt-time
   1
@@ -174,6 +174,15 @@ You only need to set this by hand if the current amount of time is too little
 for your computer to properly start up udevmon. In that case, the layout will
 not be set."
   :type 'number
+  :group 'd-emacs-mode)
+
+(defcustom d-emacs-mode-exchange-H-2-H-6
+  nil
+  "Set to t to exchange H-2 with H-6 bindings.
+
+On some systems this might be necessary because H in combination with other
+modifiers acts as a level 5 shift for currently unknown reasons."
+  :type 'boolean
   :group 'd-emacs-mode)
 
 ;;;;; Maps
