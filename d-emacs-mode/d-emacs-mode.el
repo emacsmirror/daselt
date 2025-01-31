@@ -346,7 +346,8 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 (defun d-emacs-mode-redaselt ()
   "Run the `redaselt'-bash-script to switch your keyboard layout.
 
-The keyboard-layout loaded is the d-xkb-variant specified in `d-emacs-mode-redaselt'."
+The keyboard-layout loaded is the d-xkb-variant specified in
+`d-emacs-mode-redaselt'."
   (interactive)
   (async-shell-command (d-emacs-base-concat-with-separators " "
                                                             "redaselt"
