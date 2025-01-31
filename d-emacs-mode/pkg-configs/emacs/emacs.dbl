@@ -84,7 +84,7 @@
  ((4 0 -3) . #'d-emacs-coords-draw-placevals-from-coordrx)
  ((4 0 -2) . #'d-emacs-coords-draw-keyboard-layer)
  ((4 0 2) . #'d-emacs-bind-draw-bindlist-layer)
- ((4 0 3) . #'d-emacs-bind-emacs-bind-draw-bindings-from-regexps))
+ ((4 0 3) . #'d-emacs-bind-draw-bindings-from-regexps))
 
 ;;;; isearch-mode-map
 (isearch-mode-map
