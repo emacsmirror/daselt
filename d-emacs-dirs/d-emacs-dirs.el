@@ -371,7 +371,7 @@ Parameters:
   modifiers is `regular', the base name is checked for whether it does not
   contain the word `special'.
 
-- DIR: If provided,execute in this directory.
+- DIR: If provided, execute in this directory.
 
 - CUSTOMT: If non-nil, apply the function only to files in directories whose
   corresponding custom is t, determined by `d-emacs-dirs-custom-t-p'.
