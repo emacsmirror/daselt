@@ -156,8 +156,8 @@ this off."
 
 (defcustom d-emacs-mode-undaselt
     nil
-    "Have the `undaselt' shell script run with these arguments when `d-emacs-mode'
-ends.
+    "Have the `undaselt' shell script run with these arguments when
+`d-emacs-mode' ends.
 
 You can use this to specify the layout you're using outside of Daselt, if any.
 

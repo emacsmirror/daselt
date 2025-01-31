@@ -222,8 +222,8 @@ suffixes."
   :group 'd-emacs-bind)
 
 (defcustom d-emacs-bind-outside-translations-alist
-      nil
-      "Alist of key combinations that are translated from outside to Emacs.
+                nil
+                "Alist of key combinations that are translated from outside to Emacs.
 
 Automatically generated from the contents of the remapped-keys-file.
 
@@ -231,9 +231,23 @@ If you have d-emacs-stump, you can use `d-stump-translated-emacs-keys' to set
 this.
 
 Automatically set when starting `d-emacs-mode' if `d-stump' is t."
-      :type '(alist :key-type string :value-type string)
-      :group 'd-emacs-bind)
+                :type '(alist :key-type string :value-type string)
+                :group 'd-emacs-bind)
 
+
+(defcustom d-emacs-bind-no-shift-if-string-list
+  '("<backspace>" "<return>")
+  "List of signals that are on a shift layer but should not be treated as such
+if they are given as strings.
+
+An implicit shift-modifier is applied to bindings on the second layer when they
+are given by coordinates with a C-modifier (because of reasons), but when they
+are given by strings, any modifiers are either given explicitly or implicitly by
+using uppercase letters. So when function keys that exist on the second layer
+are given by strings, it has to be specified that they should not be treated as
+being on the second layer when they are formatted."
+  :type '(repeat string)
+  :group 'd-emacs-bind)
 
 ;;;; Functions
 ;;;;; Predicates
@@ -245,13 +259,13 @@ found."
   (declare (ftype (function (t) boolean))
            (pure t))
   (if (atom cand)
-      nil
-    (cl-loop for elt in cand
+                  nil
+          (cl-loop for elt in cand
              do (if (d-emacs-bind-p elt)
-                    (cl-return t)
-                  (unless (atom elt)
+                                (cl-return t)
+                        (unless (atom elt)
                     (if (d-emacs-bind-bindlist-p elt)
-                        (cl-return t)))))))
+                                    (cl-return t)))))))
 
 (defun d-emacs-bind-bindlist-symb-p (sym)
     "Return t if SYM is a bindlist symbol.
@@ -823,8 +837,8 @@ there for the sorting order."
          (srtmods2 (caaar elbind2))
          (suffix1 (cdaar elbind1))
          (suffix2 (cdaar elbind2))
-         (hassfx1 (and suffix1 (stringp suffix1) (not (string-empty-p suffix1))))
-         (hassfx2 (and suffix2 (stringp suffix2) (not (string-empty-p suffix2))))
+         (hassfx1 (d-emacs-base-string-exists-and-nonempty suffix1))
+         (hassfx2 (d-emacs-base-string-exists-and-nonempty suffix2))
          (coords1 (cdar elbind1))
          (coords2 (cdar elbind2))
 
@@ -844,12 +858,12 @@ there for the sorting order."
         (cond  ;; Unmatched bindings should come first.
          (distinct-coords-existence (not (car distinct-coords-existence)))
 
-         (compmods (car compmods))
-
-         ;; If they have the same prefixes and COORDSONLY isn't on, look if one of them has been given as a key combination string by comparing suffixes. A non-empty suffix indicates that that binding features a key combination string and should come before one than does not have a suffix.
+         ;; If COORDSONLY isn't on, look if one of them has been given as a key combination string by comparing suffixes. A non-empty suffix indicates that that binding features a key combination string and should come before one than does not have a suffix.
          ((unless coordsonly distinct-suffix-existence)
           (car distinct-suffix-existence))
 
+         (compmods (car compmods))
+         
          ((and hassfx1 hassfx2 (not coordsonly))
           (let ((compsfx (d-emacs-bind-compare-suffixes suffix1 suffix2)))
             (if compsfx (car compsfx)
@@ -961,153 +975,160 @@ bindings are reduced."
   (declare (ftype (function (list &optional boolean) list))
            (side-effect-free t))
   (let (runlst)
-    (cl-flet (;; Function to add paragraphs
-              (hasstr (arg) (and arg (not (string-empty-p arg)))))
+    (remq nil ; Remove if-clauses that are evaluated negatively.
+          (cl-loop for n from 0 to (1- (length sblist))
+                   do (let ((potbind (nth n sblist)))
+                        (if (not (d-emacs-bind-p potbind))
+                            (setq runlst (append runlst (list potbind)))
 
-      (remq nil ; Remove if-clauses that are evaluated negatively.
-            (cl-loop for n from 0 to (1- (length sblist))
-                     do (let ((potbind (nth n sblist)))
-                          (if (not (d-emacs-bind-p potbind))
-                              (setq runlst (append runlst (list potbind)))
+                          (if (or (= n 0)
+                                  (not (d-emacs-bind-p (nth (1- n) sblist))))
 
-                            (if (or (= n 0)
-                                    (not (d-emacs-bind-p (nth (1- n) sblist))))
+                              (let* ((binding potbind)
 
-                                (let* ((binding potbind)
+                                     (indmods (caaar binding))
+                                     (prefix (d-emacs-bind-modifiers-to-string
+                                              (d-emacs-base-remove-indices indmods)))
+                                     (haspfx (d-emacs-base-string-exists-and-nonempty prefix))
 
-                                       (indmods (caaar binding))
-                                       (prefix (d-emacs-bind-modifiers-to-string
-                                                (d-emacs-base-remove-indices indmods)))
-                                       (haspfx (hasstr prefix))
+                                     (suffix (cdaar binding))
+                                     (hassfx (d-emacs-base-string-exists-and-nonempty suffix))
 
-                                       (suffix (cdaar binding))
-                                       (hassfx (hasstr suffix))
+                                     (coords (cdar binding))
+                                     (layer (car coords))
+                                     (row (nth 1 coords)))
 
-                                       (coords (cdar binding))
-                                       (layer (car coords))
-                                       (row (nth 1 coords)))
+                                (setq runlst
+                                      (append runlst
+                                              (list
+                                               (if (and coords (or coordsonly
+                                                                   (not hassfx)))
+                                                   "\n;;;;; Coordinates\n"
+                                                 "\n;;;;; Strings\n")
 
-                                  (setq runlst
-                                        (append runlst
-                                                (list
-                                                 (if (and coords (or coordsonly
-                                                                     (not hassfx)))
-                                                     "\n;;;;; Coordinates\n"
-                                                   "\n;;;;; Strings\n")
+                                               (if haspfx
+                                                   (format ";;;;;; %s\n" prefix))
 
-                                                 (if haspfx
-                                                     (format ";;;;;; %s\n" prefix))
-
-                                                 (if (and layer (or (not hassfx)
-                                                                    coordsonly))
-                                                     (format ";;;;;;; %s%s\n" prefix layer))
-
-                                                 (if (and row (or (not hassfx)
+                                               (if (and layer (or (not hassfx)
                                                                   coordsonly))
-                                                     (format ";;;;;;;; %s%s-%s\n"
-                                                             prefix
-                                                             layer
-                                                             row))
+                                                   (format ";;;;;;; %s%s\n" prefix layer))
 
-                                                 binding))))
+                                               (if (and row (or (not hassfx)
+                                                                coordsonly))
+                                                   (format ";;;;;;;; %s%s-%s\n"
+                                                           prefix
+                                                           layer
+                                                           row))
 
-                              (let* ((binding1 (nth (1- n) sblist))
-                                     (binding2 (nth n sblist))
-                                     (indmods1 (caaar binding1))
-                                     (indmods2 (caaar binding2))
-                                     ;; (prefix1 (d-emacs-bind-modifiers-to-string
-                                     ;;           (mapcar (lambda (indmod) (nth 1 indmod)) indmods2)))
-                                     (prefix2 (d-emacs-bind-modifiers-to-string
-                                               (d-emacs-base-remove-indices indmods2)))
-                                     (suffix1 (cdaar binding1))
-                                     (suffix2 (cdaar binding2))
-                                     (hassfx1 (hasstr suffix1))
-                                     (hassfx2 (hasstr suffix2))
-                                     (coords1 (cdar binding1))
-                                     (coords2 (cdar binding2))
-                                     (layer1 (nth 0 coords1))
-                                     (layer2 (nth 0 coords2))
-                                     (row1 (nth 1 coords1))
-                                     (row2 (nth 1 coords2))
+                                               binding))))
 
-                                     (eqmatch (not (and (not coords1)
-                                                        coords2)))
-                                     (eqhssfx (or (and hassfx1 hassfx2)
-                                                  (and (not hassfx1) (not hassfx2))))
-                                     (eqpfx (or (and (not indmods1) (not indmods2))
-                                                (and indmods1 indmods2
-                                                     (not ; Nil means they are the same.
-                                                      (d-emacs-bind-compare-standardized-modifier-lists
-                                                       indmods1
-                                                       indmods2)))))
-                                     (eqlay (or (and (not layer1) (not layer2))
-                                                (and layer1 layer2 (= layer1 layer2))))
-                                     (eqrow (or (and (not row1) (not row2))
-                                                (and row1 row2 (= row1 row2)))))
+                            (let* ((binding1 (nth (1- n) sblist))
+                                   (binding2 (nth n sblist))
+                                   (indmods1 (caaar binding1))
+                                   (indmods2 (caaar binding2))
+                                   ;; (prefix1 (d-emacs-bind-modifiers-to-string
+                                   ;;           (mapcar (lambda (indmod) (nth 1 indmod)) indmods2)))
+                                   (prefix2 (d-emacs-bind-modifiers-to-string
+                                             (d-emacs-base-remove-indices indmods2)))
+                                   (suffix1 (cdaar binding1))
+                                   (suffix2 (cdaar binding2))
+                                   (hassfx1 (d-emacs-base-string-exists-and-nonempty suffix1))
+                                   (hassfx2 (d-emacs-base-string-exists-and-nonempty suffix2))
+                                   (coords1 (cdar binding1))
+                                   (coords2 (cdar binding2))
+                                   (layer1 (nth 0 coords1))
+                                   (layer2 (nth 0 coords2))
+                                   (row1 (nth 1 coords1))
+                                   (row2 (nth 1 coords2))
 
-                                ;; The transition between strings and coordinates has to be placed differently depending on whether the suffixes are replaced by coordinates.
-                                (if (or (and (not eqmatch) coordsonly)
-                                        (and (not eqhssfx) (not coordsonly)))
-                                    (setq runlst (append runlst
-                                                         (list (d-emacs-base-generate-newlines 2)
-                                                               (format
-                                                                ";;;;; Coordinates")))))
+                                   (eqmatch (not (and (not coords1)
+                                                      coords2)))
+                                   (eqhssfx (or (and hassfx1 hassfx2)
+                                                (and (not hassfx1) (not hassfx2))))
+                                   (eqpfx (or (and (not indmods1) (not indmods2))
+                                              (and indmods1 indmods2
+                                                   (not ; Nil means they are the same.
+                                                    (d-emacs-bind-compare-standardized-modifier-lists
+                                                     indmods1
+                                                     indmods2)))))
+                                   (eqlay (or (and (not layer1) (not layer2))
+                                              (and layer1 layer2 (= layer1 layer2))))
+                                   (eqrow (or (and (not row1) (not row2))
+                                              (and row1 row2 (= row1 row2)))))
 
-                                (if (not eqpfx)
-                                    (setq runlst (append
-                                                  runlst
-                                                  (if (d-emacs-base-string-exists-and-nonempty prefix2)
-                                                      (list (d-emacs-base-generate-newlines
-                                                             (if (or (and (not eqmatch)
-                                                                          coordsonly)
-                                                                     (and (not eqhssfx)
-                                                                          (not coordsonly)))
-                                                                 1
-                                                               2))
+                              ;; The transition between strings and coordinates has to be placed differently depending on whether the suffixes are replaced by coordinates.
+                              (if (or (and (not eqmatch) coordsonly)
+                                      (and (not eqhssfx) (not coordsonly)))
+                                  (setq runlst (append runlst
+                                                       (list (d-emacs-base-generate-newlines 2)
+                                                             (format
+                                                              ";;;;; Coordinates")))))
+
+                              (if (not eqpfx)
+                                  (setq runlst (append
+                                                runlst
+                                                (if (d-emacs-base-string-exists-and-nonempty prefix2)
+                                                    (list (d-emacs-base-generate-newlines
+                                                           (if (or (and (not eqmatch)
+                                                                        coordsonly)
+                                                                   (and (not eqhssfx)
+                                                                        (not coordsonly)))
+                                                               1
+                                                             2))
+                                                          (format
+                                                           ";;;;;; %s"
+                                                           prefix2))))))
+
+                              (if (and (or (not eqpfx)                                           
+                                           (and (not eqlay)
+                                                ;; This clause is for the specific case that function keys are on a shift-layer.
+                                                (or coordsonly
+                                                    (not (and hassfx2 (cl-member suffix2 d-emacs-bind-no-shift-if-string-list :test #'string=))))))
+
+                                       (or coordsonly
+                                           (and (not hassfx1) (not hassfx2))
+                                           (and (not coordsonly)
+                                                (not eqmatch))))
+
+                                  (setq runlst (append runlst
+                                                       (if layer2
+                                                           (list
+                                                            ;; If both have different match status or prefixes, a headline above the layer number will be inserted, so only one newline is needed. If both are given by strings, one is matched and the other is not, the match status is irrelevant and two newlines are needed.
+                                                            (d-emacs-base-generate-newlines
+                                                             (if (and eqpfx
+                                                                      (or eqmatch
+                                                                          (and (not coordsonly)
+                                                                               hassfx1 hassfx2)))
+                                                                 2
+                                                               1))
                                                             (format
-                                                             ";;;;;; %s"
-                                                             prefix2))))))
+                                                             ";;;;;;; %s%s"
+                                                             prefix2
+                                                             layer2))))))
 
-                                (if (and (or (not eqpfx) (not eqlay))
-                                         (or coordsonly
-                                             (and (not hassfx1) (not hassfx2))
-                                             (and (not coordsonly)
-                                                  (not eqmatch))))
+                              (if (and (not (and eqpfx eqlay eqrow))
+                                       (or coordsonly
+                                           (and (not hassfx1) (not hassfx2))))
+                                  (setq runlst (append runlst
+                                                       (if row2
+                                                           (list (d-emacs-base-generate-newlines (if (and eqpfx
+                                                                                                          eqlay)
+                                                                                                     2
+                                                                                                   1))
+                                                                 (format
+                                                                  ";;;;;;;; %s%s-%s"
+                                                                  prefix2
+                                                                  layer2
+                                                                  row2))))))
 
-                                    (setq runlst (append runlst
-                                                         (if layer2
-                                                             (list (d-emacs-base-generate-newlines (if (and eqpfx
-                                                                                                            eqmatch)
-                                                                                                       2
-                                                                                                     1))
-                                                                   (format
-                                                                    ";;;;;;; %s%s"
-                                                                    prefix2
-                                                                    layer2))))))
-
-                                (if (and (not (and eqpfx eqlay eqrow))
-                                         (or coordsonly
-                                             (and (not hassfx1) (not hassfx2))))
-                                    (setq runlst (append runlst
-                                                         (if row2
-                                                             (list (d-emacs-base-generate-newlines (if (and eqpfx
-                                                                                                            eqlay)
-                                                                                                       2
-                                                                                                     1))
-                                                                   (format
-                                                                    ";;;;;;;; %s%s-%s"
-                                                                    prefix2
-                                                                    layer2
-                                                                    row2))))))
-
-                                (setq runlst (append runlst
-                                                     (list (d-emacs-base-generate-newlines 1)
-                                                           binding2)))))))
-                     finally return runlst)))))
+                              (setq runlst (append runlst
+                                                   (list (d-emacs-base-generate-newlines 1)
+                                                         binding2)))))))
+                   finally return runlst))))
 
 ;;;;;;; Strings
 (defun d-emacs-bind--sort-and-format-marked-bindlist-string (&optional coordsonly prefun modlist)
-  "Sort and format a marked bindlist-string.
+    "Sort and format a marked bindlist-string.
 
 The function will read the contents of the selected region and process them
 using `d-emacs-bind-sort-and-format-bindlist' and
@@ -1116,12 +1137,12 @@ marked region with the result.
 
 COORDSONLY, PREFUN and MODLIST are passed forward to
 `d-emacs-bind-sort-and-format-bindlist'."
-  (declare (ftype (function (&optional boolean (function (list) list) list
+    (declare (ftype (function (&optional boolean (function (list) list) list
                                        ;; (list integer) ; Compiler complains.
                                        )
                             ;; void  ; Compiler complains.
                             t)))
-  (let* ((blist (d-emacs-base-read-region))
+    (let* ((blist (d-emacs-base-read-region))
          (formattedblist
           (d-emacs-bind-sort-and-format-bindlist blist coordsonly prefun modlist))
          (formattedstring (d-emacs-bind--format-bindlist-into-string-before-insertion formattedblist)))

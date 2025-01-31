@@ -316,6 +316,8 @@ Note that you can use all helper functions for d-stump-bindlists just like for d
 One great annoyance about StumpWM is that it cannot access the higher layers of an xkb-layout (see here: [[https://github.com/stumpwm/stumpwm/wiki][Problems Stump has with XKB]]). Since Daselt houses most of its special symbols on its fourth layer and its numbers on the third, this makes direct interfacing with StumpWM fairly annoying. If you need to communicate with StumpWM often, it is recommended to instead [[https://kaashif.co.uk/2015/06/28/hacking-stumpwm-with-common-lisp/][use SLIME]] to connect to StumpWM from within Emacs. However, for everyday usage this should be unnecessary, and you can always write permanent changes into d-stumps pkg-configs, then re-generate your init, then reload it in StumpWM using *(0 -1 6) (0 -1 -4)*")
   "Since you have the option ~d-emacs-stump~ set to nil, it is assumed that you do not plan on using Daselt's StumpWM component. Remember that if you change your mind you can re-generate this tutorial to find here installation and usage instructions.
 
+If you are using Stump to translate your main key combinations to arrow keys, you might need the untranslated key combinations in key sequences. To get around this, I use the shifted versions of the same key combinations. So, for instance, *C-t* is translated to *<right>* when you're using the main layout, so for key sequences that use *C-t* I use *C-T*, which is not translated. This only works if *C-T* is not bound to another command, in that case the command you want has to be called by its name. 
+
 ")
 
 "** d-tri
