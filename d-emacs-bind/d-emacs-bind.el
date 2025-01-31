@@ -1907,7 +1907,7 @@ automatically and you don't have to worry about it."
                                         (modmatchedplacevals-C-g-remapped
                                          (if (and (equal mods '(C))
                                                   (not (or (bound-and-true-p d-emacs-stump)
-                                                           d-emacs-bind-translate-C-1-1--2-C-g)))
+                                                           d-emacs-bind-translate-C-1-1--2-C-g))) 
                                              (mapcar
                                               (lambda (placeval)
                                                 (let* ((coords (car placeval))
@@ -1917,7 +1917,7 @@ automatically and you don't have to worry about it."
                                                             val)
                                                     placeval)))
                                               modmatchedplacevals)
-                                           modmatchedbinds))
+                                           modmatchedplacevals))
                                         
                                         (coordmatchedplacevals
                                          (if (d-emacs-base-string-exists-and-nonempty coordrx)
@@ -1944,12 +1944,12 @@ automatically and you don't have to worry about it."
 
                                       ;; If there's something on layer 0, use extended boundaries.
                                       (or boundaries
-                                          (if (d-emacs-base-exists-p valmatchedplacevals
-                                                                     (lambda (placeval)
-                                                                       (= (caar placeval) 0)))
+                                          (if (d-emacs-base-exists-p
+                                               valmatchedplacevals
+                                               (lambda (placeval)
+                                                 (= (caar placeval) 0)))
                                               (nth 0 d-emacs-bind-boundaries)
-                                            (nth 1 d-emacs-bind-boundaries)))
-                                      )))))
+                                            (nth 1 d-emacs-bind-boundaries))))))))
                 
                 do (insert "\n"))))))
 
