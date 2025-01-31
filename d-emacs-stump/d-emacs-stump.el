@@ -76,9 +76,10 @@
 
 (defvar d-emacs-xkb-special-key-names)
 
-(require 'd-emacs-dirs)
-(require 'd-emacs-bind)
+(require 'd-emacs-coords)
 (require 'd-emacs-xkb)
+(require 'd-emacs-bind)
+(require 'd-emacs-dirs)
 
 ;;;; Constants
 (defconst d-emacs-stump-modules
