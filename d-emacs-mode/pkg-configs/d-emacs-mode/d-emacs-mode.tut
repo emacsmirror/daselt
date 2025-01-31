@@ -298,6 +298,37 @@ Putting your bindings into bindlists has a variety of advantages:
 ** Creating and sharing configurations
 d-emacs's capabilities go beyond the writing of bindlists — the package ~d-emacs-dirs~, which has been required by ~d-emacs-mode~, can be used to generate Emacs-configurations spread over multiple files. These can be shared in a way that they don't require the same packages to be installed — each folder in the configuration creates an option that is automatically set to nil if the corresponding package is not installed. This should make it possible to share configurations similar to how themes are shared — they can be toggled on and off and don't need the same packages to be installed. Moreover, the behavior of files in the package directory upon saving can be customized to a great degree. See the documentation of ~d-emacs-dirs~ for more details.
 
+** Contributing
+If there is a mode or package you are using regularly for which Daselt doesn't provide a configuration, you are welcome to add your own. To do this, it seems like a good idea to follow the [[https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org][MELPA workflow]]:
+
+- Clone the [[https://gitlab.com/nameiwillforget/d-emacs][d-emacs-repository]].
+
+- Add a pull request branch.
+
+- Add a subdirectory of the pkg-configs-directory in d-emacs-mode for the package or mode you want to contribute,
+
+- Create
+
+  - dbl-files for bindlists,
+
+  - dcl-files for constants that have to be set,
+
+  - adl-files for advicelists,
+
+  - dbf-files for bindforms (lisp-expressions which evaluate to bindlists),
+
+  - adf-files for adviceforms (which should similarly evaluate to advicelists),
+
+  - del-files for lisp-code that should be executed.
+
+- You might want to look at other package-files for inspiration and the documentation of `d-emacs-dirs' to understand how the recursion through subdirectories works.
+
+- Commit and push the changes to your branch.
+
+- Submit a pull request for the new configs.
+
+Currently, the Daselt-heuristics are not documented beyond what is in this tutorial, but the proposed configurations will be reviewed by me so they align with the existing ones. Most importantly, remember that mode-dependent bindings should be housed on layers 4 and 7.
+
 * Instructions for other parts of Daselt
 ** d-stump
 "
