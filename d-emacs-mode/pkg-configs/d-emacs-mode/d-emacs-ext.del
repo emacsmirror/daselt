@@ -655,8 +655,8 @@ needed."
                   (goto-char pos))))
 
             (maybe-expand-abbrev ()
-              (unless (expand-abbrev)
-                (cl-return-from d-emacs-C-3-0-2))))
+              (if (expand-abbrev)
+                  (cl-return-from d-emacs-C-3-0-2))))
 
     (if d-emacs-yasnippet (yas-maybe-expand))
     (if d-emacs-cdlatex (cdlatex-maybe-expand))
@@ -1151,25 +1151,25 @@ files and directories (starting with a period) are left out."
   (interactive "sString: \nsReplacement: \nDDirectory: ")
   (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                          (if (stringp filetest)
-                              (lambda (fname) (if (string-match-p filetest fname) t))
-                            filetest)
+                                                                  (if (stringp filetest)
+                                                                      (lambda (fname) (if (string-match-p filetest fname) t))
+                                                filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                         (lambda (fname) (if (string-match-p dirtest fname) t))
-                       dirtest)))
+                                                                 (lambda (fname) (if (string-match-p dirtest fname) t))
+                                           dirtest)))
     (save-excursion
-      (d-emacs-dirs-recurse-through-directory
+                          (d-emacs-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-            (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
+                                (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-              (let ((file (nth idx flist)))
+                                  (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-      (set-buffer buf))))
+                          (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun d-emacs-open-file-in-new-emacs (&optional filename)
