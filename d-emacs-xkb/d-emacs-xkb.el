@@ -68,6 +68,7 @@
 ;;;; Preamble
 (require 'd-emacs-base)
 
+(require 'cl-lib)
 (declare-function d-emacs-base-mark-line "d-emacs-base" (&optional arg))
 (declare-function d-emacs-base-uppercase-p "d-emacs-base" (str))
 (declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
@@ -354,7 +355,8 @@ the file have the same number of layers."
                                            (d-emacs-xkb--generate-layer laybeg layend laynum))
                                          d-emacs-xkb-layer-numbers-list)))
                           (push layname defined-layouts)))))))
-    (unless d-emacs-xkb-keep-read-buffers (kill-buffer dxkbbuf))))
+    (unless d-emacs-xkb-keep-read-buffers (kill-buffer dxkbbuf))
+    (provide 'd-emacs-xkb-layouts-generated))) ; So we can set d-emacs-xkb-layout afterwards.
 
 ;;;;; Set layouts variable
 (defun d-emacs-xkb-set-layouts-list ()
@@ -362,26 +364,22 @@ the file have the same number of layers."
 `d-emacs-xkb-.*layout'."
   (declare (ftype (function () t)))
   (defconst d-emacs-xkb-layouts
-    (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))
-    "List of d-emacs-xkb-layouts in unextended form. Generated automatically."))
+        (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))
+        "List of d-emacs-xkb-layouts in unextended form. Generated automatically."))
 
 ;;;; Generated Constants
-(condition-case nil
-    (d-emacs-xkb-generate-layouts)
+(with-eval-after-load 'd-emacs-xkb-layouts-generated
+  (d-emacs-xkb-set-layouts-list)
 
-  ;; Generate layout constants.
-  (error "No valid layout file has been provided yet. Please remedy this by setting the custom `d-emacs-xkb-file', then running `d-emacs-xkb-generate-layouts' and `d-emacs-xkb-set-layouts-list' again"))
-
-(d-emacs-xkb-set-layouts-list)
-
-(defcustom d-emacs-xkb-layout
-  'd-emacs-xkb-main-layout
-  "The keyboard-layout you're using.
+  (defcustom d-emacs-xkb-layout
+    'd-emacs-xkb-main-layout
+    "The keyboard-layout you're using.
 
 Should be one of the layouts in the `d-emacs-xkb-file'."
-  :group 'd-emacs-xkb
-  :type 'symbol
-  :options d-emacs-xkb-layouts)
+    :group 'd-emacs-xkb
+    :type 'symbol
+    :options d-emacs-xkb-layouts))
+
 
 ;;;;;
 ;;;; Provide

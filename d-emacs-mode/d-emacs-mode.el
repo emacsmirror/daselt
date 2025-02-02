@@ -65,12 +65,15 @@
 
 
 ;;;; Initialization
+;;;;; Let's read in the dxkb-file
+(eval-when-compile (d-emacs-xkb-generate-layouts))
+
 ;;;;; Customs
 (defgroup d-emacs-mode
-      nil
-      "This group houses all customization options for d-emacs."
-      :group 'd-emacs
-      :prefix "d-emacs-mode-")
+  nil
+  "This group houses all customization options for d-emacs."
+  :group 'd-emacs
+  :prefix "d-emacs-mode-")
 
 (defcustom d-emacs-mode-put-d-emacs-mode-map-into-emulation
   t
@@ -155,15 +158,15 @@ this off."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-undaselt
-    nil
-    "Have the `undaselt' shell script run with these arguments when
+  nil
+  "Have the `undaselt' shell script run with these arguments when
 `d-emacs-mode' ends.
 
 You can use this to specify the layout you're using outside of Daselt, if any.
 
 Note that the default of the `undaselt' script is `en us'."
-    :type 'string
-    :group 'd-emacs-mode)
+  :type 'string
+  :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-redaselt-time
   1
@@ -355,12 +358,12 @@ the option `d-emacs-mode-redaselt'."
                                                             (number-to-string d-emacs-mode-redaselt-time))))
 
 (defun d-emacs-mode-undaselt ()
-  "Run the `redaselt'-bash-script to switch your keyboard layout.
+    "Run the `redaselt'-bash-script to switch your keyboard layout.
 
 The keyboard-layout loaded is the d-xkb-variant specified by
 `d-emacs-xkb-layout'."
-  (interactive)
-  (async-shell-command (concat "undaselt "
+    (interactive)
+    (async-shell-command (concat "undaselt "
                                d-emacs-mode-undaselt)))
 
 ;;;;; The pkg-configs-issue
@@ -384,31 +387,32 @@ The keyboard-layout loaded is the d-xkb-variant specified by
     filename))
 
 (defun d-emacs-mode--find-pkg-configs-directory ()
-  "Find d-emacs-mode's pkg-configs-directory.
+    "Find d-emacs-mode's pkg-configs-directory.
 
 Set the corresponding option so it's saved for future sessions.
 
 If the option already points to something that looks like the right directory,
 don't do anything."
-  (declare (ftype (function () string)))
-  (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-mode-pkg-configs-directory)
+    (declare (ftype (function () string)))
+    (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-mode-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
                                (concat (file-name-directory
                                         (buffer-file-name))
                                        "pkg-configs/")))
                           (if (d-emacs-mode--pkg-configs-directory-test current-pkg-dir)
-                              (customize-save-variable 'd-emacs-mode-pkg-configs-directory
+                                  (customize-save-variable 'd-emacs-mode-pkg-configs-directory
                                                        current-pkg-dir)
                             (d-emacs-mode--pkg-configs-directory-enter-manually)))
       (error (d-emacs-mode--pkg-configs-directory-enter-manually)))))
 
 ;;;;; Find, set and save the directory
-(d-emacs-mode--find-pkg-configs-directory)
+(eval-when-compile
+  (d-emacs-mode--find-pkg-configs-directory))
 
 ;;;; Mode
 ;;;###autoload
 (define-minor-mode d-emacs-mode
-  "Daselt's minor mode.
+    "Daselt's minor mode.
 
 Rebinds most keys and revamps Emacs to implement Daselt's shortcut layout.
 
@@ -418,35 +422,35 @@ files in this directory. Depending on your hardware and installed packages this
 might take between a few seconds and maybe a minute. If you plan on toggling
 `d-emacs-mode' several times you can set `d-emacs-dirs-keep-read-buffers' to t
 to reduce the startup time."
-  :init-value nil
-  :global t
-  :interactive t
-  :lighter "Daselt"
-  (if d-emacs-mode
-      (progn  ;; Set `d-emacs-dirs-pkg-configs-directory' to `d-emacs-mode-pkg-configs-directory' while `d-emacs-mode' is on.
-        (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-dirs-pkg-configs-directory)
+    :init-value nil
+    :global t
+    :interactive t
+    :lighter "Daselt"
+    (if d-emacs-mode
+          (progn  ;; Set `d-emacs-dirs-pkg-configs-directory' to `d-emacs-mode-pkg-configs-directory' while `d-emacs-mode' is on.
+          (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-dirs-pkg-configs-directory)
           (if (bound-and-true-p d-emacs-dirs-pkg-configs-directory)
-              (progn (defvar d-emacs-d-emacs-dirs-pkg-configs-directory-backup)
+                  (progn (defvar d-emacs-d-emacs-dirs-pkg-configs-directory-backup)
                      (setq d-emacs-d-emacs-dirs-pkg-configs-directory-backup
                            d-emacs-dirs-pkg-configs-directory)))
           (setopt d-emacs-dirs-pkg-configs-directory
                   d-emacs-mode-pkg-configs-directory))
 
-        ;; `d-emacs-mode' without translated keys is borderline unusable.
-        (setq d-emacs-bind-translate-keys t)
+          ;; `d-emacs-mode' without translated keys is borderline unusable.
+          (setq d-emacs-bind-translate-keys t)
 
-        ;; Find out if it's an ansi keyboard
-        (unless (or (not d-emacs-mode-show-tutorial)
+          ;; Find out if it's an ansi keyboard
+          (unless (or (not d-emacs-mode-show-tutorial)
                     (not (eq (custom-variable-state 'd-emacs-dfk-keyboard-layout-type t)
                              'standard)))
           (customize-save-variable 'd-emacs-dfk-keyboard-layout-type
                                    (d-emacs-base-remove-text-properties-from-string
                                     (completing-read "Do you have an ansi or iso-keyboard (you have ansi if your left Shift-key is larger than CapsLock)? " d-emacs-dfk-supported-layout-types))))
 
-        (if d-emacs-bind-translate-keys
-            ;; Add the key translations for C-g and ("C-" . (1 1 -2)) if they aren't there yet.
-            (progn (if d-emacs-bind-translate-C-1-1--2-C-g
-                       (let ((transcons
+          (if d-emacs-bind-translate-keys
+                ;; Add the key translations for C-g and ("C-" . (1 1 -2)) if they aren't there yet.
+                (progn (if d-emacs-bind-translate-C-1-1--2-C-g
+                           (let ((transcons
                               `(,(d-emacs-bind-string `(("C-" . (1 1 -2)))) . "C-g"))
                              (revtranscons
                               `("C-g" . ,(d-emacs-bind-string `(("C-" . (1 1 -2)))))))
@@ -456,11 +460,11 @@ to reduce the startup time."
                     (lambda (cns) (key-translate (car cns) (cdr cns)))
                     d-emacs-bind-key-translations-alist)))
 
-        ;; Refresh the d-emacs-xkb-layouts in case someone has changed bindings.
-        (d-emacs-xkb-generate-layouts)
+          ;; Refresh the d-emacs-xkb-layouts in case someone has changed bindings.
+          (d-emacs-xkb-generate-layouts)
 
-        ;; Choose the layout
-        (unless (or (not d-emacs-mode-show-tutorial)
+          ;; Choose the layout
+          (unless (or (not d-emacs-mode-show-tutorial)
                     (not (eq (custom-variable-state 'd-emacs-xkb-layout t)
                              'standard)))
           (customize-save-variable 'd-emacs-xkb-layout
@@ -469,43 +473,43 @@ to reduce the startup time."
                                     (completing-read
                                      "Please pick the Daselt layout you want to use: "
                                      (mapcar (lambda (sym)
-                                               (d-emacs-base-namecore sym
+                                                 (d-emacs-base-namecore sym
                                                                       "d-emacs-xkb-"
                                                                       "-layout"))
                                              d-emacs-xkb-layouts))
                                     "layout")))
 
-        (if d-emacs-mode-redaselt
-            (if (file-exists-p "/usr/share/X11/xkb/symbols/dxkb")
-                (d-emacs-mode-redaselt)
-              (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/'")))
-        
-        ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
-        (unless (not (eq (custom-variable-state 'd-emacs-dfk-outside-mods t)
+          (if d-emacs-mode-redaselt
+                (if (file-exists-p "/usr/share/X11/xkb/symbols/dxkb")
+                    (d-emacs-mode-redaselt)
+                (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/'")))
+          
+          ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
+          (unless (not (eq (custom-variable-state 'd-emacs-dfk-outside-mods t)
                          'standard))
           (if (eq (symbol-value 'd-emacs-xkb-layout)
                   'd-emacs-xkb-main-layout)
-              (setopt d-emacs-dfk-outside-mods nil)
-            (setopt d-emacs-dfk-outside-mods t)))
+                  (setopt d-emacs-dfk-outside-mods nil)
+              (setopt d-emacs-dfk-outside-mods t)))
 
-        ;; Generate d-emacs-dfk-layout from the d-emacs-xkb-layout.
-        (d-emacs-dfk-import-current-layout)
+          ;; Generate d-emacs-dfk-layout from the d-emacs-xkb-layout.
+          (d-emacs-dfk-import-current-layout)
 
-        ;; Set constants
-        (when (bound-and-true-p d-emacs-stump)
+          ;; Set constants
+          (when (bound-and-true-p d-emacs-stump)
           (setopt d-emacs-bind-outside-translations-alist
                   (d-emacs-stump-translated-emacs-keys))
 
           ;; We can also apply the d-emacs-stump-bindlists here.
           (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `(((lambda (filename)
-                (d-emacs-dirs-save-bindlists-in-file filename "d-emacs-stump")) . "dbl")
+                  (d-emacs-dirs-save-bindlists-in-file filename "d-emacs-stump")) . "dbl")
              ((lambda (filename)
-                (d-emacs-dirs-save-bindforms-in-file filename "d-emacs-stump")) . "dbf"))
+                  (d-emacs-dirs-save-bindforms-in-file filename "d-emacs-stump")) . "dbf"))
            d-emacs-stump-pkg-configs-directory t nil "d-emacs-stump"))
 
-        ;; Calculate layer boundaries to simplify calculations by `d-emacs-bind-draw-bindings-from-regexps'.
-        (setq d-emacs-bind-boundaries
+          ;; Calculate layer boundaries to simplify calculations by `d-emacs-bind-draw-bindings-from-regexps'.
+          (setq d-emacs-bind-boundaries
               (list (d-emacs-coords-boundaries
                      (mapcar (lambda (placeval) (car placeval))
                              (d-emacs-base-flatten-until
@@ -524,25 +528,25 @@ to reduce the startup time."
                                1)
                               (lambda (lst) (d-emacs-coords-p (caar lst))))))))
 
-        ;; Add all files in pkg-configs to the load-path.
-        (let ((default-directory d-emacs-dirs-pkg-configs-directory))
+          ;; Add all files in pkg-configs to the load-path.
+          (let ((default-directory d-emacs-dirs-pkg-configs-directory))
           (normal-top-level-add-to-load-path '("."))
           (normal-top-level-add-subdirs-to-load-path))
 
-        ;; Add pkg-config-options
-        (d-emacs-dirs-create-pkg-customization-options-by-variable d-emacs-mode-pkg-configs-directory)
+          ;; Add pkg-config-options
+          (d-emacs-dirs-create-pkg-customization-options-by-variable d-emacs-mode-pkg-configs-directory)
 
-        (setopt d-emacs-d-emacs-mode t) ; This should really be enabled (otherwise it won't recurse into the corresponding directory).
+          (setopt d-emacs-d-emacs-mode t) ; This should really be enabled (otherwise it won't recurse into the corresponding directory).
 
-        ;; Quick keys
-        (d-emacs-mode--generate-quick-key-variables)
+          ;; Quick keys
+          (d-emacs-mode--generate-quick-key-variables)
 
-        ;; Add to emulation
-        (if d-emacs-mode-put-d-emacs-mode-map-into-emulation
-            (add-to-list 'emulation-mode-map-alists
+          ;; Add to emulation
+          (if d-emacs-mode-put-d-emacs-mode-map-into-emulation
+                (add-to-list 'emulation-mode-map-alists
                          `((d-emacs-mode . ,d-emacs-mode-map))))
 
-        (let ((undo-tree-auto-save-history nil) ; Saving undo-state of opened files is useless here and slows down startup.
+          (let ((undo-tree-auto-save-history nil) ; Saving undo-state of opened files is useless here and slows down startup.
               )
           (d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `((d-emacs-dirs-with-eval-load-elc-or-lispcode-in-file .  "del")
@@ -557,12 +561,12 @@ to reduce the startup time."
              (d-emacs-dirs-with-eval-add-adviceforms-in-file . ("daf" "regular")))
            nil t))
 
-        (if d-emacs-mode-globalize-d-emacs-mode-map
-            (progn (unless (boundp d-emacs-global-map-backup)
+          (if d-emacs-mode-globalize-d-emacs-mode-map
+                (progn (unless (boundp d-emacs-global-map-backup)
                      (setq d-emacs-global-map-backup global-map))
                    (setq global-map d-emacs-mode-map)))
 
-        (if d-emacs-mode-show-tutorial (d-emacs-mode-generate-tutorial t)))
+          (if d-emacs-mode-show-tutorial (d-emacs-mode-generate-tutorial t)))
 
     ;; Reset variables and remove advice We have to recurse again instead of
     ;; simply setting the original variables to their backup values because

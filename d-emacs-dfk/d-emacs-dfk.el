@@ -824,11 +824,12 @@ PFX is `d-emacs-xkb-' by default."
        (defconst ,dfkname
          (append layer0layout (symbol-value ',laysym))))))
 
-(defmacro d-emacs-dfk-import-current-layout ()
+(defun d-emacs-dfk-import-current-layout ()
   "Import the layout that is currently specified in `d-emacs-xkb-layout'.
 
 Set the result as the value of `d-emacs-dfk-layout'."
-  `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))
+  (unless (boundp d-emacs-xkb-layout)
+    (eval `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))))
 
 ;;;; Provide
 (provide 'd-emacs-dfk)

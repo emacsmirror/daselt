@@ -540,11 +540,14 @@ Otherwise, return nil."
         ((d-emacs-coords-p (car binding)) (car binding))))
 
 ;;;;;; Elaborate forms
-(defun d-emacs-bind--get-layout-matches-for-binding-string (str)
+(defun d-emacs-bind--get-layout-matches-for-binding-string (str &optional laysym)
   "Match (indexed) layout entries against the last part of the string STR.
 
-Return a cons of STR and the list of matching conses."
-  (declare (ftype (function (string) cons
+Return a cons of STR and the list of matching conses.
+
+LAYSYM should be the symbol of the layout that is used to match coordinates.
+By default it is the symbol returned by `d-emacs-coords--dfk-or-xkb-layout'."
+  (declare (ftype (function (string &optional symbol) cons
                             ;; (cons string (list (cons (list number) string))) ; Compiler complains.
                             ))
            (side-effect-free t))
@@ -552,7 +555,7 @@ Return a cons of STR and the list of matching conses."
   (d-emacs-base-recursive-get-cons
    str
    (d-emacs-coords-coordinatize-layout
-    (symbol-value (d-emacs-coords--dfk-or-xkb-layout)))
+    (symbol-value (or laysym (d-emacs-coords--dfk-or-xkb-layout))))
    (lambda (str compstr)
      (let ((case-fold-search nil))
        (string-match-p
@@ -570,16 +573,20 @@ Return a cons of STR and the list of matching conses."
         str)))
    t))
 
-(defun d-emacs-bind--get-unique-layout-match (str)
+(defun d-emacs-bind--get-unique-layout-match (str &optional laysym)
   "Obtain the correct match for STR from a list of potential layout matches.
 
 Typically returns the longest match, excluding matches from layer 0 if others
-are available."
-  (declare (ftype (function (string) cons
+are available.
+
+LAYSYM should be the symbol of the layout that is used to match coordinates.
+By default it is the symbol returned by `d-emacs-coords--dfk-or-xkb-layout'."
+  (declare (ftype (function (string &optional symbol) cons
                             ;; (cons (list number) string) ; Compiler complains.
                             ))
            (side-effect-free t))
-  (let* ((matches (d-emacs-bind--get-layout-matches-for-binding-string str))
+  (let* ((laysym (or laysym (d-emacs-coords--dfk-or-xkb-layout)))
+         (matches (d-emacs-bind--get-layout-matches-for-binding-string str))
 
          ;; Throw away 0-layer matches if another one exists.
          (redmatches (d-emacs-base-filter-list matches
@@ -600,21 +607,24 @@ are available."
                       (message "%s in %s is not matched by any signal in %s."
                                (car matches)
                                (current-buffer)
-                               (d-emacs-coords--dfk-or-xkb-layout)))
+                               laysym))
                (car matches)))
           (t (cdr matches)))))
 
-(defun d-emacs-bind--elaborate-on-bindstr (bindstr)
+(defun d-emacs-bind--elaborate-on-bindstr (bindstr &optional laysym)
   "Transform a binding string BINDSTR into its elaborate form.
 
 The binding is created by the position of the best match in the layout. If no
-match is found, the suffix is converted into an elaborate binding."
-  (declare (ftype (function (string) cons
+match is found, the suffix is converted into an elaborate binding.
+
+LAYSYM should be the symbol of the layout that is used to match coordinates.
+By default it is the symbol returned by `d-emacs-coords--dfk-or-xkb-layout'."
+  (declare (ftype (function (string &optional symbol) cons
                             ;; (or (cons (cons (list integer) string) (list number)) ; Compiler complains.
                             ;;     (cons ((cons (list integer) string)) void))
                             ))
            (side-effect-free t))
-  (let ((match (d-emacs-bind--get-unique-layout-match bindstr)))
+  (let ((match (d-emacs-bind--get-unique-layout-match bindstr laysym)))
     (if match
         (let* ((matchstr (cdr match))
                (propermatchstr (car (last (string-split matchstr "/"))))
@@ -626,7 +636,7 @@ match is found, the suffix is converted into an elaborate binding."
                 matchcoords))
       (cons (cons (d-emacs-bind-prefix-modifiers bindstr nil t) bindstr) nil))))
 
-(defun d-emacs-bind-elaborate-on-binding (binding)
+(defun d-emacs-bind-elaborate-on-binding (binding &optional laysym)
   "Transform a d-emacs-xkb BINDING into its elaborate form.
 
 If the binding is given by a binding string, it extracts the prefix, the suffix
@@ -645,8 +655,11 @@ the form
   (((PREFIX . SUFFIX) . COORDS) . VALUE)
 
 or the original binding if its binding string could not be matched against any
-symbol in the given layout."
-  (declare (ftype (function (t) (or cons cons)
+symbol in the given layout.
+
+LAYSYM should be the symbol of the layout that is used to match strings.
+By default it is the symbol returned by `d-emacs-coords--dfk-or-xkb-layout'."
+  (declare (ftype (function (t &optional symbol) (or cons cons)
                             ;; (or (cons (cons (cons (list integer) string) (list number)) t) ; Compiler complains.
                             ;;     (cons (cons ((cons (list integer) string)) void) t))
                             ))
@@ -656,7 +669,7 @@ symbol in the given layout."
   (let* ((value (cdr binding))
          (head (cond ((d-emacs-bind--suffix-form-p binding)
                       (let ((bindstr (car binding)))
-                        (d-emacs-bind--elaborate-on-bindstr bindstr)))
+                        (d-emacs-bind--elaborate-on-bindstr bindstr laysym)))
 
                      ;; Add coordinates corresponding to suffix if COORDSONLY is on.
                      ((d-emacs-bind--prefix-suffix-form-p binding)
@@ -681,18 +694,18 @@ symbol in the given layout."
     elaborate-binding))
 
 (defun d-emacs-bind-reduce-binding (elbind &optional coordsonly)
-  "Transform an elaborate binding ELBIND into its reduced form.
+    "Transform an elaborate binding ELBIND into its reduced form.
 
 If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
-  (declare (ftype (function (cons
+    (declare (ftype (function (cons
                              ;; (or (cons (cons (cons (list integer) string) (list number)) t) ; Compiler complains.
                              ;;     (cons (cons ((cons (list integer) string)) void) t))
                              &optional boolean)
                             t))
            (side-effect-free t))
-  (unless (d-emacs-bind-elaborate-form-p elbind)
+    (unless (d-emacs-bind-elaborate-form-p elbind)
     (error "Wrong-type argument, elaborate binding, %s" elbind))
-  (let* ((indmods (caaar elbind))
+    (let* ((indmods (caaar elbind))
          (prefix (unless (not (caaar elbind))
                    (d-emacs-bind-modifiers-to-string
                     (d-emacs-base-remove-indices indmods))))
@@ -707,15 +720,15 @@ If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
          ;; Let's redefine COORDSONLY since we now know whether we have coordinates or not.
          (coordsonly (and coords coordsonly)))
     (cl-flet ((add-prefix-if-exists (arg)
-                (if haspfx
-                    (cons prefix arg)
-                  arg)))
+                  (if haspfx
+                        (cons prefix arg)
+                    arg)))
       (cons (if coordsonly (add-prefix-if-exists coords)
               (if hassfx (add-prefix-if-exists suffix)
                 (if coords (add-prefix-if-exists coords)
                   (prog2 (message "Binding signal of %s in %s is empty." elbind
                                   (current-buffer))
-                      nil))))
+                          nil))))
             value))))
 
 ;;;;;; Comparison
@@ -1213,7 +1226,7 @@ used."
                                                     (one-or-more space))
                                                    (group (or "\(" ";" "\n"))))
                                  str-with-points-and-brackets-around-coords)
-                   (substring str-with-points-and-brackets-around-coords
+                           (substring str-with-points-and-brackets-around-coords
                               (match-beginning 1) (match-end 1))))
 
          (str-with-line-breaks-after-head
@@ -1231,10 +1244,10 @@ used."
          (finalstring (concat (format "\n;;;; %s\n"
                                       (if headname headname
                                         (if head
-                                            head
-                                          (let ((filename (buffer-file-name)))
+                                                    head
+                                              (let ((filename (buffer-file-name)))
                                             (if filename
-                                                (concat
+                                                        (concat
                                                  (format "%s-mode-map"
                                                          (d-emacs-base-containing-directory-base-name
                                                           filename))))))))
@@ -1242,7 +1255,7 @@ used."
     finalstring))
 
 ;;;;;; Extraction
-(defun d-emacs-bind-string (binding &optional translate csectoshft doublebind)
+(defun d-emacs-bind-string (binding &optional translate csectoshft doublebind laysym)
   "Return a binding string or list of strings from Daselt-binding.
 
 BINDING is expected to satisfy `d-emacs-bind-p'. Unless DOUBLEBIND is t, the
@@ -1265,13 +1278,18 @@ the optional parameters TRANSLATE, CSECTOSHFT.
   This is necessary to be able to apply discrete modifiers to translated
   bindings. In either case, return a list of all binding strings.
 
+- LAYSYM should be the symbol of the layout that is used. By default it is the
+  symbol returned by `d-emacs-coords--dfk-or-xkb-layout'.
+
 Signal an error if the binding is invalid (neither a suffix nor has matching
 coordinates)."
-  (declare (ftype (function (t &optional boolean boolean boolean) (or string list
-                                                                      ;; (list string)
-                                                                      )))
+  (declare (ftype (function (t &optional boolean boolean boolean symbol)
+                            (or string list
+                                ;; (list string)
+                                )))
            (side-effect-free t))
-  (let* ((elbind (d-emacs-bind-elaborate-on-binding binding))
+  (let* ((laysym (or laysym (d-emacs-coords--dfk-or-xkb-layout)))
+         (elbind (d-emacs-bind-elaborate-on-binding binding))
          (coords (cdar elbind))
          (sfx (cdaar elbind))
          (mods (d-emacs-base-remove-indices (caaar elbind)))
@@ -1286,7 +1304,7 @@ coordinates)."
             (if (d-emacs-base-string-exists-and-nonempty newsfx)
                 newsfx
               (error (if coords (format "Coordinates %s in binding %s have no match in %s."
-                                        coords binding (d-emacs-coords--dfk-or-xkb-layout))
+                                        coords binding laysym)
                        (format "%s has neither coordinates nor a suffix." binding))))))
          (non-translated-string (concat pfx newsfx))
          shifted) ; To check later whether it was shifted.
@@ -1361,14 +1379,14 @@ coordinates)."
   (let* ((map (car blist))
          (body (cdr blist)))
     (mapcar (lambda (binding)
-              (concat "(define-key " map " (kbd \""
+                    (concat "(define-key " map " (kbd \""
                       (d-emacs-base--escape-chars-in-str (d-emacs-bind-string binding))
                       "\"\) "
                       (let ((bindval (cdr binding)))
                         (if (stringp bindval)
-                            (concat "\"" bindval "\"")
-                          (if (symbolp (eval bindval))
-                              (concat "'" (symbol-name (eval bindval))))))
+                                        (concat "\"" bindval "\"")
+                                (if (symbolp (eval bindval))
+                                          (concat "'" (symbol-name (eval bindval))))))
                       "\)\n"))
             body)))
 
@@ -1453,22 +1471,24 @@ PFX is the prefix given to the saved bindlists. It is `d-emacs-' by default."
            nil nil #'append))))))
 
 ;;;; Function-dependent customs
-(defcustom d-emacs-bind-replace-binding-strings-alist
-  (remq nil (append (unless (or (bound-and-true-p d-emacs-stump)
-                                d-emacs-bind-translate-C-1-1--2-C-g)
-                      `(("C-g" . ,(d-emacs-bind-string `(("C-" . (1 1 -2)))))))
-                    (unless d-emacs-bind-translate-keys
-                      (mapcar (lambda (cns)
-                                (let ((str (car cns)))
-                                  (cons str (string-replace "C-" "A-" str))))
-                              d-emacs-bind-key-translations-alist))))
-  "Association list of binding strings and their replacements.
+(with-eval-after-load 'd-emacs-xkb-layouts-generated
+  (defcustom d-emacs-bind-replace-binding-strings-alist
+    (remq nil (append (unless (or (bound-and-true-p d-emacs-stump)
+                                  d-emacs-bind-translate-C-1-1--2-C-g)
+                        `(("C-g" . ,(d-emacs-bind-string `(("C-" . (1 1 -2)))))))
+                      (unless d-emacs-bind-translate-keys
+                        (mapcar (lambda (cns)
+                                  (let ((str (car cns)))
+                                    (cons str (string-replace "C-" "A-" str))))
+                                d-emacs-bind-key-translations-alist))))
+    "Association list of binding strings and their replacements.
 
 This allows certain key bindings to be replaced, particularly those that would
 be translated on Emacs 29+ and `C-g', whose interrupting action can't be
 translated."
-  :type '(alist :key-type string :value-type string)
-  :group 'd-emacs-bind)
+    :type '(alist :key-type string :value-type string)
+    :group 'd-emacs-bind))
+
 ;;;; More functions
 ;;;;; Application
 (defun d-emacs-bind-act-on-bindings (blist fun &optional nooutput)
