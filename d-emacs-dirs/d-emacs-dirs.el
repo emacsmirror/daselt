@@ -1102,9 +1102,9 @@ By default, DIR is `d-emacs-dirs-pkg-configs-directory'.
 The group for the options is GROUP, which is `d-emacs' by default. All options
 are prefixed with `GROUP-'.
 
-DEFAULTFUN should evaluate to a condition that determines whether a generated custom
-is enabled by default. Its default checks whether pkg is a provided feature or
-an installed package."
+DEFAULTFUN should evaluate to a condition that determines whether a generated
+custom is enabled by default. Its default checks whether pkg is a provided
+feature or an installed package."
   (let* ((dir (or dir d-emacs-dirs-pkg-configs-directory))
          (group (or group 'd-emacs))
          (pfx (concat (symbol-name group) "-"))

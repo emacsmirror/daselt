@@ -66,7 +66,7 @@
 
 ;;;; Initialization
 ;;;;; Let's read in the dxkb-file
-(eval-when-compile (d-emacs-xkb-generate-layouts))
+(d-emacs-xkb-generate-layouts)
 
 ;;;;; Customs
 (defgroup d-emacs-mode
@@ -148,13 +148,15 @@ combinations."
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-redaselt
-  (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
-  "Have the `redaselt' shell script run with this string as arguments when
-`d-emacs-mode' starts.
+  t
+  "Have the `redaselt' shell script run when `d-emacs-mode' starts.
+
+The argument to the script is the part of the value of `d-emacs-xkb-layout'
+between the prefix and the suffix.
 
 If you are using some other means of setting Daselt's layout, then you can turn
 this off."
-  :type 'string
+  :type 'boolean
   :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-undaselt
@@ -267,22 +269,22 @@ Uses `d-emacs-bind-translate-C-1-1--2-C-g', `d-emacs-bind-translate-keys', and
                               d-emacs-bind-key-translations-alist)))))
 
 (defun d-emacs-mode--generate-quick-key-variables ()
-  "Generate quick key variables used in Daselt configurations.
+    "Generate quick key variables used in Daselt configurations.
 
 Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
-  (declare (ftype (function () string)))
-  (let* ((filepath
+    (declare (ftype (function () string)))
+    (let* ((filepath
           (concat d-emacs-mode-pkg-configs-directory "quick-keys.dbf"))
 
          (keylist (prog1 (cl-remove-duplicates
                           (flatten-list (d-emacs-dirs-act-on-sexps-in-file
                                          filepath
                                          (lambda ()
-                                           (let ((blist (eval (d-emacs-base-read-region))))
+                                             (let ((blist (eval (d-emacs-base-read-region))))
                                              (remq nil (mapcar (lambda (bind)
-                                                                 (let ((sig (d-emacs-bind-string bind)))
+                                                                   (let ((sig (d-emacs-bind-string bind)))
                                                                    (if (= 1 (length sig))
-                                                                       (string-to-char
+                                                                           (string-to-char
                                                                         sig))))
                                                                (cdr blist))))))))
                     (let ((filebuffer (get-file-buffer filepath))) ; `get-file-buffer' can get tripped up by symlinks.
@@ -295,8 +297,8 @@ Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
                                 do (setq runlist
                                          (append runlist
                                                  (list (if (cl-evenp n)
-                                                           (nth (1+ n) keylist)
-                                                         (nth (1- n) keylist)))))
+                                                               (nth (1+ n) keylist)
+                                                           (nth (1- n) keylist)))))
                                 finally return runlist))
 
          (keystring (mapconcat #'char-to-string keylist))
@@ -305,46 +307,47 @@ Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
                               (mapconcat #'char-to-string permutedlist))))
     
     (defvar d-emacs-mode-quick-key-list keylist
-      "Quick key list for Daselt.
+        "Quick key list for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")
 
     (defvar d-emacs-mode-quick-key-string keystring
-      "Quick key string for Daselt.
+        "Quick key string for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")
 
     (defvar d-emacs-mode-quick-key-string-cons keystringpair
-      "Quick key string pair for Daselt.
+        "Quick key string pair for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")))
 
-(defun d-emacs-mode-generate-tutorial (&optional no-refresh)
-  "Generate the Daselt-tutorial.
+(with-eval-after-load 'd-emacs-xkb-layouts-generated
+  (defun d-emacs-mode-generate-tutorial (&optional no-refresh)
+    "Generate the Daselt-tutorial.
 
 NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 `d-emacs-dfk', so it's unnecessary to do it again."
-  (declare (ftype (function (&optional boolean)
-                            ;; void  ; Compiler complains.
-                            t)))
-  (interactive)
-  (unless no-refresh
-    (d-emacs-dfk-import-current-layout))
-  (let ((display-buffer-alist-backup display-buffer-alist))
-    (condition-case report
-        (let ((tutfile (concat d-emacs-mode-pkg-configs-directory "d-emacs-mode/d-emacs-mode.tut"))
-              (display-buffer-alist '((".*" display-buffer-full-frame))))
-          (find-file tutfile)
-          (d-emacs-base-goto-min)
-          (mark-sexp)
-          (let ((tuttext (eval (d-emacs-base-read-region))))
-            (deactivate-mark)
-            (pop-to-buffer "*daselt-tutorial*")
-            (delete-minibuffer-contents)
-            (org-mode)
-            (visual-line-mode)
-            (insert tuttext)
+    (declare (ftype (function (&optional boolean)
+                              ;; void  ; Compiler complains.
+                              t)))
+    (interactive)
+    (unless no-refresh
+      (d-emacs-dfk-import-current-layout))
+    (let ((display-buffer-alist-backup display-buffer-alist))
+      (condition-case report
+                                      (let ((tutfile (concat d-emacs-mode-pkg-configs-directory "d-emacs-mode/d-emacs-mode.tut"))
+                (display-buffer-alist '((".*" display-buffer-full-frame))))
+            (find-file tutfile)
             (d-emacs-base-goto-min)
-            nil))
-      (error (progn (setq display-buffer-alist display-buffer-alist-backup)
-                    (error (error-message-string report)))))))
+            (mark-sexp)
+            (let ((tuttext (eval (d-emacs-base-read-region))))
+              (deactivate-mark)
+              (pop-to-buffer "*daselt-tutorial*")
+              (delete-minibuffer-contents)
+              (org-mode)
+              (visual-line-mode)
+              (insert tuttext)
+              (d-emacs-base-goto-min)
+              nil))
+        (error (progn (setq display-buffer-alist display-buffer-alist-backup)
+                      (error (error-message-string report))))))))
 
 (defun d-emacs-mode-redaselt ()
   "Run the `redaselt'-bash-script to switch your keyboard layout.
@@ -352,10 +355,11 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 The keyboard-layout loaded is the d-xkb-variant specified in
 the option `d-emacs-mode-redaselt'."
   (interactive)
-  (async-shell-command (d-emacs-base-concat-with-separators " "
-                                                            "redaselt"
-                                                            d-emacs-mode-redaselt
-                                                            (number-to-string d-emacs-mode-redaselt-time))))
+  (async-shell-command (d-emacs-base-concat-with-separators
+                        " "
+                        "redaselt"
+                        (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
+                        (number-to-string d-emacs-mode-redaselt-time))))
 
 (defun d-emacs-mode-undaselt ()
     "Run the `redaselt'-bash-script to switch your keyboard layout.

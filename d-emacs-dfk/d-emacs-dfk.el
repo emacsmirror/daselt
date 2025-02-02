@@ -828,8 +828,9 @@ PFX is `d-emacs-xkb-' by default."
   "Import the layout that is currently specified in `d-emacs-xkb-layout'.
 
 Set the result as the value of `d-emacs-dfk-layout'."
-  (unless (boundp d-emacs-xkb-layout)
-    (eval `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))))
+  (if (boundp d-emacs-xkb-layout)
+      (eval `(defconst d-emacs-dfk-layout (d-emacs-dfk-import-layout ,d-emacs-xkb-layout)))
+    (error "No d-emacs-xkb-layout defined")))
 
 ;;;; Provide
 (provide 'd-emacs-dfk)
