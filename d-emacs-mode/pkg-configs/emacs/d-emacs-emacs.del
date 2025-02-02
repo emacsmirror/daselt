@@ -32,14 +32,14 @@
 independent buffer."
   (interactive)
   (split-window-below)
-  (clone-buffer))
+  (switch-to-buffer (clone-buffer)))
 
 (defun d-emacs-new-vertical-window-and-buffer ()
   "This function splits the window vertically and populates the new window with
 an independent info buffer."
   (interactive)
   (split-window-right)
-  (clone-buffer))
+  (switch-to-buffer (clone-buffer)))
 
 (provide 'd-emacs-emacs)
 ;;; d-emacs-emacs.del ends here

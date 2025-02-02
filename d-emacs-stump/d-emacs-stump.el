@@ -123,19 +123,13 @@
 (defun d-emacs-stump--pkg-configs-directory-test (dir)
   "Test whether DIR looks like d-emacs-stump's pkg-configs-directory."
   (declare (ftype (function (str) boolean))
-           (pure t))
+           (side-effect-free t))
   (and dir
        (file-exists-p dir)
        (file-exists-p (concat dir "stumpwm"))))
 
 (defcustom d-emacs-stump-pkg-configs-directory
-  (let* ((use-file-dialog nil) ; Dialog box doesn't let you select folder (or I was doing something wrong).
-         (filename (read-file-name "Please point d-emacs-stump to its pkg-configs directory (in the directory where d-emacs-stump is installed, include trailing backslash): "
-                                   nil nil
-                                   #'d-emacs-stump--pkg-configs-directory-test)))
-    (customize-save-variable 'd-emacs-stump-pkg-configs-directory
-                             filename)
-    filename)
+  nil
   "Pkg-configs directory for `d-emacs-stump'.
 
 This is the directory all `dbl' and `dcn' files for the d-emacs-stump-config

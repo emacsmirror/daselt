@@ -29,6 +29,8 @@
 ;;;;;;;; 2-0
  ((2 0 -4) . #'beginning-of-buffer)
  ((2 0 -2) . #'eww-back-url)
+ ((2 0 -1) . #'d-emacs-eww-search-in-new-horizontal-window)
+ ((2 0 1) . #'d-emacs-eww-search-in-new-vertical-window)
  ((2 0 2) . #'eww-forward-url)
  ((2 0 4) . #'end-of-buffer)
 
@@ -49,9 +51,4 @@
 
 ;;;;;;; 6
 ;;;;;;;; 6-0
- ((6 0 -3) . #'d-emacs-eww-search-in-new-tab)
-
-;;;;;;; 8
-;;;;;;;; 8--1
- ((8 -1 -4) . #'d-emacs-eww-search-in-new-horizontal-window)
- ((8 -1 4) . #'d-emacs-eww-search-in-new-vertical-window))
+ ((6 0 -3) . #'d-emacs-eww-search-in-new-tab))

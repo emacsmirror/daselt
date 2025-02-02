@@ -57,21 +57,18 @@
 ;;;;;;; 2
 ;;;;;;;; 2-0
  ((2 0 -4) . #'beginning-of-buffer)
+ ((2 0 -1) . #'d-emacs-new-horizontal-window-and-buffer)
+ ((2 0 1) . #'d-emacs-new-vertical-window-and-buffer)
  ((2 0 4) . #'end-of-buffer)
 
 ;;;;;;; 4
 ;;;;;;;; 4--1
- ((4 -1 -4) . #'avy-act-follow-in-new-horizontal-window)
- ((4 -1 4) . #'avy-act-follow-in-new-vertical-window)
+ ((4 0 -1) . #'avy-act-follow-in-new-horizontal-window)
+ ((4 0 1) . #'avy-act-follow-in-new-vertical-window)
 
 ;;;;;;;; 4-0
  ((4 0 4) . #'quit-window)
- ((4 0 2) . #'d-follow-or-open)
-
-;;;;;;; 8
-;;;;;;;; 8--1
- ((8 -1 -4) . #'d-emacs-new-horizontal-window-and-buffer)
- ((8 -1 4) . #'d-emacs-new-vertical-window-and-buffer))
+ ((4 0 2) . #'avy-act--follow-or-open))
 
 ;;;; help-map
 (help-map

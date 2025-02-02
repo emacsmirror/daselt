@@ -1,16 +1,20 @@
+
+;;;; tabulated-list-mode-map
 (
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
- ((1 0 -3) . #'previous-line) 
- ((1 0 -2) . #'tabulated-list-previous-column) 
- ((1 0 2) . #'tabulated-list-next-column) 
- ((1 0 3) . #'next-line) 
+ ((1 0 -3) . #'previous-line)
+ ((1 0 3) . #'next-line)
 
-;;;;;;;; 1-1 
- ((1 1 0) . #'tabulated-list-sort) 
+;;;;;;; 7
+;;;;;;;; 7--1
+ ((7 -1 -2) . #'tabulated-list-narrow-current-column)
+ ((7 -1 2) . #'tabulated-list-widen-current-column)
 
-;;;;;;; 4 
-;;;;;;;; 4--1 
- ((4 -1 -2) . #'tabulated-list-narrow-current-column) 
- ((4 -1 2) . #'tabulated-list-widen-current-column))
+;;;;;;;; 7-0
+ ((7 0 -2) . #'tabulated-list-previous-column)
+ ((7 0 2) . #'tabulated-list-next-column)
+
+;;;;;;;; 7-1
+ ((7 1 0) . #'tabulated-list-sort))

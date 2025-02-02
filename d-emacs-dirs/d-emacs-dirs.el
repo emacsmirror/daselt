@@ -1103,19 +1103,20 @@ The group for the options is GROUP, which is `d-emacs' by default. All options
 are prefixed with `GROUP-'.
 
 DEFFUN should evaluate to a condition that determines whether a generated custom
-is enabled by default. Its default is `featurep'."
+is enabled by default. Its default checks whether pkg is a provided feature or
+an installed package."
   (let* ((dir (or dir d-emacs-dirs-pkg-configs-directory))
          (group (or group 'd-emacs))
          (pfx (concat (symbol-name group) "-"))
-         (deffun (or deffun (lambda (pkg) (let ((val (featurep pkg)))
-                                       (if val t)))))
+         (defaultfun (or defaultfun (lambda (pkg) (or (featurep pkg)
+                                                 (package-installed-p pkg)))))
          (customlist (mapcar (lambda (pkg)
-                                                 `(defcustom ,(intern (concat pfx (symbol-name pkg)))
-                                                    ,(funcall deffun pkg)
-                                                    ,(d-emacs-base-fill-string-like-docstring
+                               `(defcustom ,(intern (concat pfx (symbol-name pkg)))
+                                  ,(funcall defaultfun pkg)
+                                  ,(d-emacs-base-fill-string-like-docstring
                                     (format "Set to t to have `d-emacs-dirs-act-on-pkg-files-by-type' recurse into the %sdirectory whose name is %s." pfx pkg))
-                                                    :type 'boolean
-                                                    :group ',group))
+                                  :type 'boolean
+                                  :group ',group))
                              (d-emacs-dirs-recurse-through-directory
                               dir
                               `(((lambda (filepath) (intern (file-name-base filepath)))
