@@ -181,6 +181,19 @@ not be set."
   :type 'number
   :group 'd-emacs-mode)
 
+(defcustom d-emacs-mode-global-udevmon
+  nil
+  "If set to t, run `redaselt' with a --global flag.
+
+This makes systemctl search for a global udevmon-service.
+
+Requires sudo and slows down the starting process a bit.
+
+Doesn't have any effect if neither `d-emacs-mode-redaselt' nor
+`d-emacs-mode-undaselt' are set."
+  :type 'boolean
+  :group 'd-emacs)
+
 (defcustom d-emacs-mode-exchange-H-2-H-6
   nil
   "Set to t to exchange H-2 with H-6 bindings.
@@ -355,20 +368,29 @@ NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 The keyboard-layout loaded is the d-xkb-variant specified in
 the option `d-emacs-mode-redaselt'."
   (interactive)
-  (async-shell-command (d-emacs-base-concat-with-separators
-                        " "
-                        "redaselt"
-                        (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
-                        (number-to-string d-emacs-mode-redaselt-time))))
+  (let ((cmdstr (d-emacs-base-concat-with-separators
+                 " "
+                 "redaselt"
+                 (if d-emacs-mode-global-udevmon "--global" "")
+                 (d-emacs-base-namecore d-emacs-xkb-layout "d-emacs-xkb-" "-layout")
+                 (number-to-string d-emacs-mode-redaselt-time))))
+    (if d-emacs-mode-global-udevmon
+        (shell-command cmdstr)
+      (async-shell-command cmdstr))))
 
 (defun d-emacs-mode-undaselt ()
-    "Run the `redaselt'-bash-script to switch your keyboard layout.
+  "Run the `redaselt'-bash-script to switch your keyboard layout.
 
 The keyboard-layout loaded is the d-xkb-variant specified by
 `d-emacs-xkb-layout'."
-    (interactive)
-    (async-shell-command (concat "undaselt "
-                               d-emacs-mode-undaselt)))
+  (interactive)
+  (let ((cmdstr (d-emacs-base-concat-with-separators
+                 "undaselt"
+                 (if d-emacs-mode-global-udevmon "--global" "")
+                 d-emacs-mode-undaselt)))
+    (if d-emacs-mode-global-udevmon
+        (shell-command cmdstr)
+      (async-shell-command cmdstr))))
 
 ;;;;; The pkg-configs-issue
 (defun d-emacs-mode--pkg-configs-directory-test (dir)
