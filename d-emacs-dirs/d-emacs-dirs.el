@@ -1094,7 +1094,7 @@ With a prefix argument, only regular bindlists files are considered."
   (d-emacs-dirs-find-pkg-file-by-type "dbl" (if current-prefix-arg '("regular"))))
 
 ;;;;; Macros
-(defmacro d-emacs-dirs-create-pkg-customization-options (&optional dir group deffun)
+(defmacro d-emacs-dirs-create-pkg-customization-options (&optional dir group defaultfun)
   "Create Boolean customization options from the folders in DIR.
 
 By default, DIR is `d-emacs-dirs-pkg-configs-directory'.
@@ -1102,7 +1102,7 @@ By default, DIR is `d-emacs-dirs-pkg-configs-directory'.
 The group for the options is GROUP, which is `d-emacs' by default. All options
 are prefixed with `GROUP-'.
 
-DEFFUN should evaluate to a condition that determines whether a generated custom
+DEFAULTFUN should evaluate to a condition that determines whether a generated custom
 is enabled by default. Its default checks whether pkg is a provided feature or
 an installed package."
   (let* ((dir (or dir d-emacs-dirs-pkg-configs-directory))
