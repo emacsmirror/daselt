@@ -627,17 +627,17 @@ down."
   (d-emacs--funcall-first-mode-match d-emacs-C-1-0-4-contexts-list #'scroll-up-command))
 
 (cl-defun d-emacs-C-3-0-2 ()
-    "Expand Yasnippet, Cdlatex item, abbrev, Corfu expansion if available.
+  "Expand Yasnippet, Cdlatex item, abbrev, Corfu expansion if available.
 Also, go to the next item or environment, open a footnote, or open something as
 needed."
-    (interactive)
-    (cl-flet ((yas-maybe-expand ()
-                (if (yas-maybe-expand-abbrev-key-filter t)
-                      (progn (yas-expand)
+  (interactive)
+  (cl-flet ((yas-maybe-expand ()
+              (if (yas-maybe-expand-abbrev-key-filter t)
+                  (progn (yas-expand)
                          (cl-return-from d-emacs-C-3-0-2))))
 
             (cdlatex-maybe-expand ()
-                (let ((pos (point)) expr math-mode)
+              (let ((pos (point)) expr math-mode)
                 (backward-word 1)
                 (while (eq (following-char) ?$) (forward-char 1))
                 (setq expr (buffer-substring-no-properties (point) pos))
@@ -649,16 +649,14 @@ needed."
                                   (insert (nth 2 expr))
                                   (and (nth 3 expr)
                                        (if (nth 4 expr)
-                                               (apply (nth 3 expr) (nth 4 expr))
-                                           (funcall (nth 3 expr)))))
+                                           (apply (nth 3 expr) (nth 4 expr))
+                                         (funcall (nth 3 expr)))))
                                 (cl-return-from d-emacs-C-3-0-2))
                   (goto-char pos))))
 
             (maybe-expand-abbrev ()
-                (let ((pos (point)))
-                (expand-abbrev)
-                (unless (= pos (point))
-                  (cl-return-from d-emacs-C-3-0-2)))))
+              (unless (expand-abbrev)
+                (cl-return-from d-emacs-C-3-0-2))))
 
     (if d-emacs-yasnippet (yas-maybe-expand))
     (if d-emacs-cdlatex (cdlatex-maybe-expand))
