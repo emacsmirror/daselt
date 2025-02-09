@@ -66,7 +66,7 @@ Only used if `d-emacs-mode-keep-tab-bar-status' is t."
     (Info-mode . Info-follow-nearest-node)
     (eww-mode . eww-follow-link)
     (help-mode . push-button)
-    (LaTeX-mode . latex/forward-environment)
+    (LaTeX-mode . (lambda () (latex/forward-environment 1)))
     (vterm-mode . vterm-send-tab)
     (emacs-lisp-mode . sp-next-sexp)
     (org-mode . (lambda () (let ((buffer (buffer-name)))
@@ -154,7 +154,8 @@ Only used if `d-emacs-mode-keep-tab-bar-status' is t."
     (minibuffer-mode . next-line-or-history-element)
     (image-mode . image-next-frame)
     (vterm-copy-mode . scroll-up-command)
-    (vterm-mode . vterm-send-next))
+    (vterm-mode . vterm-send-next)
+    (LaTeX-mode . latex/forward-environment))
   "Actions for `d-emacs-C-1-0-1' across different modes."
   :type '(repeat (cons symbol sexp))
   :group 'd-emacs-mode)
@@ -664,14 +665,13 @@ needed."
 
     (d-emacs--funcall-first-mode-match d-emacs-C-3-0-2-contexts-list #'org-open-at-point-global)))
 
-
 ;;;;;; Minibuffer
 (defun d-emacs-move-right-or-exit ()
   "Exit if at the end of the minibuffer, otherwise move char right."
   (interactive)
   (if (eobp)
-      (exit-minibuffer)
-    (forward-char)))
+                                                                                                                          (exit-minibuffer)
+                                                              (forward-char)))
 
 ;;;;;; Yanking
 (defun d-emacs-yank-or-org-roam-node-insert ()
@@ -727,8 +727,8 @@ ARG determines the scope of the kill."
   "Insert string `lambda'. With ARG, insert 'λ' symbol."
   (interactive "P")
   (if arg
-                                                      (insert "λ")
-                            (insert "lambda")))
+                                                          (insert "λ")
+                              (insert "lambda")))
 
 
 ;;;;;; Declaring
@@ -738,12 +738,12 @@ ARG determines the scope of the kill."
   ;; Check if the thing at point is a symbol
   (let ((sym (symbol-at-point)))
     (if (not (and sym (fboundp sym)))
-        (message "No function at point.")
-      ;; If it is a function, find where it is defined
-      (let* ((function-location (find-lisp-object-file-name sym (symbol-function sym)))
+                        (message "No function at point.")
+              ;; If it is a function, find where it is defined
+              (let* ((function-location (find-lisp-object-file-name sym (symbol-function sym)))
              (args (help-function-arglist sym t)))
         (if (not function-location)
-            (message "Cannot find function location."))
+                            (message "Cannot find function location."))
         ;; Prepare the declare-function expression
         (let ((declare-statement
                (format "(declare-function %s \"%s\" %s)"
@@ -751,27 +751,27 @@ ARG determines the scope of the kill."
                        (if function-location (file-name-sans-extension
                                               (file-name-nondirectory function-location)))
                        (if args
-                           (format "%s" (mapcar (lambda (arg) (if (symbolp arg) arg (car arg))) args))
-                         "nil"))))
+                                           (format "%s" (mapcar (lambda (arg) (if (symbolp arg) arg (car arg))) args))
+                                 "nil"))))
           (cl-flet ()
             (save-excursion (if (progn (goto-char (point-min))
                                        (d-emacs-base-search-at-line-start "\(declare-function"
                                                                           t))
-                                (progn (beginning-of-line)
+                                                (progn (beginning-of-line)
                                        (insert (d-emacs-base-append-newlines 1 declare-statement)))
                               (if (d-emacs-base-search-at-line-start "\(require" t)
-                                  (progn (while (re-search-forward
+                                                  (progn (while (re-search-forward
                                                  (rx line-start
                                                      (* (or ";" " "))
                                                      "(require"))
                                            (end-of-line))
                                          (insert (d-emacs-base-prepend-newlines 2 declare-statement)))
                                 (if (d-emacs-base-search-at-line-start ";;;; Preamble")
-                                    (progn (end-of-line)
+                                                    (progn (end-of-line)
                                            (insert (d-emacs-base-surround-by-newlines
                                                     1 1 declare-statement)))
                                   (if (d-emacs-base-search-at-line-start ";;; Code")
-                                      (progn (end-of-line)
+                                                      (progn (end-of-line)
                                              (insert (format "\n;;;; Preamble\n%s"
                                                              declare-statement))))))))))))))
 
@@ -782,21 +782,21 @@ The produced statement will be added to the preamble of the current file."
   (interactive)
   (let ((sym (symbol-at-point)))
     (if (not sym)
-        (message "No symbol under point.")
-      (let ((defvar-statement (concat "(defvar " (symbol-name sym) ")")))
+            (message "No symbol under point.")
+        (let ((defvar-statement (concat "(defvar " (symbol-name sym) ")")))
         (save-excursion (if (progn (goto-char (point-min))
                                    (d-emacs-base-search-at-line-start "(defvar"))
-                            (progn (beginning-of-line)
+                                (progn (beginning-of-line)
                                    (insert (d-emacs-base-append-newlines 1 defvar-statement)))
                           (if (d-emacs-base-search-at-line-start "(declare-function")
-                              (progn (while  (d-emacs-base-search-at-line-start "(declare-function")
+                                  (progn (while  (d-emacs-base-search-at-line-start "(declare-function")
                                        (end-of-line))
                                      (insert (d-emacs-base-prepend-newlines 2 defvar-statement)))
                             (if (d-emacs-base-search-at-line-start ";;;; Preamble")
-                                (progn (end-of-line)
+                                    (progn (end-of-line)
                                        (insert (d-emacs-base-prepend-newlines 1 defvar-statement)))
                               (if (d-emacs-base-search-at-line-start ";;; Code")
-                                  (progn (end-of-line)
+                                      (progn (end-of-line)
                                          (insert (format "\n;;;; Preamble\n%s"
                                                          defvar-statement))))))))))))
 
@@ -839,12 +839,14 @@ The produced statement will be added to the preamble of the current file."
 (defun d-emacs-do-not-search-invisible ()
   "Set the search to ignore invisible portions of the text."
   (interactive)
-  (setq search-invisible nil))
+  (setq search-invisible nil)
+  (message "Invisible text is not searched."))
 
 (defun d-emacs-search-invisible ()
   "Set the search to include invisible portions of the text."
   (interactive)
-  (setq search-invisible t))
+  (setq search-invisible t)
+  (message "Invisible text is searched."))
 
 (defun d-emacs-isearch-backward-thing-at-point ()
   "Do incremental search forward for the `thing' found near point.
@@ -1151,25 +1153,25 @@ files and directories (starting with a period) are left out."
   (interactive "sString: \nsReplacement: \nDDirectory: ")
   (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                          (if (stringp filetest)
-                              (lambda (fname) (if (string-match-p filetest fname) t))
-                            filetest)
+                                                              (if (stringp filetest)
+                                                                  (lambda (fname) (if (string-match-p filetest fname) t))
+                                              filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                         (lambda (fname) (if (string-match-p dirtest fname) t))
-                       dirtest)))
+                                                             (lambda (fname) (if (string-match-p dirtest fname) t))
+                                         dirtest)))
     (save-excursion
-      (d-emacs-dirs-recurse-through-directory
+                        (d-emacs-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-            (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
+                              (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-              (let ((file (nth idx flist)))
+                                (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-      (set-buffer buf))))
+                        (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun d-emacs-open-file-in-new-emacs (&optional filename)

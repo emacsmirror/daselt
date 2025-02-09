@@ -6,7 +6,7 @@
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-tri/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/tree/master/d-emacs-tri?ref_type=heads
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@
 ;; housing Daselt's standard Tridactyl config.
 
 ;;; Code:
+
+(require'd-emacs-base)
+(require'd-emacs-coords)
+(require'd-emacs-bind)
 
 (defcustom d-emacs-tri-bindlist-file
   (condition-case nil (concat (file-name-directory (buffer-file-name)) "d-emacs-tri.dbl")

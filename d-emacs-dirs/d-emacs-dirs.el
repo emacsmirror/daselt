@@ -579,27 +579,51 @@ If an el-file with that name already exists, no new link is added."
     (unless (file-exists-p el-name)
       (f-symlink fname el-name))))
 
+;;;;;;; Auto-insert for del-files
+(add-to-list 'auto-insert-alist
+             '(("\\.del\\'" . "Emacs Lisp header") "Short description: " ";;; "
+               (file-name-nondirectory (buffer-file-name)) " --- " str
+               (make-string (max 2 (- 80 (current-column) 27)) 32)
+               "-*- lexical-binding: t; -*-" '(setq lexical-binding t)
+               "\n\n;; Copyright (C) " (format-time-string "%Y") "  " (getenv "ORGANIZATION")
+               | (progn user-full-name) "\n\n;; Author: " (user-full-name)
+               '(if (search-backward "&" (line-beginning-position) t)
+                    (replace-match (capitalize (user-login-name)) t t))
+               '(end-of-line 1) " <" (progn user-mail-address) ">\n;; Keywords: "
+               '(require 'finder)
+               '(setq v1
+                      (mapcar (lambda (x) (list (symbol-name (car x)))) finder-known-keywords)
+                      v2
+                      (mapconcat (lambda (x) (format "%12s:  %s" (car x) (cdr x)))
+                                 finder-known-keywords "\n"))
+               ((let ((minibuffer-help-form v2)) (completing-read "Keyword, C-h: " v1 nil t))
+                str ", ")
+               & -2
+               "\n\n;; This program is free software; you can redistribute it and/or modify\n;; it under the terms of the GNU General Public License as published by\n;; the Free Software Foundation, either version 3 of the License, or\n;; (at your option) any later version.\n\n;; This program is distributed in the hope that it will be useful,\n;; but WITHOUT ANY WARRANTY; without even the implied warranty of\n;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n;; GNU General Public License for more details.\n\n;; You should have received a copy of the GNU General Public License\n;; along with this program.  If not, see <https://www.gnu.org/licenses/>.\n\n;;; Commentary:\n\n;; "
+               _ "\n\n;;; Code:\n\n\n\n(provide '" (file-name-base (buffer-file-name))
+               ")\n;;; " (file-name-nondirectory (buffer-file-name)) " ends here\n"))
+
 ;;;;;; dbl
 (defun d-emacs-dirs--delete-duplicate-comment-lines ()
-                                                      "Delete duplicate comment lines separated by blank lines in current buffer."
-                                                      (declare (ftype (function () void)))
-                                                      (save-excursion
-                                                        (d-emacs-base-goto-min)
-                                                        (while (not (eobp))
+  "Delete duplicate comment lines separated by blank lines in current buffer."
+  (declare (ftype (function () void)))
+  (save-excursion
+    (d-emacs-base-goto-min)
+    (while (not (eobp))
       (let* ((curline (thing-at-point 'line t))
              (curpos (line-end-position))
              (curtrimline (string-trim curline))
              (nextline "")
              (nexttrimline ""))
         (if (string-match-p (rx string-start ";") curtrimline)
-                                                                                                                    (cl-loop while (and (not (eobp))
+            (cl-loop while (and (not (eobp))
                                 (not (string-match-p (rx string-start (not ";"))
                                                      nexttrimline)))
                      do (progn (forward-line)
                                (setq nextline (thing-at-point 'line t))
                                (setq nexttrimline (string-trim nextline))
                                (if (string= curtrimline nexttrimline)
-                                                                                                                                           (delete-region curpos (line-end-position))))))
+                                   (delete-region curpos (line-end-position))))))
         (goto-char curpos)
         (unless (eobp)
           (forward-line))))))
@@ -944,7 +968,7 @@ DIRECTORY is `d-emacs-dirs-pkg-configs-directory' by default."
   (interactive)
   (d-emacs-dirs-act-on-pkg-files-by-type
    `(((lambda (filename)
-        (byte-compile-file filename))
+          (byte-compile-file filename))
       .
       "del"))
    (if directory directory))

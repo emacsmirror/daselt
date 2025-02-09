@@ -154,7 +154,7 @@
                           ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
      ((-1 6) . ("f11" . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
                          ,(nth 1 d-emacs-dfk-locking-3-coords)
-                         ,(nth 0 d-emacs-dfk-non-locking-5-coords)))))
+                         ,(nth 1 d-emacs-dfk-non-locking-5-coords)))))
   "Form to generate the d-dfk layouts.
 When evaluated, returns a bindlist that can be used in
 `d-emacs-dfk-generate-config'. The exact composition of the bindlist depends on
@@ -595,7 +595,7 @@ DATUM can be either a string or `d-emacs-coords'-coordinates."
   (cond ((stringp datum)
          (upcase (concat "key_" datum)))
         ((d-emacs-coords-p datum)
-         (let* ((keycode (d-emacs-dfk--calculate-coords-code datum))
+         (let* ((keycode (number-to-string (d-emacs-dfk--calculate-coords-code datum)))
                 (eventcodes (concat d-emacs-dfk-directory "input-event-codes.h"))
                 (keyname (if d-emacs-dfk-insert-names
                              (let ((buf (current-buffer)))
@@ -612,13 +612,14 @@ DATUM can be either a string or `d-emacs-coords'-coordinates."
 (defun d-emacs-dfk--datum-p (obj)
   "Check if OBJ is a datum.
 
-A datum here is either a string, d-emacs-coordinates or a list of coordinates."
+A datum here is either a string, a list of coordinates or a list of lists of
+coordinates."
   (declare (ftype (function (t) boolean))
            (pure t))
   (and obj
        (or (stringp obj)
            (d-emacs-coords-p obj)
-           (list (d-emacs-coords-p obj)))))
+           (cl-every #'d-emacs-coords-p obj))))
 
 (defun d-emacs-dfk-generate-config (&optional blist filename)
   "Generate a `dual-function-keys' configuration from BLIST.

@@ -12,10 +12,10 @@
  ((1 -1 4) . #'edebug-visit-eval-list)
 
 ;;;;;;;; 1-0
- ((1 0 -3) . #'edebug-go-mode)
+ ((1 0 -3) . #'edebug-continue-mode)
  ((1 0 -2) . #'edebug-trace-mode)
  ((1 0 2) . #'edebug-step-mode)
- ((1 0 3) . #'edebug-continue-mode)
+ ((1 0 3) . #'edebug-go-mode)
 
 ;;;;;;;; 1-1
  ((1 1 -2) . #'abort-recursive-edit)
@@ -41,8 +41,8 @@
 
 ;;;;;;;; 3-0
  ((3 0 -3) . #'edebug-step-out)
- ((3 0 2) . #'edebug-forward-sexp)
  ((3 0 2) . #'edebug-goto-here)
+ ((3 0 2) . #'edebug-forward-sexp)
  ((3 0 3) . #'edebug-step-in)
 
 ;;;;;;;; 3-1
@@ -154,6 +154,5 @@
  ((3 -1 4) . #'edebug-eval-print-last-sexp))
 
 ;;;; provide
-
-;;;; edebug-mode-map
-(provide 'd-emacs-edebug-bindlist)
+(provide
+(d-emacs-edebug-bindlist quote))

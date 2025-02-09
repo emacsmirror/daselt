@@ -6,11 +6,6 @@
  (("C-" . "<return>") . #'d-emacs-insert-newline-forward)
 
 ;;;;; Coordinates
- ((6 0 -5) . (if (bound-and-true-p d-lua-insert-normpairs) #'d-lua-insert-normpair-yas-snippet))
- ((6 0 5) . (if (bound-and-true-p d-lua-insert-normpairs) #'d-lua-insert-othernormpair-yas-snippet))
-
-;;;;;;; 7
-;;;;;;;; 7--1
  ((7 -1 -1) . (if d-emacs-icicles #'beginning-of-line+ #'beginning-of-line))
  ((7 -1 1) . (if d-emacs-icicles #'end-of-line+ #'end-of-line))
 
@@ -21,6 +16,11 @@
  ((7 0 2) . (if d-emacs-icicles #'end-of-visual-line+ #'end-of-visual-line))
  ((7 0 3) . #'d-emacs-move-to-bottom)
  ((7 0 4) . #'end-of-buffer)
+
+;;;;;;; 8
+;;;;;;;; 8-0
+ ((8 0 -5) . (if (bound-and-true-p d-emacs-lua-insert-normpairs) #'d-emacs-lua-insert-normpair-yas-snippet))
+ ((8 0 5) . (if (bound-and-true-p d-emacs-lua-insert-normpairs) #'d-emacs-lua-insert-othernormpair-yas-snippet))
 
 ;;;;;; C-
 ;;;;;;; C-1
