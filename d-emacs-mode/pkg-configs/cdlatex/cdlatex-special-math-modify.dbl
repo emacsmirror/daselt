@@ -1,40 +1,47 @@
 
 ;;;; cdlatex-mode-map
 (
+;;;;; Strings
+ ("B" "\\blue" nil t nil nil)
+ ("R" "\\red" nil t nil nil)
+ ("Y" "\\yellow" nil t nil nil)
+ ("■" "\\ensquare" nil t nil nil)
+ ("●" "\\encircle" nil t nil nil)
+
 ;;;;; Coordinates
-;;;;;;; 1
+ ((1 -1 -2) "\\tilde" nil t nil nil)
+ ((1 -1 2) "\\widetilde" nil t nil nil)
+
 ;;;;;;;; 1-0
+ ((1 0 -4) "\\hat" nil t nil nil)
+ ((1 0 -3) "\\mathfrak" nil t nil nil)
  ((1 0 -2) "\\mathbb" nil t nil nil)
- ((1 0 2) nil "\\emph" t nil nil)
-
-;;;;;;;; 1-1
- ((1 1 -3) "\\mathfrak" nil t nil nil)
-
-;;;;;;; 2
-;;;;;;;; 2-0
- ((2 0 3) "\\red" nil t nil nil)
-
-;;;;;;;; 2-1
- ((2 1 -4) "\\yellow" nil t nil nil)
- ((2 1 5) "\\blue" nil t nil nil)
+ ((1 0 -1) "\\mathop" nil t nil nil)
+ ((1 0 1) "\\mathrel" nil t nil nil)
+ ((1 0 2) "\\mathcal" "\\emph" t nil nil)
+ ((1 0 3) "\\mathbf" nil t nil nil)
+ ((1 0 4) "\\widehat" nil t nil nil)
 
 ;;;;;;; 3
 ;;;;;;;; 3--1
  ((3 -1 -4) "\\reflectbox" nil t nil nil)
 
 ;;;;;;;; 3-1
- ((3 1 -2) "\\underline" nil t nil nil)
- ((3 1 2) "\\overline" nil t nil nil)
+ ((3 1 -3) "\\cancel" nil t nil nil)
 
 ;;;;;;; 4
-;;;;;;;; 4--1
- ((4 -1 -5) "\\cancel" nil t nil nil)
- ((4 -1 -3) "\\mathsmaller" "\\textsmaller" t nil nil)
- ((4 -1 3) "\\mathlarger" "\\textlarger" t nil nil)
+;;;;;;;; 4-0
+ ((4 0 -3) "\\mathsmaller" "\\textsmaller" t nil nil)
+ ((4 0 -1) "\\overline" nil t nil nil)
+ ((4 0 1) "\\underline" nil t nil nil)
+ ((4 0 3) "\\mathlarger" "\\textlarger" t nil nil)
 
 ;;;;;;; 8
 ;;;;;;;; 8--1
  ((8 -1 -3) "\\xuparrow" nil t nil nil)
  ((8 -1 -2) "\\xleftarrow" nil t nil nil)
  ((8 -1 2) "\\xrightarrow" nil t nil nil)
- ((8 -1 3) "\\xdownarrow" nil t nil nil))
+ ((8 -1 3) "\\xdownarrow" nil t nil nil)
+
+;;;;;;;; 8-1
+ ((8 1 0) "\\overleftrightarrow" nil t nil nil))

@@ -9,10 +9,10 @@
  ((1 -1 4) . #'avy-act-follow)
 
 ;;;;;;;; 1-0
- ((1 0 -4) . #'scroll-up-command)
+ ((1 0 -4) . #'scroll-down-command)
  ((1 0 -2) . #'eww-previous-url)
  ((1 0 2) . #'eww-next-url)
- ((1 0 4) . #'scroll-down-command)
+ ((1 0 4) . #'scroll-up-command)
  ((1 0 5) . #'eww)
 
 ;;;;;;;; 1-1

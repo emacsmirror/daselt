@@ -11,7 +11,7 @@
                                    blist)))))
         (unless d-emacs-dirs-keep-read-buffers
           (kill-buffer buffer)))))
-
+ 
  (cdlatex-math-modify-alist-default
   . (let* ((filepath (concat d-emacs-dirs-pkg-configs-directory "cdlatex/cdlatex-special-math-modify.dbl"))
            (buffer (find-file-noselect filepath)))

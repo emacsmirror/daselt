@@ -41,7 +41,7 @@
 
 ;;;; Constants
 (defconst d-emacs-backward-command-list
-  (remq nil `(sp-kill-hybrid-sexp sp-mark-sexp mark-sexp mark-defun transpose-paragraphs kill-paragraph transpose-sentences delete-char transpose-lines kill-line transpose-words transpose-sexps sp-down-sexp down-list transpose-chars other-frame sp-transpose-sexp sp-transpose-hybrid-sexp mark-line d-emacs-kill-defun delete-all-space delete-horizontal-space sp-up-sexp up-list pdf-view-rotate))
+  (remq nil `(sp-kill-hybrid-sexp sp-mark-sexp mark-sexp mark-defun transpose-paragraphs kill-paragraph transpose-sentences delete-char transpose-lines transpose-words transpose-sexps sp-down-sexp down-list transpose-chars other-frame sp-transpose-sexp sp-transpose-hybrid-sexp mark-line d-emacs-kill-defun delete-all-space delete-horizontal-space sp-up-sexp up-list pdf-view-rotate))
   "List of commands for which backward analogs are created.")
 
 (defconst d-emacs-new-buffer-command-list
@@ -697,13 +697,21 @@ needed."
 
 ;;;;;; Killing
 (defun d-emacs-kill-defun (&optional arg)
-  "Kill the current defun, marking the active region and killing it.
+                                  "Kill the current defun, marking the active
+                                  region and killing it.
 
 ARG determines the scope of the kill."
-  (interactive "p")
-  (mark-defun arg)
-  (kill-region (region-beginning) (region-end)))
+                                  (interactive "p")
+                                  (mark-defun arg)
+                                  (kill-region (region-beginning) (region-end)))
 
+
+(defun d-emacs-backward-kill-line (&optional arg)
+  "Kill line backward."
+  (declare (ftype (function (&optional integer) t)))
+  (interactive "P")
+  (let ((arg (or arg 0)))
+    (kill-line arg)))
 
 ;;;;;; Insertion
 (defun d-emacs-insert-and-return (str)
@@ -955,24 +963,30 @@ replacement."
                                                  (completing-read "Enter strings to cycle (enter empty string to exit): " nil))
                                            ""))
                           (push input inputs))
-                                 inputs)))
+                     inputs)))
   (let* ((beg (if (use-region-p) (region-beginning) (point-min)))
          (end (if (use-region-p) (region-end) (point-max)))
          ;; Remove brackets if you get arguments as a list.
          (strings (if (listp (car strings)) (car strings) strings))
          ;; Reverse string if you get a prefix arg.
          (strings (if current-prefix-arg
-                                  (reverse strings)
-                          strings)))
+                      (reverse strings)
+                    strings)))
     (progn (cl-loop for n from 0 to (1- (length strings))
                     for oldstring = (nth n strings)
+                    for placeholder = (format "πλαχεηολδερ%s" n)
+                    for lengthdiff = (- (length placeholder) (length oldstring))
+                    do (goto-char beg)
                     do (while (search-forward oldstring end t)
-                         (replace-match (format "πλαχεηολδερ%s" n) case-replace t))
-                    do (goto-char beg))
+                         (replace-match placeholder case-replace t)
+                         (setq end (+ end lengthdiff))))
            (cl-loop for n from 0 to (1- (1- (length strings)))
                     for newstring = (nth (1+ n) strings)
-                    do (while (search-forward (format "πλαχεηολδερ%s" n) end t)
-                         (replace-match newstring case-replace t))
+                    for placeholder = (format "πλαχεηολδερ%s" n)
+                    for lengthdiff = (- (length newstring) (length placeholder))
+                    do (while (search-forward placeholder end t)
+                         (replace-match newstring case-replace t)
+                         (setq end (+ end lengthdiff)))
                     do (goto-char beg))
            (while (re-search-forward "πλαχεηολδερ." end t)
              (replace-match "" nil t)))))
@@ -1153,25 +1167,25 @@ files and directories (starting with a period) are left out."
   (interactive "sString: \nsReplacement: \nDDirectory: ")
   (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                                                              (if (stringp filetest)
-                                                                  (lambda (fname) (if (string-match-p filetest fname) t))
-                                              filetest)
+                          (if (stringp filetest)
+                              (lambda (fname) (if (string-match-p filetest fname) t))
+                            filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                                                             (lambda (fname) (if (string-match-p dirtest fname) t))
-                                         dirtest)))
+                         (lambda (fname) (if (string-match-p dirtest fname) t))
+                       dirtest)))
     (save-excursion
-                        (d-emacs-dirs-recurse-through-directory
+      (d-emacs-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-                              (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
+            (d-emacs-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-                                (let ((file (nth idx flist)))
+              (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-                        (set-buffer buf))))
+      (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun d-emacs-open-file-in-new-emacs (&optional filename)
@@ -1200,7 +1214,7 @@ Ignore the override map."
   (interactive "sKey: ")
   (let ((active-maps nil))
     (mapc (lambda (x)
-	              (when (and (symbolp (car x)) (symbol-value (car x)))
+	    (when (and (symbolp (car x)) (symbol-value (car x)))
 	      (add-to-list 'active-maps  (lookup-key (cdr x) (kbd key)))))
 	  minor-mode-map-alist )
     (make-composed-keymap active-maps)))
@@ -1222,8 +1236,9 @@ Ignore the override map."
                            (replace-regexp-in-string
                             "d-emacs-" "" (symbol-name cmd))))
        (&optional arg)
-     "A version of ,cmd with a negative argument so it acts backwards.
-Generated automatically using `d-emacs-backward-command-list'."
+     ,(d-emacs-base-fill-string-like-docstring
+       (format "A version of %s with a negative argument so it acts backwards.
+Generated automatically using `d-emacs-backward-command-list'." cmd))
      (interactive "p")
      (,cmd (- arg))))
  (cmd . d-emacs-backward-command-list))
@@ -1233,8 +1248,8 @@ Generated automatically using `d-emacs-backward-command-list'."
                            (replace-regexp-in-string
                             "d-emacs-" "" (symbol-name cmd))))
        (&optional arg)
-     "A version of ,cmd with an argument so it uses a new buffer.
-Generated automatically using `d-emacs-new-buffer-command-list'."
+     ,(format "A version of %s with an argument so it uses a new buffer.
+Generated automatically using `d-emacs-new-buffer-command-list'." cmd)
      (interactive "p")
      (,cmd (- arg))))
  (cmd . d-emacs-new-buffer-command-list))
