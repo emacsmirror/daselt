@@ -1,16 +1,19 @@
+
+;;;; vterm-mode-map
 (
 ;;;;; Coordinates
 ;;;;;;; 0
 ;;;;;;;; 0-0
- ((0 0 -6) . #'vterm-copy-mode) 
+ ((0 0 -6) . #'vterm-copy-mode)
 
-;;;;;; C- 
-;;;;;;; C-1 
-;;;;;;;; C-1-1 
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-1
+ (("C-" . (1 1 -2)) . (lambda nil (interactive) (vterm-send "C-c")))
  (("C-" . (1 1 0)) . #'d-vterm-insert))
 
 ;;;; vterm-copy-mode-map
-(vterm-copy-mode-map 
+(vterm-copy-mode-map
 ;;;;; Coordinates
 ;;;;;;; 0
 ;;;;;;;; 0-0

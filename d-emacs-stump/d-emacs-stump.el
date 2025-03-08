@@ -309,11 +309,11 @@ Each keymap in `d-emacs-stump-keymaps' is initialized."
                                        (kbd-conss body)))))))
 
 (defun d-emacs-stump--generate-binwarp-mode-code ()
-  "Generate the code for the binwarp mode."
-  (declare (ftype (function ()
+      "Generate the code for the binwarp mode."
+      (declare (ftype (function ()
                             ;; void  ; Compiler complains.
                             t)))
-  (let* ((blist (car (d-emacs-dirs-act-on-sexps-in-file
+      (let* ((blist (car (d-emacs-dirs-act-on-sexps-in-file
                       (concat d-emacs-stump-pkg-configs-directory
                               "binwarp/binwarp-special.dbl")
                       (lambda () (d-emacs-base-read-region)))))
@@ -323,7 +323,7 @@ Each keymap in `d-emacs-stump-keymaps' is initialized."
          (body (cdr blist)))
     (cl-flet* ((kbd-car (bind) `(kbd ,(d-emacs-bind-string bind)))
                (kbd-lists (bblist) (mapcar (lambda (bind)
-                                             (list (kbd-car bind)
+                                                 (list (kbd-car bind)
                                                    (cdr bind)))
                                            bblist)))
       (insert (format "%S\n\n" (append `(binwarp:define-binwarp-mode binwarp-mode ,headhead)

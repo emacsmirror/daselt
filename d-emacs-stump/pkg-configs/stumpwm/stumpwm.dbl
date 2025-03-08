@@ -71,10 +71,10 @@
 
 ;;;;;;;; H-1-1
  (("H-" . (1 1 -6)) . "sibling")
- (("H-" . (1 1 -3)) . "show-clipboard-history")
  (("H-" . (1 1 -2)) . "backlight-down")
  (("H-" . (1 1 0)) . "send-raw-key")
  (("H-" . (1 1 2)) . "backlight-up")
+ (("H-" . (1 1 3)) . "show-clipboard-history")
 
 ;;;;;; H-C-
 ;;;;;;; H-C-1
