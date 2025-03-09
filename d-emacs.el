@@ -1,4 +1,4 @@
-;;; d-emacs.el --- Load d-emacs-files  -*- lexical-binding: t; -*-
+;;; d-emacs.el --- Daselt's Emacs module  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025  Alexander Prähauser
 
