@@ -136,6 +136,8 @@
 (declare-function d-emacs-base-index "d-emacs-base" (list &optional fromone))
 (declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
 
+(declare-function d-emacs-bind-p "d-emacs-bind" (obj))
+
 ;;;; Customs
 (defgroup d-emacs-coords
   nil

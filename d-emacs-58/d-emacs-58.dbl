@@ -1,0 +1,54 @@
+`(;; 3
+  ((0 -6) . (,(nth 0 d-emacs-dfk-locking-3-coords)
+             . ,(nth 0 d-emacs-dfk-locking-3-coords)))
+  ((0 6) . (,(nth 1 d-emacs-dfk-locking-3-coords)
+            . ,(nth 1 d-emacs-dfk-locking-3-coords)))
+
+  ;; 4
+  ((-1 6) . ((,(nth 0 d-emacs-dfk-locking-2-coords)
+              ,(nth 1 d-emacs-dfk-locking-3-coords))
+             . (,(nth 0 d-emacs-dfk-locking-2-coords)
+                ,(nth 1 d-emacs-dfk-locking-3-coords))))
+  ((-1 7) . ((,(nth 0 d-emacs-dfk-locking-2-coords)
+              ,(nth 0 d-emacs-dfk-locking-3-coords))
+             . (,(nth 0 d-emacs-dfk-locking-2-coords)
+                ,(nth 0 d-emacs-dfk-locking-3-coords))))
+
+  ;; 5
+  ("backslash" . (,(nth 0 d-emacs-dfk-locking-5-coords)
+                  . ,(nth 0 d-emacs-dfk-locking-5-coords)))
+
+  ;; 6
+  ((-2 -3) . ((,(nth 0 d-emacs-dfk-locking-2-coords)
+               ,(nth 0 d-emacs-dfk-locking-5-coords))
+              . (,(nth 0 d-emacs-dfk-locking-2-coords)
+                 ,(nth 0 d-emacs-dfk-locking-5-coords))))
+  ((-2 3) . ((,(nth 0 d-emacs-dfk-locking-2-coords)
+              ,(nth 0 d-emacs-dfk-locking-5-coords))
+             . (,(nth 0 d-emacs-dfk-locking-2-coords)
+                ,(nth 0 d-emacs-dfk-locking-5-coords))))
+
+  ;; 7
+  ((2 -1) . ((,(nth 0 d-emacs-dfk-locking-3-coords)
+              ,(nth 0 d-emacs-dfk-locking-5-coords))
+             . (,(nth 0 d-emacs-dfk-locking-3-coords)
+                ,(nth 0 d-emacs-dfk-locking-5-coords))))
+  ((2 1) . ((,(nth 0 d-emacs-dfk-locking-3-coords)
+             ,(nth 0 d-emacs-dfk-locking-5-coords))
+            . (,(nth 0 d-emacs-dfk-locking-3-coords)
+               ,(nth 0 d-emacs-dfk-locking-5-coords))))
+  
+  ;; 8
+  ((2 2) . ((,(nth 0 d-emacs-dfk-non-locking-2-coords)
+             ,(nth 1 d-emacs-dfk-locking-3-coords)
+             ,(nth 0 d-emacs-dfk-non-locking-5-coords))
+            . (,(nth 0 d-emacs-dfk-non-locking-2-coords)
+               ,(nth 1 d-emacs-dfk-locking-3-coords)
+               ,(nth 0 d-emacs-dfk-non-locking-5-coords))))
+  ;; ((-2 2) . ((,(nth 1 d-emacs-dfk-non-locking-2-coords)
+  ;;             ,(nth 0 d-emacs-dfk-locking-3-coords)
+  ;;             ,(nth 1 d-emacs-dfk-non-locking-5-coords))
+  ;;            . (,(nth 1 d-emacs-dfk-non-locking-2-coords)
+  ;;               ,(nth 1 d-emacs-dfk-non-locking-2-coords)
+  ;;               ,(nth 1 d-emacs-dfk-non-locking-5-coords))))
+  )
