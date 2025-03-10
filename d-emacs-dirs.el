@@ -1134,7 +1134,8 @@ feature or an installed package."
          (group (or group 'd-emacs))
          (pfx (concat (symbol-name group) "-"))
          (defaultfun (or defaultfun (lambda (pkg) (or (featurep pkg)
-                                                 (package-installed-p pkg)))))
+                                                 (if (package-installed-p pkg) ; Just return truth value
+                                                     t)))))
          (customlist (mapcar (lambda (pkg)
                                `(defcustom ,(intern (concat pfx (symbol-name pkg)))
                                   ,(funcall defaultfun pkg)
