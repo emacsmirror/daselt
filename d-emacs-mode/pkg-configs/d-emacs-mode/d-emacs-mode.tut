@@ -278,7 +278,7 @@ Though vanilla Emacs suffices to run Daselt, it can be greatly improved by addin
 
 * Customization
 ** Writing Your Own Bindlists
-The best way to override bindings bound by ~d-emacs~ is to create a user-defined bindlist for the same map. An example-file is the ~user-defined-example-bindlist.dbl~ that is in the root directory of ~d-emacs-bind~. See there for more detailed instructions on how to write ~bindlists~-files. 
+The best way to override bindings bound by ~d-emacs~ is to create a user-defined bindlist for the same map. An example-file is the ~user-defined-example-bindlist.dbl~ that is in the root directory of ~d-emacs~. See there for more detailed instructions on how to write ~bindlists~-files. 
 
 ** Importing your bindings
 To import your keybindings, the function ~d-emacs-bind-convert-bindings-to-bindlist~ has been provided. To use it, simply mark the bindings you want to convert and call the command, and it will put them into bindlists, or mark nothing to convert all bindings in the current buffer. It should convert most kinds of bindings, including ~:bind~-sections of ~use-package~-configs, but you are encouraged to review the generated bindlists for consistency and completeness. Once your bindings are organized into bindlists, you can put them into user-defined ~dbl~ files, as described in the ~user-defined-example-bindlist.dbl~ and they will be applied automatically when ~d-emacs-mode~ is started next time.
