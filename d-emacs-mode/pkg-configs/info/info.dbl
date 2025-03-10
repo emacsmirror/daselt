@@ -1,6 +1,5 @@
-
 ;;;; Info-mode-map
-`(Info-mode-map
+(Info-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -14,12 +13,12 @@
 
 ;;;;;;;; 1-0
  ((1 0 -5) . #'Info-follow-nearest-node)
- ((1 0 -3) . #'Info-scroll-up)
- ((1 0 -3) . #'Info-scroll-down)
+ ((1 0 -4) . #'Info-scroll-down)
  ((1 0 -3) . #'d-emacs-scroll-chunk-down)
  ((1 0 -2) . #'Info-prev-reference)
  ((1 0 2) . #'Info-next-reference)
  ((1 0 3) . #'d-emacs-scroll-chunk-up)
+ ((1 0 4) . #'Info-scroll-up)
  ((1 0 5) . #'Info-save-current-node)
 
 ;;;;;;;; 1-1

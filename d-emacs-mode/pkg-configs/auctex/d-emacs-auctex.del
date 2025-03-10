@@ -1,0 +1,67 @@
+;;; d-emacs-auctex.del --- Daselt-code for AucTeX    -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools, tex
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defun d-emacs-latex-forward-down-environment (&optional N)
+  "Move into the N-th next environment.
+
+If there is no environment within the current environment, move to the beginning
+of the current environment.
+
+Requires latex-extra."
+  (declare (ftype (function (&optional integer) t)))
+  (interactive "p")
+  (latex/forward-environment N)
+  (latex/backward-environment 1)
+  (forward-line))
+
+(defun d-emacs-latex-backward-down-environment (&optional N)
+  "Move into the N-th previous environment.
+
+If there is no previous environment within the current environment, move to the
+end of the current environment.
+
+Requires latex-extra."
+  (declare (ftype (function (&optional integer) t)))
+  (interactive "p")
+  (latex/backward-environment N)
+  (latex/forward-environment 1)
+  (forward-line -2)
+  (end-of-line))
+
+(defun d-emacs-reftex-throw-114 ()
+  "Throw 114 to `myexit'."
+  (declare (ftype (function () t)))
+  (interactive)
+  (throw 'myexit 114))
+
+(defun d-emacs-reftex-throw-82 ()
+  "Throw 82 to `myexit'."
+  (declare (ftype (function () t)))
+  (interactive)
+  (throw 'myexit 82))
+
+(provide 'd-emacs-auctex)
+;;; d-emacs-auctex.del ends here

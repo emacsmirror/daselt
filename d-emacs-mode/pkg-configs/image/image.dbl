@@ -21,10 +21,10 @@
 
 ;;;;;;;; 2-0
  ((2 0 -4) . #'image-decrease-size)
- ((2 0 -2) . #'image-decrease-speed)
+ ((2 0 -3) . #'image-decrease-speed)
  ((2 0 -2) . #'image-previous-file)
- ((2 0 2) . #'image-increase-speed)
  ((2 0 2) . #'image-next-file)
+ ((2 0 3) . #'image-increase-speed)
  ((2 0 4) . #'image-increase-size)
  ((2 0 5) . #'image-save)
 

@@ -568,20 +568,20 @@ If the base name of FILEPATH contains the string `-init-', skip the eval conditi
  (operation d-emacs-dirs-fill-docstrings-of d-emacs-dirs-trim-lines-of d-emacs-dirs-byte-compile d-emacs-dirs-load-elc-or))
 
 (defun d-emacs-dirs-add-el-symlink-for-lispcode-in-file (fname)
-  "Add a symlink to FNAME from an eponymous name with an el-extension.
+      "Add a symlink to FNAME from an eponymous name with an el-extension.
 
 This way, Emacs's help functions can still find definitions in FNAME while you
 can open the file as a del-file so that the save hooks are in place.
 
 If an el-file with that name already exists, no new link is added."
-  (declare (ftype (function (string) t)))
-  (let ((el-name (concat (file-name-sans-extension fname) ".el")))
+      (declare (ftype (function (string) t)))
+      (let ((el-name (concat (file-name-sans-extension fname) ".el")))
     (unless (file-exists-p el-name)
       (f-symlink fname el-name))))
 
 ;;;;;;; Auto-insert for del-files
 (with-eval-after-load 'auto-insert-mode
-  (add-to-list 'auto-insert-alist
+       (add-to-list 'auto-insert-alist
                '(("\\.del\\'" . "Emacs Lisp header") "Short description: " ";;; "
                  (file-name-nondirectory (buffer-file-name)) " --- " str
                  (make-string (max 2 (- 80 (current-column) 27)) 32)
@@ -589,7 +589,7 @@ If an el-file with that name already exists, no new link is added."
                  "\n\n;; Copyright (C) " (format-time-string "%Y") "  " (getenv "ORGANIZATION")
                  | (progn user-full-name) "\n\n;; Author: " (user-full-name)
                  '(if (search-backward "&" (line-beginning-position) t)
-                      (replace-match (capitalize (user-login-name)) t t))
+                              (replace-match (capitalize (user-login-name)) t t))
                  '(end-of-line 1) " <" (progn user-mail-address) ">\n;; Keywords: "
                  '(require 'finder)
                  '(setq v1
@@ -606,25 +606,25 @@ If an el-file with that name already exists, no new link is added."
 
 ;;;;;; dbl
 (defun d-emacs-dirs--delete-duplicate-comment-lines ()
-  "Delete duplicate comment lines separated by blank lines in current buffer."
-  (declare (ftype (function () void)))
-  (save-excursion
-    (d-emacs-base-goto-min)
-    (while (not (eobp))
+    "Delete duplicate comment lines separated by blank lines in current buffer."
+    (declare (ftype (function () void)))
+    (save-excursion
+      (d-emacs-base-goto-min)
+      (while (not (eobp))
       (let* ((curline (thing-at-point 'line t))
              (curpos (line-end-position))
              (curtrimline (string-trim curline))
              (nextline "")
              (nexttrimline ""))
         (if (string-match-p (rx string-start ";") curtrimline)
-            (cl-loop while (and (not (eobp))
+                (cl-loop while (and (not (eobp))
                                 (not (string-match-p (rx string-start (not ";"))
                                                      nexttrimline)))
                      do (progn (forward-line)
                                (setq nextline (thing-at-point 'line t))
                                (setq nexttrimline (string-trim nextline))
                                (if (string= curtrimline nexttrimline)
-                                   (delete-region curpos (line-end-position))))))
+                                       (delete-region curpos (line-end-position))))))
         (goto-char curpos)
         (unless (eobp)
           (forward-line))))))
@@ -658,22 +658,28 @@ replace matching binding strings with prefix-coords pairs."
 
       ;; Remove unnecessary empty lines
       (d-emacs-base-goto-min)
+      (if (string= (thing-at-point 'line) "\n")
+          (delete-char 1))
       (while (re-search-forward (rx "\n" (one-or-more "\n")) nil t)
         (replace-match "\n\n"))
+      (d-emacs-base-goto-max)
+      (backward-char)
+      (if (string= (thing-at-point 'whitespace) "\n")
+          (delete-char 1))
 
       (set-buffer buffer)
       (goto-char pos)))
   nil)
 
 (defun d-emacs-dirs-with-eval-apply-bindlist (blist &optional backuppfx)
-  "A wrapper around `d-emacs-dirs-with-eval-apply-bindlist' which sets WITHEVAL
+    "A wrapper around `d-emacs-dirs-with-eval-apply-bindlist' which sets WITHEVAL
 to t.
 
 Evaluation can still be stopped by putting `-init-' into the base file name of
 the containing file.
 
 See `d-emacs-bind-apply-bindlist' for more documentation."
-  (d-emacs-bind-apply-bindlist blist backuppfx t))
+    (d-emacs-bind-apply-bindlist blist backuppfx t))
 
 (defun d-emacs-dirs-with-eval-apply-bindlists-in-file (&optional blistfile backuppfx)
   "Backup and bind all the bindlists in the file BLISTFILE.
@@ -1135,14 +1141,14 @@ feature or an installed package."
          (pfx (concat (symbol-name group) "-"))
          (defaultfun (or defaultfun (lambda (pkg) (or (featurep pkg)
                                                  (if (package-installed-p pkg) ; Just return truth value
-                                                     t)))))
+                                                                                         t)))))
          (customlist (mapcar (lambda (pkg)
-                               `(defcustom ,(intern (concat pfx (symbol-name pkg)))
-                                  ,(funcall defaultfun pkg)
-                                  ,(d-emacs-base-fill-string-like-docstring
+                                                 `(defcustom ,(intern (concat pfx (symbol-name pkg)))
+                                                    ,(funcall defaultfun pkg)
+                                                    ,(d-emacs-base-fill-string-like-docstring
                                     (format "Set to t to have `d-emacs-dirs-act-on-pkg-files-by-type' recurse into the %sdirectory whose name is %s." pfx pkg))
-                                  :type 'boolean
-                                  :group ',group))
+                                                    :type 'boolean
+                                                    :group ',group))
                              (d-emacs-dirs-recurse-through-directory
                               dir
                               `(((lambda (filepath) (intern (file-name-base filepath)))

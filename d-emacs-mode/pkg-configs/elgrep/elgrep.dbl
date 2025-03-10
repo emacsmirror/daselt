@@ -1,18 +1,17 @@
-(elgrep-mode-map 
+;;;; elgrep-mode-map
+(elgrep-mode-map
 ;;;;; Coordinates
 ;;;;;;; 4
 ;;;;;;;; 4--1
- ((4 -1 -4) . #'elgrep-rerun) 
+ ((4 -1 -4) . #'elgrep-rerun)
 
-;;;;;; C- 
-;;;;;;; C-4 
-;;;;;;;; C-4-0 
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
  (("C-" . (4 0 -2)) . #'elgrep-edit-mode))
 
 ;;;; elgrep-edit-mode-map
-
-;;;; elgrep-edit-mode-map
-(elgrep-edit-mode-map 
+(elgrep-edit-mode-map
 ;;;;; Coordinates
 ;;;;;; C-
 ;;;;;;; C-4

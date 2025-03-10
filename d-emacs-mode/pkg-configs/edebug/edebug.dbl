@@ -1,4 +1,3 @@
-
 ;;;; edebug-mode-map
 (
 ;;;;; Coordinates
@@ -41,7 +40,7 @@
 
 ;;;;;;;; 3-0
  ((3 0 -3) . #'edebug-step-out)
- ((3 0 2) . #'edebug-goto-here)
+ ((3 0 -2) . #'edebug-goto-here)
  ((3 0 2) . #'edebug-forward-sexp)
  ((3 0 3) . #'edebug-step-in)
 
@@ -152,7 +151,3 @@
 ;;;;;;;; 3--1
  ((3 -1 -4) . #'edebug-eval-last-sexp)
  ((3 -1 4) . #'edebug-eval-print-last-sexp))
-
-;;;; provide
-(provide
-(d-emacs-edebug-bindlist quote))

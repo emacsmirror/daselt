@@ -421,6 +421,19 @@ This cycles among all possible values of the option in the reverse order."
             (unless d-emacs-mode
               (d-emacs-icicles--reset-key-customs-from-backups))))
 
+;;;; Setting icicles-mode-map
+;; This has to be done in a roundabout way because the icicle-mode-map is
+;; re-set when the mode is started.
+(d-emacs-bind-save-bindlist-as-variable
+ '(icicle-mode-map
+;;;;; Coordinates
+;;;;;; M-C-
+;;;;;;; M-C-4
+;;;;;;;; M-C-4-0
+   (("M-C-" . (4 0 -2)))))
+
+(add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-icicle-mode-map-bindlist)))
+
 ;;;; Provide
 (provide 'd-emacs-icicles)
 ;;;  d-emacs-icicles.del ends here

@@ -1,16 +1,17 @@
-(undo-tree-visualizer-mode-map 
+;;;; undo-tree-visualizer-mode-map
+(undo-tree-visualizer-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
- ((1 0 -3) . #'undo-tree-visualize-undo) 
- ((1 0 -2) . #'undo-tree-visualize-switch-branch-left) 
- ((1 0 2) . #'undo-tree-visualize-switch-branch-right) 
- ((1 0 3) . #'undo-tree-visualize-redo) 
+ ((1 0 -3) . #'undo-tree-visualize-undo)
+ ((1 0 -2) . #'undo-tree-visualize-switch-branch-left)
+ ((1 0 2) . #'undo-tree-visualize-switch-branch-right)
+ ((1 0 3) . #'undo-tree-visualize-redo)
 
-;;;;;; C- 
-;;;;;;; C-1 
-;;;;;;;; C-1-0 
- (("C-" . (1 0 -3)) . #'undo-tree-visualize-undo) 
- (("C-" . (1 0 -2)) . #'undo-tree-visualize-switch-branch-left) 
- (("C-" . (1 0 2)) . #'undo-tree-visualize-switch-branch-right) 
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 -3)) . #'undo-tree-visualize-undo)
+ (("C-" . (1 0 -2)) . #'undo-tree-visualize-switch-branch-left)
+ (("C-" . (1 0 2)) . #'undo-tree-visualize-switch-branch-right)
  (("C-" . (1 0 3)) . #'undo-tree-visualize-redo))
