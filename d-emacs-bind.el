@@ -1556,6 +1556,7 @@ FILEPATH."
 
 (defun d-emacs-bind-apply-bindlist (blist &optional backuppfx witheval)
   "Rebind keys in a given keymap after evaluating an associated condition.
+
 The rebinding is specified by the bindlist BLIST, which has structurally two
 forms:
 
@@ -1579,13 +1580,15 @@ no backup is made, indicating that a prior backup exists. BACKUPPFX is
 `d-emacs-' by default.
 
 If WITHEVAL is t, the bindlist will still be applied without evaluation if it is
-in a file with `-init-' in its base name. Be careful, if the map the bindlist is
-applied to is not loaded, application will throw an error."
+in a file with `-init-' in its base name, if no evaluation condition can be set
+or if the buffer is not currently visiting a file. Be careful, if the map the
+bindlist is applied to is not loaded, application will throw an error."
   (declare (ftype (function (list &optional string boolean)
                             ;; void  ; Compiler complains.
                             t)))
-  (let* ((pkgname (d-emacs-base-containing-directory-base-name (buffer-file-name)))
-         (mapsymbdefault (intern (concat pkgname "-mode-map"))))
+  (let* ((bufname (buffer-file-name))
+         (pkgname (if bufname (d-emacs-base-containing-directory-base-name bufname)))
+         (mapsymbdefault (if pkgname (intern (concat pkgname "-mode-map")))))
 
     (d-emacs-bind-act-on-bindings
      blist
@@ -1597,7 +1600,8 @@ applied to is not loaded, application will throw an error."
                            (car (last heads))
                          (if heads
                              (car heads)
-                           mapsymbdefault)))
+                           (or mapsymbdefault
+                               (error "No map symbol specified and buffer not visiting a file")))))
               (backuppfx (or backuppfx "d-emacs-"))
               (backupsymb (intern (concat backuppfx (symbol-name mapsymb) "-backup"))))
          (cl-flet ((backup-and-apply-binding (&optional _dummy1 _dummy2)
@@ -1608,8 +1612,9 @@ applied to is not loaded, application will throw an error."
                          (set backupsymb map)
                          nil)
                        (d-emacs-bind-apply-binding bind map))))
-           (if witheval (d-emacs-bind-with-eval-unless-init
-                         (buffer-file-name) #'backup-and-apply-binding evalcnd)
+           (if (and witheval bufname evalcnd)
+               (d-emacs-bind-with-eval-unless-init
+                (buffer-file-name) #'backup-and-apply-binding evalcnd)
              (backup-and-apply-binding)))))
      t)
     nil))

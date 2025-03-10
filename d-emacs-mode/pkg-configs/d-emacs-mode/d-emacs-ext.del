@@ -1193,7 +1193,10 @@ files and directories (starting with a period) are left out."
 
 Defaults to the current buffer's file if FILENAME isn't specified."
   (interactive)
-  (let ((filename (if filename filename (buffer-file-name))))
+  (let ((filename (if filename filename
+                    (d-emacs-base--escape-chars-in-str
+                     (buffer-file-name)
+                     (list (rx-to-string `(group " ")))))))
     (shell-command (format "emacs --no-desktop --debug-init %s &" filename))))
 
 
@@ -1202,7 +1205,9 @@ Defaults to the current buffer's file if FILENAME isn't specified."
 
 Defaults to the current buffer's file if FILENAME isn't specified."
   (interactive)
-  (let ((filename (if filename filename (buffer-file-name))))
+  (let ((filename (if filename filename (d-emacs-base--escape-chars-in-str
+                                         (buffer-file-name)
+                                         (list (rx-to-string `(group " ")))))))
     (shell-command (format "emacs -q %s &" filename))))
 
 
