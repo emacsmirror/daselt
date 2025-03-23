@@ -35,6 +35,20 @@
  ((4 0 1) "\\underline" nil t nil nil)
  ((4 0 3) "\\mathlarger" "\\textlarger" t nil nil)
 
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) "\\xhookuparrow" nil t nil nil)
+ ((5 -1 -2) "\\xhookleftarrow" nil t nil nil)
+ ((5 -1 2) "\\xhookrightarrow" nil t nil nil)
+ ((5 -1 3) "\\xhookdownarrow" nil t nil nil)
+
+;;;;;;; 6
+;;;;;;;; 6--1
+ ((6 -1 -3) "\\xtwoheaduparrow" nil t nil nil)
+ ((6 -1 -2) "\\xtwoheadleftarrow" nil t nil nil)
+ ((6 -1 2) "\\xtwoheadrightarrow" nil t nil nil)
+ ((6 -1 3) "\\xtwoheaddownarrow" nil t nil nil)
+
 ;;;;;;; 8
 ;;;;;;;; 8--1
  ((8 -1 -3) "\\xuparrow" nil t nil nil)

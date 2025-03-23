@@ -51,6 +51,28 @@ Requires latex-extra."
   (forward-line -2)
   (end-of-line))
 
+(defun d-emacs-latex-indent-environment (&optional count)
+  "Indent the LaTeX environment point is currently in.
+
+With COUNT given, indent the COUNT-th nested environment point is in."
+  (declare (ftype (function (&optional natnum) t)))
+  (interactive "P")
+  (let ((count (or count 1)))
+    (save-excursion
+      (LaTeX-mark-environment count)
+      (indent-region (region-beginning) (region-end)))))
+
+(defun d-emacs-latex-indent-section (&optional count)
+  "Indent the LaTeX section point is currently in.
+
+With COUNT given, indent the COUNT-th nested section point is in."
+  (declare (ftype (function (&optional natnum) t)))
+  (interactive "P")
+  (let ((count (or count 1)))
+    (save-excursion
+      (LaTeX-mark-section count)
+      (indent-region (region-beginning) (region-end)))))
+
 (defun d-emacs-reftex-throw-114 ()
   "Throw 114 to `myexit'."
   (declare (ftype (function () t)))
@@ -62,6 +84,25 @@ Requires latex-extra."
   (declare (ftype (function () t)))
   (interactive)
   (throw 'myexit 82))
+
+(defun d-emacs-reftex-relabel (beg end)
+  "Relabel all LaTeX \\label commands in the region from BEG to END using
+`reftex-label'.
+
+Searches for `\\label{...}', removes it, and then calls `reftex-label' to insert
+a new label."
+  (interactive "r")
+  ;; Ensure RefTeX is loaded
+  (require 'reftex)
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "\\\\label{[^}]+}" end t)
+      ;; Delete the old \label{...}
+      (delete-region (match-beginning 0) (match-end 0))
+      ;; Step back a bit so we're still within the environment
+      (backward-char 1)
+      ;; Insert the new label
+      (reftex-label))))
 
 (provide 'd-emacs-auctex)
 ;;; d-emacs-auctex.del ends here

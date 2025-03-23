@@ -7,6 +7,8 @@
  (("C-" . (4 -1 -4)) . #'LaTeX-narrow-to-environment)
  (("C-" . (4 -1 -3)) . #'LaTeX-mark-environment)
  (("C-" . (4 -1 -2)) . #'LaTeX-environment)
+ (("C-" . (4 -1 -1)) . #'d-emacs-latex-indent-environment)
+ (("C-" . (4 -1 1)) . #'d-emacs-latex-indent-section)
  (("C-" . (4 -1 2)) . #'LaTeX-section)
  (("C-" . (4 -1 3)) . #'LaTeX-mark-section)
  (("C-" . (4 -1 4)) . #'TeX-fold-dwim)
@@ -70,6 +72,7 @@
 ;;;;;; s-
 ;;;;;;; s-4
 ;;;;;;;; s-4--1
+ (("s-" . (4 -1 -4)) . #'d-emacs-reftex-relabel)
  (("s-" . (4 -1 -3)) . #'d-emacs-lua-LaTeX-delete-environment-outside)
  (("s-" . (4 -1 3)) . #'d-emacs-lua-remove-modifier))
 
