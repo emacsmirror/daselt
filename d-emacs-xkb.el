@@ -378,8 +378,6 @@ Should be one of the layouts in the `d-emacs-xkb-file'."
     :type 'symbol
     :options d-emacs-xkb-layouts))
 
-
-;;;;;
 ;;;; Provide
 (provide 'd-emacs-xkb)
 ;;; d-emacs-xkb.el ends here

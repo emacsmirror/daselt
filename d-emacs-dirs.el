@@ -576,7 +576,7 @@ If an el-file with that name already exists, no new link is added."
   (declare (ftype (function (string) t)))
   (let ((el-name (concat (file-name-sans-extension fname) ".el")))
     (unless (file-exists-p el-name)
-      (f-symlink fname el-name))))
+      (async-shell-command (format "ln -s %s %s" fname el-name)))))
 
 ;;;;;;; Auto-insert for del-files
 (with-eval-after-load 'auto-insert-mode
