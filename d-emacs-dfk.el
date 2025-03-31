@@ -3,10 +3,9 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-dfk/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-dfk.el
 
 ;; This file is part of Daselt.
 

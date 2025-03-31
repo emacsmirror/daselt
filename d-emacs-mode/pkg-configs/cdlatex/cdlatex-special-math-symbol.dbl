@@ -23,11 +23,10 @@
  ((1 0 4) "\\right" "\\bigr" "\\Bigr" "\\biggr" "\\Biggr")
 
 ;;;;;;;; 1-1
- ((1 1 -2) "\\pentagonblack" "\\pentagon")
- ((1 1 0) "\\angle")
- ((1 1 2) "\\mdlgblksquare" "\\mdlgwhtsquare")
+ ((1 1 -2) "\\dagger")
+ ((1 1 0) "\\ddagger")
+ ((1 1 2) "\\rdagger")
  ((1 1 3) "\\ell")
- ((1 1 4) "\\hexagonblack" "\\hexagon")
  ((1 1 6) "\\exclamdown")
 
 ;;;;;;; 2
@@ -45,9 +44,12 @@
 
 ;;;;;;; 3
 ;;;;;;;; 3--1
+ ((3 -1 -5) "\\pentagon")
+ ((3 -1 -5) "\\lgwhtcircle" "\\bigcirc")
  ((3 -1 -4) "\\oplus" "\\boxplus")
  ((3 -1 2) "\\sim")
  ((3 -1 4) "\\star")
+ ((3 -1 5) "\\hexagon")
 
 ;;;;;;;; 3-0
  ((3 0 -4) "\\left[")
@@ -55,10 +57,8 @@
  ((3 0 4) "\\right[")
 
 ;;;;;;;; 3-1
- ((3 1 -4) "\\mdlgblkcircle" "\\lgwhtcircle" "\\bigcirc")
  ((3 1 -3) "\\neq")
  ((3 1 0) "\\pm" "\\mp")
- ((3 1 2) "\\dagger")
  ((3 1 3) "\\bullet")
  ((3 1 5) "\\otimes" "\\boxtimes")
 
@@ -66,6 +66,7 @@
 ;;;;;;;; 4--1
  ((4 -1 -4) "\\ominus" "\\boxminus")
  ((4 -1 2) "\\cong" "\\equiv")
+ ((4 -1 5) "\\mdlgwhtsquare")
 
 ;;;;;;;; 4-0
  ((4 0 -4) "\\lcurvyangle")

@@ -3,7 +3,10 @@
 ;; Copyright (C) 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Package-Requires: ((emacs "29.1"))
+;; Version: 1.0
 ;; Keywords: tools
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -18,9 +21,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary:
+;;; Commentary: The main file for Daselt's Emacs module.
+;; Only exists to load other files.
 
-;; 
+;; Main file for d-emacs. Only loads other files.
 
 ;;; Code:
 

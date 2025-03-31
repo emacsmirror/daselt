@@ -3,10 +3,9 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-base/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-base.el
 
 ;; This file is part of Daselt.
 
@@ -439,20 +438,21 @@ If BEG is not given, it is set using `point'."
       (point))))
 
 ;;;;; Strings
-(defun d-emacs-base--escape-chars-in-str (str)
+(defun d-emacs-base--escape-chars-in-str (str &optional escapelist)
   "Escape characters in STR that are defined in
 `d-emacs-base-escape-kbd-regexps-list'.
 
 This function modifies instances of the defined regex patterns."
-  (declare (ftype (function (string) string)))
-  (let ((escaped-char-str
-         (cl-loop for rx in d-emacs-base-escape-kbd-regexps-list
-                  if (string-match-p rx str)
-                  return (replace-regexp-in-string rx
-                                                   "\\\\\\1"
-                                                   str
-                                                   nil)
-                  finally return str)))
+  (declare (ftype (function (string &optional list) string)))
+  (let* ((escapelist (or escapelist d-emacs-base-escape-kbd-regexps-list))
+         (escaped-char-str
+          (cl-loop for rx in escapelist
+                   if (string-match-p rx str)
+                   return (replace-regexp-in-string rx
+                                                    "\\\\\\1"
+                                                    str
+                                                    nil)
+                   finally return str)))
     (if escaped-char-str escaped-char-str str)))
 
 (defun d-emacs-base-remove-surrounding-brackets (str)
@@ -573,7 +573,7 @@ Return the filled string."
   (declare (ftype (function (string) string))
            (pure t))
   (with-temp-buffer
-    (insert (concat "\"" str "\""))
+    (insert "\"" str "\"")
     (d-emacs-base-goto-min)
     (d-emacs-base-fill-string-at-point-like-docstring)
     (buffer-substring (1+ (point-min)) (1- (point-max)))))
@@ -590,7 +590,7 @@ thus marking a line other than the one point was originally in."
   (setq arg  (if arg (prefix-numeric-value arg) 0))
   (forward-line arg)
   (push-mark nil t t)
-  (goto-char (line-end-position)))
+  (end-of-line))
 
 (defun d-emacs-base-read-line ()
   "Read the current line."

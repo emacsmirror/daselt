@@ -192,10 +192,10 @@ representing a mode for which key remappings should be suspended."
 ;;;; Functions
 ;;;;; Main function
 (defun d-emacs-stump-generate-init (&optional filename)
-  "Generate a d-emacs-stump initialization file from the files in
-`d-emacs-stump-pkg-configs-directory'.
+  "Generate a d-emacs-stump initialization file.
 
-Call the resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
+Use the files in `d-emacs-stump-pkg-configs-directory' for config. Call the
+resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
   (declare (ftype (function (&optional string) string)))
   (interactive)
   (unless (bound-and-true-p d-emacs-stump-pkg-configs-directory)

@@ -594,7 +594,7 @@
 
 ;;;;;;;; s-2-0
  (("s-" . (2 0 -5)) . #'projectile-find-file)
- (("s-" . (2 0 -1)) . #'icicle-occur)
+ (("s-" . (2 0 -1)) . #'isearch-occur)
  (("s-" . (2 0 1)) . #'icicle-search-generic)
  (("s-" . (2 0 5)) . #'projectile-find-related-file)
 
@@ -765,6 +765,7 @@
 ;;;;;;;; s-H-2-0
  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame)
  (("s-H-" . (2 0 1)) . #'icicle-search-keywords)
+ (("s-H-" . (2 0 1)) . #'icicle-occur)
  (("s-H-" . (2 0 5)) . #'projectile-find-related-file-other-frame)
 
 ;;;;;;; s-H-3

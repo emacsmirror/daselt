@@ -3,10 +3,9 @@
 ;; Copyright (C) 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-bind/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-bind.el
 
 ;; This file is part of Daselt.
 
@@ -158,7 +157,7 @@ This translation is intended for Emacs versions 29 or higher. to address
 terminal translations that conflict with key bindings. When active, use the
 translated key combinations in bindings."
   :type 'boolean
-  :group 'd-emacs)
+  :group 'd-emacs-bind)
 
 (defcustom d-emacs-bind-translate-choices
   t
@@ -167,7 +166,7 @@ translated key combinations in bindings."
 If a query uses symbols at coordinates (1 0 2) or (1 0 -2), replace them with
 the values at coordinates (5 0 2) or (5 0 -2), typically unused Greek letters."
   :type 'boolean
-  :group 'd-emacs)
+  :group 'd-emacs-bind)
 
 (defcustom d-emacs-bind-translate-C-1-1--2-C-g
   nil
@@ -463,7 +462,7 @@ MODLIST is not specified, `d-emacs-bind-modifiers-list' is used."
                   ;; (function (string &optional (list integer)) (list (list integer))) ; Compiler complains.
                   )
            (side-effect-free t))
-  (unless (not prefix)
+  (when prefix
     (let ((modlist (if modlist modlist d-emacs-bind-modifiers-list))
           (case-fold-search nil))
       (remq nil (mapcar (lambda (indmodifier)
@@ -694,19 +693,19 @@ By default it is the symbol returned by `d-emacs-coords--dfk-or-xkb-layout'."
     elaborate-binding))
 
 (defun d-emacs-bind-reduce-binding (elbind &optional coordsonly)
-    "Transform an elaborate binding ELBIND into its reduced form.
+  "Transform an elaborate binding ELBIND into its reduced form.
 
 If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
-    (declare (ftype (function (cons
+  (declare (ftype (function (cons
                              ;; (or (cons (cons (cons (list integer) string) (list number)) t) ; Compiler complains.
                              ;;     (cons (cons ((cons (list integer) string)) void) t))
                              &optional boolean)
                             t))
            (side-effect-free t))
-    (unless (d-emacs-bind-elaborate-form-p elbind)
+  (unless (d-emacs-bind-elaborate-form-p elbind)
     (error "Wrong-type argument, elaborate binding, %s" elbind))
-    (let* ((indmods (caaar elbind))
-         (prefix (unless (not (caaar elbind))
+  (let* ((indmods (caaar elbind))
+         (prefix (when (caaar elbind)
                    (d-emacs-bind-modifiers-to-string
                     (d-emacs-base-remove-indices indmods))))
          (suffix (cdaar elbind))
@@ -720,15 +719,15 @@ If COORDSONLY is given, use coordinates instead of suffixes whenever possible."
          ;; Let's redefine COORDSONLY since we now know whether we have coordinates or not.
          (coordsonly (and coords coordsonly)))
     (cl-flet ((add-prefix-if-exists (arg)
-                  (if haspfx
-                        (cons prefix arg)
-                    arg)))
+                (if haspfx
+                    (cons prefix arg)
+                  arg)))
       (cons (if coordsonly (add-prefix-if-exists coords)
               (if hassfx (add-prefix-if-exists suffix)
                 (if coords (add-prefix-if-exists coords)
                   (prog2 (message "Binding signal of %s in %s is empty." elbind
                                   (current-buffer))
-                          nil))))
+                      nil))))
             value))))
 
 ;;;;;; Comparison
@@ -1704,7 +1703,7 @@ Return the modified binding."
            (cdarcoordsp (unless carcoordsp (d-emacs-coords-p (cdar bind))))
            (origcoords (cond (carcoordsp (car bind))
                              (cdarcoordsp (cdar bind))))
-           (newcoords (unless (not origcoords)
+           (newcoords (when origcoords
                         (d-emacs-bind-change-coords origcoords coordlistlist)))
            (carrest (cond (carcoordsp nil)
                           (cdarcoordsp (caar bind))
@@ -1904,7 +1903,7 @@ automatically and you don't have to worry about it."
      (lambda ()
        (cl-loop for blistsymb in matchedblsymbs
                 for blist = (symbol-value blistsymb)
-                do (insert (concat "\n" (symbol-name blistsymb) "\n"))
+                do (insert "\n" (symbol-name blistsymb) "\n")
                 do (let* ((modmatchedbinds
                            (if modrxs
                                (d-emacs-bind--elbinds-matching-modifier-regexps
@@ -1932,7 +1931,7 @@ automatically and you don't have to worry about it."
                                         (modmatchedplacevals-C-g-remapped
                                          (if (and (equal mods '(C))
                                                   (not (or (bound-and-true-p d-emacs-stump)
-                                                           d-emacs-bind-translate-C-1-1--2-C-g))) 
+                                                           d-emacs-bind-translate-C-1-1--2-C-g)))
                                              (mapcar
                                               (lambda (placeval)
                                                 (let* ((coords (car placeval))
@@ -2110,11 +2109,11 @@ Four formats are accepted:
                                     (setq blist (cons blist blistpiece)))))
                   (d-emacs-base-goto-max)
                   (if (d-emacs-bind-bindlist-p blist)
-                      (insert (concat
-                               (d-emacs-bind--format-bindlist-into-string-before-insertion
-                                (d-emacs-bind-sort-and-format-bindlist blist coordsonly)
-                                coordsonly)
-                               "\n")))))))
+                      (insert
+                       (d-emacs-bind--format-bindlist-into-string-before-insertion
+                        (d-emacs-bind-sort-and-format-bindlist blist coordsonly)
+                        coordsonly)
+                       "\n"))))))
 
 (defun d-emacs-bind-parse-for-keybindings (rx &optional mappos keypos valpos consespos mapdefaultfun)
   "Parse REGION for keybindings using RX.

@@ -3,10 +3,9 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-coords/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-coords.el
 ;; Keywords: tools
 
 ;; This file is part of Daselt.
@@ -336,7 +335,7 @@ Daselt coordinates."
 
 (defun d-emacs-coords-rel-to-abs (coords)
   "Transform relative coordinates COORDS of a key into absolute ones."
-  (declare (ftype (function (list) list)) 
+  (declare (ftype (function (list) list))
            ;; (ftype (function ((list number)) (list number))); Compiler complains.
            (side-effect-free t))
   (let* ((layer (nth 0 coords))
@@ -371,10 +370,10 @@ Daselt coordinates."
     (list layer row col)))
 
 (defun d-emacs-coords--remove-formal-places (coords)
-  "Return COL with the places between COL and the mid of ROW
+  "Return position in row with formal places between COORDS and the row mid
 removed.
 
-ROW and COL should be in relative coordinates."
+COORDS should be in relative coordinates."
   (declare (ftype (function (list) number))
            ;; (ftype (function ((list number)) number)) ; Compiler complains.
            (side-effect-free t))
@@ -405,8 +404,7 @@ ROW and COL should be in relative coordinates."
 
 ;;;;;; Coordinatization
 (defun d-emacs-coords-coordinatize-layout (layout)
-  "Add relative coordinates to every element of the d-emacs-coords-layout
-LAYOUT.
+  "Add relative coordinates to every element of LAYOUT.
 
 Resulting layout places are pairs of coordinates and their corresponding key
 symbol."
@@ -522,7 +520,7 @@ to t."
 
 ;;;;;; Function application
 (defun d-emacs-coords-run-through (bounds fun &optional runcoords)
-  "Iterate over each coordinate within a specified BOUNDS, applying a function
+  "Iterate over each coordinate within specified BOUNDS, applying a function
 FUN to each coordinate.
 
 BOUNDS can be either:
@@ -787,7 +785,7 @@ documentation."
                        do (table-forward-cell 1))))
 
 (defun d-emacs-coords-draw-org-table (colnum _rownum firstrow lastrow firstcol lastcol placevals &optional noupperrow)
-  "Draw a daselt-table in org-mode.
+  "Draw a daselt-table in `org-mode'.
 
 An auxiliary function to `d-emacs-coords-draw-placevals'. See there for more
 documentation."

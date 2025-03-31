@@ -3,10 +3,9 @@
 ;; Copyright (C) 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-dirs/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-dirs.el
 
 ;; This file is part of Daselt.
 
@@ -274,8 +273,8 @@ the processed structure of DIR."
                                          (if allfiles
                                              (rx (or (: (not ".") (* not-newline))
                                                      (: "." (+ (not ".")))))
-                                           "\\`[^.]"
-                                           ) sortfun)))
+                                           "\\`[^.]")
+                                         sortfun)))
        (if sortfun
            (funcall sortfun maybesorted)
          maybesorted)))
@@ -568,20 +567,20 @@ If the base name of FILEPATH contains the string `-init-', skip the eval conditi
  (operation d-emacs-dirs-fill-docstrings-of d-emacs-dirs-trim-lines-of d-emacs-dirs-byte-compile d-emacs-dirs-load-elc-or))
 
 (defun d-emacs-dirs-add-el-symlink-for-lispcode-in-file (fname)
-      "Add a symlink to FNAME from an eponymous name with an el-extension.
+  "Add a symlink to FNAME from an eponymous name with an el-extension.
 
 This way, Emacs's help functions can still find definitions in FNAME while you
 can open the file as a del-file so that the save hooks are in place.
 
 If an el-file with that name already exists, no new link is added."
-      (declare (ftype (function (string) t)))
-      (let ((el-name (concat (file-name-sans-extension fname) ".el")))
+  (declare (ftype (function (string) t)))
+  (let ((el-name (concat (file-name-sans-extension fname) ".el")))
     (unless (file-exists-p el-name)
       (f-symlink fname el-name))))
 
 ;;;;;;; Auto-insert for del-files
 (with-eval-after-load 'auto-insert-mode
-       (add-to-list 'auto-insert-alist
+  (add-to-list 'auto-insert-alist
                '(("\\.del\\'" . "Emacs Lisp header") "Short description: " ";;; "
                  (file-name-nondirectory (buffer-file-name)) " --- " str
                  (make-string (max 2 (- 80 (current-column) 27)) 32)
@@ -589,7 +588,7 @@ If an el-file with that name already exists, no new link is added."
                  "\n\n;; Copyright (C) " (format-time-string "%Y") "  " (getenv "ORGANIZATION")
                  | (progn user-full-name) "\n\n;; Author: " (user-full-name)
                  '(if (search-backward "&" (line-beginning-position) t)
-                              (replace-match (capitalize (user-login-name)) t t))
+                      (replace-match (capitalize (user-login-name)) t t))
                  '(end-of-line 1) " <" (progn user-mail-address) ">\n;; Keywords: "
                  '(require 'finder)
                  '(setq v1
@@ -841,15 +840,15 @@ condition. Otherwise, the name of the containing directory is used."
   nil)
 
 (defun d-emacs-dirs-with-eval-reset-constantlists-in-file (&optional constfile pfx)
-  "For each constant in a constantlist in CONSTFILE, reset the constant if a
-backup exists.
+  "Reset each constant in a constantlist in CONSTFILE.
 
-The backup should be a variable of the form PFX-CONSTNAME-backup.
+Only resets if a backup exists. The backup should be a variable of the
+form PFX-CONSTNAME-backup.
 
-Resetting is only done once an evalcondition is fulfilled. The evalcondition is
-calculated the same way as by
-`d-emacs-dirs--with-eval-backup-and-set-constants-in-file'. See there for more
-documentation."
+Resetting is only done once an evalcondition is fulfilled. The
+evalcondition is calculated the same way as by
+`d-emacs-dirs--with-eval-backup-and-set-constants-in-file'. See there
+for more documentation."
   (declare (ftype (function (&optional string string) void)))
   (interactive  (list (d-emacs-dirs--pick-pkg-file-by-type "constants")))
   (let* ((constfile (or constfile (buffer-file-name)))
@@ -1256,8 +1255,8 @@ For each TYPE, this macro generates
 Derived from emacs-lisp-mode, but adds %s and %s to %s and %s respectively.
 
 %s" type ,before-function-expression ,after-function-expression ,before-hook-expression ,after-hook-expression ,(creation-notice "mode")))
-                (add-hook ',,before-hook-expression ',,before-function-expression 99 t)
-                (add-hook ',,after-hook-expression ',,after-function-expression 99 t)))
+                (add-hook ',,before-hook-expression #',,before-function-expression 99 t)
+                (add-hook ',,after-hook-expression #',,after-function-expression 99 t)))
 
          ;; Add to auto-mode-alist
          `(let* ((extension-rx ,(rx-to-string `(: ,type string-end) t))
@@ -1416,8 +1415,8 @@ For each TYPE, this macro generates
 Derived from emacs-lisp-mode, but adds %s and %s to %s and %s respectively.
 
 %s" type ,before-function-expression ,after-function-expression ,before-hook-expression ,after-hook-expression ,(creation-notice "mode")))
-                (add-hook ',,before-hook-expression ',,before-function-expression 99 t)
-                (add-hook ',,after-hook-expression ',,after-function-expression 99 t)))
+                (add-hook ',,before-hook-expression #',,before-function-expression 99 t)
+                (add-hook ',,after-hook-expression #',,after-function-expression 99 t)))
 
          ;; Add to auto-mode-alist
          `(let* ((extension-rx ,(rx-to-string `(: ,type string-end) t))

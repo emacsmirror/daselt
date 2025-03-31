@@ -3,10 +3,9 @@
 ;; Copyright (C) 2023  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-xkb/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-xkb.el
 
 ;; This file is part of Daselt.
 
@@ -360,8 +359,7 @@ the file have the same number of layers."
 
 ;;;;; Set layouts variable
 (defun d-emacs-xkb-set-layouts-list ()
-  "Set `d-emacs-xkb-layouts' by finding all symbols matching
-`d-emacs-xkb-.*layout'."
+  "Set `d-emacs-xkb-layouts' from symbols matching `d-emacs-xkb-.*layout'."
   (declare (ftype (function () t)))
   (defconst d-emacs-xkb-layouts
         (apropos-internal "d-emacs-xkb-.*-layout" (lambda (sym) (boundp sym)))

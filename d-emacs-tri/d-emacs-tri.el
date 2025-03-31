@@ -6,7 +6,7 @@
 ;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/tree/master/d-emacs-tri?ref_type=heads
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-tri/d-emacs-tri.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

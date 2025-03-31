@@ -3,10 +3,9 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/d-emacs-mode/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-mode.el
 
 ;; This file is part of Daselt.
 
@@ -172,7 +171,7 @@ Note that the default of the `undaselt' script is `en us'."
 
 (defcustom d-emacs-mode-redaselt-time
   1
-  "The time the redaselt-script should wait between (re)starting udevmon and
+  "The time the `redaselt'-script should wait between (re)starting udevmon and
 setting the xkb-layout.
 
 You only need to set this by hand if the current amount of time is too little
@@ -189,10 +188,10 @@ This makes systemctl search for a global udevmon-service.
 
 Requires sudo and slows down the starting process a bit.
 
-Doesn't have any effect if neither `d-emacs-mode-redaselt' nor
+Doesn't have any effect if neither of the options `d-emacs-mode-redaselt' or
 `d-emacs-mode-undaselt' are set."
   :type 'boolean
-  :group 'd-emacs)
+  :group 'd-emacs-mode)
 
 (defcustom d-emacs-mode-exchange-H-2-H-6
   nil
@@ -231,7 +230,7 @@ If TOGGLE is non-nil, the Ctrl status of all bindings in the resulting keymap
 will be inverted."
   (let ((map (make-composed-keymap (list (d-emacs-minor-mode-key-binding key) (local-key-binding (kbd key)) (global-key-binding (kbd key))))))
     (if toggle
-	(mapcar 'd-emacs-mode-toggle-ctrl map)
+	(mapcar #'d-emacs-mode-toggle-ctrl map)
       map)))
 
 (defun d-emacs-mode-toggle-ctrl (item)
@@ -244,7 +243,7 @@ is a key event, the modifiers are toggled appropriately."
 	 (not (listp (cdr item))))
     (cons (d-emacs-mode-toggle-ctrl (car item)) (cdr item)))
    ((listp item)
-    (mapcar 'd-emacs-mode-toggle-ctrl item))
+    (mapcar #'d-emacs-mode-toggle-ctrl item))
    ((event-basic-type item)
     (let ((mods (event-modifiers item))
 	  (key (event-basic-type item)))
@@ -448,11 +447,11 @@ configure script from the repository):
 https://gitlab.com/nameiwillforget/daselt
 
 During startup, d-emacs-mode will ask you to set the options
- `d-emacs-xkb-layout' and `d-emacs-dfk-keyboard-layout-type', unless these
+`d-emacs-xkb-layout' and `d-emacs-dfk-keyboard-layout-type', unless these
 options are non-standard or `d-emacs-mode-show-tutorial' is nil. In that
 case, it will assume you have already set these options correctly. If
-`d-emacs-mode-redaselt' is t, it will then run the `redaselt' shell-script
-with the values specified. 
+the option `d-emacs-mode-redaselt' is t, it will then run the `redaselt'
+shell-script with the values specified.
 
 `d-emacs-mode' uses a pkg-configs-directory as defined in `d-emacs-dirs' to
 store its configuration. When `d-emacs-mode' is started, it has to read all
@@ -461,13 +460,13 @@ might take between a few seconds and maybe a minute. If you plan on toggling
 `d-emacs-mode' several times you can set `d-emacs-dirs-keep-read-buffers' to t
 to reduce the startup time.
 
-When you quit `d-emacs-mode', all constants are reset. If
+When you quit `d-emacs-mode', all constants are reset. If the option
 `d-emacs-mode-undaselt' is non-nil, the `undaselt' shell-script is run,
 resetting the keyboard layout as well."
   :init-value nil
   :global t
   :interactive t
-  :lighter "Daselt"
+  :lighter " Daselt"
   (if d-emacs-mode
       (progn  ;; Set `d-emacs-dirs-pkg-configs-directory' to `d-emacs-mode-pkg-configs-directory' while `d-emacs-mode' is on.
         (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-dirs-pkg-configs-directory)
@@ -527,12 +526,12 @@ resetting the keyboard layout as well."
               (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/'")))
         
         ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
-        (unless (not (eq (custom-variable-state 'd-emacs-dfk-outside-mods t)
-                         'standard))
-          (if (eq (symbol-value 'd-emacs-xkb-layout)
-                  'd-emacs-xkb-main-layout)
-              (setopt d-emacs-dfk-outside-mods nil)
-            (setopt d-emacs-dfk-outside-mods t)))
+        (when (eq (custom-variable-state 'd-emacs-dfk-outside-mods t)
+                  'standard))
+        (if (eq (symbol-value 'd-emacs-xkb-layout)
+                'd-emacs-xkb-main-layout)
+            (setopt d-emacs-dfk-outside-mods nil)
+          (setopt d-emacs-dfk-outside-mods t))
 
         ;; Generate d-emacs-dfk-layout from the d-emacs-xkb-layout.
         (d-emacs-dfk-import-current-layout)
