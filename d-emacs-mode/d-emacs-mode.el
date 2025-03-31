@@ -5,7 +5,7 @@
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Version: 1.0
 ;; Keywords: tools
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-mode.el
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-dirs.elhttps://gitlab.com/nameiwillforget/d-emacs/d-emacs-mode/
 
 ;; This file is part of Daselt.
 
@@ -527,11 +527,11 @@ resetting the keyboard layout as well."
         
         ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
         (when (eq (custom-variable-state 'd-emacs-dfk-outside-mods t)
-                  'standard))
-        (if (eq (symbol-value 'd-emacs-xkb-layout)
-                'd-emacs-xkb-main-layout)
-            (setopt d-emacs-dfk-outside-mods nil)
-          (setopt d-emacs-dfk-outside-mods t))
+                  'standard)
+          (if (eq (symbol-value 'd-emacs-xkb-layout)
+                  'd-emacs-xkb-main-layout)
+              (setopt d-emacs-dfk-outside-mods nil)
+            (setopt d-emacs-dfk-outside-mods t)))
 
         ;; Generate d-emacs-dfk-layout from the d-emacs-xkb-layout.
         (d-emacs-dfk-import-current-layout)
