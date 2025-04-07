@@ -20,13 +20,6 @@
  ((1 1 -2) . #'pdf-view-fit-height-to-window)
  ((1 1 2) . #'pdf-view-fit-width-to-window)
 
-;;;;;;; 2
-;;;;;;;; 2-0
- ((2 0 -3) . #'pdf-view-shrink)
- ((2 0 -2) . #'d-emacs-backward-pdf-view-rotate)
- ((2 0 2) . #'pdf-view-rotate)
- ((2 0 3) . #'pdf-view-enlarge)
-
 ;;;;;;; 4
 ;;;;;;;; 4--1
  ((4 -1 -4) . #'pdf-view-goto-label)
@@ -34,7 +27,14 @@
 
 ;;;;;;;; 4-0
  ((4 0 -4) . #'org-noter)
- ((4 0 4) . #'pdf-view-rotate))
+ ((4 0 4) . #'pdf-view-rotate)
+
+;;;;;;; 6
+;;;;;;;; 6-0
+ ((6 0 -3) . #'pdf-view-shrink)
+ ((6 0 -2) . #'d-emacs-backward-pdf-view-rotate)
+ ((6 0 2) . #'pdf-view-rotate)
+ ((6 0 3) . #'pdf-view-enlarge))
 
 ;;;; pdf-outline
 (pdf-outline
@@ -75,13 +75,18 @@
   ((4 0 2) . #'pdf-outline-follow-link-and-quit)))
 
 ;;;; pdf-history
-`
-;;;; pdf-history
 (pdf-history
 (pdf-history-minor-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1-0
- ((1 0 -2) . #'pdf-history-backward)
- ((1 0 2) . #'pdf-history-forward)
- ((1 0 3))))
+ ((1 0 3))
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 -4) . #'pdf-history-push)
+ ((2 -1 4) . #'pdf-history-goto)
+
+;;;;;;;; 2-0
+ ((2 0 -2) . #'pdf-history-backward)
+ ((2 0 2) . #'pdf-history-forward)))
