@@ -170,9 +170,9 @@ the values at coordinates (5 0 2) or (5 0 -2), typically unused Greek letters."
 
 (defcustom d-emacs-bind-translate-C-1-1--2-C-g
   nil
-  "If non-nil, translate `C-g' to C-(1 1 -2) and vice versa.
+  "If non-nil, translate `C-g` to C-(1 1 -2) and vice versa.
 
-Note that the `C-g' function to stop running processes cannot be translated, so
+Note that the `C-g` function to stop running processes cannot be translated, so
 the option is disabled by default."
   :type 'boolean
   :group 'd-emacs-bind)
@@ -403,13 +403,13 @@ This means `d-emacs-bind-elaborate-form-p' is t and it has no coordinates."
 
 A binding location consists of either
 
-- a string, like a normal string fed to `kbd',
+- a string, like a normal string fed to `kbd`,
 
 - a d-emacs-xkb coordinate list (see `d-emacs-coords-p'),
 
-a cons whose car is a string of prefixes like `M-C-' and a suffix which is the
+a cons whose car is a string of prefixes like `M-C-` and a suffix which is the
 name of the signal that is sent from the keyboard without any applied modifiers
-\(so a letter name or a name like `<kp-add>'),
+\(so a letter name or a name like `<kp-add>`),
 
 - a cons whose car is a prefix and whose cdr is a d-emacs-xkb-coordinate-list,
 
@@ -421,7 +421,7 @@ name of the signal that is sent from the keyboard without any applied modifiers
 
 - a cons whose car is
 
-  - a cons whose car is a list of modifiers, given as characters, like `C', `M'
+  - a cons whose car is a list of modifiers, given as characters, like `C`, `M`
     etc. and whose cdr is a suffix,
 
 - and whose cdr is is a d-emacs-xkb-coordinate-list.
@@ -1855,23 +1855,23 @@ binding matches the string."
 This is the most powerful of the Daselt-helper functions.
 
 - BLISTRX matches against all bindlist-names. For example, if you want to draw
-  all layers of all bindlists for StumpWM, provide `stumpwm' for BLISTRX and
+  all layers of all bindlists for StumpWM, provide `stumpwm` for BLISTRX and
   have the other regexps be empty strings.
 
 - VALRX matches against the values of all bindings in matched bindlists. For
-  example, if you want to draw all bindings to `projectile'-functions in all
+  example, if you want to draw all bindings to `projectile`-functions in all
   bindlists, provide `projectile' for VALRX and leave the other regexps empty.
 
 - COORDRX matches against all coordinates. So if you want to draw the first row
-  of all layers of all bindlists with any modifiers, provide `. -1 [-]?.' for
+  of all layers of all bindlists with any modifiers, provide `. -1 [-]?.` for
   COORDRX and leave the other regexps empty.
 
 - MODRXS is a list of regexps that match against the modifiers of bindings. The
   syntax is adapted to make the matching intuitive: if the regexp starts with
-  `^', a binding is matched if and only if the regexp does not match any
+  `^`, a binding is matched if and only if the regexp does not match any
   modifiers in it. So for instance, if you want to draw all bindings with a
   C-modifier and no s-modifier, with or without any other modifiers, provide two
-  regexps for MODRXS, `C' `^s'.
+  regexps for MODRXS, `C` `^s`.
 
 - BOUNDARIES are the boundaries the drawn layouts should have. If left nil then
 

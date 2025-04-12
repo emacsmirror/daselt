@@ -482,7 +482,7 @@ Each element of this list is supposed to be a CONS.
     characters.
 
 - The cdr of CONS should be a string describing the discrete modifier
-  as `dX', where `X' is the corresponding continuous modifier."
+  as `dX`, where `X` is the corresponding continuous modifier."
   :type '(alist :key-type (alist :key-type string :value-type (repeat character))
                 :value-type string)
   :group 'd-emacs-dfk)

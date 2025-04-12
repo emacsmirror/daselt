@@ -111,7 +111,7 @@ or includes special keys. In this case:
   counted in the row length.
 
 For example, ISO layouts contain an additional key in the lower key row
-\(the B-row) next to the left Shift key named `LSGT'. Thus, the entry for
+\(the B-row) next to the left Shift key named `LSGT`. Thus, the entry for
 this row in the default value of `d-emacs-xkb-rowlist' is a list containing
 the strings `LSGT` and `B`. Since there is no number at the beginning of the
 list, the number of keys in the row without the special key `LSGT` is taken

@@ -1024,8 +1024,8 @@ bindings.
  If MODLIST is given, use it to order modifiers instead of
  `d-emacs-bind-modifiers-list'.
 
-If `DIRECTORY' is given, it should be a subdirectory of `pkg-configs'. In that
-case, recurse through `DIRECTORY'."
+If DIRECTORY is given, it should be a subdirectory of pkg-configs. In that
+case, recurse through DIRECTORY."
   (declare (ftype (function (&optional boolean (function (list) list) list
                                        ;; (list integer) ; Compiler complains.
                                        string)
