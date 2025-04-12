@@ -1150,7 +1150,7 @@ bindings are reduced."
 
 ;;;;;;; Strings
 (defun d-emacs-bind--sort-and-format-marked-bindlist-string (&optional coordsonly prefun modlist)
-    "Sort and format a marked bindlist-string.
+  "Sort and format a marked bindlist-string.
 
 The function will read the contents of the selected region and process them
 using `d-emacs-bind-sort-and-format-bindlist' and
@@ -1159,18 +1159,19 @@ marked region with the result.
 
 COORDSONLY, PREFUN and MODLIST are passed forward to
 `d-emacs-bind-sort-and-format-bindlist'."
-    (declare (ftype (function (&optional boolean (function (list) list) list
+  (declare (ftype (function (&optional boolean (function (list) list) list
                                        ;; (list integer) ; Compiler complains.
                                        )
                             ;; void  ; Compiler complains.
                             t)))
+  (save-excursion
     (let* ((blist (d-emacs-base-read-region))
-         (formattedblist
-          (d-emacs-bind-sort-and-format-bindlist blist coordsonly prefun modlist))
-         (formattedstring (d-emacs-bind--format-bindlist-into-string-before-insertion formattedblist)))
-    (d-emacs-base-replace-region formattedstring)
-    (unless (eobp) (forward-char))
-    nil))
+           (formattedblist
+            (d-emacs-bind-sort-and-format-bindlist blist coordsonly prefun modlist))
+           (formattedstring (d-emacs-bind--format-bindlist-into-string-before-insertion formattedblist)))
+      (d-emacs-base-replace-region formattedstring)
+      
+      nil)))
 
 (defun d-emacs-bind--format-bindlist-into-string-before-insertion (blist &optional headname)
   "Convert BLIST into a formatted string for reinsertion.
