@@ -107,6 +107,7 @@ in this directory that contain `customs' in their name."
 ;;;;; Commands
 (defun d-emacs-icicle-previous-TAB-completion-method (temporary-p) ; Bound to a key in minibuffer.
   "Cycle to the previous `TAB' completion method.
+
 Option `icicle-TAB-completion-methods' determines the TAB completion methods
 that are available.
 
@@ -153,6 +154,7 @@ return to the top level."
 
 (defun d-emacs-icicle-previous-S-TAB-completion-method (temporary-p) ; Bound to a key in minibuffer.
   "Cycle to the previous `S-TAB' completion method.
+
 Option `icicle-S-TAB-completion-methods-alist' customizes the available `S-TAB'
 completion methods.
 
@@ -194,6 +196,7 @@ return to the top level."
 
 (defun icicle-next-completion-style-set () ; Bound to `C-M-(' in minibuffer.
   "Cycle to the next set (list) of completion styles, for this command only.
+
 Has no effect if the current TAB completion method is not `vanilla'. Bound to
 \\<minibuffer-local-completion-map>`\\[icicle-next-completion-style-set]' in the
 minibuffer. Option `icicle-completion-style-sets' defines the available sets.
@@ -228,6 +231,7 @@ defined."
 
 (defun d-emacs-icicle-previous-completion-style-set () ; Custom binding suggested: `C-M-)'
   "Cycle to the previous set (list) of completion styles, for this command only.
+
 Has no effect if the current TAB completion method is not `vanilla'. Intended
 for binding in the minibuffer. Option `icicle-completion-style-sets' defines the
 available sets. The newly chosen style set is used only for the current command.
@@ -265,6 +269,7 @@ defined."
 
 (defun d-emacs-icicle-previous-sort-order (&optional arg alternativep) ; Suggested binding: `C-M-,'
   "Choose a sort order by cycling to the previous one or using completion.
+
 With a numeric prefix arg, just reverse the current sort order.
 
 Option `icicle-change-sort-order-completion' determines the approach:
@@ -359,6 +364,7 @@ overridden. The new sort order is applied once sorting is enabled."
 
 (defun d-emacs-icicle-backward-cycle-incremental-completion () ; Consider binding to a suitable key in minibuffer.
   "Cycle the value of option `icicle-incremental-completion' in reverse order.
+
 If the current value is nil then it is set to `always'. If the current value is
 `always' then it is set to t. If the current value is t then it is set to nil.
 
@@ -379,6 +385,7 @@ Consider binding this function in the minibuffer for ease of use."
 
 (defun d-emacs-icicle-backward-cycle-expand-to-common-match () ; Consider for binding to a key in the minibuffer.
   "Cycle the value of option `icicle-expand-input-to-common-match' in reverse.
+
 This cycles among all possible values of the option in the reverse order."
 
   (interactive)
@@ -432,7 +439,8 @@ This cycles among all possible values of the option in the reverse order."
 ;;;;;;;; M-C-4-0
    (("M-C-" . (4 0 -2)))))
 
-(add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-icicle-mode-map-bindlist)))
+;; (add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-icicle-mode-map-bindlist)))
+(add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-isearch-mode-map-bindlist)))
 
 ;;;; Provide
 (provide 'd-emacs-icicles)
