@@ -68,11 +68,14 @@
 (require 'd-emacs-base)
 
 (require 'cl-lib)
-(declare-function d-emacs-base-mark-line "d-emacs-base" (&optional arg))
-(declare-function d-emacs-base-uppercase-p "d-emacs-base" (str))
-(declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
+;; (declare-function d-emacs-base-mark-line "d-emacs-base" (&optional arg))
+;; (declare-function d-emacs-base-uppercase-p "d-emacs-base" (str))
+;; (declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
 
 (defvar d-emacs-xkb-keep-read-buffers (bound-and-true-p d-emacs-dirs-keep-read-buffers))
+
+;; Automatically generated
+(defvar d-emacs-xkb-layouts)
 
 ;;;; Customs
 (defgroup d-emacs-xkb

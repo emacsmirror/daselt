@@ -127,15 +127,17 @@
 (require 'd-emacs-base)
 
 (declare-function org-table-align "org-table" nil)
-(declare-function d-emacs-base-with-max-buffer-maybe-return "d-emacs-base" (bufname fun))
-(declare-function d-emacs-base-remove-list-index "d-emacs-base" (lst idx))
-(declare-function d-emacs-base-filter-list "d-emacs-base" (lst pred))
-(declare-function d-emacs-base-string-exists-and-nonempty "d-emacs-base" (str))
-(declare-function d-emacs-base-forall-p "d-emacs-base" (list predicate))
-(declare-function d-emacs-base-index "d-emacs-base" (list &optional fromone))
-(declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
-
 (declare-function d-emacs-bind-p "d-emacs-bind" (obj))
+;; (declare-function d-emacs-base-with-max-buffer-maybe-return "d-emacs-base" (bufname fun))
+;; (declare-function d-emacs-base-remove-list-index "d-emacs-base" (lst idx))
+;; (declare-function d-emacs-base-filter-list "d-emacs-base" (lst pred))
+;; (declare-function d-emacs-base-string-exists-and-nonempty "d-emacs-base" (str))
+;; (declare-function d-emacs-base-forall-p "d-emacs-base" (list predicate))
+;; (declare-function d-emacs-base-index "d-emacs-base" (list &optional fromone))
+;; (declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
+
+
+(defvar d-emacs-bind-translate-choices)
 
 ;;;; Customs
 (defgroup d-emacs-coords
@@ -896,7 +898,9 @@ If ORG is t, draw an org-table."
                                                    (list (string-to-char (format "%d" num))
                                                          (number-to-string num)))
                                                  d-emacs-coords-layer-numbers-list))
-                                nil nil nil ,d-emacs-bind-translate-choices))))))
+                                nil nil nil ,(if (boundp d-emacs-bind-translate-choices)
+                                                 d-emacs-bind-translate-choices
+                                               nil)))))))
   (let ((layout (or layout (symbol-value (d-emacs-coords--dfk-or-xkb-layout)))))
     (funcall (if (called-interactively-p 'any)
                  #'d-emacs-coords-draw-placevals-in-temp-buffer

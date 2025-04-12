@@ -30,17 +30,16 @@
 
 ;;; Code:
 ;;;; Preamble
-(declare-function d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill "d-emacs-dirs" (funtypes &optional dir customt sortfun pfx))
-(declare-function d-emacs-dirs-create-pkg-customization-options "d-emacs-dirs" (&optional dir group deffun))
-(declare-function d-emacs-stump-translated-emacs-keys "d-emacs-stump" nil)
-(declare-function d-emacs-stump-translated-emacs-keys "d-emacs-stump" nil)
-(declare-function d-emacs-dfk-import-current-layout "d-emacs-dfk" nil)
-(declare-function d-emacs-xkb-generate-layouts "d-emacs-xkb" nil)
-(declare-function d-emacs-base-read-region "d-emacs-base" (&optional properties))
-(declare-function d-emacs-dirs-act-on-sexps-in-file "d-emacs-dirs" (filepath function &optional untangle))
-(declare-function d-emacs-bind-string "d-emacs-bind" (binding &optional translate csectoshft doublebind))
 (declare-function d-emacs-minor-mode-key-binding "d-emacs-mode-ext" (key))
-(declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
+(declare-function d-emacs-stump-translated-emacs-keys "d-emacs-stump" nil)
+;; (declare-function d-emacs-dirs-act-on-pkg-files-by-type-and-maybe-kill "d-emacs-dirs" (funtypes &optional dir customt sortfun pfx))
+;; (declare-function d-emacs-dirs-create-pkg-customization-options "d-emacs-dirs" (&optional dir group deffun))
+;; (declare-function d-emacs-dfk-import-current-layout "d-emacs-dfk" nil)
+;; (declare-function d-emacs-xkb-generate-layouts "d-emacs-xkb" nil)
+;; (declare-function d-emacs-base-read-region "d-emacs-base" (&optional properties))
+;; (declare-function d-emacs-dirs-act-on-sexps-in-file "d-emacs-dirs" (filepath function &optional untangle))
+;; (declare-function d-emacs-bind-string "d-emacs-bind" (binding &optional translate csectoshft doublebind))
+;; (declare-function d-emacs-base-cardinal "d-emacs-base" (n &optional fromone))
 
 (defvar d-emacs-global-map-backup)
 (defvar undo-tree-auto-save-history)
@@ -51,7 +50,15 @@
 (defvar d-emacs-replace-untranslated-keys)
 (defvar d-emacs-bind-translate-keys)
 (defvar d-emacs-bind-translate-C-1-1--2-C-g)
+(defvar d-emacs-xkb-layout)
+(defvar d-emacs-xkb-layouts)
+(defvar d-emacs-dfk-layout)
+
+;; If d-emacs-stump isn't loaded, this variable will not be bound…
 (defvar d-emacs-stump)
+
+;; and this will never be called
+(defvar d-emacs-stump-pkg-configs-directory)
 
 (require 'd-emacs-base)
 (require 'd-emacs-coords)
@@ -64,8 +71,8 @@
 
 
 ;;;; Initialization
-;;;;; Let's read in the dxkb-file
-(d-emacs-xkb-generate-layouts)
+;; ;;;;; Let's read in the dxkb-file
+;; (d-emacs-xkb-generate-layouts)
 
 ;;;;; Customs
 (defgroup d-emacs-mode
@@ -281,22 +288,22 @@ Uses `d-emacs-bind-translate-C-1-1--2-C-g', `d-emacs-bind-translate-keys', and
                               d-emacs-bind-key-translations-alist)))))
 
 (defun d-emacs-mode--generate-quick-key-variables ()
-    "Generate quick key variables used in Daselt configurations.
+  "Generate quick key variables used in Daselt configurations.
 
 Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
-    (declare (ftype (function () string)))
-    (let* ((filepath
+  (declare (ftype (function () string)))
+  (let* ((filepath
           (concat d-emacs-mode-pkg-configs-directory "quick-keys.dbf"))
 
          (keylist (prog1 (cl-remove-duplicates
                           (flatten-list (d-emacs-dirs-act-on-sexps-in-file
                                          filepath
                                          (lambda ()
-                                             (let ((blist (eval (d-emacs-base-read-region))))
+                                           (let ((blist (eval (d-emacs-base-read-region))))
                                              (remq nil (mapcar (lambda (bind)
-                                                                   (let ((sig (d-emacs-bind-string bind)))
+                                                                 (let ((sig (d-emacs-bind-string bind)))
                                                                    (if (= 1 (length sig))
-                                                                           (string-to-char
+                                                                       (string-to-char
                                                                         sig))))
                                                                (cdr blist))))))))
                     (let ((filebuffer (get-file-buffer filepath))) ; `get-file-buffer' can get tripped up by symlinks.
@@ -309,8 +316,8 @@ Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
                                 do (setq runlist
                                          (append runlist
                                                  (list (if (cl-evenp n)
-                                                               (nth (1+ n) keylist)
-                                                           (nth (1- n) keylist)))))
+                                                           (nth (1+ n) keylist)
+                                                         (nth (1- n) keylist)))))
                                 finally return runlist))
 
          (keystring (mapconcat #'char-to-string keylist))
@@ -319,47 +326,46 @@ Utilizes `d-special-quick-keys-bindlist` as a foundation for generation."
                               (mapconcat #'char-to-string permutedlist))))
     
     (defvar d-emacs-mode-quick-key-list keylist
-        "Quick key list for Daselt.
+      "Quick key list for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")
 
     (defvar d-emacs-mode-quick-key-string keystring
-        "Quick key string for Daselt.
+      "Quick key string for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")
 
     (defvar d-emacs-mode-quick-key-string-cons keystringpair
-        "Quick key string pair for Daselt.
+      "Quick key string pair for Daselt.
 Auto-generated using `d-emacs-mode--generate-quick-key-variables.'")))
 
-(with-eval-after-load 'd-emacs-xkb-layouts-generated
-  (defun d-emacs-mode-generate-tutorial (&optional no-refresh)
-    "Generate the Daselt-tutorial.
+(defun d-emacs-mode-generate-tutorial (&optional no-refresh)
+  "Generate the Daselt-tutorial.
 
 NO-REFRESH is or optimization-purposes: `d-emacs-mode' already refreshes
 `d-emacs-dfk', so it's unnecessary to do it again."
-    (declare (ftype (function (&optional boolean)
-                              ;; void  ; Compiler complains.
-                              t)))
-    (interactive)
-    (unless no-refresh
-      (d-emacs-dfk-import-current-layout))
-    (let ((display-buffer-alist-backup display-buffer-alist))
-      (condition-case report
-                                      (let ((tutfile (concat d-emacs-mode-pkg-configs-directory "d-emacs-mode/d-emacs-mode.tut"))
-                (display-buffer-alist '((".*" display-buffer-full-frame))))
-            (find-file tutfile)
+  (declare (ftype (function (&optional boolean)
+                            ;; void  ; Compiler complains.
+                            t)))
+  (interactive)
+  (unless no-refresh
+    (d-emacs-dfk-import-current-layout))
+  (let ((display-buffer-alist-backup display-buffer-alist))
+    (condition-case report
+        (let ((tutfile (concat d-emacs-mode-pkg-configs-directory "d-emacs-mode/d-emacs-mode.tut"))
+              (display-buffer-alist '((".*" display-buffer-full-frame))))
+          (find-file tutfile)
+          (d-emacs-base-goto-min)
+          (mark-sexp)
+          (let ((tuttext (eval (d-emacs-base-read-region))))
+            (deactivate-mark)
+            (pop-to-buffer "*daselt-tutorial*")
+            (delete-minibuffer-contents)
+            (org-mode)
+            (visual-line-mode)
+            (insert tuttext)
             (d-emacs-base-goto-min)
-            (mark-sexp)
-            (let ((tuttext (eval (d-emacs-base-read-region))))
-              (deactivate-mark)
-              (pop-to-buffer "*daselt-tutorial*")
-              (delete-minibuffer-contents)
-              (org-mode)
-              (visual-line-mode)
-              (insert tuttext)
-              (d-emacs-base-goto-min)
-              nil))
-        (error (progn (setq display-buffer-alist display-buffer-alist-backup)
-                      (error (error-message-string report))))))))
+            nil))
+      (error (progn (setq display-buffer-alist display-buffer-alist-backup)
+                    (error (error-message-string report)))))))
 
 (defun d-emacs-mode-redaselt ()
   "Run the `redaselt'-bash-script to switch your keyboard layout.
@@ -412,27 +418,23 @@ The keyboard-layout loaded is the d-xkb-variant specified by
     filename))
 
 (defun d-emacs-mode--find-pkg-configs-directory ()
-    "Find d-emacs-mode's pkg-configs-directory.
+  "Find d-emacs-mode's pkg-configs-directory.
 
 Set the corresponding option so it's saved for future sessions.
 
 If the option already points to something that looks like the right directory,
 don't do anything."
-    (declare (ftype (function () string)))
-    (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-mode-pkg-configs-directory)
+  (declare (ftype (function () string)))
+  (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-mode-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
                                (concat (file-name-directory
                                         (buffer-file-name))
                                        "pkg-configs/")))
                           (if (d-emacs-mode--pkg-configs-directory-test current-pkg-dir)
-                                  (customize-save-variable 'd-emacs-mode-pkg-configs-directory
+                              (customize-save-variable 'd-emacs-mode-pkg-configs-directory
                                                        current-pkg-dir)
                             (d-emacs-mode--pkg-configs-directory-enter-manually)))
       (error (d-emacs-mode--pkg-configs-directory-enter-manually)))))
-
-;;;;; Find, set and save the directory
-(eval-when-compile
-  (d-emacs-mode--find-pkg-configs-directory))
 
 ;;;; Mode
 ;;;###autoload
@@ -470,6 +472,7 @@ resetting the keyboard layout as well."
   (if d-emacs-mode
       (progn  ;; Set `d-emacs-dirs-pkg-configs-directory' to `d-emacs-mode-pkg-configs-directory' while `d-emacs-mode' is on.
         (unless (d-emacs-mode--pkg-configs-directory-test d-emacs-dirs-pkg-configs-directory)
+          (d-emacs-mode--find-pkg-configs-directory)
           (if (bound-and-true-p d-emacs-dirs-pkg-configs-directory)
               (progn (defvar d-emacs-d-emacs-dirs-pkg-configs-directory-backup)
                      (setq d-emacs-d-emacs-dirs-pkg-configs-directory-backup
@@ -575,7 +578,7 @@ resetting the keyboard layout as well."
           (normal-top-level-add-subdirs-to-load-path))
 
         ;; Add pkg-config-options
-        (d-emacs-dirs-create-pkg-customization-options-by-variable d-emacs-mode-pkg-configs-directory)
+        (d-emacs-dirs-create-pkg-customization-options-function d-emacs-mode-pkg-configs-directory)
 
         (setopt d-emacs-d-emacs-mode t) ; This should really be enabled (otherwise it won't recurse into the corresponding directory).
 

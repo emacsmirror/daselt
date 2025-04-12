@@ -3,7 +3,6 @@
 ;; Copyright (C) 2024  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
 ;; Version: 1.0
 ;; Keywords: tools, external
 ;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/blob/master/d-emacs-tri/d-emacs-tri.el
@@ -32,6 +31,9 @@
 (require'd-emacs-base)
 (require'd-emacs-coords)
 (require'd-emacs-bind)
+
+;; Automatically generated
+(defvar d-emacs-xkb-layouts)
 
 (defcustom d-emacs-tri-bindlist-file
   (condition-case nil (concat (file-name-directory (buffer-file-name)) "d-emacs-tri.dbl")
@@ -99,6 +101,7 @@ default."
 
 Add in layer 0 to each layout first, just to be sure."
   (declare (ftype (function () (list string))))
+  (d-emacs-xkb-generate-layouts)
   (d-emacs-coords-for-layouts-in (lambda (layoutsym)
                                    (let ((namecore (d-emacs-base-namecore
                                                     layoutsym "d-emacs-dfk-" "-layout")))

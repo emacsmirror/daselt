@@ -148,19 +148,22 @@
 ;;;; Preamble
 (require 'd-emacs-base)
 (require 'd-emacs-coords)
+(require 'd-emacs-bind)
 
-(declare-function d-emacs-base-fill-string-like-docstring "d-emacs-commands" (str))
-(declare-function d-emacs-bind-change-coords-in-bindlist "d-emacs-bind" (blist coordlistlist))
-(declare-function d-emacs-bind-save-bindlist-as-variable "d-emacs-bind" (blist &optional pfx))
-(declare-function d-emacs-base-read-region "d-emacs-base" (&optional properties))
-(declare-function d-emacs-base-trim-lines "nil" nil)
-(declare-function d-emacs-bind--sort-and-format-marked-bindlist-string "d-emacs-bind" (&optional coordsonly prefun modlist))
-(declare-function d-emacs-base-goto-min "d-emacs-base" nil)
-(declare-function d-emacs-base-containing-directory-base-name "d-emacs-base" (filepath))
-(declare-function d-emacs-base-geq-p "d-emacs-base" (seq1 seq2))
-(declare-function d-emacs-base-compare-by-sequential-predicates "d-emacs-base" (arg1 arg2 &rest predicates))
-(declare-function d-emacs-base-funcalls-recursively "d-emacs-base" (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
-(declare-function d-emacs-base-def-by-forms "d-emacs-base" (templates &rest mappings))
+;; (declare-function d-emacs-base-fill-string-like-docstring "d-emacs-commands" (str))
+;; (declare-function d-emacs-bind-change-coords-in-bindlist "d-emacs-bind" (blist coordlistlist))
+;; (declare-function d-emacs-bind-save-bindlist-as-variable "d-emacs-bind" (blist &optional pfx))
+;; (declare-function d-emacs-base-read-region "d-emacs-base" (&optional properties))
+;; (declare-function d-emacs-base-trim-lines "nil" nil)
+;; (declare-function d-emacs-bind--sort-and-format-marked-bindlist-string "d-emacs-bind" (&optional coordsonly prefun modlist))
+;; (declare-function d-emacs-base-goto-min "d-emacs-base" nil)
+;; (declare-function d-emacs-base-containing-directory-base-name "d-emacs-base" (filepath))
+;; (declare-function d-emacs-base-geq-p "d-emacs-base" (seq1 seq2))
+;; (declare-function d-emacs-base-compare-by-sequential-predicates "d-emacs-base" (arg1 arg2 &rest predicates))
+;; (declare-function d-emacs-base-funcalls-recursively "d-emacs-base" (obj funtests &optional recursetest formatfun eltcolfun lstcolfun restargs restargfun contt debug))
+;; (declare-function d-emacs-base-def-by-forms "d-emacs-base" (templates &rest mappings))
+
+(require 'autoinsert)
 
 ;;;; Customs
 (defgroup d-emacs-dirs
@@ -197,8 +200,8 @@ If non-nil, previously read buffers will not be closed."
 
 ;;;; Constants
 (defconst d-emacs-dirs-pkg-type-modifiers-list
-                                        '("user-defined" "special")
-                                        "Type modifiers that files in `d-emacs-dirs-pkg-configs-directory ' can have.")
+  '("user-defined" "special")
+  "Type modifiers that files in `d-emacs-dirs-pkg-configs-directory ' can have.")
 
 (defconst d-emacs-dirs-supported-type-data-list
   `(("del" "lispcode" ("trim-lines-of" "fill-docstrings-of" "add-el-symlink-for") ("byte-compile" "load-elc-or"))
@@ -579,51 +582,50 @@ If an el-file with that name already exists, no new link is added."
       (async-shell-command (format "ln -s %s %s" fname el-name)))))
 
 ;;;;;;; Auto-insert for del-files
-(with-eval-after-load 'auto-insert-mode
-  (add-to-list 'auto-insert-alist
-               '(("\\.del\\'" . "Emacs Lisp header") "Short description: " ";;; "
-                 (file-name-nondirectory (buffer-file-name)) " --- " str
-                 (make-string (max 2 (- 80 (current-column) 27)) 32)
-                 "-*- lexical-binding: t; -*-" '(setq lexical-binding t)
-                 "\n\n;; Copyright (C) " (format-time-string "%Y") "  " (getenv "ORGANIZATION")
-                 | (progn user-full-name) "\n\n;; Author: " (user-full-name)
-                 '(if (search-backward "&" (line-beginning-position) t)
-                      (replace-match (capitalize (user-login-name)) t t))
-                 '(end-of-line 1) " <" (progn user-mail-address) ">\n;; Keywords: "
-                 '(require 'finder)
-                 '(setq v1
-                        (mapcar (lambda (x) (list (symbol-name (car x)))) finder-known-keywords)
-                        v2
-                        (mapconcat (lambda (x) (format "%12s:  %s" (car x) (cdr x)))
-                                   finder-known-keywords "\n"))
-                 ((let ((minibuffer-help-form v2)) (completing-read "Keyword, C-h: " v1 nil t))
-                  str ", ")
-                 & -2
-                 "\n\n;; This program is free software; you can redistribute it and/or modify\n;; it under the terms of the GNU General Public License as published by\n;; the Free Software Foundation, either version 3 of the License, or\n;; (at your option) any later version.\n\n;; This program is distributed in the hope that it will be useful,\n;; but WITHOUT ANY WARRANTY; without even the implied warranty of\n;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n;; GNU General Public License for more details.\n\n;; You should have received a copy of the GNU General Public License\n;; along with this program.  If not, see <https://www.gnu.org/licenses/>.\n\n;;; Commentary:\n\n;; "
-                 _ "\n\n;;; Code:\n\n\n\n(provide '" (file-name-base (buffer-file-name))
-                 ")\n;;; " (file-name-nondirectory (buffer-file-name)) " ends here\n")))
+(add-to-list 'auto-insert-alist
+             '(("\\.del\\'" . "Emacs Lisp header") "Short description: " ";;; "
+               (file-name-nondirectory (buffer-file-name)) " --- " str
+               (make-string (max 2 (- 80 (current-column) 27)) 32)
+               "-*- lexical-binding: t; -*-" '(setq lexical-binding t)
+               "\n\n;; Copyright (C) " (format-time-string "%Y") "  " (getenv "ORGANIZATION")
+               | (progn user-full-name) "\n\n;; Author: " (user-full-name)
+               '(if (search-backward "&" (line-beginning-position) t)
+                    (replace-match (capitalize (user-login-name)) t t))
+               '(end-of-line 1) " <" (progn user-mail-address) ">\n;; Keywords: "
+               '(require 'finder)
+               '(setq v1
+                      (mapcar (lambda (x) (list (symbol-name (car x)))) finder-known-keywords)
+                      v2
+                      (mapconcat (lambda (x) (format "%12s:  %s" (car x) (cdr x)))
+                                 finder-known-keywords "\n"))
+               ((let ((minibuffer-help-form v2)) (completing-read "Keyword, C-h: " v1 nil t))
+                str ", ")
+               & -2
+               "\n\n;; This program is free software; you can redistribute it and/or modify\n;; it under the terms of the GNU General Public License as published by\n;; the Free Software Foundation, either version 3 of the License, or\n;; (at your option) any later version.\n\n;; This program is distributed in the hope that it will be useful,\n;; but WITHOUT ANY WARRANTY; without even the implied warranty of\n;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n;; GNU General Public License for more details.\n\n;; You should have received a copy of the GNU General Public License\n;; along with this program.  If not, see <https://www.gnu.org/licenses/>.\n\n;;; Commentary:\n\n;; "
+               _ "\n\n;;; Code:\n\n\n\n(provide '" (file-name-base (buffer-file-name))
+               ")\n;;; " (file-name-nondirectory (buffer-file-name)) " ends here\n"))
 
 ;;;;;; dbl
 (defun d-emacs-dirs--delete-duplicate-comment-lines ()
-    "Delete duplicate comment lines separated by blank lines in current buffer."
-    (declare (ftype (function () void)))
-    (save-excursion
-      (d-emacs-base-goto-min)
-      (while (not (eobp))
+  "Delete duplicate comment lines separated by blank lines in current buffer."
+  (declare (ftype (function () void)))
+  (save-excursion
+    (d-emacs-base-goto-min)
+    (while (not (eobp))
       (let* ((curline (thing-at-point 'line t))
              (curpos (line-end-position))
              (curtrimline (string-trim curline))
              (nextline "")
              (nexttrimline ""))
         (if (string-match-p (rx string-start ";") curtrimline)
-                (cl-loop while (and (not (eobp))
+            (cl-loop while (and (not (eobp))
                                 (not (string-match-p (rx string-start (not ";"))
                                                      nexttrimline)))
                      do (progn (forward-line)
                                (setq nextline (thing-at-point 'line t))
                                (setq nexttrimline (string-trim nextline))
                                (if (string= curtrimline nexttrimline)
-                                       (delete-region curpos (line-end-position))))))
+                                   (delete-region curpos (line-end-position))))))
         (goto-char curpos)
         (unless (eobp)
           (forward-line))))))
@@ -974,7 +976,7 @@ DIRECTORY is `d-emacs-dirs-pkg-configs-directory' by default."
   (interactive)
   (d-emacs-dirs-act-on-pkg-files-by-type
    `(((lambda (filename)
-          (byte-compile-file filename))
+        (byte-compile-file filename))
       .
       "del"))
    (if directory directory))
@@ -1140,14 +1142,14 @@ feature or an installed package."
          (pfx (concat (symbol-name group) "-"))
          (defaultfun (or defaultfun (lambda (pkg) (or (featurep pkg)
                                                  (if (package-installed-p pkg) ; Just return truth value
-                                                                                         t)))))
+                                                     t)))))
          (customlist (mapcar (lambda (pkg)
-                                                 `(defcustom ,(intern (concat pfx (symbol-name pkg)))
-                                                    ,(funcall defaultfun pkg)
-                                                    ,(d-emacs-base-fill-string-like-docstring
+                               `(defcustom ,(intern (concat pfx (symbol-name pkg)))
+                                  ,(funcall defaultfun pkg)
+                                  ,(d-emacs-base-fill-string-like-docstring
                                     (format "Set to t to have `d-emacs-dirs-act-on-pkg-files-by-type' recurse into the %sdirectory whose name is %s." pfx pkg))
-                                                    :type 'boolean
-                                                    :group ',group))
+                                  :type 'boolean
+                                  :group ',group))
                              (d-emacs-dirs-recurse-through-directory
                               dir
                               `(((lambda (filepath) (intern (file-name-base filepath)))
@@ -1156,12 +1158,18 @@ feature or an installed package."
                               nil #'append))))
     (append '(progn) customlist)))
 
-(defmacro d-emacs-dirs-create-pkg-customization-options-by-variable (&optional dirvar pfx defval)
-  "Like `d-emacs-dirs-create-pkg-customization-options', but DIRVAR should be a
-variable containing a directory path.
+(defun d-emacs-dirs-create-pkg-customization-options-function (&optional dir pfx defval)
+  "Like `d-emacs-dirs-create-pkg-customization-options', but a function.
 
 See `d-emacs-dirs-create-pkg-customization-options' for more documentation."
-  `(d-emacs-dirs-create-pkg-customization-options ,(symbol-value dirvar) ,pfx ,defval))
+  (eval `(d-emacs-dirs-create-pkg-customization-options ,dir ,pfx ,defval)))
+
+;; (defmacro d-emacs-dirs-create-pkg-customization-options-by-variable (&optional dirvar pfx defval)
+;;   "Like `d-emacs-dirs-create-pkg-customization-options', but DIRVAR should be a
+;; variable containing a directory path.
+
+;; See `d-emacs-dirs-create-pkg-customization-options' for more documentation."
+;;   `(d-emacs-dirs-create-pkg-customization-options ,(symbol-value dirvar) ,pfx ,defval))
 
 (defmacro d-emacs-dirs-create-save-customized-modes-30 (typelist &optional pfx defaultvalfun)
   "Create the prerequisites for the save behavior of file types in TYPELIST.
@@ -1497,22 +1505,21 @@ and, if so, calls it with the name of the current file. Otherwise, it calls `d-e
         (mode ,@(mapcar (lambda (lst) (nth 4 lst)) typelist))
         (override ,@(mapcar (lambda (lst) (nth 5 lst)) typelist))))))
 
-(defmacro d-emacs-dirs-create-save-customized-modes-by-variable (typelistsym &optional pfx defaultvalfun)
-  "Like `d-emacs-dirs-create-save-customized-modes', but TYPELISTSYM should be a
-symbol bound to a typelist.
+(defun d-emacs-dirs-create-save-customized-modes-function (typelist &optional pfx defaultvalfun)
+  "Like `d-emacs-dirs-create-save-customized-modes', but a function.
 
 See `d-emacs-dirs-create-save-customized-modes' for more documentation."
-  (remq nil `(d-emacs-dirs-create-save-customized-modes ,(symbol-value typelistsym) ,pfx ,defaultvalfun)))
+  (remq nil `(d-emacs-dirs-create-save-customized-modes ,typelist ,pfx ,defaultvalfun)))
 
 ;; Macro expansion works differently between 29 and 30
 (defalias 'd-emacs-dirs-create-save-customized-modes
-                        (if (< emacs-major-version 30)
-                                                  'd-emacs-dirs-create-save-customized-modes-29
-                          'd-emacs-dirs-create-save-customized-modes-30))
+  (if (< emacs-major-version 30)
+      'd-emacs-dirs-create-save-customized-modes-29
+    'd-emacs-dirs-create-save-customized-modes-30))
 
 
 ;;;;;; Macro call
-(d-emacs-dirs-create-save-customized-modes-by-variable
+(d-emacs-dirs-create-save-customized-modes-function
  d-emacs-dirs-supported-type-data-list)
 
 ;;;; Provide

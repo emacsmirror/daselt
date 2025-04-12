@@ -21,7 +21,9 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary: The main file for Daselt's Emacs module.
+;;; Commentary:
+
+;; The main file for Daselt's Emacs module.
 ;; Only exists to load other files.
 
 ;; Main file for d-emacs. Only loads other files.

@@ -562,10 +562,12 @@ Return the filled string."
                    finally do ; Only called if no sentence end is found.
                    (fill-region beg end))
           (prog1 (progn (goto-char beg) ; Return the docstring.
-                        (mark-sexp)
-                        (prog1 (buffer-substring (region-beginning)
-                                                 (region-end))
-                          (deactivate-mark)))
+                        (thing-at-point 'sexp)
+                        ;; (mark-sexp)
+                        ;; (prog1 (buffer-substring (region-beginning)
+                        ;;                          (region-end))
+                        ;;   (deactivate-mark))
+                        )
             (end-of-defun)))))))
 
 (defun d-emacs-base-fill-string-like-docstring (str)
@@ -579,7 +581,7 @@ Return the filled string."
     (buffer-substring (1+ (point-min)) (1- (point-max)))))
 
 ;;;;; Lines
-;; Taken from min,sc-cmds.el (Icicle library).
+;; Taken from cmds.el (Icicle library).
 (defun d-emacs-base-mark-line (&optional arg)
   "Put mark at end of line, point at beginning.
 

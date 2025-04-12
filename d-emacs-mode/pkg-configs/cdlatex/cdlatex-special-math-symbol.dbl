@@ -41,9 +41,9 @@
 
 ;;;;;;;; 2-1
  ((2 1 -3) . "\\ldoublehead")
- ((2 1 -2) . "\\lhook")
+ ((2 1 -2) . "\\clhook")
  ((2 1 0) "\\multimapdotboth")
- ((2 1 2) . "\\rhook")
+ ((2 1 2) . "\\crhook")
  ((2 1 3) . "\\rdoublehead")
 
 ;;;;;;; 3
