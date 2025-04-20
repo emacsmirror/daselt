@@ -24,9 +24,11 @@
 ;;; Commentary:
 
 ;; This package is Daselt's Emacs module. Daselt is a global configuration
-;; scheme for a GNU/Linux system, providing, among other things, a custom
-;; keyboard layout and a shortcut meta-layout. Daselt's Emacs component consists
-;; of several parts:
+;; scheme for a GNU/Linux system, providing, among other things, an optimized
+;; keyboard layout and a shortcut meta-layout. The main purpose of this package
+;; is to provide an implementation of this shortcut meta-layout in Emacs, but it
+;; contains several parts, which can be used independently to create and share
+;; other configurations:
 
 ;; - `d-emacs-base` provides a host of functions for the other packages that
 ;; - might be useful for building other packages as well.
@@ -53,6 +55,15 @@
 
 ;; For more information, please visit the main page of Daselt:
 ;; https://gitlab.com/nameiwillforget/daselt.
+
+;; Installation:
+
+;; Most of the components of d-emacs can be used on their own but are mainly
+;; auxiliary tools for the creation of other packages and configurations.
+;; d-emacs-mode contains the actual configuration to allow you to have the
+;; Daselt experience in Emacs, but to use it, Daselt's xkb and dfk components
+;; have to be configured on your system. To achieve this, please follow the
+;; README in the Daselt repository and use the Daselt configure script.
 
 ;;; Code:
 
