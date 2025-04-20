@@ -31,7 +31,8 @@
 
 ;;;;;;; 2
 ;;;;;;;; 2--1
- ((2 -1 2) "\\simeq")
+ ((2 -1 2) "\\loopleftarrow")
+ ((2 -1 2) "\\looprightarrow")
 
 ;;;;;;;; 2-0
  ((2 0 -3) "\\llparenthesis")
@@ -48,10 +49,10 @@
 
 ;;;;;;; 3
 ;;;;;;;; 3--1
- ((3 -1 -5) "\\lgwhtcircle" "\\bigcirc")
  ((3 -1 -5) "\\pentagon")
+ ((3 -1 -5) "\\lgwhtcircle" "\\bigcirc")
  ((3 -1 -4) "\\oplus" "\\boxplus")
- ((3 -1 2) "\\sim")
+ ((3 -1 2) "\\sim" "\\simeq")
  ((3 -1 4) "\\star")
  ((3 -1 5) "\\hexagon")
 

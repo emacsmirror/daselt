@@ -440,6 +440,7 @@ This cycles among all possible values of the option in the reverse order."
    (("M-C-" . (4 0 -2)))))
 
 ;; (add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-icicle-mode-map-bindlist)))
+
 (add-hook 'icicle-mode-hook (lambda () (d-emacs-bind-apply-bindlist d-emacs-isearch-mode-map-bindlist)))
 
 ;;;; Provide

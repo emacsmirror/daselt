@@ -23,10 +23,36 @@
 
 ;;; Commentary:
 
-;; The main file for Daselt's Emacs module.
-;; Only exists to load other files.
+;; This package is Daselt's Emacs module. Daselt is a global configuration
+;; scheme for a GNU/Linux system, providing, among other things, a custom
+;; keyboard layout and a shortcut meta-layout. Daselt's Emacs component consists
+;; of several parts:
 
-;; Main file for d-emacs. Only loads other files.
+;; - `d-emacs-base` provides a host of functions for the other packages that
+;; - might be useful for building other packages as well.
+
+;; - `d-emacs-coords` provides functions to for the coordinatization of layouts.
+
+;; - `d-emacs-xkb` can import custom xkb-layouts into Emacs.
+
+;; - `d-emacs-dfk` can generate Dual Function Keys configurations from coordinates
+;; and add them to layouts as a zeroth layer.
+
+;; - `d-emacs-bind` allows Emacs to read bindings that use coordinates and store
+;; and manipulate them in bindlists.
+
+;; - `d-emacs-dirs` provides functions to recursively act on files in a directory
+;; and automatically apply actions on file save.
+
+;; - `d-emacs-mode` provides a mode that implements Daselt's shortcut layout in
+;; Emacs.
+
+;; - `d-emacs-stump` can generate StumpWM configurations from bindlists.
+
+;; - `d-emacs-tri` can generate Tridactyl configurations from bindlists.
+
+;; For more information, please visit the main page of Daselt:
+;; https://gitlab.com/nameiwillforget/daselt.
 
 ;;; Code:
 

@@ -330,7 +330,7 @@ the file have the same number of layers."
   (let ((dxkbbuf (find-file-noselect d-emacs-xkb-file))
         defined-layouts)  ; This way we don't overwrite layouts with a base and a full version.
     (set-buffer dxkbbuf)
-    (goto-char (point-min))
+    (d-emacs-base-goto-min)
     (while (re-search-forward (rx "partial" (* blank)
                                   "alphanumeric_keys" (* not-newline) (* (or "\n" blank))
                                   "xkb_symbols")

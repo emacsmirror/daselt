@@ -1,7 +1,9 @@
 # D-Emacs
-This package is Daselt's [Emacs](https://www.gnu.org/software/emacs/) module. It consists of several parts:
+This package is [Daselt](https://gitlab.com/nameiwillforget/daselt)'s [Emacs](https://www.gnu.org/software/emacs/) module. Daselt is a global configuration scheme for a GNU/Linux system, providing, among other things, a custom keyboard layout and a shortcut meta-layout. Daselt's Emacs component consists of several parts:
 
-- `d-emacs-coords` provides functions to for coordinatized layouts.
+- `d-emacs-base` provides a host of functions for the other packages that might be useful for building other packages as well.
+
+- `d-emacs-coords` provides functions to for the coordinatization of layouts.
 
 - `d-emacs-xkb` can import custom [xkb](https://www.x.org/wiki/XKB/)-layouts into Emacs.
 
