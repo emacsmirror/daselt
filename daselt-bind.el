@@ -232,8 +232,8 @@ Automatically set when starting `daselt-mode' if `d-stump' is t."
 
 
 (defcustom daselt-bind-no-shift-if-string-list
-                '("<backspace>" "<return>")
-                "List of signals that are on a shift layer but should not be treated as such
+  '("<backspace>" "<return>")
+  "List of signals that are on a shift layer but should not be treated as such
 if they are given as strings.
 
 An implicit shift-modifier is applied to bindings on the second layer when they
@@ -242,8 +242,8 @@ are given by strings, any modifiers are either given explicitly or implicitly by
 using uppercase letters. So when function keys that exist on the second layer
 are given by strings, it has to be specified that they should not be treated as
 being on the second layer when they are formatted."
-                :type '(repeat string)
-                :group 'daselt-bind)
+  :type '(repeat string)
+  :group 'daselt-bind)
 
 (defcustom daselt-bind-replace-binding-strings-alist
   '(nil)
@@ -1908,9 +1908,9 @@ automatically and you don't have to worry about it."
          (matchedblsymbs (if (string-empty-p blistrx)
                              blistsymbs
                            (daselt-base-filter-list blistsymbs (lambda (blistsymb)
-                                                                  (string-match-p
-                                                                   blistrx
-                                                                   (symbol-name blistsymb)))))))
+                                                                 (string-match-p
+                                                                  blistrx
+                                                                  (symbol-name blistsymb)))))))
 
     (daselt-base-with-max-buffer-maybe-return
      "*daselt-layout*"

@@ -5,7 +5,7 @@
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Version: 1.0
 ;; Keywords: tools, external
-;; URL: https://gitlab.com/nameiwillforget/d-emacs/daselt-stump/
+;; URL: https://gitlab.com/nameiwillforget/d-emacs/-/tree/master/daselt-stump
 
 ;; This file is part of Daselt.
 

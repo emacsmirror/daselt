@@ -716,7 +716,7 @@ If ORG is non-nil, output is formatted as an `org-mode' table.
 
 NOUPPERROW is only of importance if ORG is t. Then it removes the upper row of
 the org table, which indexes coordinates."
-  (declare (ftype (function (list &optional cons list boolean boolean) 
+  (declare (ftype (function (list &optional cons list boolean boolean)
                             ;; ((list (cons (list number) t)) &optional ; Compiler complains.
                             ;;  (cons (list number) (list number))
                             ;;  (list (list number))
