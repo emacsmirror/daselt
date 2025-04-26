@@ -314,32 +314,32 @@
 
 ;;;; rect
 (rect
- (rectangle-mark-mode-map
+(rectangle-mark-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
-  ((1 -1 -3) . #'delete-rectangle)
-  ((1 -1 -2) . #'rectangle-exchange-point-and-mark)
-  ((1 -1 2) . #'clear-rectangle)
+ ((1 -1 -3) . #'delete-rectangle)
+ ((1 -1 -2) . #'rectangle-exchange-point-and-mark)
+ ((1 -1 2) . #'clear-rectangle)
 
 ;;;;;;;; 1-0
-  ((1 0 -3) . #'replace-rectangle)
-  ((1 0 -2) . #'string-rectangle)
-  ((1 0 -1) . #'open-rectangle)
-  ((1 0 1) . #'close-rectangle)
-  ((1 0 2) . #'string-insert-rectangle)
+ ((1 0 -3) . #'replace-rectangle)
+ ((1 0 -2) . #'string-rectangle)
+ ((1 0 -1) . #'open-rectangle)
+ ((1 0 1) . #'close-rectangle)
+ ((1 0 2) . #'string-insert-rectangle)
 
 ;;;;;;;; 1-1
-  ((1 1 -3) . #'copy-rectangle-as-kill)
-  ((1 1 3) . #'yank-rectangle)
+ ((1 1 -3) . #'copy-rectangle-as-kill)
+ ((1 1 3) . #'yank-rectangle)
 
 ;;;;;;; 2
 ;;;;;;;; 2-1
-  ((2 1 -3) . #'kill-rectangle)
+ ((2 1 -3) . #'kill-rectangle)
 
 ;;;;;;; 5
 ;;;;;;;; 5-1
-  ((5 1 -3) . #'copy-rectangle-to-register)))
+ ((5 1 -3) . #'copy-rectangle-to-register)))
 
 ;;;; prog-mode-map
 (prog-mode-map
@@ -378,25 +378,25 @@
 
 ;;;; debug
 (debug
- (debugger-mode-map
+(debugger-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
-  ((1 -1 -4) . #'debugger-eval-expression)
-  ((1 -1 3) . #'debugger-jump)
-  ((1 -1 4) . #'debugger-list-functions)
+ ((1 -1 -4) . #'debugger-eval-expression)
+ ((1 -1 3) . #'debugger-jump)
+ ((1 -1 4) . #'debugger-list-functions)
 
 ;;;;;;;; 1-0
-  ((1 0 -4) . #'debugger-return-value)
-  ((1 0 -3) . #'backtrace-backward-frame)
-  ((1 0 1) . #'debugger-continue)
-  ((1 0 2) . #'debugger-step-through)
-  ((1 0 3) . #'backtrace-forward-frame)
+ ((1 0 -4) . #'debugger-return-value)
+ ((1 0 -3) . #'backtrace-backward-frame)
+ ((1 0 1) . #'debugger-continue)
+ ((1 0 2) . #'debugger-step-through)
+ ((1 0 3) . #'backtrace-forward-frame)
 
 ;;;;;;;; 1-1
-  ((1 1 -2) . #'debugger-frame-clear)
-  ((1 1 0) . #'backtrace-toggle-locals)
+ ((1 1 -2) . #'debugger-frame-clear)
+ ((1 1 0) . #'backtrace-toggle-locals)
 
 ;;;;;;; 4
 ;;;;;;;; 4-0
-  ((4 0 4) . #'debugger-quit)))
+ ((4 0 4) . #'debugger-quit)))

@@ -616,12 +616,12 @@
 
 ;;;;;;;; s-3-0
  (("s-" . (3 0 -5)) . #'icicle-dired-saved-file-candidates)
- (("s-" . (3 0 -3)) . #'add-global-abbrev)
- (("s-" . (3 0 -2)) . #'add-mode-abbrev)
+ (("s-" . (3 0 -3)) . (if d-emacs-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'add-global-abbrev))
+ (("s-" . (3 0 -2)) . (if d-emacs-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
  (("s-" . (3 0 -1)) . #'d-emacs-d-emacs-isearch-backward-symbol)
  (("s-" . (3 0 1)) . #'isearch-forward-symbol)
- (("s-" . (3 0 2)) . #'inverse-add-mode-abbrev)
- (("s-" . (3 0 3)) . #'inverse-add-global-abbrev)
+ (("s-" . (3 0 2)) . (if d-emacs-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
+ (("s-" . (3 0 3)) . (if d-emacs-abbrev-chain #'abbrev-chain-look-up-abbrev #'inverse-add-global-abbrev))
 
 ;;;;;;;; s-3-1
  (("s-" . (3 1 -5)) . #'d-emacs-backward-delete-all-space)
@@ -764,8 +764,8 @@
 ;;;;;;; s-H-2
 ;;;;;;;; s-H-2-0
  (("s-H-" . (2 0 -5)) . #'projectile-find-file-other-frame)
+ (("s-H-" . (2 0 -1)) . #'icicle-search-keywords)
  (("s-H-" . (2 0 1)) . #'icicle-occur)
- (("s-H-" . (2 0 1)) . #'icicle-search-keywords)
  (("s-H-" . (2 0 5)) . #'projectile-find-related-file-other-frame)
 
 ;;;;;;; s-H-3

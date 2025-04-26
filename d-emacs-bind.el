@@ -1405,11 +1405,11 @@ coordinates)."
 
 ;;;;; Saving
 (defun d-emacs-bind--set-bindlist-symbol (sym blist filename)
-  "Set SYM to BLIST and mention its setting place FILENAME in documentation."
-  (declare (ftype (function (symbol list string) symbol)))
-  (set sym blist)
-  (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
-  sym)
+    "Set SYM to BLIST and mention its setting place FILENAME in documentation."
+    (declare (ftype (function (symbol list string) symbol)))
+    (set sym blist)
+    (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
+    sym)
 
 (defun d-emacs-bind-save-bindlist-as-variable  (blist &optional pfx)
   "Save BLIST as a variable.
@@ -1428,31 +1428,31 @@ PFX is the prefix given to the saved bindlists. It is `d-emacs-' by default."
     (if (or (not head)
             (not (or (symbolp head)
                      (stringp head))))
-                                                    (let* ((filename (file-name-nondirectory filepath))
+        (let* ((filename (file-name-nondirectory filepath))
                (filenamebase (file-name-base filepath))
                (symbol (if (string-match-p "special" filename)
-                                                                       (intern (substring filenamebase 0 -1))
-                                               (d-emacs-base-intern-from-parts (concat ; Mapconcat would insert two -'s for the empty string.
+                           (intern (substring filenamebase 0 -1))
+                         (d-emacs-base-intern-from-parts (concat ; Mapconcat would insert two -'s for the empty string.
                                                           pfx
                                                           (if (string-match-p "-user-defined" filename)
-                                                                                                          "-user-defined"
-                                                                                  ""))
+                                                              "-user-defined"
+                                                            ""))
                                                          mapsymbdefaultname
                                                          "bindlist"))))
           (d-emacs-bind--set-bindlist-symbol symbol blist filepath))
 
       (cl-flet* ((head-over-body (bblist)
-                                         (and (d-emacs-bind-head bblist)
+                   (and (d-emacs-bind-head bblist)
                         (or (stringp (car bblist))  ; Let's ensure the head is a symbol
                             (symbolp (car bblist))) ; or string.
                         (not (d-emacs-bind-head (cdr bblist)))))
                  (name-if-symbol (elt)
-                                         (if (symbolp elt)
-                                                                   (symbol-name elt)
-                                           elt)))
+                   (if (symbolp elt)
+                       (symbol-name elt)
+                     elt)))
 
         (if (head-over-body blist)
-                                                        (let ((namecore (name-if-symbol (car blist))))
+            (let ((namecore (name-if-symbol (car blist))))
               (d-emacs-bind--set-bindlist-symbol (d-emacs-base-intern-from-parts pfx namecore "bindlist")
                                                  blist
                                                  filepath))
@@ -1461,25 +1461,25 @@ PFX is the prefix given to the saved bindlists. It is `d-emacs-' by default."
           (d-emacs-base-funcalls-recursively
            blist
            `(((lambda (bblist &optional heads)
-                                      (let* ((pfx ,pfx)
+                (let* ((pfx ,pfx)
                        (filepath ,filepath)
                        (head (d-emacs-bind-head bblist))
                        (namecore (if (symbolp head)
-                                                                                 (symbol-name head)
-                                                         (if (stringp head)
-                                                                                   head
-                                                           (error "Expected a symbol or string a head of headed bindlist")))))
+                                     (symbol-name head)
+                                   (if (stringp head)
+                                       head
+                                     (error "Expected a symbol or string a head of headed bindlist")))))
                   (d-emacs-bind--set-bindlist-symbol (d-emacs-base-intern-from-parts pfx namecore "bindlist")
                                                      bblist
                                                      filepath)))
               .
               (lambda (idx lst &optional heads) ; Test
-                                      (let ((bblist (nth idx lst)))
+                (let ((bblist (nth idx lst)))
                   (and (d-emacs-bind-bindlist-p bblist)
                        (not (d-emacs-bind-head (cdr bblist)))))
-                                      )))
+                )))
            (lambda (idx lst &optional _heads)
-                                   (let ((elt (nth idx lst)))
+             (let ((elt (nth idx lst)))
                (d-emacs-bind-bindlist-p elt)))
            nil nil #'append))))))
 
@@ -1495,7 +1495,7 @@ is set to nil."
                       `(("C-g" . ,(d-emacs-bind-string `(("C-" . (1 1 -2)))))))
                     (unless d-emacs-bind-translate-keys
                       (mapcar (lambda (cns)
-                                (let ((str (car cns)))
+                                  (let ((str (car cns)))
                                   (cons str (string-replace "C-" "A-" str))))
                               d-emacs-bind-key-translations-alist)))))
 
@@ -1597,7 +1597,8 @@ bindlist is applied to is not loaded, application will throw an error."
                             t)))
   (let* ((bufname (buffer-file-name))
          (pkgname (if bufname (d-emacs-base-containing-directory-base-name bufname)))
-         (mapsymbdefault (if pkgname (intern (concat pkgname "-mode-map")))))
+         (pkgsym (if pkgname (intern pkgname)))
+         (mapsymdefault (if pkgname (intern (concat pkgname "-mode-map")))))
 
     (d-emacs-bind-act-on-bindings
      blist
@@ -1605,17 +1606,17 @@ bindlist is applied to is not loaded, application will throw an error."
        (let* ((headpairt (= (length heads) 2))
               (evalcnd (if headpairt
                            (car heads)
-                         (intern pkgname)))
-              (mapsymb (if headpairt
-                           (car (last heads))
-                         (if heads
-                             (car heads)
-                           (or mapsymbdefault
-                               (error "No map symbol specified and buffer not visiting a file")))))
+                         pkgsym))
+              (mapsym (if headpairt
+                          (car (last heads))
+                        (if heads
+                            (car heads)
+                          (or mapsymdefault
+                              (error "No map symbol specified and buffer not visiting a file")))))
               (backuppfx (or backuppfx "d-emacs-"))
-              (backupsymb (intern (concat backuppfx (symbol-name mapsymb) "-backup"))))
+              (backupsymb (intern (concat backuppfx (symbol-name mapsym) "-backup"))))
          (cl-flet ((backup-and-apply-binding (&optional _dummy1 _dummy2)
-                     (let ((map (symbol-value mapsymb))) ; Mapsymb has to be evaluated only within the with-eval-after-load expression.
+                     (let ((map (symbol-value mapsym))) ; Mapsym has to be evaluated only within the with-eval-after-load expression.
 
                        (unless (and (boundp backupsymb) ; Don't overwrite an already existing backup.
                                     (keymapp (symbol-value backupsymb)))
