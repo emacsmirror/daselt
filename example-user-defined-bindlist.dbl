@@ -1,20 +1,45 @@
-(((0 0 6) . #'forward-char) ; Bind `<XF86Launch5>' to `forward-char' in `d-emacs-mode-map'.
- ((1 0 2)) ; Unbind (1 0 2).
- (("M-C-" . (5 0 2)) #'backward-char) ; This is how you specify modifiers.
- ) 
 
-(d-emacs-base-miscellaneous-map ; Apply bindings to `d-emacs-base-miscellaneous-map'.
- ((1 0 2) . (if (package-installed-p 'treemacs) #'treemacs-mode #'term-mode)) ; Such clauses are allowed in the cdr. When the bindlist is applied, the cdr is evaluated, yielding a command name.
+;;;; d-emacs-mode-map
+(
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-0
+ ((0 0 6) . #'forward-char) 
 
- ("t" . #'treemacs) ; This is how you specify binding strings.
- ("C-t" . #'term) ; You can put modifiers directly into the binding string.
- )
+;;;;;;; 1 
+;;;;;;;; 1-0 
+ ((1 0 2)) 
 
-(flycheck ; After `flycheck' is loaded…
- (flycheck-mode-map ; In `flycheck-mode-map'…
-  (("M-" . (3 -1 1)) . #'treemacs-mode)) ; Bind #' M-(3 -1 1) to treemacs mode.
- (flycheck-command-map
-  (("H-C-" . (3 -1 -1)) . #'projectile-compile-project)) ; And H-C-(3 -1 -1) to `projectile-compile-project'.
- )
+;;;;;; M-C- 
+;;;;;;; M-C-5 
+;;;;;;;; M-C-5-0 
+ (("M-C-" . (5 0 2)) #'backward-char)) 
 
-;; You can see the effect of `d-emacs-dirs-sort-and-format-bindlists-in-file' by using it here. Note however that it will destroy the comments in bindlists (though you can restore them with an `undo').
+
+;;;; daselt-base-miscellaneous-map
+(daselt-base-miscellaneous-map 
+;;;;; Strings
+ ("t" . #'treemacs) 
+
+;;;;;; C- 
+ (("C-" . "t") . #'term) 
+
+;;;;; Coordinates 
+ ((1 0 2) . (if (package-installed-p 'treemacs) #'treemacs-mode #'term-mode)))
+
+
+;;;; flycheck
+(flycheck
+(flycheck-command-map 
+;;;;; Coordinates
+;;;;;; H-C-
+;;;;;;; H-C-3
+;;;;;;;; H-C-3--1
+ (("H-C-" . (3 -1 -1)) . #'projectile-compile-project)) (flycheck-mode-map 
+;;;;; Coordinates
+;;;;;; M-
+;;;;;;; M-3
+;;;;;;;; M-3--1
+ (("M-" . (3 -1 1)) . #'treemacs-mode)))
+
+;; You can see the effect of `daselt-dirs-sort-and-format-bindlists-in-file' by using it here. Note however that it will destroy the comments in bindlists (though you can restore them with an `undo').

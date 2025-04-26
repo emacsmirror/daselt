@@ -1,0 +1,402 @@
+;;;; global-map
+(global-map
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 -4)) . #'scroll-down-command)
+ (("C-" . (1 0 4)) . #'scroll-up-command)
+
+;;;;;; M-
+;;;;;;; M-4
+;;;;;;;; M-4--1
+ (("M-" . (4 -1 2))))
+
+;;;; function-key-map
+(function-key-map
+;;;;; Strings
+ ("<f7>" . #'event-apply-hyper-modifier)
+
+;;;;; Coordinates
+;;;;;;; 0
+ ((0 1 -7) . #'event-apply-alt-modifier)
+
+;;;;;;;; 0-2
+ ((0 2 -1) . #'event-apply-meta-modifier)
+
+;;;;;; C-
+;;;;;;; C-0
+;;;;;;;; C-0-2
+ (("C-" . (0 2 -1)) . #'event-apply-super-modifier))
+
+;;;; button-buffer-map
+(button-buffer-map
+;;;;; Coordinates
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -2) . #'backward-button)
+ ((2 0 2) . #'forward-button))
+
+;;;; special-mode-map
+(special-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'avy-act-follow-in-new-tab)
+ ((1 -1 4) . #'avy-act-follow)
+
+;;;;;;;; 1-0
+ ((1 0 -4) . #'scroll-down-command)
+ ((1 0 -3) . #'daselt-scroll-chunk-down)
+ ((1 0 3) . #'daselt-scroll-chunk-up)
+ ((1 0 4) . #'scroll-up-command)
+
+;;;;;;;; 1-1
+ ((1 1 -2) . #'revert-buffer)
+
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -4) . #'beginning-of-buffer)
+ ((2 0 -1) . #'daselt-new-horizontal-window-and-buffer)
+ ((2 0 1) . #'daselt-new-vertical-window-and-buffer)
+ ((2 0 4) . #'end-of-buffer)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -1) . #'avy-act-follow-in-new-horizontal-window)
+ ((4 0 1) . #'avy-act-follow-in-new-vertical-window)
+ ((4 0 2) . #'avy-act--follow-or-open)
+ ((4 0 4) . #'quit-window))
+
+;;;; help-map
+(help-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 3) . #'d-free-places-from-regexps)
+
+;;;;;;;; 4-0
+ ((4 0 -3) . #'daselt-coords-draw-placevals-from-coordrx)
+ ((4 0 -2) . #'daselt-coords-draw-keyboard-layer)
+ ((4 0 2) . #'daselt-bind-draw-bindlist-layer)
+ ((4 0 3) . #'daselt-bind-draw-bindings-from-regexps))
+
+;;;; isearch-mode-map
+(isearch-mode-map
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 -4)) . #'isearch-query-replace)
+ (("C-" . (1 0 -3)) . #'isearch-ring-retreat)
+ (("C-" . (1 0 -1)) . #'isearch-repeat-backward)
+ (("C-" . (1 0 1)) . #'isearch-repeat-forward)
+ (("C-" . (1 0 3)) . #'isearch-ring-advance)
+ (("C-" . (1 0 4)) . #'isearch-query-replace-regexp)
+
+;;;;;;;; C-1-1
+ (("C-" . (1 1 -3)) . #'isearch-yank-word-or-char)
+ (("C-" . (1 1 2)) . #'isearch-quote-char)
+
+;;;;;;; C-2
+;;;;;;;; C-2-0
+ (("C-" . (2 0 -1)) . #'isearch-occur)
+
+;;;;;;;; C-2-1
+ (("C-" . (2 1 -3)) . #'isearch-yank-kill)
+ (("C-" . (2 1 3)) . #'isearch-printing-char)
+
+;;;;;;; C-3
+;;;;;;;; C-3-1
+ (("C-" . (3 1 3)) . #'isearch-xterm-paste)
+
+;;;;;;; C-4
+;;;;;;;; C-4-1
+ (("C-" . (4 1 -3)) . #'isearch-yank-word)
+ (("C-" . (4 1 3)) . #'isearch-yank-pop-only)
+
+;;;;;;; C-5
+;;;;;;;; C-5--1
+ (("C-" . (5 -1 -4)) . #'isearchp-eval-sexp-and-insert)
+ (("C-" . (5 -1 -4)) . #'isearchp-narrow-to-lazy-highlights)
+ (("C-" . (5 -1 -3)) . #'isearchp-remove-failed-part)
+ (("C-" . (5 -1 2)) . #'icicle-search-w-isearch-string)
+ (("C-" . (5 -1 4)) . #'isearchp-init-edit)
+
+;;;;;;;; C-5-0
+ (("C-" . (5 0 -5)) . #'isearchp-retrieve-last-quit-search)
+ (("C-" . (5 0 -4)) . #'icicle-isearch-complete)
+ (("C-" . (5 0 -2)) . #'isearchp-property-backward)
+ (("C-" . (5 0 2)) . #'isearchp-property-forward)
+ (("C-" . (5 0 5)) . #'isearchp-open-recursive-edit)
+
+;;;;;;;; C-5-1
+ (("C-" . (5 1 -3)) . #'icicle-isearch-history-insert)
+ (("C-" . (5 1 -3)) . #'isearchp-yank-symbol-or-char)
+ (("C-" . (5 1 2)) . #'isearchp-act-on-demand)
+ (("C-" . (5 1 3)) . #'icicle-insert-history-element)
+
+;;;;;;; C-6
+;;;;;;;; C-6--1
+ (("C-" . (6 -1 -3)) . #'isearchp-cleanup)
+
+;;;;;;;; C-6-0
+ (("C-" . (6 0 -2)) . #'isearchp-property-backward-regexp)
+ (("C-" . (6 0 2)) . #'isearchp-property-forward-regexp)
+ (("C-" . (6 0 3)) . #'goto-longest-line)
+
+;;;;;;;; C-6-1
+ (("C-" . (6 1 -3)) . #'isearchp-yank-sexp-symbol-or-char)
+
+;;;;;;; C-7
+;;;;;;;; C-7-1
+ (("C-" . (7 1 -3)) . #'isearchp-kill-ring-save)
+
+;;;;;; M-
+;;;;;;; M-1
+;;;;;;;; M-1--1
+ (("M-" . (1 -1 -2)) . #'isearch-toggle-specified-input-method)
+ (("M-" . (1 -1 2)) . #'isearch-toggle-input-method)
+
+;;;;;;;; M-1-0
+ (("M-" . (1 0 -5)) . #'isearch-toggle-word)
+ (("M-" . (1 0 -1)) . #'isearch-toggle-symbol)
+ (("M-" . (1 0 1)) . #'isearch-toggle-invisible)
+ (("M-" . (1 0 5)) . #'isearch-toggle-lax-whitespace)
+
+;;;;;;;; M-1-1
+ (("M-" . (1 1 -2)) . #'isearch-toggle-char-fold)
+ (("M-" . (1 1 2)) . #'isearch-toggle-case-fold)
+
+;;;;;;; M-2
+;;;;;;;; M-2--1
+ (("M-" . (2 -1 1)) . #'isearch-toggle-regexp)
+
+;;;;;;; M-5
+;;;;;;;; M-5--1
+ (("M-" . (5 -1 -4)) . #'isearchp-toggle-literal-replacement)
+ (("M-" . (5 -1 -2)) . #'isearchp-toggle-search-invisible)
+ (("M-" . (5 -1 2)) . #'isearchp-toggle-regexp-quote-yank)
+ (("M-" . (5 -1 3)) . #'isearchp-toggle-hiding-comments)
+ (("M-" . (5 -1 4)) . #'isearchp-toggle-complementing-domain)
+ (("M-" . (5 -1 5)) . #'isearchp-toggle-repeat-search-if-fail)
+
+;;;;;;;; M-5-0
+ (("M-" . (5 0 -5)) . #'isearchp-toggle-dimming-filter-failures)
+ (("M-" . (5 0 -4)) . #'isearchp-toggle-ignoring-comments)
+ (("M-" . (5 0 -3)) . #'isearchp-toggle-highlighting-regexp-groups)
+ (("M-" . (5 0 -2)) . #'isearchp-toggle-lazy-highlight-cleanup)
+ (("M-" . (5 0 -1)) . #'isearchp-toggle-regexp-quote-yank)
+ (("M-" . (5 0 1)) . #'isearchp-toggle-highlighting-regexp-groups)
+ (("M-" . (5 0 2)) . #'isearchp-toggle-lazy-highlight-full-buffer)
+ (("M-" . (5 0 3)) . #'isearchp-cycle-mismatch-removal)
+ (("M-" . (5 0 4)) . #'isearchp-toggle-dimming-outside-search-area)
+ (("M-" . (5 0 5)) . #'isearchp-toggle-option-toggle)
+
+;;;;;;;; M-5-1
+ (("M-" . (5 1 -4)) . #'isearchp-toggle-showing-filter-prompt-prefixes)
+ (("M-" . (5 1 -3)) . #'isearchp-toggle-region-restriction)
+ (("M-" . (5 1 -2)) . #'isearchp-toggle-limit-match-numbers-to-region)
+ (("M-" . (5 1 2)) . #'isearchp-toggle-showing-match-number)
+ (("M-" . (5 1 3)) . #'isearchp-toggle-region-deactivation)
+ (("M-" . (5 1 4)) . #'isearchp-toggle-auto-keep-filter-predicate)
+ (("M-" . (5 1 5)) . #'isearchp-toggle-set-region)
+
+;;;;;; s-
+;;;;;;; s-1
+;;;;;;;; s-1-1
+ (("s-" . (1 1 -3)) . #'isearch-yank-secondary)
+
+;;;;;;; s-5
+;;;;;;;; s-5-1
+ (("s-" . (5 1 -3)) . #'isearchp-yank-line)
+
+;;;;;;; s-6
+;;;;;;;; s-6-1
+ (("s-" . (6 1 -3)) . #'isearchp-yank-through-rec-edit-move)
+
+;;;;;; s-C-
+;;;;;;; s-C-5
+;;;;;;;; s-C-5-1
+ (("s-C-" . (5 1 -3)) . #'isearchp-yank-through-key-move)
+ (("s-C-" . (5 1 3)) . #'isearchp-retrieve-last-quit-search)
+
+;;;;;;; s-C-6
+;;;;;;;; s-C-6-1
+ (("s-C-" . (6 1 -3)) . #'isearchp-yank-through-new-match))
+
+;;;; minibuffer-local-map
+(minibuffer-local-map
+;;;;; Coordinates
+;;;;;;; 0
+;;;;;;;; 0-0
+ ((0 0 -6) . #'cdlatex-math-symbol)
+
+;;;;;;; 6
+;;;;;;;; 6-0
+ ((6 0 -5) . #'d-insert-normpair-yas-snippet)
+ ((6 0 5) . #'d-insert-othernormpair-yas-snippet)
+
+;;;;;; C-
+;;;;;;; C-0
+;;;;;;;; C-0--2
+ (("C-" . (0 -2 -4)) . #'cdlatex-math-modify)
+
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 2)) . #'daselt-move-right-or-exit)
+
+;;;;;;; C-7
+;;;;;;;; C-7-0
+ (("C-" . (7 0 -3)) . #'previous-history-element)
+ (("C-" . (7 0 -1)) . #'previous-matching-history-element)
+ (("C-" . (7 0 1)) . #'next-matching-history-element)
+ (("C-" . (7 0 3)) . #'next-history-element)
+
+;;;;;;;; C-7-1
+ (("C-" . (7 1 2)) . #'minibuffer-complete-and-exit)
+
+;;;;;; s-
+;;;;;;; s-4
+;;;;;;;; s-4-0
+ (("s-" . (4 0 -1)) . #'minibuffer-complete-history)
+ (("s-" . (4 0 1)) . #'minibuffer-complete-defaults))
+
+;;;; minibuffer-local-isearch-map
+(minibuffer-local-isearch-map
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4-0
+ (("C-" . (4 0 2)) . #'isearch-complete-edit)
+
+;;;;;;;; C-4-1
+ (("C-" . (4 1 2)) . #'isearch-yank-char-in-minibuffer)
+
+;;;;;; s-C-
+;;;;;;; s-C-4
+;;;;;;;; s-C-4-0
+ (("s-C-" . (4 0 -4)) . #'isearch-reverse-exit-minibuffer)
+ (("s-C-" . (4 0 4)) . #'isearch-forward-exit-minibuffer))
+
+;;;; query-replace-map
+(query-replace-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -2) . #'skip)
+ ((1 0 2) . #'act)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 4) . #'exit)
+
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 -2)) . #'skip)
+ (("C-" . (1 0 2)) . #'act))
+
+;;;; widget-keymap
+(widget-keymap
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -2) . #'widget-backward)
+ ((1 0 2) . #'widget-forward)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -1) . #'bury-buffer)
+ ((4 0 2) . #'widget-button-press))
+
+;;;; rectangle-mark-mode-map
+
+;;;; rect
+(rect
+(rectangle-mark-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -3) . #'delete-rectangle)
+ ((1 -1 -2) . #'rectangle-exchange-point-and-mark)
+ ((1 -1 2) . #'clear-rectangle)
+
+;;;;;;;; 1-0
+ ((1 0 -3) . #'replace-rectangle)
+ ((1 0 -2) . #'string-rectangle)
+ ((1 0 -1) . #'open-rectangle)
+ ((1 0 1) . #'close-rectangle)
+ ((1 0 2) . #'string-insert-rectangle)
+
+;;;;;;;; 1-1
+ ((1 1 -3) . #'copy-rectangle-as-kill)
+ ((1 1 3) . #'yank-rectangle)
+
+;;;;;;; 2
+;;;;;;;; 2-1
+ ((2 1 -3) . #'kill-rectangle)
+
+;;;;;;; 5
+;;;;;;;; 5-1
+ ((5 1 -3) . #'copy-rectangle-to-register)))
+
+;;;; prog-mode-map
+(prog-mode-map
+;;;;; Coordinates
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 4) . #'daselt-mode-insert-lambda-string))
+
+;;;; emacs-lisp-mode-map
+(emacs-lisp-mode-map
+;;;;; Coordinates
+;;;;;; M-
+;;;;;;; M-4
+;;;;;;;; M-4--1
+ (("M-" . (4 -1 -4)) . #'daselt-base-fill-docstrings-in-buffer)
+ (("M-" . (4 -1 -3)) . #'daselt-generate-declare-function)
+ (("M-" . (4 -1 2)) . #'emacs-lisp-macroexpand)
+ (("M-" . (4 -1 3)) . #'daselt-generate-variable-definition)
+ (("M-" . (4 -1 4)) . #'daselt-base-fill-current-docstring)
+
+;;;;;;;; M-4-1
+ (("M-" . (4 1 -2)) . #'elisp-byte-compile-buffer)
+ (("M-" . (4 1 2)) . #'emacs-lisp-native-compile)
+
+;;;;;; M-C-
+;;;;;;; M-C-4
+;;;;;;;; M-C-4-1
+ (("M-C-" . (4 1 2)) . #'emacs-lisp-native-compile-and-load))
+
+;;;; custom-mode-map
+(custom-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 4) . #'Custom-buffer-done))
+
+;;;; debug
+(debug
+(debugger-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'debugger-eval-expression)
+ ((1 -1 3) . #'debugger-jump)
+ ((1 -1 4) . #'debugger-list-functions)
+
+;;;;;;;; 1-0
+ ((1 0 -4) . #'debugger-return-value)
+ ((1 0 -3) . #'backtrace-backward-frame)
+ ((1 0 1) . #'debugger-continue)
+ ((1 0 2) . #'debugger-step-through)
+ ((1 0 3) . #'backtrace-forward-frame)
+
+;;;;;;;; 1-1
+ ((1 1 -2) . #'debugger-frame-clear)
+ ((1 1 0) . #'backtrace-toggle-locals)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 4) . #'debugger-quit)))

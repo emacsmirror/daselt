@@ -1,0 +1,112 @@
+;;; daselt-auctex.del --- Daselt-code for AucTeX    -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools, tex
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defun daselt-latex-forward-down-environment (&optional N)
+  "Move into the N-th next environment.
+
+If there is no environment within the current environment, move to the beginning
+of the current environment. Skip the label if one exists.
+
+Requires latex-extra."
+  (declare (ftype (function (&optional integer) t)))
+  (interactive "p")
+  (latex/forward-environment N)
+  (latex/backward-environment 1)
+  (forward-line)
+  (when (looking-at-p "[[:space:]]*\\\\label{")
+    (forward-line))
+  (when (looking-at "[[:space:]]*")
+    (goto-char (match-end 0))))
+
+(defun daselt-latex-backward-down-environment (&optional N)
+  "Move into the N-th previous environment.
+
+If there is no previous environment within the current environment, move to the
+end of the current environment.
+
+Requires latex-extra."
+  (declare (ftype (function (&optional integer) t)))
+  (interactive "p")
+  (latex/backward-environment N)
+  (latex/forward-environment 1)
+  (forward-line -2)
+  (end-of-line))
+
+(defun daselt-latex-indent-environment (&optional count)
+  "Indent the LaTeX environment point is currently in.
+
+With COUNT given, indent the COUNT-th nested environment point is in."
+  (declare (ftype (function (&optional natnum) t)))
+  (interactive "P")
+  (let ((count (or count 1)))
+    (save-excursion
+      (LaTeX-mark-environment count)
+      (indent-region (region-beginning) (region-end)))))
+
+(defun daselt-latex-indent-section (&optional count)
+  "Indent the LaTeX section point is currently in.
+
+With COUNT given, indent the COUNT-th nested section point is in."
+  (declare (ftype (function (&optional natnum) t)))
+  (interactive "P")
+  (let ((count (or count 1)))
+    (save-excursion
+      (LaTeX-mark-section count)
+      (indent-region (region-beginning) (region-end)))))
+
+(defun daselt-reftex-throw-114 ()
+  "Throw 114 to `myexit'."
+  (declare (ftype (function () t)))
+  (interactive)
+  (throw 'myexit 114))
+
+(defun daselt-reftex-throw-82 ()
+  "Throw 82 to `myexit'."
+  (declare (ftype (function () t)))
+  (interactive)
+  (throw 'myexit 82))
+
+(defun daselt-reftex-relabel (beg end)
+  "Relabel all LaTeX \\label commands in the region from BEG to END using
+`reftex-label'.
+
+Searches for `\\label{...}', removes it, and then calls `reftex-label' to insert
+a new label."
+  (interactive "r")
+  ;; Ensure RefTeX is loaded
+  (require 'reftex)
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward "\\\\label{[^}]+}" end t)
+      ;; Delete the old \label{...}
+      (delete-region (match-beginning 0) (match-end 0))
+      ;; Step back a bit so we're still within the environment
+      (backward-char 1)
+      ;; Insert the new label
+      (reftex-label))))
+
+(provide 'daselt-auctex)
+;;; daselt-auctex.del ends here

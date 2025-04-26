@@ -1,0 +1,1 @@
+/home/alex/projects/d-ext/d-emacs/daselt-mode/pkg-configs/pdf-tools/daselt-pdf-tools.del

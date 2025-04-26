@@ -1,26 +1,26 @@
 # D-Emacs
 This package is [Daselt](https://gitlab.com/nameiwillforget/daselt)'s [Emacs](https://www.gnu.org/software/emacs/) module. Daselt is a global configuration scheme for a GNU/Linux system, providing, among other things, a custom keyboard layout and a shortcut meta-layout. Daselt's Emacs component consists of several parts:
 
-- `d-emacs-base` provides a host of functions for the other packages that might be useful for building other packages as well.
+- `daselt-base` provides a host of functions for the other packages that might be useful for building other packages as well.
 
-- `d-emacs-coords` provides functions to for the coordinatization of layouts.
+- `daselt-coords` provides functions to for the coordinatization of layouts.
 
-- `d-emacs-xkb` can import custom [xkb](https://www.x.org/wiki/XKB/)-layouts into Emacs.
+- `daselt-xkb` can import custom [xkb](https://www.x.org/wiki/XKB/)-layouts into Emacs.
 
-- `d-emacs-dfk` can generate [Dual Function Keys](https://gitlab.com/interception/linux/plugins/dual-function-keys) configurations from coordinates
+- `daselt-dfk` can generate [Dual Function Keys](https://gitlab.com/interception/linux/plugins/dual-function-keys) configurations from coordinates
   and add them to layouts as a zeroth layer.
 
-- `d-emacs-bind` allows Emacs to read bindings that use coordinates and store
+- `daselt-bind` allows Emacs to read bindings that use coordinates and store
   and manipulate them in bindlists.
 
-- `d-emacs-dirs` provides functions to recursively act on files in a directory
+- `daselt-dirs` provides functions to recursively act on files in a directory
   and automatically apply actions on file save.
 
-- `d-emacs-mode` provides a mode that implements Daselt's shortcut layout in
+- `daselt-mode` provides a mode that implements Daselt's shortcut layout in
   Emacs.
 
-- `d-emacs-stump` can generate [StumpWM](https://github.com/stumpwm/stumpwm/wiki) configurations from bindlists.
+- `daselt-stump` can generate [StumpWM](https://github.com/stumpwm/stumpwm/wiki) configurations from bindlists.
 
-- `d-emacs-tri` can generate [Tridactyl](https://github.com/tridactyl/tridactyl) configurations from bindlists.
+- `daselt-tri` can generate [Tridactyl](https://github.com/tridactyl/tridactyl) configurations from bindlists.
 
 For more information, please visit the main page of [Daselt](https://gitlab.com/nameiwillforget/daselt).

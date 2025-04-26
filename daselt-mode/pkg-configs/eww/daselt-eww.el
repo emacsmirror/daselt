@@ -1,0 +1,1 @@
+/home/alex/projects/d-ext/d-emacs/daselt-mode/pkg-configs/eww/daselt-eww.del

@@ -1,0 +1,8 @@
+(when daselt-bind-translate-choices
+  '(((read-answer) :around (daselt--translate-read-answer))
+    ((read-multiple-choice) :around (daselt--translate-read-multiple-choice))
+    ((read-char-choice) :around (daselt--translate-read-char-choice))
+    ((checkdoc-interactive-loop) :override (daselt-checkdoc-interactive-loop))))
+
+(when daselt-mode-keep-tab-bar-status
+  `((,daselt-mode-tab-bar-status-functions :around (daselt-mode-keep-tab-bar-status))))

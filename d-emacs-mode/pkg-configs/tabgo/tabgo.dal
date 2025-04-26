@@ -1,1 +1,0 @@
-(((tabgo) :around (d-emacs-mode-keep-tab-bar-status)))

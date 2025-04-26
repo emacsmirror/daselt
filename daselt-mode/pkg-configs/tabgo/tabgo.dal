@@ -1,0 +1,1 @@
+(((tabgo) :around (daselt-mode-keep-tab-bar-status)))
