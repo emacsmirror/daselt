@@ -118,23 +118,23 @@ selection mechanisms."
   :group 'daselt-mode)
 
 (defcustom daselt-mode-show-tutorial
-  t
-  "Show the Daselt tutorial when `daselt-mode' is started.
+          t
+          "Show the Daselt tutorial when `daselt-mode' is started.
 
 If non-nil, the tutorial will be displayed upon entering the mode."
-  :type 'boolean
-  :group 'daselt-mode)
+          :type 'boolean
+          :group 'daselt-mode)
 
 
 ;; This is a custom mostly to have it saved between sessions.
 (defcustom daselt-mode-pkg-configs-directory
-  nil
-  "The pkg-configs-directory of daselt-mode.
+                  nil
+                  "The pkg-configs-directory of `daselt-mode'.
 
 This should be the directory named `pkg-configs' in the folder in which
 daselt-mode is installed."
-  :type 'directory
-  :group 'daselt-mode)
+                  :type 'directory
+                  :group 'daselt-mode)
 
 (defcustom daselt-mode-keep-tab-bar-status
   nil
@@ -431,7 +431,7 @@ don't do anything."
                                         (buffer-file-name))
                                        "pkg-configs/")))
                           (if (daselt-mode--pkg-configs-directory-test current-pkg-dir)
-                              (customize-save-variable 'daselt-mode-pkg-configs-directory
+                                                  (customize-save-variable 'daselt-mode-pkg-configs-directory
                                                        current-pkg-dir)
                             (daselt-mode--pkg-configs-directory-enter-manually)))
       (error (daselt-mode--pkg-configs-directory-enter-manually)))))
@@ -506,22 +506,25 @@ resetting the keyboard layout as well."
 
         ;; Refresh the daselt-xkb-layouts in case someone has changed bindings.
         (daselt-xkb-generate-layouts)
+        (daselt-xkb-set-layouts-list)
+        (put 'daselt-xkb-layout 'custom-options daselt-xkb-layouts)
 
         ;; Choose the layout
-        (unless (or (not daselt-mode-show-tutorial)
-                    (not (eq (custom-variable-state 'daselt-xkb-layout t)
-                             'standard)))
-          (customize-save-variable 'daselt-xkb-layout
-                                   (daselt-base-intern-from-parts
-                                    "daselt-xkb"
-                                    (completing-read
-                                     "Please pick the Daselt layout you want to use: "
-                                     (mapcar (lambda (sym)
-                                               (daselt-base-namecore sym
-                                                                     "daselt-xkb-"
-                                                                     "-layout"))
-                                             daselt-xkb-layouts))
-                                    "layout")))
+        (if (or (not (boundp 'daselt-xkb-layout))
+                (and daselt-mode-show-tutorial
+                     (eq (custom-variable-state 'daselt-xkb-layout t)
+                         'standard)))
+            (customize-save-variable 'daselt-xkb-layout
+                                     (daselt-base-intern-from-parts
+                                      "daselt-xkb"
+                                      (completing-read
+                                       "Please pick the Daselt layout you want to use: "
+                                       (mapcar (lambda (sym)
+                                                 (daselt-base-namecore sym
+                                                                       "daselt-xkb-"
+                                                                       "-layout"))
+                                               daselt-xkb-layouts))
+                                      "layout")))
 
         (if daselt-mode-redaselt
             (if (file-exists-p "/usr/share/X11/xkb/symbols/dxkb")

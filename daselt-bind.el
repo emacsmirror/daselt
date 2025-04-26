@@ -1433,12 +1433,12 @@ PFX is the prefix given to the saved bindlists. It is `daselt-' by default."
                (symbol (if (string-match-p "special" filename)
                            (intern (substring filenamebase 0 -1))
                          (daselt-base-intern-from-parts (concat ; Mapconcat would insert two -'s for the empty string.
-                                                          pfx
-                                                          (if (string-match-p "-user-defined" filename)
-                                                              "-user-defined"
-                                                            ""))
-                                                         mapsymbdefaultname
-                                                         "bindlist"))))
+                                                         pfx
+                                                         (if (string-match-p "-user-defined" filename)
+                                                             "-user-defined"
+                                                           ""))
+                                                        mapsymbdefaultname
+                                                        "bindlist"))))
           (daselt-bind--set-bindlist-symbol symbol blist filepath))
 
       (cl-flet* ((head-over-body (bblist)
@@ -1454,8 +1454,8 @@ PFX is the prefix given to the saved bindlists. It is `daselt-' by default."
         (if (head-over-body blist)
             (let ((namecore (name-if-symbol (car blist))))
               (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
-                                                 blist
-                                                 filepath))
+                                                blist
+                                                filepath))
 
           ;; This should produce a list of bindlist symbols.
           (daselt-base-funcalls-recursively
@@ -1470,14 +1470,13 @@ PFX is the prefix given to the saved bindlists. It is `daselt-' by default."
                                        head
                                      (error "Expected a symbol or string a head of headed bindlist")))))
                   (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
-                                                     bblist
-                                                     filepath)))
+                                                    bblist
+                                                    filepath)))
               .
               (lambda (idx lst &optional heads) ; Test
                 (let ((bblist (nth idx lst)))
                   (and (daselt-bind-bindlist-p bblist)
-                       (not (daselt-bind-head (cdr bblist)))))
-                )))
+                       (not (daselt-bind-head (cdr bblist))))))))
            (lambda (idx lst &optional _heads)
              (let ((elt (nth idx lst)))
                (daselt-bind-bindlist-p elt)))
@@ -1942,7 +1941,7 @@ automatically and you don't have to worry about it."
                                          (remq nil (mapcar #'daselt-bind--elbind-to-placeval
                                                            specificmodmatchedbinds)))
 
-                                        ;; If C-g is not translated by `d-stump' or `daselt-bind-translate-C-1-1--2-C-g' and the modifier is `C', check all placevals if they are bound to "g", and, if so, put the value of that placeval on `C-1-1--2'.
+                                        ;; If C-g is not translated by `d-stump` or `daselt-bind-translate-C-1-1--2-C-g' and the modifier is `C', check all placevals if they are bound to "g", and, if so, put the value of that placeval on `C-1-1--2'.
                                         (modmatchedplacevals-C-g-remapped
                                          (if (and (equal mods '(C))
                                                   (not (or (bound-and-true-p daselt-stump)

@@ -349,17 +349,16 @@ the file have the same number of layers."
                         (backward-char)
                         (mark-sexp)
                         (unless (daselt-base-exists-p defined-layouts
-                                                       (lambda (previous-layname)
-                                                         (string= layname previous-layname)))
+                                                      (lambda (previous-layname)
+                                                        (string= layname previous-layname)))
                           (let ((laybeg (region-beginning)) (layend (region-end)))
                             (set (intern (concat "daselt-xkb-" layname "-layout"))
                                  (mapcar (lambda (laynum)
                                            (daselt-xkb--generate-layer laybeg layend laynum))
                                          daselt-xkb-layer-numbers-list)))
                           (push layname defined-layouts)))))))
-    (unless daselt-xkb-keep-read-buffers (kill-buffer dxkbbuf))
-    (provide 'daselt-xkb-layouts-generated))) ; So we can set daselt-xkb-layout afterwards.
-
+    (unless daselt-xkb-keep-read-buffers (kill-buffer dxkbbuf))))
+                                        ;
 ;;;;; Set layouts variable
 (defun daselt-xkb-set-layouts-list ()
   "Set `daselt-xkb-layouts' from symbols matching `daselt-xkb-.*layout'."
@@ -369,17 +368,13 @@ the file have the same number of layers."
     "List of daselt-xkb-layouts in unextended form. Generated automatically."))
 
 ;;;; Generated Constants
-(with-eval-after-load 'daselt-xkb-layouts-generated
-  (daselt-xkb-set-layouts-list)
-
-  (defcustom daselt-xkb-layout
-    'daselt-xkb-main-layout
-    "The keyboard-layout you're using.
+(defcustom daselt-xkb-layout
+  'daselt-xkb-main-layout
+  "The keyboard-layout you're using.
 
 Should be one of the layouts in the `daselt-xkb-file'."
-    :group 'daselt-xkb
-    :type 'symbol
-    :options daselt-xkb-layouts))
+  :group 'daselt-xkb
+  :type 'symbol)
 
 ;;;; Provide
 (provide 'daselt-xkb)
