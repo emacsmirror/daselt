@@ -167,36 +167,26 @@ should be in."
     filename))
 
 (defun daselt-stump--find-pkg-configs-directory ()
-            "Find daselt-stump's pkg-configs-directory.
+              "Find daselt-stump's pkg-configs-directory.
 
 Set the corresponding option so it's saved for future sessions.
 
 If the option already points to something that looks like the right directory,
 don't do anything."
-            (declare (ftype (function () string)))
-            (unless (daselt-stump--pkg-configs-directory-test daselt-stump-pkg-configs-directory)
+              (declare (ftype (function () string)))
+              (unless (daselt-stump--pkg-configs-directory-test daselt-stump-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
                                (concat (file-name-directory
                                         (buffer-file-name))
                                        "pkg-configs/")))
                           (if (daselt-stump--pkg-configs-directory-test current-pkg-dir)
-                                                  (customize-save-variable 'daselt-stump-pkg-configs-directory
+                                                      (customize-save-variable 'daselt-stump-pkg-configs-directory
                                                        current-pkg-dir)
                             (daselt-stump--pkg-configs-directory-enter-manually)))
       (error (daselt-stump--pkg-configs-directory-enter-manually)))))
 
 ;;;; Functions
 ;;;;; Initial Customization
-(defun daselt-stump-set-remap-exceptions-alist ()
-  "Automatically set `daselt-stump-remap-exceptions-alist'.
-
-Sets this option according to whether daselt-stump-binwarp is set to t."
-  (declare (ftype (function () t)))
-  (setopt daselt-stump-remap-exceptions-alist
-          (list (remq nil (if (and (boundp daselt-stump-binwarp)
-                                   daselt-stump-binwarp)
-                              `("binwarp" . 'binwarp:*binwarp-mode-p*))))))
-
 (defun daselt-stump-initialize ()
   "Initialize daselt-stump.
 
@@ -206,7 +196,7 @@ remap exceptions and present the options to the user."
   (daselt-stump--find-pkg-configs-directory)
 
   (daselt-dirs-create-pkg-customization-options-function
-   daselt-stump-pkg-configs-directory daselt-stump
+   daselt-stump-pkg-configs-directory 'daselt-stump
    (lambda (pkg)
      (if (string= (symbol-name pkg) "stumpwm")
          t
@@ -219,6 +209,16 @@ remap exceptions and present the options to the user."
   ;; Then continue with the command exit-recursive-edit.")
   ;;   (recursive-edit)
   )
+
+(defun daselt-stump-set-remap-exceptions-alist ()
+  "Automatically set `daselt-stump-remap-exceptions-alist'.
+
+Sets this option according to whether daselt-stump-binwarp is set to t."
+  (declare (ftype (function () t)))
+  (setopt daselt-stump-remap-exceptions-alist
+          (list (remq nil (if (and (boundp daselt-stump-binwarp)
+                                   daselt-stump-binwarp)
+                              `("binwarp" . 'binwarp:*binwarp-mode-p*))))))
 
 ;;;;; Main function
 (defun daselt-stump-generate-init (&optional filename)
