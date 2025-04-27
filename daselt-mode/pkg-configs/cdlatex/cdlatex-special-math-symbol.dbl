@@ -31,7 +31,7 @@
 
 ;;;;;;; 2
 ;;;;;;;; 2--1
- ((2 -1 2) "\\loopleftarrow")
+ ((2 -1 -2) "\\loopleftarrow")
  ((2 -1 2) "\\looprightarrow")
 
 ;;;;;;;; 2-0

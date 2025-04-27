@@ -1509,7 +1509,7 @@ and, if so, calls it with the name of the current file. Otherwise, it calls `das
   "Like `daselt-dirs-create-save-customized-modes', but a function.
 
 See `daselt-dirs-create-save-customized-modes' for more documentation."
-  (remq nil `(daselt-dirs-create-save-customized-modes ,typelist ,pfx ,defaultvalfun)))
+  (remq nil (daselt-dirs-create-save-customized-modes typelist pfx defaultvalfun)))
 
 ;; Macro expansion works differently between 29 and 30
 (defalias 'daselt-dirs-create-save-customized-modes
