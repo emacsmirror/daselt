@@ -1,4 +1,4 @@
-;;; daselt.el --- Daselt's Emacs module  -*- lexical-binding: t; -*-
+;;; daselt.el --- Module for the Daselt configuration scheme  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025  Alexander Prähauser
 
