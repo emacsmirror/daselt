@@ -1,0 +1,14 @@
+# Ignore all hidden files
+*/.*
+
+# Ignore compiled files
+*.elc
+
+# Ignore .el files in a pkg-configs directory
+**/pkg-configs/**/*.el
+
+# Ignore files with #
+*#*
+
+# Ignore files with ~
+*~*
