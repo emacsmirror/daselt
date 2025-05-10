@@ -12,3 +12,6 @@
 
 # Ignore files with ~
 *~*
+
+# Ignore files with ~
+*user-defined*
