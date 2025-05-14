@@ -257,7 +257,7 @@ The keys *C-(1 0 -2)*, *C-(1 0 3)* and *C-(1 0 -3)* are similarly contextual:
 
 (if daselt-yasnippet
     "** Yasnippet
-It has already been [[** *C-(3 0 2)*][mentioned]] that *C-(3 0 -2)* is used to expand yasnippets (as well as expanding abbrevs and following links). Moreover, while you fill the fields of a snippet you can use *C-(3 0 -3)* to navigate to the previous field and *C-(3 0 3)* to navigate to the next.
+It has already been [[** *C-(3 0 2)*][mentioned]] that *C-(3 0 2)* is used to expand yasnippets (as well as expanding abbrevs and following links). Moreover, while you fill the fields of a snippet you can use *C-(3 0 -3)* to navigate to the previous field and *C-(3 0 3)* to navigate to the next.
 ")
 
 "
@@ -275,6 +275,9 @@ Though vanilla Emacs suffices to run Daselt, it can be greatly improved by addin
 - [[https://github.com/oantolin/embark][Embark]], particularly or its command ~embark-bindings~.
 
 - A minibuffer completion framework. Vertico is very popular and solid. A more powerful but involved framework is [[https://www.emacswiki.org/emacs/Icicles][Icicles]]. Daselt has fairly complete configurations for both.
+
+* Tips and Tricks
+Daselt can completely revamp the way you use abbrevs. For this, for this, remember that the expansion of abbrevs can be triggered by *C-(3 0 2)*, which is almost effortless to type. So you can keep ~abbrev-mode~ turned off globally and use *C-(3 0 2)* to expand abbrevs, which allows you to use many more strings as abbrevs, including single letters and words. With this, you can create abbrevs for all most common words and phrase, which over time allows you to about half the amount of letters you have to ty have to type. This is particularly effective if you use [[https://gitlab.com/nameiwillforget/abbrev-chain][abbrev-chain]] to structure your abbrevs.
 
 * Customization
 ** Writing Your Own Bindlists
@@ -296,7 +299,7 @@ Putting your bindings into bindlists has a variety of advantages:
 - the configuration ~daselt~ provides can be de-applied at any time by turning off ~daselt-mode~ and fine-tuned using the customs it automatically generates.
 
 ** Creating and sharing configurations
-daselt's capabilities go beyond the writing of bindlists — the package ~daselt-dirs~, which has been required by ~daselt-mode~, can be used to generate Emacs-configurations spread over multiple files. These can be shared in a way that they don't require the same packages to be installed — each folder in the configuration creates an option that is automatically set to nil if the corresponding package is not installed. This should make it possible to share configurations similar to how themes are shared — they can be toggled on and off and don't need the same packages to be installed. Moreover, the behavior of files in the package directory upon saving can be customized to a great degree. See the documentation of ~daselt-dirs~ for more details.
+Daselt's capabilities go beyond the writing of bindlists — the package ~daselt-dirs~, which has been required by ~daselt-mode~, can be used to generate Emacs-configurations spread over multiple files. These can be shared in a way that they don't require the same packages to be installed — each folder in the configuration creates an option that is automatically set to nil if the corresponding package is not installed. This should make it possible to share configurations similar to how themes are shared — they can be toggled on and off and don't need the same packages to be installed. Moreover, the behavior of files in the package directory upon saving can be customized to a great degree. See the documentation of ~daselt-dirs~ for more details.
 
 ** Contributing
 If there is a mode or package you are using regularly for which Daselt doesn't provide a configuration, you are welcome to add your own. To do this, it seems like a good idea to follow the [[https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org][MELPA workflow]]:
@@ -328,6 +331,9 @@ If there is a mode or package you are using regularly for which Daselt doesn't p
 - Submit a pull request for the new configs.
 
 Currently, the Daselt-heuristics are not documented beyond what is in this tutorial, but the proposed configurations will be reviewed by me so they align with the existing ones. Most importantly, remember that mode-dependent bindings should be housed on layers 4 and 7.
+
+** Caveats
+Note that Daselt has to evaluate a lot of code using ~with-eval-after-load~. To avoid loading code when ~daselt-mode~ is turned off, it inspects the ~after-load-alist~ and removes all forms that mention daselt. So if you have code that uses Daselt-functions that should load with ~with-eval-after-load~, it will remove that. Please plan accordingly.
 
 * Instructions for other parts of Daselt
 ** d-stump
