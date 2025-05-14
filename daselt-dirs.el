@@ -452,7 +452,7 @@ This loads the code of all regular files in
 (defun daselt-dirs--execute-and-maybe-kill-file-buffer (filename fun)
   "Execute FUN with FILEPATH as an argument.
 
-Kill the buffer corresponding to FILENAME unless DASELT-DIRS-KEEP-READ-BUFFERS
+Kill the buffer corresponding to FILENAME unless `daselt-dirs-keep-read-buffers'
 is t."
   (declare (ftype (function (string (function (string) t)) t)))
   (prog1 (funcall fun filename)
@@ -463,7 +463,7 @@ is t."
 
 Wraps functions in FUNTYPES in
 `daselt-dirs--execute-and-maybe-kill-file-buffer'. Convert errors produced by
-them into warnings, then send them to `d-act-on-pkg-files-by-type'. See
+them into warnings. Send resulting forms to `d-act-on-pkg-files-by-type'. See
 `d-act-on-pkg-files-by-type'. for further documentation."
   (let ((newfuntypes (mapcar (lambda (funtype)
                                (let ((fun (car funtype))
@@ -547,13 +547,13 @@ Otherwise, load FNAME."
       (load fname))))
 
 (defun daselt-dirs-byte-compile-lispcode-in-file (fname)
-  "Byte-compile `del'-file FNAME."
-  (declare (ftype (function (string) t)))
-  (let ((byte-compile-dest-file-function
+                                                    "Byte-compile `del'-file FNAME."
+                                                    (declare (ftype (function (string) t)))
+                                                    (let ((byte-compile-dest-file-function
          (lambda (fname)
-           (if (string-match-p (rx ".del" string-end) fname)
-               (concat (file-name-sans-extension fname) ".elc")
-             (error "Should only be used on a `del'-file")))))
+                                                             (if (string-match-p (rx ".del" string-end) fname)
+                                                                                                                   (concat (file-name-sans-extension fname) ".elc")
+                                                               (error "Should only be used on a `del'-file")))))
     (byte-compile-file fname)))
 
 (daselt-base-def-by-forms
@@ -566,18 +566,20 @@ If the base name of FILEPATH contains the string `-init-', skip the eval conditi
                  operation-core))
        (declare (ftype (function (string) t)))
        (daselt-bind-with-eval-unless-init
-        filepath #',(intern (concat (symbol-name operation) "-lispcode-in-file"))))))
+        filepath (lambda ()
+                   (,(intern (concat (symbol-name operation) "-lispcode-in-file"))
+                    filepath))))))
  (operation daselt-dirs-fill-docstrings-of daselt-dirs-trim-lines-of daselt-dirs-byte-compile daselt-dirs-load-elc-or))
 
 (defun daselt-dirs-add-el-symlink-for-lispcode-in-file (fname)
-  "Add a symlink to FNAME from an eponymous name with an el-extension.
+    "Add a symlink to FNAME from an eponymous name with an el-extension.
 
 This way, Emacs's help functions can still find definitions in FNAME while you
 can open the file as a del-file so that the save hooks are in place.
 
 If an el-file with that name already exists, no new link is added."
-  (declare (ftype (function (string) t)))
-  (let ((el-name (concat (file-name-sans-extension fname) ".el")))
+    (declare (ftype (function (string) t)))
+    (let ((el-name (concat (file-name-sans-extension fname) ".el")))
     (unless (file-exists-p el-name)
       (async-shell-command (format "ln -s %s %s" fname el-name)))))
 
@@ -729,7 +731,7 @@ PFX is the prefix for the save and backup variables."
                (apply-from-symbol symbol-s)))))))
     nil))
 
-(defun daselt-dirs-with-eval-reset-bindlists-in-file (&optional blistfile backuppfx)
+(defun daselt-dirs-reset-bindlists-in-file (&optional blistfile backuppfx)
   "Backup and bind all the bindlists in the file BLISTFILE.
 
 BLISTFILE can be selected interactively from available bindlists in
@@ -759,13 +761,10 @@ current buffer's file name. BACKUPPFX is forwarded to
                               ;; the head should be an eval condition.
                               (double-head-p (and (daselt-bind-head blist)
                                                   (not (daselt-bind-p (nth 1 blist)))
-                                                  (daselt-bind-head (car blist))))
-                              (evalcond (if double-head-p (daselt-bind-head blist))))
-                         (daselt-bind-with-eval-unless-init
-                          blistfile (if double-head-p
-                                        (lambda (blist) (mapcar #'restorefun (cdr blist)))
-                                      (lambda (blist) (restorefun blist)))
-                          evalcond))))))
+                                                  (daselt-bind-head (car blist)))))
+                         (if double-head-p
+                             (mapcar #'restorefun (cdr blist))
+                           (restorefun blist)))))))
   nil)
 
 ;;;;;; dbf
@@ -797,21 +796,50 @@ BACKUPPFX is forwarded to `daselt-dirs-with-eval-apply-bindlist'."
   nil)
 
 ;;;;;; dcl
+(defun daselt-dirs-set-constants-in-list (constlist pfx configname filename)
+  "Set all constants in a constantlist according to their values.
+
+Back them up first in a variable whose name is `PFX-constname-backup`,
+where `constname` is the name of the constant.
+
+Add info to the constant's documentation saying they were changed by
+CONFIGNAME in FILENAME."
+  (declare (ftype (function (list string string string) list)))
+  (mapc (lambda (constcons)
+          (let* ((constsymb (car constcons))
+                 (constname (symbol-name constsymb))
+                 (constval (eval (cdr constcons)))
+                 (backupname (concat pfx constname "-backup"))
+                 (backupsymb (intern backupname))
+                 (symbdoc (get constsymb 'variable-documentation)))
+            (unless (or (boundp backupsymb) ; Don't overwrite an existing backup.
+                        (not (boundp constsymb)))
+              (set backupsymb (symbol-value constsymb))
+              (put backupsymb 'variable-documentation symbdoc))
+            (set constsymb constval)
+            (if (stringp symbdoc) ; If a variable isn't yet properly initialized, it might not provide documentation to modify.
+                (put constsymb 'variable-documentation
+                     (concat symbdoc (format "\n\nThis symbol's value was changed by %s. in %s"
+                                             configname filename))))))
+        constlist))
+
 (defun daselt-dirs-with-eval-set-constantlists-in-file (&optional constfile pfx configname)
   "Set all constants in constantlists according to their values in a CONSTFILE.
+
 Utilizes the buffer's file when CONSTFILE is nil. Parameters are set using
 `setopt', ensuring customs are set as appropriate.
 
-PFX is the prefix given to the backup. It is `daselt-' by default.
+PFX is the prefix given to the backup. It is `daselt-` by default.
 
 To the documentation string of a changed constant is appended a string `This
 constant's value was changed by CONFIGNAME in FILE'. The default for CONFIGNAME
 is PFX with the last character removed.
 
-The constants are only set once an evaluation condition is fulfilled. If the
+If the filename contains the string `init-`, the constants are set immediately.
+Otherwise they are only set once an evaluation condition is fulfilled. If the
 first element in a constantlist is not a cons, it is used as the evaluation
 condition. Otherwise, the name of the containing directory is used."
-  (declare (ftype (function (&optional string string string) void)))
+  (declare (ftype (function (&optional string string string) boolean)))
   (interactive  (list (daselt-dirs--pick-pkg-file-by-type "constants")))
   (let* ((constfile (or constfile (buffer-file-name)))
          (pfx (or pfx "daselt-"))
@@ -824,62 +852,52 @@ condition. Otherwise, the name of the containing directory is used."
                             (buffer-file-name)))
                   (pkgsymb (intern pkgname))
                   (evalcond (if head head pkgsymb)))
-             (with-eval-after-load evalcond
-               (mapc (lambda (constcons)
-                       (let* ((constsymb (car constcons))
-                              (constname (symbol-name constsymb))
-                              (constval (eval (cdr constcons)))
-                              (backupname (concat pfx constname "-backup"))
-                              (backupsymb (intern backupname))
-                              (symbdoc (get constsymb 'variable-documentation)))
-                         (unless (or (boundp backupsymb) ; Don't overwrite an existing backup.
-                                     (not (boundp constsymb)))
-                           (set backupsymb (symbol-value constsymb))
-                           (put backupsymb 'variable-documentation symbdoc))
-                         (set constsymb constval)
-                         (put constsymb 'variable-documentation (concat symbdoc (format "\n\nThis symbol's value was changed by %s. in %s" configname (buffer-file-name))))))
-                     constlist))))))
+             (daselt-bind-with-eval-unless-init
+              constfile
+              (lambda ()
+                (daselt-dirs-set-constants-in-list constlist pfx configname constfile))
+              evalcond)))))
   nil)
 
-(defun daselt-dirs-with-eval-reset-constantlists-in-file (&optional constfile pfx)
-  "Reset each constant in a constantlist in CONSTFILE.
+;; (defun daselt-dirs-with-eval-reset-constantlists-in-file (&optional constfile pfx)
+;;   "Reset each constant in a constantlist in CONSTFILE.
 
-Only resets if a backup exists. The backup should be a variable of the
-form PFX-CONSTNAME-backup.
+;; Only resets if a backup exists. The backup should be a variable of the
+;; form PFX-CONSTNAME-backup.
 
-Resetting is only done once an evalcondition is fulfilled. The
-evalcondition is calculated the same way as by
-`daselt-dirs--with-eval-backup-and-set-constants-in-file'. See there
-for more documentation."
-  (declare (ftype (function (&optional string string) void)))
-  (interactive  (list (daselt-dirs--pick-pkg-file-by-type "constants")))
-  (let* ((constfile (or constfile (buffer-file-name)))
-         (pfx (or pfx "daselt-")))
-    (daselt-dirs-act-on-sexps-in-file
-     constfile
-     (lambda () (let* ((constlist (daselt-base-read-region))
-                  (head (unless (consp (car constlist)) (car constlist)))
-                  (pkgname (daselt-base-containing-directory-base-name
-                            (buffer-file-name)))
-                  (pkgsymb (intern pkgname))
-                  (evalcond (if head head pkgsymb)))
-             (with-eval-after-load evalcond
-               (mapc (lambda (constcons)
-                       (let* ((constsymb (car constcons))
-                              (constname (symbol-name constsymb))
-                              (backupname (concat pfx constname "-backup"))
-                              (backupsymb (intern backupname)))
-                         (when (eval `(bound-and-true-p ,backupsymb))
-                           (setopt--set constsymb (symbol-value backupsymb))
-                           (put constsymb 'variable-documentation
-                                (get backupsymb 'variable-documentation))
-                           (makunbound backupsymb))))
-                     constlist))))))
-  nil)
+;; Resetting is only done once an evalcondition is fulfilled. The
+;; evalcondition is calculated the same way as by
+;; `daselt-dirs--with-eval-backup-and-set-constants-in-file'. See there
+;; for more documentation."
+;;   (declare (ftype (function (&optional string string) void)))
+;;   (interactive  (list (daselt-dirs--pick-pkg-file-by-type "constants")))
+;;   (let* ((constfile (or constfile (buffer-file-name)))
+;;          (pfx (or pfx "daselt-")))
+;;     (daselt-dirs-act-on-sexps-in-file
+;;      constfile
+;;      (lambda () (let* ((constlist (daselt-base-read-region))
+;;                   (head (unless (consp (car constlist)) (car constlist)))
+;;                   (pkgname (daselt-base-containing-directory-base-name
+;;                             (buffer-file-name)))
+;;                   (pkgsymb (intern pkgname))
+;;                   (evalcond (if head head pkgsymb)))
+;;              (with-eval-after-load evalcond
+;;                (mapc (lambda (constcons)
+;;                        (let* ((constsymb (car constcons))
+;;                               (constname (symbol-name constsymb))
+;;                               (backupname (concat pfx constname "-backup"))
+;;                               (backupsymb (intern backupname)))
+;;                          (when (eval `(bound-and-true-p ,backupsymb))
+;;                            (setopt--set constsymb (symbol-value backupsymb))
+;;                            (put constsymb 'variable-documentation
+;;                                 (get backupsymb 'variable-documentation))
+;;                            (makunbound backupsymb))))
+;;                      constlist))))))
+;;   nil)
 
 ;;;;;; dal
 (daselt-base-def-by-forms ((let ((addp (string= str "add")))
-                              `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-advicelist")) (adlist)
+                             `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-advicelist")) (adlist)
                                  ,(daselt-base-fill-string-like-docstring
                                    (format "For all all advice combinations in ADLIST,
 %s the advice to the corresponding function after EVALCOND is fulfilled.
@@ -910,7 +928,7 @@ ADLIST should consist of
                                         (radlist (if head (cdr adlist) adlist)))
                                    (with-eval-after-load evalcond
                                      (mapcar (lambda (adv)
-                                               (let (,@(remq nil
+                                                                   (let (,@(remq nil
                                                              (list
                                                               `(advfun #',(intern (concat "advice-" str)))
                                                               `(symbs (car adv))
@@ -918,9 +936,9 @@ ADLIST should consist of
                                                               (if addp '(how (cadr adv)))
                                                               (if addp '(props (cadddr adv))))))
                                                  (mapcar (lambda (symb)
-                                                           (mapcar
+                                                                               (mapcar
                                                             (lambda (fun)
-                                                              (apply advfun
+                                                                                  (apply advfun
                                                                      (remq nil (list
                                                                                 symb
                                                                                 ,(if addp `how)
@@ -931,7 +949,7 @@ ADLIST should consist of
                                              radlist))
                                    nil)))
 
-                            `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-advicelists-in-file")) (&optional alfile)
+                           `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-advicelists-in-file")) (&optional alfile)
                                ,(daselt-base-fill-string-like-docstring
                                  (format "%s all advices in the daselt-advices-file
 whose name is ALFILE. Treats the alfile of the current buffer as a
@@ -942,11 +960,11 @@ default." str))
                                  (daselt-dirs-act-on-sexps-in-file
                                   alfile
                                   (lambda ()
-                                    (,(intern (concat "daselt-dirs-with-eval-" str "-advicelist"))
+                                                        (,(intern (concat "daselt-dirs-with-eval-" str "-advicelist"))
                                      (daselt-base-read-region)))))
                                nil)
 
-                            `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-adviceforms-in-file")) (&optional alffile)
+                           `(defun ,(intern (concat "daselt-dirs-with-eval-" str "-adviceforms-in-file")) (&optional alffile)
                                ,(daselt-base-fill-string-like-docstring
                                  (format "Evaluate every balanced expression in ALFFILE and feed the output to `daselt-dirs-with-eval-%s-advicelist'." str))
                                (declare (ftype (function (&optional string)
@@ -962,7 +980,7 @@ default." str))
                                                                       "-advicelist"))
                                                    adlist)))))
                                nil))
-                           (str . ("add" "remove")))
+                          (str . ("add" "remove")))
 
 ;;;;; Global operations
 ;;;;;; del

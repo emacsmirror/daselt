@@ -658,7 +658,8 @@ needed."
                   (cl-return-from daselt-C-3-0-2))))
 
     (if daselt-yasnippet (yas-maybe-expand))
-    (if daselt-cdlatex (cdlatex-maybe-expand))
+    (if (and daselt-cdlatex cdlatex-mode)
+        (cdlatex-maybe-expand))
     (maybe-expand-abbrev)
 
     (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)))

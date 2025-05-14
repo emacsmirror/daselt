@@ -60,6 +60,8 @@
 ;; and this will never be called
 (defvar daselt-stump-pkg-configs-directory)
 
+(defvar daselt-mode-eval-log nil
+  "Log for `daselt-mode' eval conditions.")
 (require 'daselt-base)
 (require 'daselt-coords)
 (require 'daselt-xkb)
@@ -363,7 +365,8 @@ NO-REFRESH is or optimization-purposes: `daselt-mode' already refreshes
             (visual-line-mode)
             (insert tuttext)
             (daselt-base-goto-min)
-            nil))
+            nil)
+          (kill-buffer (get-file-buffer tutfile)))
       (error (progn (setq display-buffer-alist display-buffer-alist-backup)
                     (error (error-message-string report)))))))
 
@@ -379,9 +382,12 @@ the option `daselt-mode-redaselt'."
                  (if daselt-mode-global-udevmon "--global" "")
                  (daselt-base-namecore daselt-xkb-layout "daselt-xkb-" "-layout")
                  (number-to-string daselt-mode-redaselt-time))))
-    (if daselt-mode-global-udevmon
-        (shell-command cmdstr)
-      (async-shell-command cmdstr))))
+    (let ((display-buffer-alist
+           '(("\\*Async Daselt Buffer\\*"
+              (display-buffer-no-window)))))
+      (if daselt-mode-global-udevmon
+          (shell-command cmdstr "*Async Daselt Buffer*")
+        (async-shell-command cmdstr "*Async Daselt Buffer*")))))
 
 (defun daselt-mode-undaselt ()
   "Run the `redaselt'-bash-script to switch your keyboard layout.
@@ -393,9 +399,12 @@ The keyboard-layout loaded is the d-xkb-variant specified by
                  "undaselt"
                  (if daselt-mode-global-udevmon "--global" "")
                  daselt-mode-undaselt)))
-    (if daselt-mode-global-udevmon
-        (shell-command cmdstr)
-      (async-shell-command cmdstr))))
+    (let ((display-buffer-alist
+           '(("\\*Async Daselt Buffer\\*"
+              (display-buffer-no-window)))))
+      (if daselt-mode-global-udevmon
+          (shell-command cmdstr "*Async Daselt Buffer*")
+        (async-shell-command cmdstr "*Async Daselt Buffer*")))))
 
 ;;;;; The pkg-configs-issue
 (defun daselt-mode--pkg-configs-directory-test (dir)
@@ -428,10 +437,10 @@ don't do anything."
   (unless (daselt-mode--pkg-configs-directory-test daselt-mode-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
                                (concat (file-name-directory
-                                        (buffer-file-name))
+                                        (symbol-file 'daselt-mode))
                                        "pkg-configs/")))
                           (if (daselt-mode--pkg-configs-directory-test current-pkg-dir)
-                                                  (customize-save-variable 'daselt-mode-pkg-configs-directory
+                              (customize-save-variable 'daselt-mode-pkg-configs-directory
                                                        current-pkg-dir)
                             (daselt-mode--pkg-configs-directory-enter-manually)))
       (error (daselt-mode--pkg-configs-directory-enter-manually)))))
@@ -594,7 +603,7 @@ resetting the keyboard layout as well."
                          `((daselt-mode . ,daselt-mode-map))))
 
         (let ((undo-tree-auto-save-history nil) ; Saving undo-state of opened files is useless here and slows down startup.
-              )
+              (daselt-bind-eval-log 'daselt-mode-eval-log))
           (daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `((daselt-dirs-with-eval-load-elc-or-lispcode-in-file .  "del")
              (daselt-dirs-save-and-with-eval-apply-bindlists-in-file
@@ -615,17 +624,11 @@ resetting the keyboard layout as well."
 
         (if daselt-mode-show-tutorial (daselt-mode-generate-tutorial t)))
 
-    ;; Reset variables and remove advice We have to recurse again instead of
-    ;; simply setting the original variables to their backup values because
-    ;; there is the possibility that otherwise an eval-condition might be
-    ;; triggered after the mode was exited, overriding the restored
-    ;; backup-value.
-    (daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill
-     `((daselt-dirs-with-eval-remove-advicelists-in-file . ("dal" "regular"))
-       (daselt-dirs-with-eval-reset-bindlists-in-file . ("dbl" "regular"))
-       (daselt-dirs-with-eval-reset-constantlists-in-file . ("dcl" "regular"))))
+    ;; Remove all eval forms that have been set by `daselt-mode'.
+    (let ((daselt-bind-eval-log 'daselt-mode-eval-log))
+      (daselt-bind--remove-from-log))
 
-    ;; Let's also reset all global variables that have not been found by the recursion (because their entry was deleted).
+    ;; Let's also reset all global variables that have not been found by the recursion.
     (daselt-dirs--reset-backed-up-variables)
 
     ;; Restore the keyboard layout.

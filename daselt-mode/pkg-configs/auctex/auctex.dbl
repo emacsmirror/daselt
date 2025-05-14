@@ -17,13 +17,16 @@
  (("C-" . (4 0 -4)) . #'daselt-latex-backward-down-environment)
  (("C-" . (4 0 -3)) . #'latex/beginning-of-environment)
  (("C-" . (4 0 -2)) . #'latex/backward-environment)
+ (("C-" . (4 0 1)) . #'reftex-reference)
  (("C-" . (4 0 3)) . #'latex/end-of-environment)
  (("C-" . (4 0 4)) . #'daselt-latex-forward-down-environment)
 
 ;;;;;;;; C-4-1
  (("C-" . (4 1 -4)) . #'latex/hide-show-all)
- (("C-" . (4 1 2)) . #'LaTeX-command-section)
- (("C-" . (4 1 3)) . #'reftex-reference)
+ (("C-" . (4 1 -3)) . #'math-preview-decrement-scale)
+ (("C-" . (4 1 -2)) . #'math-preview-clear-at-point)
+ (("C-" . (4 1 2)) . #'math-preview-at-point)
+ (("C-" . (4 1 3)) . #'math-preview-increment-scale)
 
 ;;;;;;; C-7
 ;;;;;;;; C-7--1
@@ -36,6 +39,9 @@
  (("C-" . (7 0 -2)) . #'latex/previous-section)
  (("C-" . (7 0 2)) . #'latex/next-section)
  (("C-" . (7 0 4)) . #'latex/next-section-same-level)
+
+;;;;;;;; C-7-1
+ (("C-" . (7 1 2)) . #'LaTeX-command-section)
 
 ;;;;;; M-
 ;;;;;;; M-4
@@ -57,6 +63,11 @@
  (("M-" . (4 0 4)) . #'TeX-fold-clearout-buffer)
  (("M-" . (4 0 5)) . #'arxiv-lookup)
 
+;;;;;;;; M-4-1
+ (("M-" . (4 1 -3)) . #'math-preview-copy-svg)
+ (("M-" . (4 1 -2)) . #'math-preview-clear-region)
+ (("M-" . (4 1 2)) . #'math-preview-region)
+
 ;;;;;;; M-7
 ;;;;;;;; M-7--1
  (("M-" . (7 -1 -4)) . #'TeX-fold-section)
@@ -74,7 +85,9 @@
 ;;;;;;;; s-4--1
  (("s-" . (4 -1 -4)) . #'daselt-reftex-relabel)
  (("s-" . (4 -1 -3)) . #'daselt-lua-LaTeX-delete-environment-outside)
- (("s-" . (4 -1 3)) . #'daselt-lua-remove-modifier))
+
+;;;;;;;; s-4-1
+ (("s-" . (4 1 2)) . #'daselt-lua-remove-modifier))
 
 ;;;; reftex-toc-mode
 ;;;; reftex-toc

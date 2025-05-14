@@ -106,18 +106,27 @@
 
 ;;;; Variables
 (defvar daselt-bind-boundaries
-  nil
-  "List of boundaries of layers of different lengths.
+            nil
+            "List of boundaries of layers of different lengths.
 
 This is used purely to increase performance of commands like
 `daselt-bind-draw-bindings-from-regexps'. Generally you shouldn't set this by
 hand but use `daselt-coords-boundaries' to calculate these based on the layers
 in your `daselt-xkb-layout' and `daselt-dfk-layout'.")
 
+(defvar daselt-bind-eval-log
+  nil
+  "If non-nil, `daselt-bind-with-eval-unless-init' logs here.
+
+Can be used to remove untriggered log conditions with
+`daselt-bind--remove-from-after-load-alist'.
+
+Usually you don't want to set this manually except when you write
+ a mode like `daselt-mode', which adds a lot of eval conditions.")
 ;;;; Constants
 (defconst daselt-bind-modifiers-list
-  (list ?C ?H ?M ?S ?s ?A)
-  "List of modifiers in their standard order in Daselt.
+        (list ?C ?H ?M ?S ?s ?A)
+        "List of modifiers in their standard order in Daselt.
 
 Note that this is different from the standard order of modifiers in Emacs.")
 
@@ -1500,7 +1509,7 @@ is set to nil."
 
 ;;;;; Application
 (defun daselt-bind-act-on-bindings (blist fun &optional nooutput)
-  "Recursively apply FUN to all bindings in BLIST.
+                "Recursively apply FUN to all bindings in BLIST.
 
 This function traverses BLIST, which is expected to be a structure containing
 bindings, and applies the function FUN to each binding it encounters. It
@@ -1526,16 +1535,16 @@ The function uses `d-funcall-recursively' to manage traversal:
 The results are conditionally collected based on whether NOOUTPUT is set. Head
 elements of lists are determined using `daselt-bind-head' and added to RESTARGS
 so they can be used by FUN."
-  (declare (ftype (function (list (function (t) t) &optional boolean) t
+                (declare (ftype (function (list (function (t) t) &optional boolean) t
                             ;; (or list void) ; Compiler complains.
                             )))
-  (daselt-base-funcall-recursively blist
+                (daselt-base-funcall-recursively blist
                                     fun
                                     (lambda (idx lst &optional _heads)
-                                      (let ((elt (nth idx lst)))
+                                                    (let ((elt (nth idx lst)))
                                         (daselt-bind-p elt)))
                                     (lambda (idx lst &optional _heads)
-                                      (let ((elt (nth idx lst)))
+                                                    (let ((elt (nth idx lst)))
                                         (and (not (atom elt))
                                              (not (daselt-bind-p elt)))))
                                     nil
@@ -1543,24 +1552,32 @@ so they can be used by FUN."
                                     (if nooutput nil #'cons)
                                     nil
                                     (lambda (lst heads)
-                                      (append heads (let ((newhead (daselt-bind-head lst)))
+                                                    (append heads (let ((newhead (daselt-bind-head lst)))
                                                       (if newhead (list newhead)))))
                                     nil))
 
-(defun daselt-bind-with-eval-unless-init (filepath fun &optional initcond)
-  "If FILEPATH contains `-init-' in its base, execute FUN.
 
-Otherwise, execute FUN once INITCOND has been evaluated.
+(defun daselt-bind-with-eval-unless-init (filepath fun &optional evalcond)
+  "If FILEPATH contains `-init-` in its base, execute FUN.
 
-INITCOND defaults to the feature whose name is that of the directory containig
-FILEPATH."
-  (declare (ftype (function (string (function (string) t) &optional (or string symbol)) t)))
+Otherwise, execute FUN once EVALCOND has been evaluated.
+
+EVALCOND defaults to the feature whose name is that of the directory containing
+FILEPATH.
+
+If `daselt-bind-eval-log' is non-nil, FUN and EVALCOND are logged in it so they
+can be removed with `daselt-bind--remove-from-after-load-alist'."
+  (declare (ftype (function (string (function nil t) &optional (or string symbol)) t)))
   (let* ((filename (daselt-base-containing-directory-base-name filepath))
          (pkgsym (intern filename)))
     (if (string-match-p "-init-" filename)
-        (funcall fun filepath)
-      (with-eval-after-load (or initcond pkgsym)
-        (funcall fun filepath)))))
+        (funcall fun)
+      (with-eval-after-load (or evalcond pkgsym)
+        (funcall fun))
+      (when daselt-bind-eval-log
+        (if (alist-get evalcond (symbol-value daselt-bind-eval-log))
+            (push fun (alist-get evalcond (symbol-value daselt-bind-eval-log)))
+          (push (cons evalcond (list fun)) (symbol-value daselt-bind-eval-log)))))))
 
 (defun daselt-bind-apply-bindlist (blist &optional backuppfx witheval)
   "Rebind keys in a given keymap after evaluating an associated condition.
@@ -1573,10 +1590,9 @@ forms:
 2. Multiple keymaps with respective bindings: (EVAL (MAP1 BIND11 BIND12 ...)
   (MAP2 BIND21 BIND22 ...))
 
-EVAL is an expression to be evaluated within
-`with-eval-after-load' if WITHEVAL is t. If the EVAL entry is ommitted, it
-defaults to the feature whose name is the same as directory name containing the
-current buffer's file.
+EVAL is an expression to be evaluated within `with-eval-after-load' if WITHEVAL
+is t. If the EVAL entry is ommitted, it defaults to the feature whose name is
+the same as directory name containing the current buffer's file.
 
 - MAP is a symbol referring to the keymap to modify. If the MAP entry is
 omitted, it will default to the mode map corresponding to the containing
@@ -1584,8 +1600,8 @@ directory name.
 
 For each MAP, the current keymap is backed up as `BACKUPPFX-MAP-backup' before
 rebindings are applied. If `BACKUPPFX-MAP-backup' is already bound to a keymap,
-no backup is made, indicating that a prior backup exists. BACKUPPFX is
-`daselt-' by default.
+no backup is made, indicating that a prior backup exists. BACKUPPFX is `daselt-'
+by default.
 
 If WITHEVAL is t, the bindlist will still be applied without evaluation if it is
 in a file with `-init-' in its base name, if no evaluation condition can be set
@@ -1597,36 +1613,35 @@ bindlist is applied to is not loaded, application will throw an error."
   (let* ((bufname (buffer-file-name))
          (pkgname (if bufname (daselt-base-containing-directory-base-name bufname)))
          (pkgsym (if pkgname (intern pkgname)))
-         (mapsymdefault (if pkgname (intern (concat pkgname "-mode-map")))))
-
-    (daselt-bind-act-on-bindings
-     blist
-     (lambda (bind &optional heads)
-       (let* ((headpairt (= (length heads) 2))
-              (evalcnd (if headpairt
-                           (car heads)
-                         pkgsym))
-              (mapsym (if headpairt
-                          (car (last heads))
-                        (if heads
-                            (car heads)
-                          (or mapsymdefault
-                              (error "No map symbol specified and buffer not visiting a file")))))
-              (backuppfx (or backuppfx "daselt-"))
-              (backupsymb (intern (concat backuppfx (symbol-name mapsym) "-backup"))))
-         (cl-flet ((backup-and-apply-binding (&optional _dummy1 _dummy2)
-                     (let ((map (symbol-value mapsym))) ; Mapsym has to be evaluated only within the with-eval-after-load expression.
-
-                       (unless (and (boundp backupsymb) ; Don't overwrite an already existing backup.
-                                    (keymapp (symbol-value backupsymb)))
-                         (set backupsymb map)
-                         nil)
-                       (daselt-bind-apply-binding bind map))))
-           (if (and witheval bufname evalcnd)
-               (daselt-bind-with-eval-unless-init
-                (buffer-file-name) #'backup-and-apply-binding evalcnd)
-             (backup-and-apply-binding)))))
-     t)
+         (mapsymdefault (if pkgname (intern (concat pkgname "-mode-map"))))
+         (upperhead (daselt-bind-head blist))
+         (headpairt (and upperhead
+                         (daselt-bind-head (cadr blist))))
+         (evalcnd (if headpairt
+                      upperhead
+                    pkgsym)))
+    (cl-flet ((apply-bindlist ()
+                (daselt-bind-act-on-bindings
+                 blist
+                 (lambda (bind &optional heads)
+                   (let* ((mapsym (if headpairt
+                                      (car (last heads))
+                                    (if heads
+                                        (car heads)
+                                      (or mapsymdefault
+                                          (error "No map symbol specified and buffer not visiting a file")))))
+                          (map (symbol-value mapsym))
+                          (backuppfx (or backuppfx "daselt-"))
+                          (backupsymb (intern (concat backuppfx (symbol-name mapsym) "-backup"))))
+                     (unless (and (boundp backupsymb) ; Don't overwrite an already existing backup.
+                                  (keymapp (symbol-value backupsymb)))
+                       (set backupsymb map))
+                     (daselt-bind-apply-binding bind map)))
+                 t)))
+      (if (and witheval bufname evalcnd)
+          (daselt-bind-with-eval-unless-init
+           bufname #'apply-bindlist)
+        (apply-bindlist)))
     nil))
 
 (defun daselt-bind-apply-binding (binding map)
@@ -1653,9 +1668,9 @@ Bindings are translated if `daselt-bind-translate-keys' is set to t."
     (mapc (lambda (bstr)
             (define-key map (kbd bstr) (eval value))
             (if (daselt-base-exists-p daselt-coords-bad-combinations-list
-                                       (lambda (combination)
-                                         (string= (daselt-bind-string (cons combination nil))
-                                                  bstr)))
+                                      (lambda (combination)
+                                        (string= (daselt-bind-string (cons combination nil))
+                                                 bstr)))
                 (define-key map
                             (kbd (string-replace
                                   "H-" "s-M-"
@@ -1664,6 +1679,108 @@ Bindings are translated if `daselt-bind-translate-keys' is set to t."
           binding-strings)
     nil))
 
+
+;;;;; Removal
+;; (defun daselt-bind--remove-from-after-load-alist (evalcond fun)
+;;   "Remove FUN from the EVALCOND entry in `after-load-alist'.
+
+;; Note that this function uses `daselt-bind--daselt-in-after-load-alist', which
+;; currently only does a search on whether `daselt` occurs in the function body.
+
+;; Not exactly clean, but effective. Anyway, if you want to use this, you'll have
+;; to think of your own test."
+;;   (declare (ftype (function ((or symbol string) symbol) t)))
+;;   (let ((entry (assq evalcond after-load-alist)))
+;;     (when entry
+;;       (let ((condfuns (cdr entry)))
+;;         (setcdr entry (remq nil (mapcar (lambda (condfun)
+;;                                           (daselt-bind--daselt-in-after-load-alist
+;;                                            fun condfun))
+;;                                         condfuns)))
+;;         (if (eq (cdr entry) nil)
+;;             (delq entry after-load-alist))))))
+
+;; (defun daselt-bind--compare-in-after-load-alist (fun condfun)
+;;   "Compare FUN to CONDFUN.
+
+;; Assumes that CONDFUN is an element of an entry of `after-load-alist'.
+
+;; Dangerous because it is super-hard to compare in `after-load-alist'."
+;;   (unless (or (equal fun condfun)
+;;               (let* ((nested (and (functionp condfun)
+;;                                   (aref condfun 2)))
+;;                      (ost (and (functionp nested)
+;;                                (aref nested 0)))
+;;                      (pst (and (functionp ost)
+;;                                (aref ost 2)))
+;;                      (qst (and (listp pst)
+;;                                (cdr pst)))
+;;                      (rst (and (listp qst)
+;;                                (car qst)))
+;;                      (sst (and (listp rst)
+;;                                (cdr rst))))
+;;                 (equal fun sst)))
+;;     condfun))
+
+;; (defun daselt-bind--compare-in-after-load-alist (fun condfun)
+;;   "Compare FUN to CONDFUN.
+
+;; Assumes that CONDFUN is an element of an entry of `after-load-alist'.
+
+;; Dangerous because it is super-hard to compare in `after-load-alist'."
+;;   (unless (or (equal fun condfun)
+;; 	      (progn (defalias 'temp-func condfun)
+;; 	             (disassemble 'temp-func)
+;;                      (set-buffer "*Disassemble*")
+;; 	             (goto-char (point-min))
+;; 	             (prog1 (search-forward "daselt" nil t)
+;;                        (kill-buffer "*Disassemble*"))))
+;;     condfun))
+
+;; (defun daselt-bind--remove-from-log ()
+;;   "Remove eval forms as they are logged in `daselt-bind-eval-log'.
+
+;; Note that this function relies on `daselt-bind--compare-in-after-load-alist',
+;; which is problematic as a predicate. You can use it, but at your own danger."
+;;   (declare (ftype (function nil t)))
+;;   (save-window-excursion
+;;     (mapcar (lambda (evalpair)
+;;               (let ((evalcond (car evalpair))
+;;                     (funs (cdr evalpair)))
+;;                 (mapcar (lambda (fun)
+;;                           (daselt-bind--remove-from-after-load-alist evalcond fun))
+;;                         funs)))
+;;             (symbol-value daselt-bind-eval-log))))
+
+(defun daselt-bind--remove-from-log ()
+  "Remove eval forms as they are logged in `daselt-bind-eval-log'.
+
+Note that this function literally removes every function in `after-load-alist'
+whose body contains the word `daselt`."
+  (declare (ftype (function nil t)))
+  (save-window-excursion
+      (setq after-load-alist
+          (remq nil (mapcar (lambda (evalpair)
+                                (cons (car evalpair)
+                                    (remq nil (mapcar #'daselt-bind--daselt-in-after-load-alist
+                                                      (cdr evalpair)))))
+                            after-load-alist)))))
+
+(defun daselt-bind--daselt-in-after-load-alist (fun)
+  "Find out if the body of a function in `after-load-alist' contains `daselt`.
+
+If so, don't return it."
+  (unless (and (functionp fun)
+               (not (native-comp-function-p fun))
+               (progn (defalias 'temp-func fun)
+	              ;; Disassembly can sometimes fail, but if so we can be pretty sure it's not a Daselt-eval.
+                      (condition-case nil
+                          (progn (disassemble 'temp-func)
+                                 (set-buffer "*Disassemble*")
+	                         (daselt-base-goto-min)
+	                         (prog1 (search-forward "daselt" nil t)
+                                   (kill-buffer "*Disassemble*"))))))
+    fun))
 
 ;;;;; Coordinate changes
 
@@ -1678,10 +1795,10 @@ Return the modified bindlist."
                             list))
            (pure t))
   (mapcar (lambda (bind) (if (daselt-bind-p bind)
-                             (daselt-bind-change-coords-in-binding bind coordlistlist)
-                           (if (consp bind)
-                               (daselt-bind-change-coords-in-bindlist bind coordlistlist)
-                             bind)))
+                                                                                                                                                                                                                             (daselt-bind-change-coords-in-binding bind coordlistlist)
+                                                                                                                           (if (consp bind)
+                                                                                                                                                                                                                               (daselt-bind-change-coords-in-bindlist bind coordlistlist)
+                                                                                                                             bind)))
           blist))
 
 (defun daselt-bind-change-coords-in-bindlist-during-sorting (blist coordlistlist)
