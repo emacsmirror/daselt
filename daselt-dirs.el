@@ -794,7 +794,6 @@ BACKUPPFX is forwarded to `daselt-dirs-with-eval-apply-bindlist'."
      (lambda () (daselt-dirs-with-eval-apply-bindlist
             (eval (daselt-base-read-region)) backuppfx))))
   nil)
-
 ;;;;;; dcl
 (defun daselt-dirs-set-constants-in-list (constlist pfx configname filename)
   "Set all constants in a constantlist according to their values.
@@ -804,7 +803,7 @@ where `constname` is the name of the constant.
 
 Add info to the constant's documentation saying they were changed by
 CONFIGNAME in FILENAME."
-  (declare (ftype (function (list string string string) list)))
+  ;; (declare (ftype (function (list string string string) t)))
   (mapc (lambda (constcons)
           (let* ((constsymb (car constcons))
                  (constname (symbol-name constsymb))
@@ -824,7 +823,7 @@ CONFIGNAME in FILENAME."
         constlist))
 
 (defun daselt-dirs-with-eval-set-constantlists-in-file (&optional constfile pfx configname)
-  "Set all constants in constantlists according to their values in a CONSTFILE.
+      "Set all constants in constantlists according to their values in a CONSTFILE.
 
 Utilizes the buffer's file when CONSTFILE is nil. Parameters are set using
 `setopt', ensuring customs are set as appropriate.
@@ -839,9 +838,9 @@ If the filename contains the string `init-`, the constants are set immediately.
 Otherwise they are only set once an evaluation condition is fulfilled. If the
 first element in a constantlist is not a cons, it is used as the evaluation
 condition. Otherwise, the name of the containing directory is used."
-  (declare (ftype (function (&optional string string string) boolean)))
-  (interactive  (list (daselt-dirs--pick-pkg-file-by-type "constants")))
-  (let* ((constfile (or constfile (buffer-file-name)))
+      (declare (ftype (function (&optional string string string) boolean)))
+      (interactive  (list (daselt-dirs--pick-pkg-file-by-type "constants")))
+      (let* ((constfile (or constfile (buffer-file-name)))
          (pfx (or pfx "daselt-"))
          (configname (or configname (substring pfx 0 -1))))
     (daselt-dirs-act-on-sexps-in-file
@@ -855,9 +854,9 @@ condition. Otherwise, the name of the containing directory is used."
              (daselt-bind-with-eval-unless-init
               constfile
               (lambda ()
-                (daselt-dirs-set-constants-in-list constlist pfx configname constfile))
+                    (daselt-dirs-set-constants-in-list constlist pfx configname constfile))
               evalcond)))))
-  nil)
+      nil)
 
 ;; (defun daselt-dirs-with-eval-reset-constantlists-in-file (&optional constfile pfx)
 ;;   "Reset each constant in a constantlist in CONSTFILE.

@@ -1774,12 +1774,12 @@ If so, don't return it."
                (not (native-comp-function-p fun))
                (progn (defalias 'temp-func fun)
 	              ;; Disassembly can sometimes fail, but if so we can be pretty sure it's not a Daselt-eval.
-                      (condition-case nil
-                          (progn (disassemble 'temp-func)
-                                 (set-buffer "*Disassemble*")
-	                         (daselt-base-goto-min)
-	                         (prog1 (search-forward "daselt" nil t)
-                                   (kill-buffer "*Disassemble*"))))))
+                      (ignore-errors
+                        (progn (disassemble 'temp-func)
+                               (set-buffer "*Disassemble*")
+	                       (daselt-base-goto-min)
+	                       (prog1 (search-forward "daselt" nil t)
+                                 (kill-buffer "*Disassemble*"))))))
     fun))
 
 ;;;;; Coordinate changes
