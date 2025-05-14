@@ -603,7 +603,8 @@ resetting the keyboard layout as well."
                          `((daselt-mode . ,daselt-mode-map))))
 
         (let ((undo-tree-auto-save-history nil) ; Saving undo-state of opened files is useless here and slows down startup.
-              (daselt-bind-eval-log 'daselt-mode-eval-log))
+              ;; (daselt-bind-eval-log 'daselt-mode-eval-log) ; Currently unused.
+              )
           (daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `((daselt-dirs-with-eval-load-elc-or-lispcode-in-file .  "del")
              (daselt-dirs-save-and-with-eval-apply-bindlists-in-file
@@ -625,8 +626,7 @@ resetting the keyboard layout as well."
         (if daselt-mode-show-tutorial (daselt-mode-generate-tutorial t)))
 
     ;; Remove all eval forms that have been set by `daselt-mode'.
-    (let ((daselt-bind-eval-log 'daselt-mode-eval-log))
-      (daselt-bind--remove-from-log))
+    (daselt-bind--remove-from-after-load-alist)
 
     ;; Let's also reset all global variables that have not been found by the recursion.
     (daselt-dirs--reset-backed-up-variables)

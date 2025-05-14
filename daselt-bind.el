@@ -1752,16 +1752,16 @@ Bindings are translated if `daselt-bind-translate-keys' is set to t."
 ;;                         funs)))
 ;;             (symbol-value daselt-bind-eval-log))))
 
-(defun daselt-bind--remove-from-log ()
+(defun daselt-bind--remove-from-after-load-alist ()
   "Remove eval forms as they are logged in `daselt-bind-eval-log'.
 
 Note that this function literally removes every function in `after-load-alist'
 whose body contains the word `daselt`."
   (declare (ftype (function nil t)))
   (save-window-excursion
-      (setq after-load-alist
+    (setq after-load-alist
           (remq nil (mapcar (lambda (evalpair)
-                                (cons (car evalpair)
+                              (cons (car evalpair)
                                     (remq nil (mapcar #'daselt-bind--daselt-in-after-load-alist
                                                       (cdr evalpair)))))
                             after-load-alist)))))
@@ -1795,10 +1795,10 @@ Return the modified bindlist."
                             list))
            (pure t))
   (mapcar (lambda (bind) (if (daselt-bind-p bind)
-                                                                                                                                                                                                                             (daselt-bind-change-coords-in-binding bind coordlistlist)
-                                                                                                                           (if (consp bind)
-                                                                                                                                                                                                                               (daselt-bind-change-coords-in-bindlist bind coordlistlist)
-                                                                                                                             bind)))
+                                                                                                                                                                                                                                 (daselt-bind-change-coords-in-binding bind coordlistlist)
+                                                                                                                             (if (consp bind)
+                                                                                                                                                                                                                                   (daselt-bind-change-coords-in-bindlist bind coordlistlist)
+                                                                                                                               bind)))
           blist))
 
 (defun daselt-bind-change-coords-in-bindlist-during-sorting (blist coordlistlist)

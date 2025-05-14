@@ -277,7 +277,7 @@ Though vanilla Emacs suffices to run Daselt, it can be greatly improved by addin
 - A minibuffer completion framework. Vertico is very popular and solid. A more powerful but involved framework is [[https://www.emacswiki.org/emacs/Icicles][Icicles]]. Daselt has fairly complete configurations for both.
 
 * Tips and Tricks
-Daselt can completely revamp the way you use abbrevs. For this, for this, remember that the expansion of abbrevs can be triggered by *C-(3 0 2)*, which is almost effortless to type. So you can keep ~abbrev-mode~ turned off globally and use *C-(3 0 2)* to expand abbrevs, which allows you to use many more strings as abbrevs, including single letters and words. With this, you can create abbrevs for all most common words and phrase, which over time allows you to about half the amount of letters you have to ty have to type. This is particularly effective if you use [[https://gitlab.com/nameiwillforget/abbrev-chain][abbrev-chain]] to structure your abbrevs.
+Daselt can completely revamp the way you use abbrevs. For this, for this, remember that the expansion of abbrevs can be triggered by *C-(3 0 2)*, which is almost effortless to type. So you can keep ~abbrev-mode~ turned off globally and use *C-(3 0 2)* to expand abbrevs, which allows you to use many more strings as abbrevs, including single letters and words. With this, you can create abbrevs for all most common words and phrases, which over time allows you to about halve the amount of letters you have to type. This is particularly effective if you use [[https://gitlab.com/nameiwillforget/abbrev-chain][abbrev-chain]] to structure your abbrevs.
 
 * Customization
 ** Writing Your Own Bindlists
