@@ -150,25 +150,16 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
   :group 'daselt-mode)
 
 (defcustom daselt-C-1-0-4-contexts-list
-                            '((pdf-view-mode . pdf-view-next-page-command)
+                                  '((pdf-view-mode . pdf-view-next-page-command)
     (minibuffer-mode . next-line-or-history-element)
     (image-mode . image-next-frame)
     (vterm-copy-mode . scroll-up-command)
     (vterm-mode . vterm-send-next)
     (LaTeX-mode . latex/forward-environment))
-                            "Actions for `daselt-C-1-0-1' across different modes."
-                            :type '(repeat (cons symbol sexp))
-                            :group 'daselt-mode)
+                                  "Actions for `daselt-C-1-0-1' across different modes."
+                                  :type '(repeat (cons symbol sexp))
+                                  :group 'daselt-mode)
 
-
-(defcustom daselt-insert-latex-normpairs
-  t
-  "If non-nil, insert a norm-pair yasnippet for specific inputs.
-
-Inserts a norm-pair yasnippet when typing (8 0 -5) and (8 0 5).
-Refer to `daselt-latex-insert-normpair-yas-snippet' for details."
-  :type 'boolean
-  :group 'daselt-mode)
 
 ;;;; Functions
 ;;;;; Functions for key commands
@@ -183,7 +174,7 @@ If no match is found, DEFAULT is called instead."
                       for mcmd = (cdr mcons)
                       do (if (or (and (boundp mmode) (symbol-value mmode))
                                  (derived-mode-p mmode))
-                                                                                     (cl-return mcmd))
+                                                                                             (cl-return mcmd))
                       finally return default)))
     (funcall-interactively cmd)))
 

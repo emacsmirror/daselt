@@ -203,11 +203,20 @@ Doesn't have any effect if neither of the options `daselt-mode-redaselt' or
   :group 'daselt-mode)
 
 (defcustom daselt-mode-exchange-H-2-H-6
-  nil
-  "Set to t to exchange H-2 with H-6 bindings.
+                        nil
+                        "Set to t to exchange H-2 with H-6 bindings.
 
 On some systems this might be necessary because H in combination with other
 modifiers acts as a level 5 shift for currently unknown reasons."
+                        :type 'boolean
+                        :group 'daselt-mode)
+
+(defcustom daselt-insert-latex-normpairs
+  t
+  "If non-nil, insert a norm-pair yasnippet for specific inputs.
+
+Inserts a norm-pair yasnippet when typing (8 0 -5) and (8 0 5).
+Refer to `daselt-latex-insert-normpair-yas-snippet' for details."
   :type 'boolean
   :group 'daselt-mode)
 
