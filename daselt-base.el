@@ -1060,10 +1060,14 @@ If a tuple of nth elements of MAPPINGS contains lists of elements, then a copy
 of each template is generated for each combination of atomic elements of these
 lists. For instance, if there are two TEMPLATES
 
-`(obj1 a b)' `(obj2 c (d (e f)))'
+`(obj1 a b)` `(obj2 c (d (e f)))`
 
-then template insertions are generated with obj1 → a, obj → c obj1 → b, obj → d
-obj1 → b, obj → e obj1 → b, obj → f."
+then template insertions are generated with
+
+obj1 → a, obj2 → c
+obj1 → b, obj2 → d
+obj1 → b, obj2 → e
+obj1 → b, obj2 → f."
   (let* ((substitutions (mapcar #'car mappings))
          (substitution-cardinal (daselt-base-cardinal (length substitutions)))
          (value-lists (mapcar #'cdr mappings))

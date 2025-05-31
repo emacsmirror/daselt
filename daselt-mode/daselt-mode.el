@@ -175,7 +175,7 @@ this off."
 You can use this to specify the layout you're using outside of Daselt, if any.
 
 Note that the default of the `undaselt' script is `en us'."
-  :type 'string
+  :type '(choice string boolean)
   :group 'daselt-mode)
 
 (defcustom daselt-mode-redaselt-time

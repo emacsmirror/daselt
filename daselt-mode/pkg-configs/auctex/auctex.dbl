@@ -23,20 +23,23 @@
 
 ;;;;;;;; C-4-1
  (("C-" . (4 1 -4)) . #'latex/hide-show-all)
- (("C-" . (4 1 -3)) . #'math-preview-decrement-scale)
+ (("C-" . (4 1 -3)) . #'daselt-latex-kill-ring-delete-math-delimiters)
  (("C-" . (4 1 -2)) . #'math-preview-clear-at-point)
  (("C-" . (4 1 2)) . #'math-preview-at-point)
- (("C-" . (4 1 3)) . #'math-preview-increment-scale)
+ (("C-" . (4 1 3)) . #'daselt-latex-kill-ring-delete-math-delimiters-completing)
 
 ;;;;;;; C-7
 ;;;;;;;; C-7--1
  (("C-" . (7 -1 -4)) . #'TeX-narrow-to-group)
+ (("C-" . (7 -1 -1)) . #'math-preview-decrement-scale)
+ (("C-" . (7 -1 1)) . #'math-preview-increment-scale)
  (("C-" . (7 -1 4)) . #'reftex-toc)
 
 ;;;;;;;; C-7-0
  (("C-" . (7 0 -4)) . #'latex/previous-section-same-level)
  (("C-" . (7 0 -3)) . #'latex/up-section)
  (("C-" . (7 0 -2)) . #'latex/previous-section)
+ (("C-" . (7 0 1)) . #'daselt-latex-isearchp-within-mathmode)
  (("C-" . (7 0 2)) . #'latex/next-section)
  (("C-" . (7 0 4)) . #'latex/next-section-same-level)
 
@@ -49,6 +52,8 @@
  (("M-" . (4 -1 -4)) . #'TeX-fold-region)
  (("M-" . (4 -1 -3)) . #'LaTeX-mark-environment)
  (("M-" . (4 -1 -2)) . #'LaTeX-close-environment)
+ (("M-" . (4 -1 -1)) . #'daselt-latex-replace-string-in-mathmode)
+ (("M-" . (4 -1 1)) . #'daselt-latex-replace-regexp-in-mathmode)
  (("M-" . (4 -1 3)) . #'LaTeX-mark-section)
  (("M-" . (4 -1 4)) . #'TeX-fold-clearout-region)
 
@@ -56,8 +61,8 @@
  (("M-" . (4 0 -4)) . #'TeX-fold-buffer)
  (("M-" . (4 0 -3)) . #'TeX-fold-macro)
  (("M-" . (4 0 -2)) . #'TeX-fold-paragraph)
- (("M-" . (4 0 -1)) . #'daselt-lua-change-mathvar)
- (("M-" . (4 0 1)) . #'daselt-lua-change-mathvar-withinstring)
+ (("M-" . (4 0 -1)) . #'daselt-latex-replace-string-in-mathmode)
+ (("M-" . (4 0 1)) . #'daselt-latex-replace-regexp-in-mathmode)
  (("M-" . (4 0 2)) . #'TeX-fold-clearout-paragraph)
  (("M-" . (4 0 3)) . #'TeX-fold-clearout-region)
  (("M-" . (4 0 4)) . #'TeX-fold-clearout-buffer)
@@ -80,6 +85,10 @@
  (("M-C-" . (4 -1 -3)) . #'er/mark-LaTeX-inside-environment)
  (("M-C-" . (4 -1 4)) . #'reftex-goto-label)
 
+;;;;;;;; M-C-4-0
+ (("M-C-" . (4 0 -1)) . #'daselt-latex-query-replace-string-in-mathmode)
+ (("M-C-" . (4 0 1)) . #'daselt-latex-query-replace-regexp-in-mathmode)
+
 ;;;;;; s-
 ;;;;;;; s-4
 ;;;;;;;; s-4--1
@@ -87,7 +96,13 @@
  (("s-" . (4 -1 -3)) . #'daselt-latex-delete-environment)
 
 ;;;;;;;; s-4-1
- (("s-" . (4 1 2)) . #'daselt-lua-remove-modifier))
+ (("s-" . (4 1 -2)) . #'daselt-latex-refresh-region-previews)
+ (("s-" . (4 1 2)) . #'daselt-latex-refresh-buffer-previews)
+
+;;;;;;; s-7
+;;;;;;;; s-7-1
+ (("s-" . (7 1 -2)) . #'daselt-latex-refresh-environment-previews)
+ (("s-" . (7 1 2)) . #'daselt-latex-refresh-section-previews))
 
 ;;;; reftex-toc-mode
 ;;;; reftex-toc

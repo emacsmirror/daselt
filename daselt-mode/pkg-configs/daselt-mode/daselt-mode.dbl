@@ -19,8 +19,8 @@
 
 ;;;;;;; 8
 ;;;;;;;; 8-0
- ((8 0 -5) . (if (bound-and-true-p daselt-lua-insert-normpairs) #'daselt-lua-insert-normpair-yas-snippet))
- ((8 0 5) . (if (bound-and-true-p daselt-lua-insert-normpairs) #'daselt-lua-insert-othernormpair-yas-snippet))
+ ((8 0 -5) . (if daselt-latex-insert-normpairs #'daselt-latex-insert-normpair-yas-snippet))
+ ((8 0 5) . (if daselt-latex-insert-normpairs #'daselt-latex-insert-othernormpair-yas-snippet))
 
 ;;;;;; C-
 ;;;;;;; C-1
@@ -37,7 +37,7 @@
  (("C-" . (1 -1 5)) . #'transpose-lines)
 
 ;;;;;;;; C-1-0
- (("C-" . (1 0 -5)) daselt-mode-dynamic-binding "C-h")
+ (("C-" . (1 0 -5)) . (daselt-mode-dynamic-binding "C-h"))
  (("C-" . (1 0 -4)) . (if (bound-and-true-p daselt-mode-include-imitation-commands) #'daselt-C-1-0--4))
  (("C-" . (1 0 -3)) . (if (bound-and-true-p daselt-mode-include-imitation-commands) #'daselt-C-1-0--3))
  (("C-" . (1 0 -2)) . (if (bound-and-true-p daselt-mode-include-imitation-commands) #'daselt-C-1-0--2))
@@ -52,7 +52,7 @@
  (("C-" . (1 1 -6)) . #'org-timer-start)
  (("C-" . (1 1 -5)) . #'daselt-backward-kill-line)
  (("C-" . (1 1 -4)) . #'avy-act-on-position-in-line)
- (("C-" . (1 1 -3)) . #'easy-kill)
+ (("C-" . (1 1 -3)) . (if daselt-easy-kill #'easy-kill #'copy-region-as-kill))
  (("C-" . (1 1 0)) . #'universal-argument)
  (("C-" . (1 1 2)) . #'execute-extended-command)
  (("C-" . (1 1 3)) . #'daselt-yank-or-org-roam-node-insert)
@@ -91,7 +91,7 @@
  (("C-" . (2 1 -4)) . #'avy-act-to-point-in-same-line)
  (("C-" . (2 1 -3)) . #'completion-kill-region)
  (("C-" . (2 1 -2)) . #'daselt-backward-subsentence)
- (("C-" . (2 1 0)) daselt-mode-dynamic-binding "C-c")
+ (("C-" . (2 1 0)) . (daselt-mode-dynamic-binding "C-c"))
  (("C-" . (2 1 2)) . #'daselt-forward-subsentence)
  (("C-" . (2 1 3)) . #'capitalize-dwim)
  (("C-" . (2 1 4)) . #'avy-act-on-position)
@@ -317,7 +317,7 @@
  (("M-" . (1 1 -5)) . #'daselt-backwardaselt-base-mark-line)
  (("M-" . (1 1 -3)) . #'avy-kill-ring-save-region)
  (("M-" . (1 1 -2)) . #'ekg-capture)
- (("M-" . (1 1 0)) daselt-mode-dynamic-binding "C-x")
+ (("M-" . (1 1 0)) . (daselt-mode-dynamic-binding "C-x"))
  (("M-" . (1 1 2)) . #'org-roam-capture)
  (("M-" . (1 1 3)) . (if daselt-consult #'consult-yank-pop #'yank-pop))
  (("M-" . (1 1 4)) . #'icicle-switch-to-completions)
@@ -616,12 +616,12 @@
 
 ;;;;;;;; s-3-0
  (("s-" . (3 0 -5)) . #'icicle-dired-saved-file-candidates)
- (("s-" . (3 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'add-global-abbrev))
+ (("s-" . (3 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'add-global-abbrev))
  (("s-" . (3 0 -2)) . (if daselt-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
  (("s-" . (3 0 -1)) . #'daselt-daselt-isearch-backward-symbol)
  (("s-" . (3 0 1)) . #'isearch-forward-symbol)
  (("s-" . (3 0 2)) . (if daselt-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
- (("s-" . (3 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'inverse-add-global-abbrev))
+ (("s-" . (3 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'inverse-add-global-abbrev))
 
 ;;;;;;;; s-3-1
  (("s-" . (3 1 -5)) . #'daselt-backward-delete-all-space)
@@ -707,7 +707,8 @@
 ;;;;;;;; s-C-2-1
  (("s-C-" . (2 1 -4)) . #'avy-act-to-point)
  (("s-C-" . (2 1 -3)) . #'projectile-test-project)
- (("s-C-" . (2 1 0)) . #'projectile-compile-project)
+ (("s-C-" . (2 1 0)) . #'consult-theme)
+ (("s-C-" . (2 1 2)) . #'projectile-compile-project)
  (("s-C-" . (2 1 3)) . #'projectile-invalidate-cache)
  (("s-C-" . (2 1 4)) . #'citar-open)
 

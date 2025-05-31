@@ -24,16 +24,108 @@
 
 ;;; Code:
 
+;;;; Options
+(defcustom daselt-latex-insert-normpairs
+                                                                                            t
+                                                                                            "If non-nil, insert a norm-pair yasnippet for specific inputs.
+
+Inserts a norm-pair yasnippet when typing (8 0 -5) and (8 0 5).
+Refer to `daselt-lua-insert-normpair-yasnippet' for details."
+                                                                                            :type 'boolean
+                                                                                            :group 'daselt-mode)
+
+;;;; Functions
+;;;;; Insertion
+(defun daselt-latex-insert-normpair-yas-snippet (&optional ARG)
+  "This command inserts a correctly spaced norm pair yas-snippet. If the region is active
+and usable, it inserts the norm pair around the region. It is bound to ∣ in LaTeX-mode,
+because their spacing otherwise is awful.
+
+Without a prefix argument, it inserts a snippet like \\mathopen{∣}-\\mathclose{∣}.
+
+With a universal prefix argument C-u it just inserts a normal norm sign.
+
+With -2 as a prefix, it inserts a snippet like
+\\mathopen{\\mathsmaller{\\mathsmaller{∣}}}${1:-}\\mathclose{\\mathsmaller{\\mathsmaller{∣}}}.
+
+With -1 as a prefix, it inserts a snippet like \\mathopen{\\mathsmaller{∣}}${1:-}\\mathclose{\\mathsmaller{∣}}.
+
+With 0 as a prefix, it inserts a snippet like \\left\\vert${1:-}\\right\\vert.
+
+With 2 as a prefix, it inserts \\big\\vert${1:-}\\big\\vert.
+
+With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
+  (interactive "p")
+  (let ((snippet (cond ((= ARG -2) "\\mathsmaller{\\mathsmaller{\\mathopen{∣}}}${1:-}\\mathsmaller{\\mathsmaller{\\mathclose{∣}}}")
+                       ((= ARG -1) "\\mathsmaller{\\mathopen{∣}}${1:-}\\mathsmaller{\\mathclose{∣}}")
+                       ((= ARG 0)
+                        "\\left\\vert${1:-}\\right\\vert")
+                       ((= ARG 2)
+                        "\\big\\vert${1:-}\\big\\vert")
+                       ((= ARG 3)
+                        "\\bigg\\vert${1:-}\\bigg\\vert")
+                       (t "\\mathopen{∣}${1:-}\\mathclose{∣}"))))
+    (cond ((eq ARG 4)
+           (self-insert-command 1))
+          ((use-region-p)
+           (progn
+             (call-interactively #'kill-region)
+             (yas-expand-snippet snippet)
+             (yank)))
+          (t (yas-expand-snippet snippet)))))
+
+(defun daselt-latex-insert-othernormpair-yas-snippet (&optional ARG)
+  "This command inserts a correctly spaced ∥-norm pair yas-snippet. If the region is
+active and usable, it inserts the norm pair around the region. It is bound to ∥ in
+LaTeX-mode, because their spacing otherwise is awful.
+
+Without a prefix argument, it inserts a snippet like \\mathopen{∥}-\\mathclose{∥}.
+
+With a universal prefix argument C-u it just inserts a normal norm sign.
+
+With -2 as a prefix, it inserts a snippet like
+\\mathopen{\\mathsmaller{\\mathsmaller{∥}}}${1:-}\\mathclose{\\mathsmaller{\\mathsmaller{∥}}}.
+
+With -1 as a prefix, it inserts a snippet like \\mathopen{\\mathsmaller{∥}}${1:-}\\mathclose{\\mathsmaller{∥}}.
+
+With 0 as a prefix, it inserts a snippet like \\left\\|${1:-}\\right\\|.
+
+With 2 as a prefix, it inserts \\big\\|${1:-}\\big\\|.
+
+With 3 as a prefix, it inserts \\bigg\\|${1:-}\\bigg\\|."
+  (interactive "p")
+  (let ((snippet (cond ((= ARG -2)
+                        "\\mathopen{\\mathsmaller{\\mathsmaller{∥}}}${1:-}\\mathclose{\\mathsmaller{\\mathsmaller{∥}}}")
+                       ((= ARG -1)
+                        "\\mathopen{\\mathsmaller{∥}}${1:-}\\mathclose{\\mathsmaller{∥}}")
+                       ((= ARG 0)
+                        "\\left\\|${1:-}\\right\\|")
+                       ((= ARG 2)
+                        "\\big\\|${1:-}\\big\\|")
+                       ((= ARG 3)
+                        "\\bigg\\|${1:-}\\bigg\\|")
+                       (t "\\mathopen{∥}${1:-}\\mathclose{∥}"))))
+    (cond ((eq ARG 4)
+           (self-insert-command 1))
+          ((use-region-p)
+           (progn
+             (call-interactively #'kill-region)
+             (yas-expand-snippet snippet)
+             (yank)))
+          (t (yas-expand-snippet snippet)))))
+
+
+;;;;; Navigation
 (defun daselt-latex-forward-down-environment (&optional N)
-  "Move into the N-th next environment.
+                                                                                    "Move into the N-th next environment.
 
 If there is no environment within the current environment, move to the beginning
 of the current environment. Skip the label if one exists.
 
 Requires latex-extra."
-  (declare (ftype (function (&optional integer) t)))
-  (interactive "p")
-  (let ((N (or N 1)))
+                                                                                    (declare (ftype (function (&optional integer) t)))
+                                                                                    (interactive "p")
+                                                                                    (let ((N (or N 1)))
     (latex/forward-environment N)
        (latex/backward-environment 1)
        (forward-line)
@@ -43,30 +135,32 @@ Requires latex-extra."
          (goto-char (match-end 0)))))
 
 (defun daselt-latex-backward-down-environment (&optional N)
-  "Move into the N-th previous environment.
+                                    "Move into the N-th previous environment.
 
 If there is no previous environment within the current environment, move to the
 end of the current environment.
 
 Requires latex-extra."
-  (declare (ftype (function (&optional integer) t)))
-  (interactive "p")
-  (let ((N (or N 1)))
+                                    (declare (ftype (function (&optional integer) t)))
+                                    (interactive "p")
+                                    (let ((N (or N 1)))
     (latex/backward-environment N)
     (latex/forward-environment 1)
     (forward-line -2)
     (end-of-line)))
 
+
+;;;;; Folding
 (defun daselt-latex-fold-all-environments ()
-  "Fold all LaTeX environments in buffer.
+                    "Fold all LaTeX environments in buffer.
 
 Requires latex-extra."
-  (declare (ftype (function nil t)))
-  (interactive)
-  (save-excursion
-    (daselt-base-goto-min)
-    (if (search-forward "\\begin{document}" nil t)
-        (progn (beginning-of-line)
+                    (declare (ftype (function nil t)))
+                    (interactive)
+                    (save-excursion
+                      (daselt-base-goto-min)
+                      (if (search-forward "\\begin{document}" nil t)
+                                            (progn (beginning-of-line)
                (daselt-latex-forward-down-environment)
                (while (not (string= "document"
                                     (progn (latex/forward-environment 1)
@@ -78,15 +172,15 @@ Requires latex-extra."
       (message "No document found."))))
 
 (defun daselt-latex-clear-all-environments ()
-  "Clear all LaTeX environments in buffer.
+                          "Clear all LaTeX environments in buffer.
 
 Requires latex-extra."
-  (declare (ftype (function nil t)))
-  (interactive)
-  (save-excursion
-    (daselt-base-goto-min)
-    (daselt-latex-forward-down-environment)
-    (while (not (string= "document"
+                          (declare (ftype (function nil t)))
+                          (interactive)
+                          (save-excursion
+                            (daselt-base-goto-min)
+                            (daselt-latex-forward-down-environment)
+                            (while (not (string= "document"
                          (progn (latex/forward-environment 1)
                                 (daselt-latex-backward-down-environment)
                                 (forward-char)
@@ -96,74 +190,166 @@ Requires latex-extra."
                                 (region-end))
       (latex/forward-environment 1))))
 
+
+;;;;; Indenting
 (defun daselt-latex-indent-environment (&optional count)
-  "Indent the LaTeX environment point is currently in.
+          "Indent the LaTeX environment point is currently in.
 
 With COUNT given, indent the COUNT-th nested environment point is in."
-  (declare (ftype (function (&optional natnum) t)))
-  (interactive "P")
-  (let ((count (or count 1)))
+          (declare (ftype (function (&optional natnum) t)))
+          (interactive "P")
+          (let ((count (or count 1)))
     (save-excursion
-      (LaTeX-mark-environment count)
-      (indent-region (region-beginning) (region-end)))))
+              (LaTeX-mark-environment count)
+              (let ((beg (region-beginning))
+            (end (region-end)))
+        (indent-region beg end)))))
 
 (defun daselt-latex-indent-section (&optional count)
-        "Indent the LaTeX section point is currently in.
+                                                            "Indent the LaTeX section point is currently in.
 
 With COUNT given, indent the COUNT-th nested section point is in."
-        (declare (ftype (function (&optional natnum) t)))
-        (interactive "P")
-        (let ((count (or count 1)))
+                                                            (declare (ftype (function (&optional natnum) t)))
+                                                            (interactive "P")
+                                                            (let ((count (or count 1)))
     (save-excursion
-            (LaTeX-mark-section count)
-            (indent-region (region-beginning) (region-end)))))
+                                                                (LaTeX-mark-section count)
+                                                                (indent-region (region-beginning) (region-end)))))
 
+
+;;;;; Deletion
 (defun daselt-latex-delete-environment ()
-  (interactive)
-  (when (LaTeX-current-environment)
+                                              (interactive)
+                                              (when (LaTeX-current-environment)
     (save-excursion
-      (let* ((begin-start (save-excursion
-                            (LaTeX-find-matching-begin)
-                            (point)))
+                                                  (let* ((begin-start (save-excursion
+                                                                        (LaTeX-find-matching-begin)
+                                                                        (point)))
              (begin-end (save-excursion
-                          (goto-char begin-start)
-                          (search-forward-regexp "begin{.*?}")))
+                                                                      (goto-char begin-start)
+                                                                      (search-forward-regexp "begin{.*?}")))
              (end-end (save-excursion
-                        (LaTeX-find-matching-end)
-                        (point)))
+                                                                    (LaTeX-find-matching-end)
+                                                                    (point)))
              (end-start (save-excursion
-                          (goto-char end-end)
-                          (1- (search-backward-regexp "\\end")))))
+                                                                      (goto-char end-end)
+                                                                      (1- (search-backward-regexp "\\end")))))
         ;; delete end first since if we delete begin first it shifts the
         ;; location of end
         (delete-region end-start end-end)
         (delete-region begin-start begin-end)))))
 
+(defun daselt-latex-kill-ring-delete-math-delimiters-completing (entry)
+  "Delete math delimiters from a kill-ring entry selected with `completing-read`."
+  (interactive (list (completing-read "Select kill-ring entry: " kill-ring nil t)))
+  (let ((new (replace-regexp-in-string (rx (or "$" "\\(" "\\)" "\\[" "\\]")) "" entry)))
+    (kill-new new t)))
 
+(defun daselt-latex-kill-ring-delete-math-delimiters ()
+  "Delete math delimiters from the first kill-ring entry."
+  (interactive)
+  (daselt-latex-completing-kill-ring-delete-math-delimiters (car kill-ring)))
+
+
+;;;;; Previews
+(defun daselt-latex-refresh-region-previews (beg end)
+              "Refresh math previews between BEG and END.
+
+Requires `math-preview'."
+              (declare (ftype (function (number number) t)))
+              (interactive "r")
+              (math-preview-clear-region beg end)
+              (math-preview-region beg end))
+
+(defun daselt-latex-refresh-environment-previews (&optional count)
+  "Refresh math previews in COUNTth environment.
+
+Requires `math-preview'."
+  (declare (ftype (function (&optional number) t)))
+  (interactive "p")
+  (LaTeX-mark-environment count)
+  (daselt-latex-refresh-region-previews (region-beginning)
+                                        (region-end)))
+
+(defun daselt-latex-refresh-section-previews (&optional no-subsections)
+  "Refresh math previews in current section.
+
+Requires `math-preview'."
+  (declare (ftype (function (&optional boolean) t)))
+  (interactive "P")
+  (LaTeX-mark-section no-subsections)
+  (daselt-latex-refresh-region-previews (region-beginning)
+                                        (region-end)))
+
+(defun daselt-latex-refresh-buffer-previews ()
+                                                    "Refresh math previews in COUNTth environment.
+
+Requires `math-preview'."
+                                                    (declare (ftype (function nil t)))
+                                                    (interactive)
+                                                    (mark-whole-buffer)
+                                                    (daselt-latex-refresh-region-previews (region-beginning)
+                                        (region-end)))
+
+
+;; Better done with smartparens.
+;; (defun daselt-latex-remove-modifier (env)
+;;   "This command removes TeX modifier ENV.
+
+;; Requires cdlatex."
+;;   (interactive (completing-read "Environment: "
+;;                                 (mapcar #'car LaTeX-environment-list)))
+;;   ;; (replace-regexp (format "\\\\%s{\\(.*?\\)}" env) "\\1")
+;;   (replace-regexp (rx-to-string `(seq "\\" ,env "{" (group (*? nonl)) "}")) "\\1"))
+
+
+;;;;; Searching
+(defun daselt-latex-isearchp-within-mathmode (a)
+  "This function does a search restricted to mathmode."
+  (interactive)  
+  (let ((isearch-filter-predicate 'check-math-mode))
+    (call-interactively #'isearch-forward)))
+
+;;;;; Replacing
+(daselt-base-def-by-forms
+ (`(defun ,(intern (concat "daselt-latex-" mquery "replace-" type "-in-mathmode")) ()
+     ,(format "%seplace %s OLD with NEW in LaTeX mathmode regions."
+              (if (string-empty-p mquery)
+                  "R"
+                "Query r")
+              type)
+     (interactive)
+     (let ((isearch-filter-predicate 'check-math-mode))
+       (call-interactively (quote ,(intern (concat mquery "replace-" type)))))))
+ (type . ("string" "regexp"))
+ (mquery . (("" "query-") ("" "query-"))))
+
+
+;;;;; Reftex
 (defun daselt-reftex-throw-114 ()
-        "Throw 114 to `myexit'."
-        (declare (ftype (function () t)))
-        (interactive)
-        (throw 'myexit 114))
+                                                                                                                                                                "Throw 114 to `myexit'."
+                                                                                                                                                                (declare (ftype (function () t)))
+                                                                                                                                                                (interactive)
+                                                                                                                                                                (throw 'myexit 114))
 
 (defun daselt-reftex-throw-82 ()
-        "Throw 82 to `myexit'."
-        (declare (ftype (function () t)))
-        (interactive)
-        (throw 'myexit 82))
+                "Throw 82 to `myexit'."
+                (declare (ftype (function () t)))
+                (interactive)
+                (throw 'myexit 82))
 
 (defun daselt-reftex-relabel (beg end)
-                        "Relabel all LaTeX \\label commands in the region from BEG to END using
+                                          "Relabel all LaTeX \\label commands in the region from BEG to END using
 `reftex-label'.
 
 Searches for `\\label{...}', removes it, and then calls `reftex-label' to insert
 a new label."
-                        (interactive "r")
-                        ;; Ensure RefTeX is loaded
-                        (require 'reftex)
-                        (save-excursion
-                          (goto-char beg)
-                          (while (re-search-forward "\\\\label{[^}]+}" end t)
+                                          (interactive "r")
+                                          ;; Ensure RefTeX is loaded
+                                          (require 'reftex)
+                                          (save-excursion
+                                            (goto-char beg)
+                                            (while (re-search-forward "\\\\label{[^}]+}" end t)
       ;; Delete the old \label{...}
       (delete-region (match-beginning 0) (match-end 0))
       ;; Step back a bit so we're still within the environment
