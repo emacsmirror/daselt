@@ -24,20 +24,10 @@
 
 ;;; Code:
 
-;;;; Options
-(defcustom daselt-latex-insert-normpairs
-                                                                                            t
-                                                                                            "If non-nil, insert a norm-pair yasnippet for specific inputs.
-
-Inserts a norm-pair yasnippet when typing (8 0 -5) and (8 0 5).
-Refer to `daselt-lua-insert-normpair-yasnippet' for details."
-                                                                                            :type 'boolean
-                                                                                            :group 'daselt-mode)
-
 ;;;; Functions
 ;;;;; Insertion
 (defun daselt-latex-insert-normpair-yas-snippet (&optional ARG)
-  "This command inserts a correctly spaced norm pair yas-snippet. If the region is active
+      "This command inserts a correctly spaced norm pair yas-snippet. If the region is active
 and usable, it inserts the norm pair around the region. It is bound to ∣ in LaTeX-mode,
 because their spacing otherwise is awful.
 
@@ -55,8 +45,8 @@ With 0 as a prefix, it inserts a snippet like \\left\\vert${1:-}\\right\\vert.
 With 2 as a prefix, it inserts \\big\\vert${1:-}\\big\\vert.
 
 With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
-  (interactive "p")
-  (let ((snippet (cond ((= ARG -2) "\\mathsmaller{\\mathsmaller{\\mathopen{∣}}}${1:-}\\mathsmaller{\\mathsmaller{\\mathclose{∣}}}")
+      (interactive "p")
+      (let ((snippet (cond ((= ARG -2) "\\mathsmaller{\\mathsmaller{\\mathopen{∣}}}${1:-}\\mathsmaller{\\mathsmaller{\\mathclose{∣}}}")
                        ((= ARG -1) "\\mathsmaller{\\mathopen{∣}}${1:-}\\mathsmaller{\\mathclose{∣}}")
                        ((= ARG 0)
                         "\\left\\vert${1:-}\\right\\vert")
@@ -69,9 +59,9 @@ With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
            (self-insert-command 1))
           ((use-region-p)
            (progn
-             (call-interactively #'kill-region)
-             (yas-expand-snippet snippet)
-             (yank)))
+                 (call-interactively #'kill-region)
+                 (yas-expand-snippet snippet)
+                 (yank)))
           (t (yas-expand-snippet snippet)))))
 
 (defun daselt-latex-insert-othernormpair-yas-snippet (&optional ARG)
