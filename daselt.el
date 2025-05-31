@@ -3,7 +3,7 @@
 ;; Copyright (C) 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Package-Requires: ((emacs "29.1"))
+;; Package-Requires: ((emacs "30.1"))
 ;; Version: 1.0
 ;; Keywords: tools
 ;; URL: https://gitlab.com/nameiwillforget/d-emacs/
