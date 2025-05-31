@@ -1772,14 +1772,14 @@ whose body contains the word `daselt`."
 If so, don't return it."
   (unless (and (functionp fun)
                (not (native-comp-function-p fun))
-               (progn (defalias 'temp-func fun)
+               (progn (defalias #'daselt-temp-fun fun)
 	              ;; Disassembly can sometimes fail, but if so we can be pretty sure it's not a Daselt-eval.
                       (ignore-errors
-                        (progn (disassemble 'temp-func)
-                               (set-buffer "*Disassemble*")
-	                       (daselt-base-goto-min)
-	                       (prog1 (search-forward "daselt" nil t)
-                                 (kill-buffer "*Disassemble*"))))))
+                        (disassemble #'daselt-temp-fun)
+                        (set-buffer "*Disassemble*")
+	                (daselt-base-goto-min)
+	                (prog1 (search-forward "daselt" nil t)
+                          (kill-buffer "*Disassemble*")))))
     fun))
 
 ;;;;; Coordinate changes
@@ -1795,10 +1795,10 @@ Return the modified bindlist."
                             list))
            (pure t))
   (mapcar (lambda (bind) (if (daselt-bind-p bind)
-                                                                                                                                                                                                                                 (daselt-bind-change-coords-in-binding bind coordlistlist)
-                                                                                                                             (if (consp bind)
-                                                                                                                                                                                                                                   (daselt-bind-change-coords-in-bindlist bind coordlistlist)
-                                                                                                                               bind)))
+                                                                                                                                                                                                                                     (daselt-bind-change-coords-in-binding bind coordlistlist)
+                                                                                                                               (if (consp bind)
+                                                                                                                                                                                                                                       (daselt-bind-change-coords-in-bindlist bind coordlistlist)
+                                                                                                                                 bind)))
           blist))
 
 (defun daselt-bind-change-coords-in-bindlist-during-sorting (blist coordlistlist)
@@ -2058,7 +2058,7 @@ automatically and you don't have to worry about it."
                                          (remq nil (mapcar #'daselt-bind--elbind-to-placeval
                                                            specificmodmatchedbinds)))
 
-                                        ;; If C-g is not translated by `d-stump` or `daselt-bind-translate-C-1-1--2-C-g' and the modifier is `C', check all placevals if they are bound to "g", and, if so, put the value of that placeval on `C-1-1--2'.
+                                        ;; If C-g is not translated by `d-stump` or `daselt-bind-translate-C-1-1--2-C-g' and the modifier is `C`, check all placevals if they are bound to "g", and, if so, put the value of that placeval on `C-1-1--2'.
                                         (modmatchedplacevals-C-g-remapped
                                          (if (and (equal mods '(C))
                                                   (not (or (bound-and-true-p daselt-stump)
