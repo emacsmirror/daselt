@@ -19,8 +19,8 @@
 
 ;;;;;;; 8
 ;;;;;;;; 8-0
- ((8 0 -5) . (if daselt-latex-insert-normpairs #'daselt-latex-insert-normpair-yas-snippet))
- ((8 0 5) . (if daselt-latex-insert-normpairs #'daselt-latex-insert-othernormpair-yas-snippet))
+ ((8 0 -5) . (if daselt-insert-latex-normpairs #'daselt-latex-insert-normpair-yas-snippet))
+ ((8 0 5) . (if daselt-insert-latex-normpairs #'daselt-latex-insert-othernormpair-yas-snippet))
 
 ;;;;;; C-
 ;;;;;;; C-1
