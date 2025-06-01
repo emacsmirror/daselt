@@ -338,8 +338,12 @@
 ;;;;;;;; M-2-0
  (("M-" . (2 0 -5)) . #'projectile-dired)
  (("M-" . (2 0 -4)) . #'transpose-regions)
+ (("M-" . (2 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'add-global-abbrev))
+ (("M-" . (2 0 -2)) . (if daselt-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
  (("M-" . (2 0 -1)) . #'daselt-replace-regexp-backward)
  (("M-" . (2 0 1)) . #'replace-regexp)
+ (("M-" . (2 0 2)) . (if daselt-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
+ (("M-" . (2 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'inverse-add-global-abbrev))
 
 ;;;;;;;; M-2-1
  (("M-" . (2 1 -5)) . #'daselt-mark-subsentence)
@@ -616,12 +620,8 @@
 
 ;;;;;;;; s-3-0
  (("s-" . (3 0 -5)) . #'icicle-dired-saved-file-candidates)
- (("s-" . (3 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'add-global-abbrev))
- (("s-" . (3 0 -2)) . (if daselt-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
  (("s-" . (3 0 -1)) . #'daselt-daselt-isearch-backward-symbol)
  (("s-" . (3 0 1)) . #'isearch-forward-symbol)
- (("s-" . (3 0 2)) . (if daselt-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
- (("s-" . (3 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'inverse-add-global-abbrev))
 
 ;;;;;;;; s-3-1
  (("s-" . (3 1 -5)) . #'daselt-backward-delete-all-space)
