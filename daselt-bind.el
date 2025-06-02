@@ -1772,14 +1772,14 @@ whose body contains the word `daselt`."
 If so, don't return it."
   (unless (and (functionp fun)
                (not (native-comp-function-p fun))
-               (progn (defalias 'daselt-temp-fun fun)
-	              ;; Disassembly can sometimes fail, but if so we can be pretty sure it's not a Daselt-eval.
-                      (ignore-errors
-                        (disassemble 'daselt-temp-fun)
-                        (set-buffer "*Disassemble*")
-	                (daselt-base-goto-min)
-	                (prog1 (search-forward "daselt" nil t)
-                          (kill-buffer "*Disassemble*")))))
+               (progn 
+	         ;; Disassembly can sometimes fail, but if so we can be pretty sure it's not a Daselt-eval.
+                 (ignore-errors
+                   (disassemble fun)
+                   (set-buffer "*Disassemble*")
+	           (daselt-base-goto-min)
+	           (prog1 (search-forward "daselt" nil t)
+                     (kill-buffer "*Disassemble*")))))
     fun))
 
 ;;;;; Coordinate changes

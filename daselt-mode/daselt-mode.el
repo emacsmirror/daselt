@@ -31,37 +31,8 @@
 ;;; Code:
 ;;;; Preamble
 (declare-function daselt-minor-mode-key-binding "daselt-mode-ext" (key))
-(declare-function daselt-stump-translatedaselt-keys "daselt-stump" nil)
-;; (declare-function daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill "daselt-dirs" (funtypes &optional dir customt sortfun pfx))
-;; (declare-function daselt-dirs-create-pkg-customization-options "daselt-dirs" (&optional dir group deffun))
-;; (declare-function daselt-dfk-import-current-layout "daselt-dfk" nil)
-;; (declare-function daselt-xkb-generate-layouts "daselt-xkb" nil)
-;; (declare-function daselt-base-read-region "daselt-base" (&optional properties))
-;; (declare-function daselt-dirs-act-on-sexps-in-file "daselt-dirs" (filepath function &optional untangle))
-;; (declare-function daselt-bind-string "daselt-bind" (binding &optional translate csectoshft doublebind))
-;; (declare-function daselt-base-cardinal "daselt-base" (n &optional fromone))
+(declare-function daselt-stump-translate-daselt-keys "daselt-stump" nil)
 
-(defvar daselt-global-map-backup)
-(defvar undo-tree-auto-save-history)
-(defvar daselt-dirs-keep-read-buffers)
-(defvar daselt-base-debug)
-(defvar daselt-dirs-pkg-configs-directory)
-(defvar daselt-bind-key-translations-alist)
-(defvar daselt-replace-untranslated-keys)
-(defvar daselt-bind-translate-keys)
-(defvar daselt-bind-translate-C-1-1--2-C-g)
-(defvar daselt-xkb-layout)
-(defvar daselt-xkb-layouts)
-(defvar daselt-dfk-layout)
-
-;; If daselt-stump isn't loaded, this variable will not be bound…
-(defvar daselt-stump)
-
-;; and this will never be called
-(defvar daselt-stump-pkg-configs-directory)
-
-(defvar daselt-mode-eval-log nil
-  "Log for `daselt-mode' eval conditions.")
 (require 'daselt-base)
 (require 'daselt-coords)
 (require 'daselt-xkb)
@@ -71,25 +42,36 @@
 (require 'cl-lib)
 (require 'org-table)
 
+(defvar daselt-replace-untranslated-keys)
+(defvar daselt-global-map-backup)
+(defvar undo-tree-auto-save-history)
 
+;; If daselt-stump isn't loaded, this variable will not be bound…
+(defvar daselt-stump)
+
+;; and this will never be called
+(defvar daselt-stump-pkg-configs-directory)
+
+(defvar daselt-mode-eval-log nil
+  "Log for `daselt-mode' eval conditions.")
 ;;;; Initialization
 ;; ;;;;; Let's read in the dxkb-file
 ;; (daselt-xkb-generate-layouts)
 
 ;;;;; Customs
 (defgroup daselt-mode
-  nil
-  "This group houses all customization options for daselt."
-  :group 'daselt
-  :prefix "daselt-mode-")
+                        nil
+                        "This group houses all customization options for daselt."
+                        :group 'daselt
+                        :prefix "daselt-mode-")
 
 (defcustom daselt-mode-put-daselt-mode-map-into-emulation
-  t
-  "If non-nil, add `daselt-mode-map' to `emulation-mode-map-alists'.
+          t
+          "If non-nil, add `daselt-mode-map' to `emulation-mode-map-alists'.
 
 Maps in this list supersede most other keymaps."
-  :type 'boolean
-  :group 'daselt-mode)
+          :type 'boolean
+          :group 'daselt-mode)
 
 (defcustom daselt-mode-globalize-daselt-mode-map
   nil
@@ -563,7 +545,7 @@ resetting the keyboard layout as well."
         ;; Set constants
         (when (bound-and-true-p daselt-stump)
           (setopt daselt-bind-outside-translations-alist
-                  (daselt-stump-translatedaselt-keys))
+                  (daselt-stump-translate-daselt-keys))
 
           ;; We can also apply the daselt-stump-bindlists here.
           (daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill

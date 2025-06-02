@@ -526,7 +526,7 @@ specified conditions."
     (insert overallstr)))
 
 ;;;;;; Retrieve Emacs translations
-(defun daselt-stump-translatedaselt-keys ()
+(defun daselt-stump-translate-daselt-keys ()
   "Return the key translations from Stump to Emacs.
 
 Used for `daselt--emacs-key-translations-alist'."
