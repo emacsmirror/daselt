@@ -85,6 +85,7 @@ in this directory that contain `customs' in their name."
 (defun daselt-icicles--reset-key-customs-from-backups ()
   "Reset icicles customs for keys to their backed-up values."
   (daselt-dirs-recurse-through-directory
+   (concat daselt-dirs-pkg-configs-directory "icicles/")
    (lambda (filepath) (daselt-dirs-act-on-sexps-in-file
                   filepath
                   (lambda () (let* ((blist (daselt-base-read-region))
@@ -100,7 +101,6 @@ in this directory that contain `customs' in their name."
                                         (if (boundp custbup)
                                             (setopt--set cust (symbol-value (symbol-value custbup))))))
                                     body))))))
-   (concat daselt-dirs-pkg-configs-directory "icicles/")
    (lambda (filepath) (and (daselt-bind-bindlist-p filepath)
                       (string-match-p "customs" (file-name-base filepath))))))
 
@@ -289,11 +289,11 @@ overridden. The new sort order is applied once sorting is enabled."
   (interactive "P")
   (let ((orders (delq nil icicle-sort-orders-alist))) ; Remove nil entries.
     (if (and (called-interactively-p 'interactive) icicle-inhibit-sort-p)
-        (icicle-msg-maybe-in-minibuffer "Cannot sort candidates now")
-      (if (and arg (not (consp arg)))
-          (icicle-reverse-sort-order)
-        (let* ((use-completion-p (if (integerp icicle-change-sort-order-completion)
-                                     (> (length (icicle-current-sort-functions orders))
+                                                                                                                                (icicle-msg-maybe-in-minibuffer "Cannot sort candidates now")
+                                                                  (if (and arg (not (consp arg)))
+                                                                                                                                  (icicle-reverse-sort-order)
+                                                                    (let* ((use-completion-p (if (integerp icicle-change-sort-order-completion)
+                                                                                                                                                             (> (length (icicle-current-sort-functions orders))
                                         icicle-change-sort-order-completion)
                                    icicle-change-sort-order-completion))
                (use-completion-p (or (and (not arg) use-completion-p) ; Resolve completion mode.
@@ -311,15 +311,15 @@ overridden. The new sort order is applied once sorting is enabled."
                                         (icicle-default-in-prompt-format-function
                                          (lambda (def) (format " (default: %s)" def))))
                                     (save-selected-window
-                                      (completing-read
+                                                                                                  (completing-read
                                        (format "New %ssort order: " (if alternativep
-                                                                        "alternative "
-                                                                      ""))
+                                                                                                                                                                                                "alternative "
+                                                                                                                                  ""))
                                        (icicle-current-sort-functions orders)
                                        nil t nil nil
                                        (car (rassoc (if alternativep
-                                                        icicle-alternative-sort-comparer
-                                                      icicle-sort-comparer)
+                                                                                                                                                                                icicle-alternative-sort-comparer
+                                                                                                                  icicle-sort-comparer)
                                                     orders))))))
                  ;; Apply chosen sort order.
                  (when (if alternativep icicle-alternative-sort-comparer icicle-sort-comparer)
@@ -333,11 +333,11 @@ overridden. The new sort order is applied once sorting is enabled."
                         (current-order-index (cl-position (icicle-current-sort-order alternativep)
                                                           order-names :test #'equal))
                         (previous-order-index (if current-order-index
-                                                  (mod (- current-order-index 1) (length order-names))
-                                                (1- (length order-names))))
+                                                                                                                                                                          (mod (- current-order-index 1) (length order-names))
+                                                                                                            (1- (length order-names))))
                         (next-order (nth previous-order-index order-names))
                         (preceding-order (if (> (length order-names) 1)
-                                             (nth (mod (- previous-order-index 1) (length order-names))
+                                                                                                                                                                     (nth (mod (- previous-order-index 1) (length order-names))
                                                   order-names)
                                            nil)))
                    (when (if alternativep icicle-alternative-sort-comparer icicle-sort-comparer)
@@ -359,7 +359,7 @@ overridden. The new sort order is applied once sorting is enabled."
            (icicle-propertize (concat next-order (and icicle-reverse-sort-p  ", REVERSED"))
                               'face 'icicle-msg-emphasis)
            (if preceding-order (format ".  Previous: %s" preceding-order) "")))
-        (when (fboundp 'completion--flush-all-sorted-completions)
+                                                                    (when (fboundp 'completion--flush-all-sorted-completions)
           (completion--flush-all-sorted-completions))))))
 
 (defun daselt-icicle-backward-cycle-incremental-completion () ; Consider binding to a suitable key in minibuffer.
@@ -429,19 +429,10 @@ This cycles among all possible values of the option in the reverse order."
               (daselt-icicles--reset-key-customs-from-backups))))
 
 ;;;; Setting icicles-mode-map
-;; This has to be done in a roundabout way because the icicle-mode-map is
-;; re-set when the mode is started.
-(daselt-bind-save-bindlist-as-variable
- '(icicle-mode-map
-;;;;; Coordinates
-;;;;;; M-C-
-;;;;;;; M-C-4
-;;;;;;;; M-C-4-0
-   (("M-C-" . (4 0 -2)))))
-
-;; (add-hook 'icicle-mode-hook (lambda () (daselt-bind-apply-bindlist daselt-icicle-mode-map-bindlist)))
-
-(add-hook 'icicle-mode-hook (lambda () (daselt-bind-apply-bindlist daselt-isearch-mode-map-bindlist)))
+(add-hook 'icicle-mode-hook
+          (lambda ()
+            (daselt-bind-apply-bindlist daselt-isearch-mode-map-bindlist)
+            (daselt-bind-apply-bindlist daselt-icicle-mode-map-bindlist)))
 
 ;;;; Provide
 (provide 'daselt-icicles)

@@ -1401,24 +1401,24 @@ coordinates)."
   (let* ((map (car blist))
          (body (cdr blist)))
     (mapcar (lambda (binding)
-                    (concat "(define-key " map " (kbd \""
+                      (concat "(define-key " map " (kbd \""
                       (daselt-base--escape-chars-in-str (daselt-bind-string binding))
                       "\"\) "
                       (let ((bindval (cdr binding)))
                         (if (stringp bindval)
-                                        (concat "\"" bindval "\"")
-                                (if (symbolp (eval bindval))
-                                          (concat "'" (symbol-name (eval bindval))))))
+                                            (concat "\"" bindval "\"")
+                                  (if (symbolp (eval bindval))
+                                              (concat "'" (symbol-name (eval bindval))))))
                       "\)\n"))
             body)))
 
-;;;;; Saving
+;;;;;; Saving
 (defun daselt-bind--set-bindlist-symbol (sym blist filename)
-    "Set SYM to BLIST and mention its setting place FILENAME in documentation."
-    (declare (ftype (function (symbol list string) symbol)))
-    (set sym blist)
-    (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
-    sym)
+      "Set SYM to BLIST and mention its setting place FILENAME in documentation."
+      (declare (ftype (function (symbol list string) symbol)))
+      (set sym blist)
+      (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
+      sym)
 
 (defun daselt-bind-save-bindlist-as-variable  (blist &optional pfx)
   "Save BLIST as a variable.
@@ -1427,69 +1427,77 @@ PFX is the prefix given to the saved bindlists. It is `daselt-' by default."
   (declare (ftype (function (list &optional string) (or symbol
                                                         ;; (list symbol) ; Compiler complains.
                                                         list))))
-  (let* ((pkgname (daselt-base-containing-directory-base-name (buffer-file-name)))
-         ;; (pkgsymb (intern pkgname))
-         (mapsymbdefaultname (concat pkgname "-mode-map"))
-         (pfx (or pfx "daselt"))
-         (filepath (buffer-file-name))
-         (head (daselt-bind-head blist)))
+  (let ((filepath (buffer-file-name))
+        (pfx (or pfx "daselt"))
+        (head (daselt-bind-head blist)))
+    (cl-flet* ((head-over-body (bblist)
+                 (and (daselt-bind-head bblist)
+                      (or (stringp (car bblist))  ; Let's ensure the head is a symbol
+                          (symbolp (car bblist))) ; or string.
+                      (not (daselt-bind-head (cdr bblist)))))
+               (name-if-symbol (elt)
+                 (if (symbolp elt)
+                     (symbol-name elt)
+                   elt)))
+      (if filepath
+          (let* ((pkgname (daselt-base-containing-directory-base-name filepath))
+                 (mapsymbdefaultname (concat pkgname "-mode-map"))
+                 (filename (file-name-nondirectory filepath))
+                 (filenamebase (file-name-base filepath))
+                 (symbol (if (string-match-p "special" filename)
+                             (intern (substring filenamebase 0 -1))
+                           (daselt-base-intern-from-parts
+                            (concat ; Mapconcat would insert two -'s for the empty string.
+                             pfx
+                             (if (string-match-p "-user-defined" filename)
+                                 "-user-defined"
+                               ""))
+                            mapsymbdefaultname
+                            "bindlist"))))
+            
+            (if (or (not head)
+                    (not (or (symbolp head)
+                             (stringp head))))
+                (daselt-bind--set-bindlist-symbol symbol blist filepath)
+              
+              (if (head-over-body blist)
+                  (let ((namecore (name-if-symbol (car blist))))
+                    (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
+                                                      blist
+                                                      filepath))
 
-    (if (or (not head)
-            (not (or (symbolp head)
-                     (stringp head))))
-        (let* ((filename (file-name-nondirectory filepath))
-               (filenamebase (file-name-base filepath))
-               (symbol (if (string-match-p "special" filename)
-                           (intern (substring filenamebase 0 -1))
-                         (daselt-base-intern-from-parts (concat ; Mapconcat would insert two -'s for the empty string.
-                                                         pfx
-                                                         (if (string-match-p "-user-defined" filename)
-                                                             "-user-defined"
-                                                           ""))
-                                                        mapsymbdefaultname
-                                                        "bindlist"))))
-          (daselt-bind--set-bindlist-symbol symbol blist filepath))
-
-      (cl-flet* ((head-over-body (bblist)
-                   (and (daselt-bind-head bblist)
-                        (or (stringp (car bblist))  ; Let's ensure the head is a symbol
-                            (symbolp (car bblist))) ; or string.
-                        (not (daselt-bind-head (cdr bblist)))))
-                 (name-if-symbol (elt)
-                   (if (symbolp elt)
-                       (symbol-name elt)
-                     elt)))
-
-        (if (head-over-body blist)
-            (let ((namecore (name-if-symbol (car blist))))
-              (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
-                                                blist
-                                                filepath))
-
-          ;; This should produce a list of bindlist symbols.
-          (daselt-base-funcalls-recursively
-           blist
-           `(((lambda (bblist &optional heads)
-                (let* ((pfx ,pfx)
-                       (filepath ,filepath)
-                       (head (daselt-bind-head bblist))
-                       (namecore (if (symbolp head)
-                                     (symbol-name head)
-                                   (if (stringp head)
-                                       head
-                                     (error "Expected a symbol or string a head of headed bindlist")))))
-                  (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
-                                                    bblist
-                                                    filepath)))
-              .
-              (lambda (idx lst &optional heads) ; Test
-                (let ((bblist (nth idx lst)))
-                  (and (daselt-bind-bindlist-p bblist)
-                       (not (daselt-bind-head (cdr bblist))))))))
-           (lambda (idx lst &optional _heads)
-             (let ((elt (nth idx lst)))
-               (daselt-bind-bindlist-p elt)))
-           nil nil #'append))))))
+                ;; This should produce a list of bindlist symbols.
+                (daselt-base-funcalls-recursively
+                 blist
+                 `(((lambda (bblist &optional heads)
+                      (let* ((pfx ,pfx)
+                             (filepath ,filepath)
+                             (head (daselt-bind-head bblist))
+                             (namecore (if (symbolp head)
+                                           (symbol-name head)
+                                         (if (stringp head)
+                                             head
+                                           (error "Expected a symbol or string a head of headed bindlist")))))
+                        (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist")
+                                                          bblist
+                                                          filepath)))
+                    .
+                    (lambda (idx lst &optional heads) ; Test
+                      (let ((bblist (nth idx lst)))
+                        (and (daselt-bind-bindlist-p bblist)
+                             (not (daselt-bind-head (cdr bblist))))))))
+                 (lambda (idx lst &optional _heads)
+                   (let ((elt (nth idx lst)))
+                     (daselt-bind-bindlist-p elt)))
+                 nil nil #'append))))
+        (if (not head)
+            (error "No bindlist name given and buffer not visiting a file")
+          (let ((namecore (if (stringp head)
+                              head
+                            (if (symbolp head)
+                                (symbol-name head)
+                              (error "Expected a symbol or string a head of headed bindlist")))))
+            (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist"))))))))
 
 ;;;;; Custom generation functions
 (defun daselt-bind-generate-replace-binding-strings-alist ()
@@ -1503,7 +1511,7 @@ is set to nil."
                       `(("C-g" . ,(daselt-bind-string `(("C-" . (1 1 -2)))))))
                     (unless daselt-bind-translate-keys
                       (mapcar (lambda (cns)
-                                  (let ((str (car cns)))
+                                (let ((str (car cns)))
                                   (cons str (string-replace "C-" "A-" str))))
                               daselt-bind-key-translations-alist)))))
 

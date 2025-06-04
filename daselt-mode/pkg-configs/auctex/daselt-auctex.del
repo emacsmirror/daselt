@@ -27,18 +27,21 @@
 ;;;; Functions
 ;;;;; Insertion
 (defun daselt-latex-insert-normpair-yas-snippet (&optional ARG)
-      "This command inserts a correctly spaced norm pair yas-snippet. If the region is active
-and usable, it inserts the norm pair around the region. It is bound to ∣ in LaTeX-mode,
-because their spacing otherwise is awful.
+      "This command inserts a correctly spaced norm pair yas-snippet.
 
-Without a prefix argument, it inserts a snippet like \\mathopen{∣}-\\mathclose{∣}.
+If the region is active and usable, it inserts the norm pair around the region.
+It is bound to ∣ in LaTeX-mode, because their spacing otherwise is awful.
+
+Without a prefix argument, it inserts a snippet like
+\\mathopen{∣}-\\mathclose{∣}.
 
 With a universal prefix argument C-u it just inserts a normal norm sign.
 
 With -2 as a prefix, it inserts a snippet like
 \\mathopen{\\mathsmaller{\\mathsmaller{∣}}}${1:-}\\mathclose{\\mathsmaller{\\mathsmaller{∣}}}.
 
-With -1 as a prefix, it inserts a snippet like \\mathopen{\\mathsmaller{∣}}${1:-}\\mathclose{\\mathsmaller{∣}}.
+With -1 as a prefix, it inserts a snippet like
+\\mathopen{\\mathsmaller{∣}}${1:-}\\mathclose{\\mathsmaller{∣}}.
 
 With 0 as a prefix, it inserts a snippet like \\left\\vert${1:-}\\right\\vert.
 
@@ -65,18 +68,21 @@ With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
           (t (yas-expand-snippet snippet)))))
 
 (defun daselt-latex-insert-othernormpair-yas-snippet (&optional ARG)
-  "This command inserts a correctly spaced ∥-norm pair yas-snippet. If the region is
-active and usable, it inserts the norm pair around the region. It is bound to ∥ in
-LaTeX-mode, because their spacing otherwise is awful.
+  "This command inserts a correctly spaced ∥-norm pair yas-snippet.
 
-Without a prefix argument, it inserts a snippet like \\mathopen{∥}-\\mathclose{∥}.
+If the region is active and usable, it inserts the norm pair around the region.
+It is bound to ∥ in LaTeX-mode, because their spacing otherwise is awful.
+
+Without a prefix argument, it inserts a snippet like
+\\mathopen{∥}-\\mathclose{∥}.
 
 With a universal prefix argument C-u it just inserts a normal norm sign.
 
 With -2 as a prefix, it inserts a snippet like
 \\mathopen{\\mathsmaller{\\mathsmaller{∥}}}${1:-}\\mathclose{\\mathsmaller{\\mathsmaller{∥}}}.
 
-With -1 as a prefix, it inserts a snippet like \\mathopen{\\mathsmaller{∥}}${1:-}\\mathclose{\\mathsmaller{∥}}.
+With -1 as a prefix, it inserts a snippet like
+\\mathopen{\\mathsmaller{∥}}${1:-}\\mathclose{\\mathsmaller{∥}}.
 
 With 0 as a prefix, it inserts a snippet like \\left\\|${1:-}\\right\\|.
 
@@ -107,7 +113,8 @@ With 3 as a prefix, it inserts \\bigg\\|${1:-}\\bigg\\|."
 
 ;;;;; Navigation
 (defun daselt-latex-forward-down-environment (&optional N)
-                                                                                    "Move into the N-th next environment.
+                                                                                    "Move
+into the N-th next environment.
 
 If there is no environment within the current environment, move to the beginning
 of the current environment. Skip the label if one exists.
@@ -196,15 +203,17 @@ With COUNT given, indent the COUNT-th nested environment point is in."
         (indent-region beg end)))))
 
 (defun daselt-latex-indent-section (&optional count)
-                                                            "Indent the LaTeX section point is currently in.
+                                                            "Indent the LaTeX
+                                                            section point is
+                                                            currently in.
 
 With COUNT given, indent the COUNT-th nested section point is in."
                                                             (declare (ftype (function (&optional natnum) t)))
                                                             (interactive "P")
                                                             (let ((count (or count 1)))
     (save-excursion
-                                                                (LaTeX-mark-section count)
-                                                                (indent-region (region-beginning) (region-end)))))
+                                                                    (LaTeX-mark-section count)
+                                                                    (indent-region (region-beginning) (region-end)))))
 
 
 ;;;;; Deletion
@@ -238,7 +247,7 @@ With COUNT given, indent the COUNT-th nested section point is in."
 (defun daselt-latex-kill-ring-delete-math-delimiters ()
   "Delete math delimiters from the first kill-ring entry."
   (interactive)
-  (daselt-latex-completing-kill-ring-delete-math-delimiters (car kill-ring)))
+  (daselt-latex-kill-ring-delete-math-delimiters-completing (car kill-ring)))
 
 
 ;;;;; Previews
@@ -272,14 +281,12 @@ Requires `math-preview'."
                                         (region-end)))
 
 (defun daselt-latex-refresh-buffer-previews ()
-                                                    "Refresh math previews in COUNTth environment.
+  "Refresh math previews in COUNTth environment.
 
 Requires `math-preview'."
-                                                    (declare (ftype (function nil t)))
-                                                    (interactive)
-                                                    (mark-whole-buffer)
-                                                    (daselt-latex-refresh-region-previews (region-beginning)
-                                        (region-end)))
+  (declare (ftype (function nil t)))
+  (interactive)
+  (daselt-latex-refresh-region-previews (point-min) (point-max)))
 
 
 ;; Better done with smartparens.
@@ -294,9 +301,9 @@ Requires `math-preview'."
 
 
 ;;;;; Searching
-(defun daselt-latex-isearchp-within-mathmode (a)
+(defun daselt-latex-isearchp-within-mathmode ()
   "This function does a search restricted to mathmode."
-  (interactive)  
+  (interactive)
   (let ((isearch-filter-predicate 'check-math-mode))
     (call-interactively #'isearch-forward)))
 
@@ -314,6 +321,13 @@ Requires `math-preview'."
  (type . ("string" "regexp"))
  (mquery . (("" "query-") ("" "query-"))))
 
+;; (defun daselt-latex-exchange-in-mathmode ()
+;;   "Exchange strings in mathmode"
+;;   (declare (ftype (function () t)))
+;;   (interactive)
+;;   (let ((isearch-filter-predicate 'check-math-mode))
+;;     (call-interactively #'daselt-exchange)))
+
 
 ;;;;; Reftex
 (defun daselt-reftex-throw-114 ()
@@ -329,17 +343,17 @@ Requires `math-preview'."
                 (throw 'myexit 82))
 
 (defun daselt-reftex-relabel (beg end)
-                                          "Relabel all LaTeX \\label commands in the region from BEG to END using
+  "Relabel all LaTeX \\label commands in the region from BEG to END using
 `reftex-label'.
 
 Searches for `\\label{...}', removes it, and then calls `reftex-label' to insert
 a new label."
-                                          (interactive "r")
-                                          ;; Ensure RefTeX is loaded
-                                          (require 'reftex)
-                                          (save-excursion
-                                            (goto-char beg)
-                                            (while (re-search-forward "\\\\label{[^}]+}" end t)
+  (interactive "r")
+  ;; Ensure RefTeX is loaded
+  (require 'reftex)
+  (save-excursion
+                                    (goto-char beg)
+                                    (while (re-search-forward "\\\\label{[^}]+}" end t)
       ;; Delete the old \label{...}
       (delete-region (match-beginning 0) (match-end 0))
       ;; Step back a bit so we're still within the environment

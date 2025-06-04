@@ -191,17 +191,25 @@ user."
   :group 'daselt)
 
 (defcustom daselt-dirs-keep-read-buffers
-              nil
-              "Keep buffers open after daselt-functions read them.
+                        nil
+                        "Keep buffers open after daselt-functions read them.
 
 If non-nil, previously read buffers will not be closed."
-              :type 'boolean
-              :group 'daselt-dirs)
+                        :type 'boolean
+                        :group 'daselt-dirs)
+
+(defcustom daselt-dirs-debug
+  nil
+  "Display errors where normally they would be made into warnings.
+
+Used for debugging."
+  :type 'boolean
+  :group 'daselt-dirs)
 
 ;;;; Constants
 (defconst daselt-dirs-pkg-type-modifiers-list
-  '("user-defined" "special")
-  "Type modifiers that files in `daselt-dirs-pkg-configs-directory ' can have.")
+          '("user-defined" "special")
+          "Type modifiers that files in `daselt-dirs-pkg-configs-directory ' can have.")
 
 (defconst daselt-dirs-supported-type-data-list
   `(("del" "lispcode" ("trim-lines-of" "fill-docstrings-of" "add-el-symlink-for") ("byte-compile" "load-elc-or"))
@@ -469,12 +477,15 @@ them into warnings. Send resulting forms to `d-act-on-pkg-files-by-type'. See
                                (let ((fun (car funtype))
                                      (type (cdr funtype)))
                                  (cons (lambda (filepath)
-                                         (condition-case err
+                                         (if daselt-dirs-debug
                                              (daselt-dirs--execute-and-maybe-kill-file-buffer
                                               filepath fun)
-                                           (error (warn "Error in %s:\n%s"
-                                                        filepath
-                                                        (error-message-string err)))))
+                                           (condition-case err
+                                               (daselt-dirs--execute-and-maybe-kill-file-buffer
+                                                filepath fun)
+                                             (error (warn "Error in %s:\n%s"
+                                                          filepath
+                                                          (error-message-string err))))))
                                        type)))
                              funtypes)))
     (daselt-dirs-act-on-pkg-files-by-type newfuntypes dir customt sortfun pfx)))
@@ -537,7 +548,7 @@ results can be collected using `list' or `append' if UNTANGLE is non-nil."
     (daselt-base-trim-lines)))
 
 (defun daselt-dirs-load-elc-or-lispcode-in-file (fname)
-  "If an `elc'-version of FNAME exists, load it.
+  "If an `elc`-version of FNAME exists, load it.
 
 Otherwise, load FNAME."
   (declare (ftype (function (string) boolean)))

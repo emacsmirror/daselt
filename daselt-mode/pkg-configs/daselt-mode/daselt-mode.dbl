@@ -176,6 +176,7 @@
  (("C-" . (6 -1 1)) . #'text-scale-increase)
  (("C-" . (6 -1 2)) . #'other-frame)
  (("C-" . (6 -1 3)) . #'delete-frame)
+ (("C-" . (6 -1 4)) . #'hs-toggle-hiding)
  (("C-" . (6 -1 5)) . #'daselt-insert-and-return)
 
 ;;;;;;;; C-6-0
@@ -520,6 +521,10 @@
  (("M-C-" . (5 1 1)) . #'citar-create-note)
 
 ;;;;;;; M-C-6
+;;;;;;;; M-C-6--1
+ (("M-C-" . (6 -1 -4)) . #'hs-hide-all)
+ (("M-C-" . (6 -1 4)) . #'hs-show-all)
+
 ;;;;;;;; M-C-6-1
  (("M-C-" . (6 1 -3)) . #'projectile-kill-buffers)
  (("M-C-" . (6 1 2)) . #'projectile-switch-to-buffer-other-window)
@@ -748,6 +753,7 @@
 
 ;;;;;;; s-C-6
 ;;;;;;;; s-C-6--1
+ (("s-C-" . (6 -1 -4)) . #'hs-hide-level)
  (("s-C-" . (6 -1 -1)) . #'default-text-scale-decrease)
  (("s-C-" . (6 -1 1)) . #'default-text-scale-increase)
 
