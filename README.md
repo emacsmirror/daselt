@@ -23,4 +23,5 @@ This package is [Daselt](https://gitlab.com/nameiwillforget/daselt)'s [Emacs](ht
 
 - `daselt-tri` can generate [Tridactyl](https://github.com/tridactyl/tridactyl) configurations from bindlists.
 
+Daselt's Emacs module can now be installed through MELPA. However, to use Daselt, it is necessary to install some of its other components too.
 For more information, please visit the main page of [Daselt](https://gitlab.com/nameiwillforget/daselt).
