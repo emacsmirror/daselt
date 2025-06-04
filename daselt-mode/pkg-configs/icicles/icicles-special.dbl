@@ -1,0 +1,7 @@
+;;;; icicle-mode-map
+(icicle-mode-map
+;;;;; Coordinates
+;;;;;; M-C-
+;;;;;;; M-C-4
+;;;;;;;; M-C-4-0
+ (("M-C-" . (4 0 -2))))
