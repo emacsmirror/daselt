@@ -1,7 +1,7 @@
 # D-Emacs
 This package is [Daselt](https://gitlab.com/nameiwillforget/daselt)'s [Emacs](https://www.gnu.org/software/emacs/) module. Daselt is a global configuration scheme for a GNU/Linux system, providing, among other things, a custom keyboard layout and a shortcut meta-layout. Daselt's Emacs component consists of several parts:
 
-- `daselt-base` provides a host of functions for the other packages that might be useful for building other packages as well.
+- `daselt-base` provides a host of functions for the other components that might be useful for building other packages as well.
 
 - `daselt-coords` provides functions to for the coordinatization of layouts.
 
