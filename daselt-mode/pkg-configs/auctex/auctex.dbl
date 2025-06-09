@@ -20,6 +20,7 @@
  (("C-" . (4 0 1)) . #'reftex-reference)
  (("C-" . (4 0 3)) . #'latex/end-of-environment)
  (("C-" . (4 0 4)) . #'daselt-latex-forward-down-environment)
+ (("C-" . (4 0 5)) . #'TeX-documentation-texdoc)
 
 ;;;;;;;; C-4-1
  (("C-" . (4 1 -4)) . #'latex/hide-show-all)

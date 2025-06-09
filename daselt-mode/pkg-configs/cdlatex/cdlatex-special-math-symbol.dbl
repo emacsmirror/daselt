@@ -105,8 +105,8 @@
  ((6 -1 4) "\\antisymdiff")
 
 ;;;;;;;; 6-0
- ((6 0 -2) "\\leq" "\\preceq" "\\precsim")
- ((6 0 2) "\\geq" "\\succeq" "\\succsim")
+ ((6 0 -2) "\\leq" "\\preceq" "\\precsim" "\\nleq")
+ ((6 0 2) "\\geq" "\\succeq" "\\succsim" "\\ngeq")
 
 ;;;;;;; 8
 ;;;;;;;; 8--1

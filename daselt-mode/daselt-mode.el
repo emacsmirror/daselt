@@ -52,6 +52,10 @@
 ;; and this will never be called
 (defvar daselt-stump-pkg-configs-directory)
 
+;; These are generated when starting the mode.
+(defvar daselt-xkb-layouts)
+(defvar daselt-dfk-layout)
+
 (defvar daselt-mode-eval-log nil
   "Log for `daselt-mode' eval conditions.")
 ;;;; Initialization

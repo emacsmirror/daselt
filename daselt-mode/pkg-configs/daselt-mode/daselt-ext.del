@@ -663,6 +663,7 @@ needed."
         (cdlatex-maybe-expand))
     (maybe-expand-abbrev)
 
+    (push-mark)
     (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)))
 
 ;;;;;; Minibuffer

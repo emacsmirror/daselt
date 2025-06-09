@@ -1414,11 +1414,11 @@ coordinates)."
 
 ;;;;;; Saving
 (defun daselt-bind--set-bindlist-symbol (sym blist filename)
-      "Set SYM to BLIST and mention its setting place FILENAME in documentation."
-      (declare (ftype (function (symbol list string) symbol)))
-      (set sym blist)
-      (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
-      sym)
+  "Set SYM to BLIST and mention its setting place FILENAME in documentation."
+  (declare (ftype (function (symbol list string) symbol)))
+  (set sym blist)
+  (put sym 'variable-documentation (format "This bindlist was read in from %s." filename))
+  sym)
 
 (defun daselt-bind-save-bindlist-as-variable  (blist &optional pfx)
   "Save BLIST as a variable.
@@ -1497,7 +1497,7 @@ PFX is the prefix given to the saved bindlists. It is `daselt-' by default."
                             (if (symbolp head)
                                 (symbol-name head)
                               (error "Expected a symbol or string a head of headed bindlist")))))
-            (daselt-bind--set-bindlist-symbol (daselt-base-intern-from-parts pfx namecore "bindlist"))))))))
+            (set (daselt-base-intern-from-parts pfx namecore "bindlist") blist)))))))
 
 ;;;;; Custom generation functions
 (defun daselt-bind-generate-replace-binding-strings-alist ()
@@ -1511,7 +1511,7 @@ is set to nil."
                       `(("C-g" . ,(daselt-bind-string `(("C-" . (1 1 -2)))))))
                     (unless daselt-bind-translate-keys
                       (mapcar (lambda (cns)
-                                (let ((str (car cns)))
+                                      (let ((str (car cns)))
                                   (cons str (string-replace "C-" "A-" str))))
                               daselt-bind-key-translations-alist)))))
 
@@ -1648,7 +1648,7 @@ bindlist is applied to is not loaded, application will throw an error."
                  t)))
       (if (and witheval bufname evalcnd)
           (daselt-bind-with-eval-unless-init
-           bufname #'apply-bindlist)
+           bufname #'apply-bindlist evalcnd)
         (apply-bindlist)))
     nil))
 
