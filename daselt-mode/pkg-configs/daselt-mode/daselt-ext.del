@@ -628,8 +628,13 @@ Mode-specific contexts can be edited by changing
 
 (cl-defun daselt-C-3-0-2 ()
   "Expand Yasnippet, Cdlatex item, abbrev, Corfu expansion if available.
+
 Also, go to the next item or environment, open a footnote, or open something as
-needed."
+needed.
+
+If point changes position, add the previous position to the `mark-ring'.
+This is helpful for when you tried to expand something and it didn't work
+for some reason."
   (interactive)
   (cl-flet ((yas-maybe-expand ()
               (if (yas-maybe-expand-abbrev-key-filter t)
@@ -663,8 +668,31 @@ needed."
         (cdlatex-maybe-expand))
     (maybe-expand-abbrev)
 
-    (push-mark)
-    (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)))
+    (let ((pos (point))
+          (buf (current-buffer)))
+
+      (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)
+
+      ;; If point has moved, save the previous position to the mark ring
+      (unless (and (eq buf (current-buffer))
+                   (= pos (point)))
+        (when (mark t)
+          (let ((old (nth mark-ring-max mark-ring))
+                (history-delete-duplicates nil))
+            (add-to-history 'mark-ring (copy-marker (mark-marker)) mark-ring-max t)
+            (when old
+              (set-marker old nil))))
+        (set-marker (mark-marker) pos (current-buffer))
+        ;; Don't push the mark on the global mark ring if the last global
+        ;; mark pushed was in this same buffer.
+        (unless (and global-mark-ring
+                     (eq (marker-buffer (car global-mark-ring)) (current-buffer)))
+          (let ((old (nth global-mark-ring-max global-mark-ring))
+                (history-delete-duplicates nil))
+            (add-to-history
+             'global-mark-ring (copy-marker (mark-marker)) global-mark-ring-max t)
+            (when old
+              (set-marker old nil))))))))
 
 ;;;;;; Minibuffer
 (defun daselt-move-right-or-exit ()
