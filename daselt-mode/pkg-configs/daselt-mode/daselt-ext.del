@@ -634,7 +634,9 @@ needed.
 
 If point changes position, add the previous position to the `mark-ring'.
 This is helpful for when you tried to expand something and it didn't work
-for some reason."
+for some reason.
+
+In math-mode, no abbrevs are expanded."
   (interactive)
   (cl-flet ((yas-maybe-expand ()
               (if (yas-maybe-expand-abbrev-key-filter t)
@@ -666,10 +668,12 @@ for some reason."
     (if daselt-yasnippet (yas-maybe-expand))
     (if (and daselt-cdlatex cdlatex-mode)
         (cdlatex-maybe-expand))
-    (maybe-expand-abbrev)
+    (unless (texmathp)
+      (maybe-expand-abbrev))
 
     (let ((pos (point))
-          (buf (current-buffer)))
+          (buf (current-buffer))
+          (marker (point-marker)))
 
       (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)
 
@@ -679,10 +683,10 @@ for some reason."
         (when (mark t)
           (let ((old (nth mark-ring-max mark-ring))
                 (history-delete-duplicates nil))
-            (add-to-history 'mark-ring (copy-marker (mark-marker)) mark-ring-max t)
+            (add-to-history 'mark-ring marker mark-ring-max t)
             (when old
               (set-marker old nil))))
-        (set-marker (mark-marker) pos (current-buffer))
+        ;; (set-marker (mark-marker) pos (current-buffer))
         ;; Don't push the mark on the global mark ring if the last global
         ;; mark pushed was in this same buffer.
         (unless (and global-mark-ring
@@ -1196,25 +1200,25 @@ files and directories (starting with a period) are left out."
   (interactive "sString: \nsReplacement: \nDDirectory: ")
   (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                          (if (stringp filetest)
-                              (lambda (fname) (if (string-match-p filetest fname) t))
-                            filetest)
+                                                                                                                                                                                                                              (if (stringp filetest)
+                                                                                                                                                                                                                                  (lambda (fname) (if (string-match-p filetest fname) t))
+                                                                                                                              filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                         (lambda (fname) (if (string-match-p dirtest fname) t))
-                       dirtest)))
+                                                                                                                                                                                                                             (lambda (fname) (if (string-match-p dirtest fname) t))
+                                                                                                                         dirtest)))
     (save-excursion
-      (daselt-dirs-recurse-through-directory
+                                                                                                        (daselt-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-            (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
+                                                                                                              (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-              (let ((file (nth idx flist)))
+                                                                                                                (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-      (set-buffer buf))))
+                                                                                                        (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun daselt-open-file-in-new-emacs (&optional filename)

@@ -140,4 +140,4 @@
 ;;;;;; M-
 ;;;;;;; M-4
 ;;;;;;;; M-4--1
- (("M-" . (4 -1 -3)) . #'d-dired-permanentely-delete))
+ (("M-" . (4 -1 -3)) . #'daselt-dired-permanently-delete))

@@ -9,7 +9,6 @@
  (("C-" . (1 -1 4)) . #'corfu-quick-jump)
 
 ;;;;;;;; C-1-0
- (("C-" . (1 0 -5)) . #'corfu-info-documentation)
  (("C-" . (1 0 -4)) . #'corfu-first)
  (("C-" . (1 0 -3)) . #'corfu-previous)
  (("C-" . (1 0 -2)) . #'corfu-quit)
@@ -30,4 +29,9 @@
  (("C-" . (7 0 -3)) . #'prescient-toggle-char-fold)
  (("C-" . (7 0 -2)) . #'prescient-toggle-regexp)
  (("C-" . (7 0 2)) . #'prescient-toggle-fuzzy)
- (("C-" . (7 0 3)) . #'prescient-toggle-anchored))
+ (("C-" . (7 0 3)) . #'prescient-toggle-anchored)
+
+;;;;;; s-
+;;;;;;; s-1
+;;;;;;;; s-1-0
+ (("s-" . (1 0 -5)) . #'corfu-info-documentation))

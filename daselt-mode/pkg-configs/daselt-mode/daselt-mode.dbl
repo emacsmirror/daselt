@@ -310,6 +310,7 @@
  (("M-" . (1 0 -2)) . #'embark-act)
  (("M-" . (1 0 -1)) . #'daselt-replace-string-backward)
  (("M-" . (1 0 1)) . #'replace-string)
+ (("M-" . (1 0 2)) . #'tea-timer)
  (("M-" . (1 0 3)) . #'windresize)
  (("M-" . (1 0 4)) . #'save-buffers-kill-emacs)
  (("M-" . (1 0 5)) . #'org-brain-visualize)
@@ -469,6 +470,7 @@
  (("M-C-" . (1 0 -1)) . #'daselt-query-replace-string-backward)
  (("M-C-" . (1 0 1)) . #'query-replace)
  (("M-C-" . (1 0 3)) . #'rename-file-and-buffer)
+ (("M-C-" . (1 0 4)) . #'server-edit)
  (("M-C-" . (1 0 5)) . #'eww-search-words)
 
 ;;;;;;;; M-C-1-1

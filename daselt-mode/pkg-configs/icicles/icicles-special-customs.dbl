@@ -1,12 +1,13 @@
-;;;; icicles-mode-map
+ ;;;; icicles-mode-map
 (
 ;;;;; Coordinates
 ;;;;;; C-
 ;;;;;;; C-4
 ;;;;;;;; C-4--1
  (("C-" . (4 -1 -4)) quote icicle-search-from-isearch-keys)
- (("C-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-keys)
  (("C-" . (4 -1 -2)) quote icicle-apropos-complete-keys)
+ (("C-" . (4 -1 -2)) quote icicle-prefix-complete-keys)
+ (("C-" . (4 -1 2)) quote icicle-apropos-cycle-previous-keys)
  (("C-" . (4 -1 3)) quote icicle-apropos-cycle-next-keys)
 
 ;;;;;;;; C-4-0
@@ -16,7 +17,6 @@
 ;;;;;;;; C-4-1
  (("C-" . (4 1 -4)) quote icicle-isearch-history-insert-keys)
  (("C-" . (4 1 -3)) quote icicle-prefix-cycle-previous-keys)
- (("C-" . (4 1 -2)) quote icicle-prefix-complete-keys)
  (("C-" . (4 1 3)) quote icicle-prefix-cycle-next-keys)
  (("C-" . (4 1 4)) quote icicle-isearch-complete-keys)
 
@@ -39,7 +39,8 @@
 ;;;;;;; s-C-4
 ;;;;;;;; s-C-4--1
  (("s-C-" . (4 -1 -3)) quote icicle-apropos-cycle-previous-help-keys)
- (("s-C-" . (4 -1 -2)) quote icicle-apropos-complete-no-display-keys)
+ (("s-C-" . (4 -1 -2)) quote icicle-prefix-complete-no-display-keys)
+ (("s-C-" . (4 -1 2)) quote icicle-apropos-complete-no-display-keys)
  (("s-C-" . (4 -1 3)) quote icicle-apropos-cycle-previous-help-keys)
 
 ;;;;;;;; s-C-4-0
@@ -49,7 +50,6 @@
 
 ;;;;;;;; s-C-4-1
  (("s-C-" . (4 1 -3)) quote icicle-prefix-cycle-previous-help-keys)
- (("s-C-" . (4 1 -2)) quote icicle-prefix-complete-no-display-keys)
  (("s-C-" . (4 1 3)) quote icicle-prefix-cycle-next-help-keys)
 
 ;;;;;; s-H-
@@ -183,8 +183,6 @@
 ;;;;;;; C-4
 ;;;;;;;; C-4--1
  (("C-" . (4 -1 -5)) . #'icicle-insert-key-description)
- (("C-" . (4 -1 -1)) . #'icicle-apropos-complete-and-narrow)
- (("C-" . (4 -1 2)) . #'icicle-apropos-complete-and-exit)
  (("C-" . (4 -1 4)) . #'daselt-icicle-avy-jump)
 
 ;;;;;;;; C-4-0
@@ -200,7 +198,9 @@
 ;;;;;;; C-7
 ;;;;;;;; C-7--1
  (("C-" . (7 -1 -4)) . #'icicle-keep-only-past-inputs)
- (("C-" . (7 -1 2)) . #'icicle-candidate-read-fn-invoke)
+ (("C-" . (7 -1 -2)) . #'icicle-apropos-complete-and-narrow)
+ (("C-" . (7 -1 1)) . #'icicle-candidate-read-fn-invoke)
+ (("C-" . (7 -1 2)) . #'icicle-apropos-complete-and-exit)
  (("C-" . (7 -1 5)) . #'icicle-candidate-set-save-selected)
 
 ;;;;;;;; C-7-0
