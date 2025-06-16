@@ -431,8 +431,9 @@ This cycles among all possible values of the option in the reverse order."
 ;;;; Setting icicles-mode-map
 (add-hook 'icicle-mode-hook
           (lambda ()
-            (daselt-bind-apply-bindlist daselt-isearch-mode-map-bindlist)
-            (daselt-bind-apply-bindlist daselt-icicle-mode-map-bindlist)))
+            (when icicle-mode
+              (daselt-bind-apply-bindlist daselt-isearch-mode-map-bindlist)
+              (daselt-bind-apply-bindlist daselt-icicle-mode-map-bindlist))))
 
 ;;;; Provide
 (provide 'daselt-icicles)
