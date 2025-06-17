@@ -28,15 +28,15 @@
 
 ;;; Code:
 
-(require'daselt-base)
-(require'daselt-coords)
-(require'daselt-bind)
+(require 'daselt-base)
+(require 'daselt-coords)
+(require 'daselt-bind)
 
 ;; Automatically generated
 (defvar daselt-xkb-layouts)
 
 (defcustom daselt-tri-bindlist-file
-  (condition-case nil (concat (file-name-directory (buffer-file-name)) "daselt-tri.dbl")
+  (condition-case nil (concat daselt-emacs-dir "/daselt-tri-configs/daselt-tri.dbl")
     (error nil))
   "The bindlist file from which the Tridactyl config is generated."
   :type  'directory

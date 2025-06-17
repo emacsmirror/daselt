@@ -67,6 +67,11 @@
 
 ;;; Code:
 
+
+(defconst daselt-emacs-dir
+  (file-name-directory (or load-file-name (buffer-file-name)))
+  "Directory Daselt's Emacs component is installed in.")
+  
 (require 'daselt-base)
 (require 'daselt-coords)
 (require 'daselt-xkb)
@@ -74,6 +79,7 @@
 (require 'daselt-bind)
 (require 'daselt-dirs)
 (require 'daselt-mode)
+
 
 (provide 'daselt)
 ;;; daselt.el ends here

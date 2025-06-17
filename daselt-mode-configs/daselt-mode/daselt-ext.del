@@ -1228,7 +1228,8 @@ Defaults to the current buffer's file if FILENAME isn't specified."
   (interactive)
   (let ((filename (if filename filename
                     (daselt-base--escape-chars-in-str
-                     (buffer-file-name)
+                     (unless (buffer-file-name)
+                       (error "Buffer not visiting a file"))
                      (list (rx-to-string `(group " ")))))))
     (shell-command (format "emacs --no-desktop --debug-init %s &" filename))))
 

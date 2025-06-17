@@ -138,7 +138,7 @@
 ;; `daselt-dirs-' and suffixed by `-save'.
 
 ;; For an example of how a config for `daselt-dirs' can look in practice, see
-;; the `pkg-configs'-directory of `daselt-mode'.
+;; the `daselt-mode-configs`-directory at the root of Daselt.
 
 ;; This module is distributed under the GNU General Public License v3.0 and is
 ;; maintained as part of the Daselt project. Contributions and enhancements are
@@ -209,7 +209,7 @@ Used for debugging."
 ;;;; Constants
 (defconst daselt-dirs-pkg-type-modifiers-list
           '("user-defined" "special")
-          "Type modifiers that files in `daselt-dirs-pkg-configs-directory ' can have.")
+          "Type modifiers that files in `daselt-dirs-pkg-configs-directory' can have.")
 
 (defconst daselt-dirs-supported-type-data-list
   `(("del" "lispcode" ("trim-lines-of" "fill-docstrings-of" "add-el-symlink-for") ("byte-compile" "load-elc-or"))
@@ -360,7 +360,7 @@ This means its base name doesn’t start with a dot and does not contain # or ~.
 
 ;;;;; pkg-configs
 (defun daselt-dirs-act-on-pkg-files-by-type (funtypes &optional dir customt sortfun pfx)
-  "Apply functions to files of specified types in `pkg-configs'.
+  "Apply functions to files of specified types in pkg-configs.
 
 This function operates on files located in the `pkg-configs' directory. It
 applies each function specified in FUNTYPES to files that match a corresponding
@@ -699,7 +699,7 @@ See `daselt-bind-apply-bindlist' for more documentation."
   "Backup and bind all the bindlists in the file BLISTFILE.
 
 BLISTFILE can be selected interactively from available bindlists in
-`daselt-directory/pkg-configs/daselt/'. If BLISTFILE is nil, defaults to the
+`daselt-dirs-pkg-configs-directory'. If BLISTFILE is nil, defaults to the
 current buffer's file name. BACKUPPFX is forwarded to
 `daselt-dirs-with-eval-apply-bindlist'."
   (declare (ftype (function (&optional string string) void)))
@@ -746,7 +746,7 @@ PFX is the prefix for the save and backup variables."
   "Backup and bind all the bindlists in the file BLISTFILE.
 
 BLISTFILE can be selected interactively from available bindlists in
-`daselt-directory/pkg-configs/daselt/'. If BLISTFILE is nil, defaults to the
+`daselt-dirs-pkg-configs-directory'. If BLISTFILE is nil, defaults to the
 current buffer's file name. BACKUPPFX is forwarded to
 `daselt-dirs-with-eval-apply-bindlist'."
   (declare (ftype (function (&optional string string) void)))
@@ -1012,7 +1012,9 @@ DIRECTORY is `daselt-dirs-pkg-configs-directory' by default."
 
 ;;;;;; dbl
 (defun daselt-dirs--exchange-coordinates (coordlistlist &optional modlist coordsonly directory)
-  "Exchange coordinates in all bindlists in `daselt/pkg-configs' or DIRECTORY.
+  "Exchange coordinates in all bindlists in DIRECTORY.
+
+DIRECTORY is `daselt-dirs-pkg-configs-directory' by default.
 
 COORDLISTLIST is a list of lists where the kth entry in the nth contained list
 specifies the value that is to be used to replace the values matching the k-1th
@@ -1042,7 +1044,9 @@ MODLIST, COORDSONLY and DIRECTORY are forwarded to
   nil)
 
 (defun daselt-dirs--sort-and-format-bindlists (&optional coordsonly prefun modlist directory)
-  "Recurse through `daselt/pkg-configs' and format all bindlists within.
+  "Recurse through `daselt-dirs-pkg-configs-directory' and format all bindlists
+within.
+
 If PREFUN is specified, it denotes a function to run on each bindlist once its
 bidings are in an elaborate form.
 
@@ -1050,10 +1054,7 @@ If COORDSONLY is t, prefer coordinates to suffixes when reducing elaborate
 bindings.
 
  If MODLIST is given, use it to order modifiers instead of
- `daselt-bind-modifiers-list'.
-
-If DIRECTORY is given, it should be a subdirectory of pkg-configs. In that
-case, recurse through DIRECTORY."
+ `daselt-bind-modifiers-list'."
   (declare (ftype (function (&optional boolean (function (list) list) list
                                        ;; (list integer) ; Compiler complains.
                                        string)
@@ -1094,7 +1095,7 @@ PFX is `daselt-' by default."
 
 ;;;;; Finding files
 (defun daselt-dirs--pick-pkg-file-by-type (type &optional subdir nodefault)
-  "Select a file in pkg-configs by TYPE.
+  "Select a file in `daselt-dirs-pkg-configs-directory' by TYPE.
 
 TYPE can be any expression that can act as a type specifier for
 `daselt-dirs-act-on-pkg-files-by-type'. Restrict to files in SUBDIR if
