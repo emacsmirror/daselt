@@ -176,12 +176,10 @@ don't do anything."
   (declare (ftype (function () string)))
   (unless (daselt-stump--pkg-configs-directory-test daselt-stump-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
-                               (concat (file-name-directory
-                                        (buffer-file-name))
-                                       "daselt-stump/")))
+                               (concat daselt-emacs-dir "daselt-stump-configs/")))
                           (if (daselt-stump--pkg-configs-directory-test current-pkg-dir)
-                              (customize-save-variable 'daselt-stump-pkg-configs-directory
-                                                       current-pkg-dir)
+                              (customize-set-variable 'daselt-stump-pkg-configs-directory
+                                                      current-pkg-dir)
                             (daselt-stump--pkg-configs-directory-enter-manually)))
       (error (daselt-stump--pkg-configs-directory-enter-manually)))))
 

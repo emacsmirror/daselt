@@ -431,12 +431,10 @@ don't do anything."
   (declare (ftype (function () string)))
   (unless (daselt-mode--pkg-configs-directory-test daselt-mode-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
-                               (concat (file-name-directory
-                                        daselt-emacs-dir)
-                                       "daselt-mode-configs/")))
+                               (concat daselt-emacs-dir "daselt-mode-configs/")))
                           (if (daselt-mode--pkg-configs-directory-test current-pkg-dir)
-                              (customize-save-variable 'daselt-mode-pkg-configs-directory
-                                                       current-pkg-dir)
+                              (customize-set-variable 'daselt-mode-pkg-configs-directory
+                                                      current-pkg-dir)
                             (daselt-mode--pkg-configs-directory-enter-manually)))
       (error (daselt-mode--pkg-configs-directory-enter-manually)))))
 
@@ -493,7 +491,7 @@ resetting the keyboard layout as well."
                              'standard)))
           (customize-save-variable 'daselt-dfk-keyboard-layout-type
                                    (daselt-base-remove-text-properties-from-string
-                                    (completing-read "Do you have an ansi or iso-keyboard (you have ansi if your left Shift-key is larger than CapsLock)? " daselt-dfk-supported-layout-types))))
+                                    (completing-read "Do you have an ansi or iso-keyboard (you have ansi if your left Shift-key is larger than CapsLock)? " daselt-dfk-supported-layout-types nil t))))
 
         (if daselt-bind-translate-keys
             ;; Add the key translations for C-g and ("C-" . (1 1 -2)) if they aren't there yet.
