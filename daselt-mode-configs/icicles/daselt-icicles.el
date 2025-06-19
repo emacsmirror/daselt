@@ -1,1 +1,0 @@
-/home/alex/projects/d-ext/d-emacs/daselt-mode/pkg-configs/icicles/daselt-icicles.del
