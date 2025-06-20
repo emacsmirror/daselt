@@ -28,7 +28,7 @@
 ;; between Emacs and the StumpWM window manager. It automates the generation of
 ;; StumpWM configuration files based on daselt-bindlists, allowing users
 ;; to define and manage keybindings, modules, and custom settings within Emacs,
-;; and provides a standard-configuration in the `daselt-stump-configs'-directory.
+;; and provides a standard-configuration in the `stump-configs'-directory.
 
 ;; Key Features:
 ;; - **Automatic Configuration Generation**: Transforms daselt-bind-bindlists
@@ -55,7 +55,7 @@
 
 ;; Usage:
 ;; The main function is `daselt-stump-generate-init'. Its output can be
-;; configured using d-stumps `daselt-stump-configs'-directory and the options in the
+;; configured using d-stumps `stump-configs'-directory and the options in the
 ;; group `daselt-stump'.
 
 ;;; Code:
@@ -115,7 +115,7 @@
   "List of cons cells defining exceptions for key remapping in StumpWM modes.
 
 Each cons cell consists of a string representing a directory name in
-`daselt-stump-configs' \(without its path) and a symbol representing a
+`stump-configs' \(without its path) and a symbol representing a
 mode for which key remappings should be suspended.
 
 If this option is set to (nil), then it is re-set by
@@ -146,7 +146,7 @@ should be in."
   "Specify manually where the pkg-configs-directory is."
   (declare (ftype (function () string)))
   (let* ((use-file-dialog nil) ; Dialog box doesn't let you select folder (or I was doing something wrong).
-         (filename (read-file-name "Please point daselt-stump to its pkg-configs directory (it's called daselt-stump-configs and in the daselt-root directory, include trailing backslash): "
+         (filename (read-file-name "Please point daselt-stump to its pkg-configs directory (it's called stump-configs and in the daselt-root directory, include trailing backslash): "
                                    nil nil
                                    #'daselt-stump--pkg-configs-directory-test)))
     (customize-save-variable 'daselt-stump-pkg-configs-directory
@@ -163,7 +163,7 @@ don't do anything."
   (declare (ftype (function () string)))
   (unless (daselt-stump--pkg-configs-directory-test daselt-stump-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
-                               (concat daselt-emacs-dir "daselt-stump-configs/")))
+                               (concat daselt-emacs-dir "stump-configs/")))
                           (if (daselt-stump--pkg-configs-directory-test current-pkg-dir)
                               (customize-set-variable 'daselt-stump-pkg-configs-directory
                                                       current-pkg-dir)

@@ -150,15 +150,14 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
   :group 'daselt-mode)
 
 (defcustom daselt-C-1-0-4-contexts-list
-                                  '((pdf-view-mode . pdf-view-next-page-command)
+  '((pdf-view-mode . pdf-view-next-page-command)
     (minibuffer-mode . next-line-or-history-element)
     (image-mode . image-next-frame)
     (vterm-copy-mode . scroll-up-command)
-    (vterm-mode . vterm-send-next)
-    (LaTeX-mode . latex/forward-environment))
-                                  "Actions for `daselt-C-1-0-1' across different modes."
-                                  :type '(repeat (cons symbol sexp))
-                                  :group 'daselt-mode)
+    (vterm-mode . vterm-send-next))
+  "Actions for `daselt-C-1-0-1' across different modes."
+  :type '(repeat (cons symbol sexp))
+  :group 'daselt-mode)
 
 
 ;;;; Functions

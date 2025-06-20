@@ -36,7 +36,7 @@
 (defvar daselt-xkb-layouts)
 
 (defcustom daselt-tri-bindlist-file
-  (condition-case nil (concat daselt-emacs-dir "/daselt-tri-configs/daselt-tri.dbl")
+  (condition-case nil (concat daselt-emacs-dir "tri-configs/daselt-tri.dbl")
     (error nil))
   "The bindlist file from which the Tridactyl config is generated."
   :type  'directory

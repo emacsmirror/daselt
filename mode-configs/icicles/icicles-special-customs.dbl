@@ -1,4 +1,4 @@
- ;;;; icicles-mode-map
+;;;; icicles-mode-map
 (
 ;;;;; Coordinates
 ;;;;;; C-
@@ -71,6 +71,11 @@
 ;;;;; Coordinates
 ;;;;;; C-
 ;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 -1)) . #'icicle-apropos-complete-and-widen)
+ (("C-" . (4 -1 1)) . #'icicle-apropos-complete-and-narrow)
+ (("C-" . (4 -1 2)) . #'icicle-apropos-complete)
+
 ;;;;;;;; C-4-0
  (("C-" . (4 0 1)) . #'icicle-insert-string-at-point)
 

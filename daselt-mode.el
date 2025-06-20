@@ -26,7 +26,7 @@
 
 ;; Define `daselt-mode', the implementation of the Daselt shortcut-layout in
 ;; Emacs and provide commands needed to start it. Commands bound to keys are in
-;; `daselt-mode-configs/daselt/daselt-ext.del'.
+;; `daselt-mode-configs/daselt-mode/daselt-ext.del'.
 
 ;;; Code:
 ;;;; Preamble

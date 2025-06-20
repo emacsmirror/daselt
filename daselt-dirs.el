@@ -138,7 +138,7 @@
 ;; `daselt-dirs-' and suffixed by `-save'.
 
 ;; For an example of how a config for `daselt-dirs' can look in practice, see
-;; the `daselt-mode-configs`-directory at the root of Daselt.
+;; the `mode-configs`-directory at the root of Daselt.
 
 ;; This module is distributed under the GNU General Public License v3.0 and is
 ;; maintained as part of the Daselt project. Contributions and enhancements are
