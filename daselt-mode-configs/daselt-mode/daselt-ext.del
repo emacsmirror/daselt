@@ -172,9 +172,11 @@ If no match is found, DEFAULT is called instead."
   (let ((cmd (cl-loop for mcons in alist
                       for mmode = (car mcons)
                       for mcmd = (cdr mcons)
-                      do (if (or (and (boundp mmode) (symbol-value mmode))
+                      do (if (or (and (boundp mmode)
+                                      (memq mmode minor-mode-alist)
+                                      (symbol-value mmode))
                                  (derived-mode-p mmode))
-                                                                                             (cl-return mcmd))
+                             (cl-return mcmd))
                       finally return default)))
     (funcall-interactively cmd)))
 
