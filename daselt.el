@@ -67,11 +67,24 @@
 
 ;;; Code:
 
-
 (defconst daselt-emacs-dir
   (file-name-directory (or load-file-name (buffer-file-name)))
   "Directory Daselt's Emacs component is installed in.")
-  
+
+;; Put here so it loads outside of daselt-stump.el
+(defgroup daselt-stump
+  nil
+  "Customization options for daselt-stump in Emacs."
+  :group 'daselt
+  :prefix "daselt-stump-")
+
+(defcustom daselt-stump
+  nil
+  "Non-nil means StumpWM integration with daselt-stump is active."
+  :type 'boolean
+  :group 'daselt-stump)
+
+
 (require 'daselt-base)
 (require 'daselt-coords)
 (require 'daselt-xkb)

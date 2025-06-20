@@ -546,6 +546,7 @@ resetting the keyboard layout as well."
 
         ;; Set constants
         (when (bound-and-true-p daselt-stump)
+          (require 'daselt-stump)
           (setopt daselt-bind-outside-translations-alist
                   (daselt-stump-translate-daselt-keys))
 
