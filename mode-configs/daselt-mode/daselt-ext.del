@@ -640,9 +640,9 @@ for some reason.
 In math-mode, no abbrevs are expanded."
   (interactive)
   (cl-flet ((yas-maybe-expand ()
-              (if (yas-maybe-expand-abbrev-key-filter t)
-                  (progn (yas-expand)
-                         (cl-return-from daselt-C-3-0-2))))
+              (when (yas-maybe-expand-abbrev-key-filter t)
+                (yas-expand)
+                (cl-return-from daselt-C-3-0-2)))
 
             (cdlatex-maybe-expand ()
               (let ((pos (point)) expr math-mode)
@@ -666,11 +666,13 @@ In math-mode, no abbrevs are expanded."
               (if (expand-abbrev)
                   (cl-return-from daselt-C-3-0-2))))
 
-    (if daselt-yasnippet (yas-maybe-expand))
-    (if (and daselt-cdlatex cdlatex-mode)
-        (cdlatex-maybe-expand))
+    (when daselt-yasnippet (yas-maybe-expand))
+    (when (and daselt-cdlatex cdlatex-mode)
+      (cdlatex-maybe-expand))
 
-    (tempo-expand-if-complete)
+    (when (and (fboundp #'tempo-expand-if-complete)
+               (tempo-expand-if-complete))
+      (cl-return-from daselt-C-3-0-2))
 
     (unless (texmathp)
       (maybe-expand-abbrev))
@@ -1204,25 +1206,25 @@ files and directories (starting with a period) are left out."
   (interactive "sString: \nsReplacement: \nDDirectory: ")
   (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                                                                                                                                                                                                                              (if (stringp filetest)
-                                                                                                                                                                                                                                  (lambda (fname) (if (string-match-p filetest fname) t))
-                                                                                                                              filetest)
+                          (if (stringp filetest)
+                              (lambda (fname) (if (string-match-p filetest fname) t))
+                            filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                                                                                                                                                                                                                             (lambda (fname) (if (string-match-p dirtest fname) t))
-                                                                                                                         dirtest)))
+                         (lambda (fname) (if (string-match-p dirtest fname) t))
+                       dirtest)))
     (save-excursion
-                                                                                                        (daselt-dirs-recurse-through-directory
+      (daselt-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-                                                                                                              (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
+            (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-                                                                                                                (let ((file (nth idx flist)))
+              (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-                                                                                                        (set-buffer buf))))
+      (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun daselt-open-file-in-new-emacs (&optional filename)

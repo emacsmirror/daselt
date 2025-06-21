@@ -26,7 +26,7 @@
 
 ;; Define `daselt-mode', the implementation of the Daselt shortcut-layout in
 ;; Emacs and provide commands needed to start it. Commands bound to keys are in
-;; `daselt-mode-configs/daselt-mode/daselt-ext.del'.
+;; `mode-configs/daselt-mode/daselt-ext.del'.
 
 ;;; Code:
 ;;;; Preamble
@@ -119,7 +119,7 @@ If non-nil, the tutorial will be displayed upon entering the mode."
   nil
   "The pkg-configs-directory of `daselt-mode'.
 
-This should be the directory named `daselt-mode-configs' in the root directory
+This should be the directory named `mode-configs' in the root directory
 of Daselt."
   :type 'directory
   :group 'daselt-mode)
@@ -417,8 +417,8 @@ The keyboard-layout loaded is the d-xkb-variant specified by
          (filename (read-file-name "Please point daselt-mode to its pkg-configs directory (in the root directory of Daselt, include trailing backslash): "
                                    nil nil
                                    #'daselt-mode--pkg-configs-directory-test)))
-    (customize-save-variable 'daselt-mode-pkg-configs-directory
-                             filename)
+    (customize-set-variable 'daselt-mode-pkg-configs-directory
+                            filename)
     filename))
 
 (defun daselt-mode--find-pkg-configs-directory ()
@@ -431,7 +431,7 @@ don't do anything."
   (declare (ftype (function () string)))
   (unless (daselt-mode--pkg-configs-directory-test daselt-mode-pkg-configs-directory)
     (condition-case nil (let ((current-pkg-dir
-                               (concat daselt-emacs-dir "daselt-mode-configs/")))
+                               (concat daselt-emacs-dir "mode-configs/")))
                           (if (daselt-mode--pkg-configs-directory-test current-pkg-dir)
                               (customize-set-variable 'daselt-mode-pkg-configs-directory
                                                       current-pkg-dir)
