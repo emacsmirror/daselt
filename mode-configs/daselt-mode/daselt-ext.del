@@ -628,7 +628,7 @@ Mode-specific contexts can be edited by changing
   (daselt--funcall-first-mode-match daselt-C-1-0-4-contexts-list #'scroll-up-command))
 
 (cl-defun daselt-C-3-0-2 ()
-  "Expand Yasnippet, Cdlatex item, abbrev, Corfu expansion if available.
+  "Expand Yasnippet, Cdlatex item, tempo tag, abbrev, Corfu expansion if available.
 
 Also, go to the next item or environment, open a footnote, or open something as
 needed.
@@ -669,6 +669,9 @@ In math-mode, no abbrevs are expanded."
     (if daselt-yasnippet (yas-maybe-expand))
     (if (and daselt-cdlatex cdlatex-mode)
         (cdlatex-maybe-expand))
+
+    (tempo-expand-if-complete)
+
     (unless (texmathp)
       (maybe-expand-abbrev))
 

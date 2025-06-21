@@ -622,6 +622,8 @@
 ;;;;;;;; s-3--1
  (("s-" . (3 -1 -3)) . #'just-one-space)
  (("s-" . (3 -1 -2)) . #'xref-find-references)
+ (("s-" . (3 -1 -1)) . #'tempo-backward-mark)
+ (("s-" . (3 -1 1)) . #'tempo-forward-mark)
  (("s-" . (3 -1 2)) . #'xref-find-definitions)
  (("s-" . (3 -1 3)) . #'delete-trailing-whitespace)
 
@@ -634,6 +636,8 @@
  (("s-" . (3 1 -5)) . #'daselt-backward-delete-all-space)
  (("s-" . (3 1 -4)) . #'debug-on-entry)
  (("s-" . (3 1 -3)) . #'append-next-kill)
+ (("s-" . (3 1 -2)) . #'tempo-add-tag)
+ (("s-" . (3 1 2)) . #'tempo-complete-tag)
  (("s-" . (3 1 4)) . #'cancel-debug-on-entry)
  (("s-" . (3 1 5)) . #'delete-all-space)
 
