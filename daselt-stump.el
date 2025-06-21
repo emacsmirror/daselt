@@ -134,7 +134,7 @@ If this option is set to (nil), then it is re-set by
        (file-exists-p (concat dir "stumpwm"))))
 
 (defcustom daselt-stump-pkg-configs-directory
-  nil
+  (concat daselt-emacs-dir "stump-configs/")
   "Pkg-configs directory for `daselt-stump'.
 
 This is the directory all `dbl' and `dcn' files for the daselt-stump-config
