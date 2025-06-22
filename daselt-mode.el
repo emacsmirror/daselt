@@ -57,25 +57,26 @@
 (defvar daselt-dfk-layout)
 
 (defvar daselt-mode-eval-log nil
-  "Log for `daselt-mode' eval conditions.")
+        "Log for `daselt-mode' eval conditions.")
+(defvar daselt-emacs-dir)
 ;;;; Initialization
 ;; ;;;;; Let's read in the dxkb-file
 ;; (daselt-xkb-generate-layouts)
 
 ;;;;; Customs
 (defgroup daselt-mode
-                        nil
-                        "This group houses all customization options for daselt."
-                        :group 'daselt
-                        :prefix "daselt-mode-")
+  nil
+  "This group houses all customization options for daselt."
+  :group 'daselt
+  :prefix "daselt-mode-")
 
 (defcustom daselt-mode-put-daselt-mode-map-into-emulation
-          t
-          "If non-nil, add `daselt-mode-map' to `emulation-mode-map-alists'.
+  t
+  "If non-nil, add `daselt-mode-map' to `emulation-mode-map-alists'.
 
 Maps in this list supersede most other keymaps."
-          :type 'boolean
-          :group 'daselt-mode)
+  :type 'boolean
+  :group 'daselt-mode)
 
 (defcustom daselt-mode-globalize-daselt-mode-map
   nil

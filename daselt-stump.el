@@ -81,6 +81,7 @@
 (defvar daselt-stump-binwarp)
 (defvar daselt-xkb-layouts)
 
+(defvar daselt-emacs-dir)
 (require 'daselt-coords)
 (require 'daselt-xkb)
 (require 'daselt-bind)

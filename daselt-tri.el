@@ -35,6 +35,7 @@
 ;; Automatically generated
 (defvar daselt-xkb-layouts)
 
+(defvar daselt-emacs-dir)
 (defcustom daselt-tri-bindlist-file
   (condition-case nil (concat daselt-emacs-dir "tri-configs/daselt-tri.dbl")
     (error nil))
