@@ -190,13 +190,13 @@ Doesn't have any effect if neither of the options `daselt-mode-redaselt' or
   :group 'daselt-mode)
 
 (defcustom daselt-mode-exchange-H-2-H-6
-                        nil
-                        "Set to t to exchange H-2 with H-6 bindings.
+  nil
+  "Set to t to exchange H-2 with H-6 bindings.
 
 On some systems this might be necessary because H in combination with other
 modifiers acts as a level 5 shift for currently unknown reasons."
-                        :type 'boolean
-                        :group 'daselt-mode)
+  :type 'boolean
+  :group 'daselt-mode)
 
 (defcustom daselt-insert-latex-normpairs
   t
@@ -206,6 +206,7 @@ Inserts a norm-pair yasnippet when typing (8 0 -5) and (8 0 5).
 Refer to `daselt-latex-insert-normpair-yas-snippet' for details."
   :type 'boolean
   :group 'daselt-mode)
+
 
 ;;;;; Maps
 (defvar-keymap daselt-mode-miscellaneous-map)
@@ -473,7 +474,11 @@ resetting the keyboard layout as well."
   :interactive t
   :lighter " Daselt"
   (if daselt-mode
-      (progn  ;; Set `daselt-dirs-pkg-configs-directory' to `daselt-mode-pkg-configs-directory' while `daselt-mode' is on.
+      (progn
+        ;; Just to be sure that `daselt-emacs-dir' is set (if possible).
+        (require 'daselt)
+
+        ;; Set `daselt-dirs-pkg-configs-directory' to `daselt-mode-pkg-configs-directory' while `daselt-mode' is on.
         (unless (daselt-mode--pkg-configs-directory-test daselt-dirs-pkg-configs-directory)
           (daselt-mode--find-pkg-configs-directory)
           (if (bound-and-true-p daselt-dirs-pkg-configs-directory)

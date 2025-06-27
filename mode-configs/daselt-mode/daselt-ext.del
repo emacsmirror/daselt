@@ -33,11 +33,13 @@
 (require 'checkdoc)
 (require 'outline)
 
+(declare-function tempo-expand-if-complete "tempo.el")
 (defvar daselt-cdlatex)
 (defvar daselt-yasnippet)
 (defvar cdlatex-command-alist-comb)
 (defvar daselt-special-read-answer-bindlist)
 (defvar daselt-base-definition-types-list)
+
 
 ;;;; Constants
 (defconst daselt-backward-command-list
@@ -49,8 +51,8 @@
   "List of commands for which analogs are created that open a new buffer.")
 
 (defconst daselt-subsentence-command-list
-    (remq nil `(backward-sentence forward-sentence backward-kill-sentence kill-sentence ,(if (package-installed-p 'expand-region) 'er/mark-sentence) daselt-backward-transpose-sentences))
-    "List of commands for which subsentence analogs are created in.")
+  (remq nil `(backward-sentence forward-sentence backward-kill-sentence kill-sentence ,(if (package-installed-p 'expand-region) 'er/mark-sentence) daselt-backward-transpose-sentences))
+  "List of commands for which subsentence analogs are created in.")
 
 ;;;; Customs
 (defcustom daselt-mode-tab-bar-status-functions
@@ -97,42 +99,42 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
   :group 'daselt-mode)
 
 (defcustom daselt-C-1-0-2-contexts-list
-      '((rectangle-mark-mode . (lambda () (rectangle-forward-char 1)))
+  '((rectangle-mark-mode . (lambda () (rectangle-forward-char 1)))
     (minibuffer-mode . daselt-move-right-or-exit)
-    (image-mode . image-forward-hscroll)
-    (pdf-view-mode . image-forward-hscroll)
+    (image-mode . (lambda () (image-forward-hscroll 1)))
+    (pdf-view-mode . (lambda () (image-forward-hscroll 1)))
     (vterm-mode . vterm-send-right))
-      "Actions for `daselt-C-1-0-2' in different modes."
-      :type '(repeat (cons symbol sexp))
-      :group 'daselt-mode)
+  "Actions for `daselt-C-1-0-2' in different modes."
+  :type '(repeat (cons symbol sexp))
+  :group 'daselt-mode)
 
 (defcustom daselt-C-1-0--2-contexts-list
-      '((rectangle-mark-mode . (lambda () (rectangle-backward-char 1)))
-    (image-mode . image-backward-hscroll)
-    (pdf-view-mode . image-backward-hscroll)
+  '((rectangle-mark-mode . (lambda () (rectangle-backward-char 1)))
+    (image-mode . (lambda () (image-backward-hscroll 1)))
+    (pdf-view-mode . (lambda () (image-backward-hscroll 1)))
     (vterm-mode . vterm-send-left))
-      "Actions for `daselt-C-1-0--2' in different modes."
-      :type '(repeat (cons symbol sexp))
-      :group 'daselt-mode)
+  "Actions for `daselt-C-1-0--2' in different modes."
+  :type '(repeat (cons symbol sexp))
+  :group 'daselt-mode)
 
 (defcustom daselt-C-1-0--3-contexts-list
-    '((vterm-copy-mode . previous-line)
+  '((vterm-copy-mode . previous-line)
     (vterm-mode . vterm-send-up)
     (minibuffer-mode . previous-line-or-history-element)
     (rectangle-mark-mode . (lambda () (rectangle-previous-line 1)))
-    (pdf-view-mode . (lambda () pdf-view-scroll-down-or-previous-page 1))
+    (pdf-view-mode . (lambda () (pdf-view-previous-line-or-previous-page 1)))
     (image-mode . image-previous-line)
     (eshell-hist-mode . eshell-previous-input))
-    "Actions for `daselt-C-1-0--3' across different modes."
-    :type '(repeat (cons symbol sexp))
-    :group 'daselt-mode)
+  "Actions for `daselt-C-1-0--3' across different modes."
+  :type '(repeat (cons symbol sexp))
+  :group 'daselt-mode)
 
 (defcustom daselt-C-1-0-3-contexts-list
   '((vterm-copy-mode . next-line)
     (vterm-mode . vterm-send-down)
     (minibuffer-mode . next-line-or-history-element)
     (rectangle-mark-mode . (lambda () rectangle-next-line 1))
-    (pdf-view-mode . (lambda () pdf-view-scroll-up-or-next-page 1))
+    (pdf-view-mode . (lambda () (pdf-view-scroll-up-or-next-page 1)))
     (image-mode . image-next-line)
     (eshell-hist-mode . eshell-next-input))
   "Actions for `daselt-C-1-0-3' across different modes."
@@ -158,6 +160,8 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
   "Actions for `daselt-C-1-0-1' across different modes."
   :type '(repeat (cons symbol sexp))
   :group 'daselt-mode)
+
+
 
 
 ;;;; Functions
@@ -279,11 +283,11 @@ value as its cdr."
 
 ;;;;; Replace hardcoded keybinds
 (defun daselt-checkdoc-interactive-loop (start-here showstatus findfunc)
-        "`checkdoc-interactive-loop` customized to include Daselt shortcuts.
+  "`checkdoc-interactive-loop` customized to include Daselt shortcuts.
 
 See the primary command for documentation."
-        ;; Determine where to start the test
-        (let* ((begin (prog1 (point)
+  ;; Determine where to start the test
+  (let* ((begin (prog1 (point)
 		  (if (not start-here) (goto-char (point-min)))))
 	 ;; Assign a flag to spellcheck flag
 	 (checkdoc-spellcheck-documentation-flag
@@ -300,49 +304,49 @@ See the primary command for documentation."
          (fixchar (string-to-char (daselt-coords-binding '(1 0 2))))
          (inschar (string-to-char (daselt-coords-binding '(1 0 -2)))))
     (save-window-excursion
-            (if (not (car err-list)) (setq err-list nil))
-            ;; Include whatever function point is in for good measure.
-            (beginning-of-defun)
-            (while err-list
+      (if (not (car err-list)) (setq err-list nil))
+      ;; Include whatever function point is in for good measure.
+      (beginning-of-defun)
+      (while err-list
 	(goto-char (cdr (car err-list)))
 	;; The cursor should be just in front of the offending doc string
 	(setq cdo (if (stringp (car (car err-list)))
-	                          (save-excursion (make-overlay
+	              (save-excursion (make-overlay
 				       (point) (progn (forward-sexp 1)
 						      (point))))
                     (make-overlay
 		     (checkdoc-error-start (car (car err-list)))
 		     (checkdoc-error-end (car (car err-list))))))
 	(unwind-protect
-	                (progn
-	            (overlay-put cdo 'face 'highlight)
-	            ;; Make sure the whole doc string is visible if possible.
-	            (sit-for 0)
-	            (if (and (= (following-char) ?\")
+	    (progn
+	      (overlay-put cdo 'face 'highlight)
+	      ;; Make sure the whole doc string is visible if possible.
+	      (sit-for 0)
+	      (if (and (= (following-char) ?\")
 		       (not (pos-visible-in-window-p
 			     (save-excursion (forward-sexp 1) (point))
 			     (selected-window))))
-		              (let ((l (count-lines (point)
+		  (let ((l (count-lines (point)
 					(save-excursion
-					        (forward-sexp 1) (point)))))
+					  (forward-sexp 1) (point)))))
 		    (if (> l (window-height))
-			            (recenter 1)
-		            (recenter (/ (- (window-height) l) 2))))
+			(recenter 1)
+		      (recenter (/ (- (window-height) l) 2))))
 		(recenter))
-	            (message "%s (C-h,%s%s)" (checkdoc-error-text
+	      (message "%s (C-h,%s%s)" (checkdoc-error-text
                                         (car (car err-list)))
 		       (if (checkdoc-error-unfixable (car (car err-list)))
-			               "" (concat (char-to-string fixchar) ","))
+			   "" (concat (char-to-string fixchar) ","))
                        (mapconcat #'char-to-string
                                   (list nextchar prevchar quitchar inschar)
                                   ","))
-	            (save-excursion
-		      (goto-char (checkdoc-error-start (car (car err-list))))
-		      (if (not (pos-visible-in-window-p))
-		                (recenter (- (window-height) 2)))
-		      (setq c (read-event)))
-	            (if (not (integerp c)) (setq c ??))
-	            (cond
+	      (save-excursion
+		(goto-char (checkdoc-error-start (car (car err-list))))
+		(if (not (pos-visible-in-window-p))
+		    (recenter (- (window-height) 2)))
+		(setq c (read-event)))
+	      (if (not (integerp c)) (setq c ??))
+	      (cond
 	       ;; Exit condition
 	       ((eq c ?\C-g) (signal 'quit nil))
 	       ;; Request an auto-fix
@@ -360,15 +364,15 @@ See the primary command for documentation."
 		  (setq fixed (not (eq checkdoc-autofix-flag
 				       'automatic-then-never)))
 		  (if (not fixed)
-		                  (progn
-			      (message "A Fix was not available.")
-			      (sit-for 2))
+		      (progn
+			(message "A Fix was not available.")
+			(sit-for 2))
 		    (setq err-list (cdr err-list))))
 		(beginning-of-defun)
 		(let ((ne (funcall findfunc nil)))
 		  (if ne
-		                  (setq err-list (cons ne err-list))
-		          (cond ((not err-list)
+		      (setq err-list (cons ne err-list))
+		    (cond ((not err-list)
 			   (message "No More Stylistic Errors.")
 			   (sit-for 2))
 			  (t
@@ -379,21 +383,21 @@ See the primary command for documentation."
 	       ((eq c nextchar)
 		(let ((ne (funcall findfunc nil)))
 		  (if (not ne)
-		                  (if showstatus
-			              (setq returnme err-list
+		      (if showstatus
+			  (setq returnme err-list
 				err-list nil)
 			(if (not err-list)
-			                (message "No More Stylistic Errors.")
-			        (message "No Additional style errors.  Continuing..."))
+			    (message "No More Stylistic Errors.")
+			  (message "No Additional style errors.  Continuing..."))
 			(sit-for 2))
 		    (setq err-list (cons ne err-list)))))
 	       ;; Go backwards in the list of errors
 	       ((eq c prevchar)
 		(if (/= (length err-list) 1)
-		                (progn
-		            (setq err-list (cdr err-list))
-		            (goto-char (cdr (car err-list)))
-		            (beginning-of-defun))
+		    (progn
+		      (setq err-list (cdr err-list))
+		      (goto-char (cdr (car err-list)))
+		      (beginning-of-defun))
 		  (message "No Previous Errors.")
 		  (sit-for 2)))
 	       ;; Edit the buffer recursively.
@@ -405,8 +409,8 @@ See the primary command for documentation."
 		(beginning-of-defun)
 		(let ((ne (funcall findfunc nil)))
 		  (if (not ne)
-		                  (if showstatus
-			              (setq returnme err-list
+		      (if showstatus
+			  (setq returnme err-list
 				err-list nil)
 			(message "No More Stylistic Errors.")
 			(sit-for 2))
@@ -419,16 +423,16 @@ See the primary command for documentation."
 	       ;; Goofy stuff
 	       (t
                 (if (get-buffer-window checkdoc--help-buffer)
-		                (progn
-                            (delete-window (get-buffer-window checkdoc--help-buffer))
-                            (kill-buffer checkdoc--help-buffer))
+		    (progn
+                      (delete-window (get-buffer-window checkdoc--help-buffer))
+                      (kill-buffer checkdoc--help-buffer))
                   (with-output-to-temp-buffer checkdoc--help-buffer
                     (with-current-buffer standard-output
                       (insert
                        "Checkdoc Keyboard Summary:\n"
                        (if (checkdoc-error-unfixable (car (car err-list)))
-                                       ""
-                               (concat
+                           ""
+                         (concat
                           (format "%s    - auto Fix this warning without asking" fixchar)
                           " (if available.)\n"
                           "         Very complex operations will still query.\n"))
@@ -480,15 +484,15 @@ Parameters:
  Returns: A list of the replacement strings corresponding to each element in
  `lst'."
   (cl-flet ((obj-or-name (obj) (if (symbolp obj)
-                                           (symbol-name obj)
-                                     obj)))
+                                   (symbol-name obj)
+                                 obj)))
     (mapcar (lambda (obj)
-                  (let* ((ocnsp (consp obj))
+              (let* ((ocnsp (consp obj))
                      (str (if ocnsp (obj-or-name (car obj))
                             (obj-or-name obj)))
                      (repl (if ocnsp
-                                       (cdr obj)
-                                 (funcall fun obj))))
+                               (cdr obj)
+                             (funcall fun obj))))
                 (daselt-replace-string-throughout-directory str repl dir filetest dirtest allfiles)
 
                 repl))
@@ -507,9 +511,9 @@ If `tab-bar-mode' is off, it remains off after executing COMMAND."
 ;;;;; Commands
 ;;;;;; Modifiers
 (defun daselt-MetaSuper-next-cmd ()
-            "Apply Meta and Super modifiers to the next event."
-            (interactive)
-            (execute-kbd-macro
+  "Apply Meta and Super modifiers to the next event."
+  (interactive)
+  (execute-kbd-macro
    (vector
     (event-apply-modifier
      (event-apply-modifier
@@ -578,30 +582,41 @@ Move up ARG levels; if INVISIBLE-OK is non-nil, consider invisible lines."
 
 ;;;;;; Context-Specific behavior
 (defun daselt-C-1-0-2 ()
-      "Contextual command on `C-(1 0 2)'.
+  "Contextual command on `C-(1 0 2)'.
 
 Mode-specific contexts can be edited by changing `daselt-C-1-0-2-contexts-list`.
 Default behavior is to move cursor one character forward."
-      (interactive)
-      (daselt--funcall-first-mode-match daselt-C-1-0-2-contexts-list #'forward-char))
+  (interactive)
+  (daselt--funcall-first-mode-match daselt-C-1-0-2-contexts-list #'forward-char))
+
+(defun daselt-C-1--1-0 ()
+  "Like `back-button-local-backward but interacts better with `daselt-C-3-0-2'."
+  (declare (ftype (function () t)))
+  (interactive)
+  (cl-letf (((symbol-function 'back-button-push-mark)
+             (lambda ()
+               (if (eq last-command #'daselt-C-3-0-2)
+                   (set-marker (mark-marker) (point) (current-buffer))
+                 (push-mark)))))
+    (back-button-local-backward)))
 
 (defun daselt-C-1-0--2 ()
-      "Contextual command on `C-(1 0 -2)'.
+  "Contextual command on `C-(1 0 -2)'.
 
 Mode-specific contexts can be edited by changing
 `daselt-C-1-0--2-contexts-list`. Default behavior is to move cursor one
 character backward."
-      (interactive)
-      (daselt--funcall-first-mode-match daselt-C-1-0--2-contexts-list #'backward-char))
+  (interactive)
+  (daselt--funcall-first-mode-match daselt-C-1-0--2-contexts-list #'backward-char))
 
 (defun daselt-C-1-0--3 ()
-      "Contextual command on `C-(1 0 -3)'.
+  "Contextual command on `C-(1 0 -3)'.
 
 Mode-specific contexts can be edited by changing
 `daselt-C-1-0--3-contexts-list'. Default behavior is to move cursor one line
 up."
-      (interactive)
-      (daselt--funcall-first-mode-match daselt-C-1-0--3-contexts-list #'previous-line))
+  (interactive)
+  (daselt--funcall-first-mode-match daselt-C-1-0--3-contexts-list #'previous-line))
 
 (defun daselt-C-1-0-3 ()
   "Contextual command on `C-(1 0 3)'.
@@ -639,6 +654,11 @@ for some reason.
 
 In math-mode, no abbrevs are expanded."
   (interactive)
+
+  ;; If we're using `daselt-C-3-0-2-mixed-abbrevs', then we should
+  ;; calculate a syntax-table in which the symbols we're using are characters.
+  ;; We only need to calculate that table once per buffer, saving CPU cycles.
+
   (cl-flet ((yas-maybe-expand ()
               (when (yas-maybe-expand-abbrev-key-filter t)
                 (yas-expand)
@@ -663,7 +683,9 @@ In math-mode, no abbrevs are expanded."
                   (goto-char pos))))
 
             (maybe-expand-abbrev ()
-              (if (expand-abbrev)
+              (if (if daselt-abbrev-chain
+                      (abbrev-chain-expand)
+                    (expand-abbrev))
                   (cl-return-from daselt-C-3-0-2))))
 
     (when daselt-yasnippet (yas-maybe-expand))
@@ -693,6 +715,7 @@ In math-mode, no abbrevs are expanded."
             (when old
               (set-marker old nil))))
         ;; (set-marker (mark-marker) pos (current-buffer))
+
         ;; Don't push the mark on the global mark ring if the last global
         ;; mark pushed was in this same buffer.
         (unless (and global-mark-ring
@@ -709,8 +732,8 @@ In math-mode, no abbrevs are expanded."
   "Exit if at the end of the minibuffer, otherwise move char right."
   (interactive)
   (if (eobp)
-                                                                                                                          (exit-minibuffer)
-                                                              (forward-char)))
+      (exit-minibuffer)
+    (forward-char)))
 
 ;;;;;; Yanking
 (defun daselt-yank-or-org-roam-node-insert ()
@@ -736,13 +759,12 @@ In math-mode, no abbrevs are expanded."
 
 ;;;;;; Killing
 (defun daselt-kill-defun (&optional arg)
-                                  "Kill the current defun, marking the active
-                                  region and killing it.
+  "Kill the current defun, marking the active region and killing it.
 
 ARG determines the scope of the kill."
-                                  (interactive "p")
-                                  (mark-defun arg)
-                                  (kill-region (region-beginning) (region-end)))
+  (interactive "p")
+  (mark-defun arg)
+  (kill-region (region-beginning) (region-end)))
 
 
 (defun daselt-backward-kill-line (&optional arg)
@@ -774,8 +796,8 @@ ARG determines the scope of the kill."
   "Insert string `lambda'. With ARG, insert 'λ' symbol."
   (interactive "P")
   (if arg
-                                                          (insert "λ")
-                              (insert "lambda")))
+      (insert "λ")
+    (insert "lambda")))
 
 
 ;;;;;; Declaring
@@ -785,12 +807,12 @@ ARG determines the scope of the kill."
   ;; Check if the thing at point is a symbol
   (let ((sym (symbol-at-point)))
     (if (not (and sym (fboundp sym)))
-                        (message "No function at point.")
-              ;; If it is a function, find where it is defined
-              (let* ((function-location (find-lisp-object-file-name sym (symbol-function sym)))
+        (message "No function at point.")
+      ;; If it is a function, find where it is defined
+      (let* ((function-location (find-lisp-object-file-name sym (symbol-function sym)))
              (args (help-function-arglist sym t)))
         (if (not function-location)
-                            (message "Cannot find function location."))
+            (message "Cannot find function location."))
         ;; Prepare the declare-function expression
         (let ((declare-statement
                (format "(declare-function %s \"%s\" %s)"
@@ -798,27 +820,27 @@ ARG determines the scope of the kill."
                        (if function-location (file-name-sans-extension
                                               (file-name-nondirectory function-location)))
                        (if args
-                                           (format "%s" (mapcar (lambda (arg) (if (symbolp arg) arg (car arg))) args))
-                                 "nil"))))
+                           (format "%s" (mapcar (lambda (arg) (if (symbolp arg) arg (car arg))) args))
+                         "nil"))))
           (cl-flet ()
             (save-excursion (if (progn (goto-char (point-min))
                                        (daselt-base-search-at-line-start "\(declare-function"
-                                                                          t))
-                                                (progn (beginning-of-line)
+                                                                         t))
+                                (progn (beginning-of-line)
                                        (insert (daselt-base-append-newlines 1 declare-statement)))
                               (if (daselt-base-search-at-line-start "\(require" t)
-                                                  (progn (while (re-search-forward
+                                  (progn (while (re-search-forward
                                                  (rx line-start
                                                      (* (or ";" " "))
                                                      "(require"))
                                            (end-of-line))
                                          (insert (daselt-base-prepend-newlines 2 declare-statement)))
                                 (if (daselt-base-search-at-line-start ";;;; Preamble")
-                                                    (progn (end-of-line)
+                                    (progn (end-of-line)
                                            (insert (daselt-base-surround-by-newlines
                                                     1 1 declare-statement)))
                                   (if (daselt-base-search-at-line-start ";;; Code")
-                                                      (progn (end-of-line)
+                                      (progn (end-of-line)
                                              (insert (format "\n;;;; Preamble\n%s"
                                                              declare-statement))))))))))))))
 
@@ -829,21 +851,21 @@ The produced statement will be added to the preamble of the current file."
   (interactive)
   (let ((sym (symbol-at-point)))
     (if (not sym)
-            (message "No symbol under point.")
-        (let ((defvar-statement (concat "(defvar " (symbol-name sym) ")")))
+        (message "No symbol under point.")
+      (let ((defvar-statement (concat "(defvar " (symbol-name sym) ")")))
         (save-excursion (if (progn (goto-char (point-min))
                                    (daselt-base-search-at-line-start "(defvar"))
-                                (progn (beginning-of-line)
+                            (progn (beginning-of-line)
                                    (insert (daselt-base-append-newlines 1 defvar-statement)))
                           (if (daselt-base-search-at-line-start "(declare-function")
-                                  (progn (while  (daselt-base-search-at-line-start "(declare-function")
+                              (progn (while  (daselt-base-search-at-line-start "(declare-function")
                                        (end-of-line))
                                      (insert (daselt-base-prepend-newlines 2 defvar-statement)))
                             (if (daselt-base-search-at-line-start ";;;; Preamble")
-                                    (progn (end-of-line)
+                                (progn (end-of-line)
                                        (insert (daselt-base-prepend-newlines 1 defvar-statement)))
                               (if (daselt-base-search-at-line-start ";;; Code")
-                                      (progn (end-of-line)
+                                  (progn (end-of-line)
                                          (insert (format "\n;;;; Preamble\n%s"
                                                          defvar-statement))))))))))))
 

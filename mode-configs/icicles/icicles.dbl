@@ -1,0 +1,7 @@
+;;;; minibuffer-mode-map
+(minibuffer-mode-map
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 2)) . #'icicle-apropos-complete))

@@ -1,11 +1,6 @@
 ;;;; icicle-mode-map
 (icicle-mode-map
 ;;;;; Coordinates
-;;;;;; C-
-;;;;;;; C-4
-;;;;;;;; C-4--1
- (("C-" . (4 -1 2)) . #'icicle-apropos-complete)
-
 ;;;;;; M-C-
 ;;;;;;; M-C-4
 ;;;;;;;; M-C-4-0

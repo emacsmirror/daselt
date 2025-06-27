@@ -29,7 +29,7 @@
  (("C-" . (1 -1 -4)) . #'avy-goto-char-in-line)
  (("C-" . (1 -1 -3)) . #'set-mark-command)
  (("C-" . (1 -1 -2)) . (if daselt-undo-tree #'undo-tree-undo #'undo))
- (("C-" . (1 -1 -1)) . (if daselt-back-button #'back-button-local-backward #'pop-tag-mark))
+ (("C-" . (1 -1 -1)) . (if daselt-back-button #'daselt-C-1--1-0 #'pop-tag-mark))
  (("C-" . (1 -1 1)) . #'back-button-local-forward)
  (("C-" . (1 -1 2)) . (if daselt-undo-tree #'undo-tree-redo #'redo-redo))
  (("C-" . (1 -1 3)) . #'easy-mark)
