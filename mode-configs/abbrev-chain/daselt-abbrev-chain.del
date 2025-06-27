@@ -1,0 +1,85 @@
+;;; daselt-abbrev-chain.del --- Daselt's abbrev-chain module  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defcustom daselt-abbrev-chain-non-constituents
+  '(?- ?_ ?: ?. ?, ?! ??)
+  "List of characters in the Daselt-layout that are not added to
+`abbrev-chain-temporary-word-constituents'.
+
+It is not necessary to add non-characters, such as command keys. It is also not
+necessary to add brackets and such."
+  :type '(repeat character)
+  :group 'daselt-mode)
+
+(defcustom daselt-abbrev-chain-added-syntax-classes
+  '(?_)
+  "Syntax classes that are added to `abbrev-chain-temporary-word-constituents'
+by Daselt.
+
+By default only consists of the syntax class ?_, which designates symbols."
+  :type '(repeat character)
+  :group 'daselt-mode)
+
+(defvar daselt-abbrev-chain-temporary-word-constituents-backup
+  abbrev-chain-temporary-word-constituents)
+
+(defun daselt-abbrev-chain-add-to-temporary-word-constituents ()
+  "Add characters from `daselt-xkb-layout' to
+`abbrev-chain-temporary-word-constituents'.
+
+Adds characters whose syntax-class is in
+`daselt-abbrev-chain-added-syntax-classes'.
+
+Excludes symbols from `daselt-abbrev-chain-non-constituents'."
+  (declare (ftype (function () t)))
+  (setopt abbrev-chain-temporary-word-constituents
+          (append daselt-abbrev-chain-temporary-word-constituents-backup
+                  (let ((laylist (flatten-list (symbol-value daselt-xkb-layout))))
+                    (remq
+                     nil (mapcar
+                          (lambda (entry)
+                            (if (= 1 (length entry))
+                                (let ((char (string-to-char entry)))
+                                  (if (and (or (memq (char-syntax char)
+                                                     daselt-abbrev-chain-added-syntax-classes))
+                                           (not (cl-member
+                                                 char
+                                                 daselt-abbrev-chain-non-constituents
+                                                 :test #'=)))
+                                      char))))
+                          laylist))))))
+
+(add-hook 'after-change-major-mode-hook
+          #'daselt-abbrev-chain-add-to-temporary-word-constituents
+          89)
+
+(add-hook 'daselt-mode-hook
+          (unless daselt-mode
+            (remove-hook 'after-change-major-mode-hook
+                         #'daselt-abbrev-chain-add-to-temporary-word-constituents)))
+
+(provide 'daselt-abbrev-chain)
+;;; daselt-abbrev-chain.del ends here
