@@ -254,10 +254,12 @@ resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
     (delete-region (point-min) (point-max))
     (insert ";;;; daselt-stump-init.lisp\n\n")
     (insert "(stumpwm:set-prefix-key (stumpwm:kbd \"F11\"))\n")
-    (daselt-stump--generate-module-code)
     (daselt-stump--generate-keymaps-code)
     (insert bindingstring)
     (insert otherstring)
+
+    (insert ";;; Module-specific code\n")
+    (daselt-stump--generate-module-code)
     (if daselt-stump-iresize (daselt-stump--generate-iresize-map-code))
     (if daselt-stump-binwarp (daselt-stump--generate-binwarp-mode-code))
     (daselt-stump--generate-remap-list-code)
