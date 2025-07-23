@@ -34,6 +34,9 @@
 (require 'outline)
 
 (declare-function tempo-expand-if-complete "tempo.el")
+
+;; This is only called if daselt-abbrev-chain is t
+(declare-function abbrev-chain-with-syntax-table-and-combining-categories nil)
 (defvar daselt-cdlatex)
 (defvar daselt-yasnippet)
 (defvar cdlatex-command-alist-comb)
@@ -696,7 +699,13 @@ In math-mode, no abbrevs are expanded."
                (tempo-expand-if-complete))
       (cl-return-from daselt-C-3-0-2))
 
-    (unless (texmathp)
+    (unless (or (texmathp)
+                (save-excursion
+                  (if daselt-abbrev-chain
+                      (abbrev-chain-with-syntax-table-and-combining-categories
+                       (backward-word))
+                    (backward-word))
+                  (texmathp)))
       (maybe-expand-abbrev))
 
     (let ((pos (point))
@@ -1213,7 +1222,7 @@ files and directories (starting with a period) are left out."
       (set-buffer buf))))
 
 (defun daselt-replace-regexp-throughout-directory (regexp replacement dir &optional filetest dirtest allfiles)
-  "Replace REGEXP with REPLACEMENT in files in DIR.
+                "Replace REGEXP with REPLACEMENT in files in DIR.
 
 FILETEST can be either a regexp or a function. If it is a regexp, replacement is
 only done in a file if the regexp is matched in the filename. If it is a
@@ -1225,28 +1234,28 @@ either a regexp or a function and works similar to FILETEST.
 
 If ALLFILES is t, all files and directories are considered, otherwise hidden
 files and directories (starting with a period) are left out."
-  (interactive "sString: \nsReplacement: \nDDirectory: ")
-  (let* ((buf (current-buffer))
+                (interactive "sString: \nsReplacement: \nDDirectory: ")
+                (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                          (if (stringp filetest)
-                              (lambda (fname) (if (string-match-p filetest fname) t))
-                            filetest)
+                                                      (if (stringp filetest)
+                                                          (lambda (fname) (if (string-match-p filetest fname) t))
+                                          filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                         (lambda (fname) (if (string-match-p dirtest fname) t))
-                       dirtest)))
+                                                     (lambda (fname) (if (string-match-p dirtest fname) t))
+                                     dirtest)))
     (save-excursion
-      (daselt-dirs-recurse-through-directory
+                    (daselt-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-            (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
+                          (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-              (let ((file (nth idx flist)))
+                            (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-      (set-buffer buf))))
+                    (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun daselt-open-file-in-new-emacs (&optional filename)

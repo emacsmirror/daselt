@@ -49,8 +49,8 @@
 
 ;;;;;;; 3
 ;;;;;;;; 3--1
- ((3 -1 -5) "\\pentagon")
  ((3 -1 -5) "\\lgwhtcircle" "\\bigcirc")
+ ((3 -1 -5) "\\pentagon")
  ((3 -1 -4) "\\oplus" "\\boxplus")
  ((3 -1 2) "\\sim" "\\simeq")
  ((3 -1 4) "\\star")
@@ -75,6 +75,7 @@
 
 ;;;;;;;; 4-0
  ((4 0 -4) "\\lcurvyangle")
+ ((4 0 2) "\\backslash")
 
 ;;;;;;;; 4-1
  ((4 1 -4) "\\rcurvyangle")

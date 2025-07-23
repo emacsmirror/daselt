@@ -38,15 +38,7 @@
 
 ;;;; pdf-outline
 (pdf-outline
-(pdf-outline-minor-mode-map
-;;;;; Coordinates
-;;;;;;; 1
-;;;;;;;; 1-0
- ((1 0 -1))
-
-;;;;;;; 2
-;;;;;;;; 2--1
- ((2 -1 4) . #'pdf-outline)) (pdf-outline-buffer-mode-map
+(pdf-outline-buffer-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -69,13 +61,24 @@
  ((4 0 -3) . #'pdf-outline-up-heading)
  ((4 0 -2) . #'pdf-outline-display-link)
  ((4 0 2) . #'pdf-outline-follow-link-and-quit)
- ((4 0 4) . #'pdf-outline-quit)))
+ ((4 0 4) . #'pdf-outline-quit)) (pdf-outline-minor-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -1))
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 4) . #'pdf-outline)))
 
 ;;;; pdf-history
 (pdf-history
 (pdf-history-minor-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 4))
+
 ;;;;;;;; 1-0
  ((1 0 3))
 
@@ -87,3 +90,23 @@
 ;;;;;;;; 2-0
  ((2 0 -2) . #'pdf-history-backward)
  ((2 0 2) . #'pdf-history-forward)))
+
+;;;; pdf-links
+(pdf-links
+(pdf-links-minor-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -2) . #'pdf-links-isearch-link)
+ ((4 -1 2) . #'pdf-links-action-perform)))
+
+;;;; pdf-isearch-active-mode-map
+
+;;;; pdf-isearch
+(pdf-isearch
+(pdf-isearch-active-mode-map
+;;;;; Coordinates
+;;;;;; C-
+;;;;;;; C-1
+;;;;;;;; C-1-0
+ (("C-" . (1 0 1)) . #'isearch-repeat-forward)))
