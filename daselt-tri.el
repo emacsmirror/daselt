@@ -64,38 +64,39 @@ default."
     (daselt-dirs-act-on-sexps-in-file
      daselt-tri-bindlist-file
      (lambda () (let* ((blist (daselt-base-read-region))
-                  (elblist (mapcar (lambda (bind)
-                                     (daselt-bind-elaborate-on-binding bind))
-                                   blist))
-                  (strlist (mapcar (lambda (elbind)
-                                     (let* ((mods (daselt-base-remove-indices (caaar elbind)))
-                                            (coords (cdar elbind))
-                                            (sfx (if coords
-                                                     (daselt-coords-binding coords)
-                                                   (cdaar elbind)))
-                                            (nsfx (cond ((string= sfx "<")
-                                                         "<<")
-                                                        ((string= sfx ">")
-                                                         ">>")
-                                                        (t sfx)))
-                                            (value (cdr elbind)))
-                                       (concat "bind "
-                                               (if mods "<")
-                                               (if mods (daselt-bind-modifiers-to-string mods))
-                                               nsfx
-                                               (if mods ">")
-                                               " "
-                                               value
-                                               "\n")))
-                                   elblist)))
-             (cl-flet ((frmtstrlst (lststr) (string-replace
-                                             "\")" ""
-                                             (string-replace
-                                              "(\"" ""
-                                              (string-replace "\" \"" "" lststr)))))
-               (set-buffer buffer)
-               (insert (frmtstrlst (format "%S" strlist)))
-               (save-buffer)))))))
+                       (elblist (mapcar (lambda (bind)
+                                          (daselt-bind-elaborate-on-binding bind))
+                                        blist))
+                       (strlist (mapcar (lambda (elbind)
+                                          (let* ((mods (daselt-base-remove-indices (caaar elbind)))
+                                                 (coords (cdar elbind))
+                                                 (sfx (if coords
+                                                          (daselt-coords-binding coords)
+                                                        (cdaar elbind)))
+                                                 (nsfx (cond ((string= sfx "<")
+                                                              "<<")
+                                                             ((string= sfx ">")
+                                                              ">>")
+                                                             (t sfx)))
+                                                 (value (cdr elbind)))
+                                            (concat "bind "
+                                                    (if mods "<")
+                                                    (if mods (daselt-bind-modifiers-to-string mods))
+                                                    nsfx
+                                                    (if mods ">")
+                                                    " "
+                                                    value
+                                                    "\n")))
+                                        elblist)))
+                  (cl-flet ((frmtstrlst (lststr) (string-replace
+                                                  "\")" ""
+                                                  (string-replace
+                                                   "(\"" ""
+                                                   (string-replace "\" \"" "" lststr)))))
+                    (set-buffer buffer)
+                    (insert (frmtstrlst (format "%S" strlist)))
+                    (insert (format "set hintchars %S" daselt-mode-quick-key-string))
+                    (save-buffer)))))))
 
 (defun daselt-tri-generate-all-configs ()
   "Execute `daselt-tri-generate-config' for each layout in `daselt-xkb-layouts'.
