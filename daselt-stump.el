@@ -106,31 +106,43 @@
   :group 'daselt-stump)
 
 (defcustom daselt-stump-contrib
-      t
-      "Toggle if you want to use daselt-stump's contrib-functions."
-      :type 'boolean
-      :group 'daselt-stump)
+        t
+        "Toggle if you want to use daselt-stump's contrib-functions."
+        :type 'boolean
+        :group 'daselt-stump)
 
 
 (defcustom daselt-stump-remap-exceptions-alist
+  '(nil)
   "List of cons cells defining exceptions for key remapping in StumpWM modes.
 
 Each cons cell consists of a string representing a directory name in
-`stump-configs' \(without its path) and a symbol representing a
+`stump-configs' \(without its path\) and a symbol representing a
 mode for which key remappings should be suspended.
 
 If this option is set to (nil), then it is re-set by
 `daselt-stump-set-remap-exceptions-alist' in `daselt-stump-initialize'."
-  '(nil)
   :type '(repeat (alist :key-type string :value-type symbol))
+  :group 'daselt-stump)
+
+(defcustom daselt-stump-backlight-decrease-command
+    "backlight-down"
+    "StumpWM command used to increase the screen brightness."
+    :type 'string
+    :group 'daselt-stump)
+
+(defcustom daselt-stump-backlight-increase-command
+  "backlight-up"
+  "StumpWM command used to increase the screen brightness."
+  :type 'string
   :group 'daselt-stump)
 
 ;;;;; Set-configs directory
 (defun daselt-stump--pkg-configs-directory-test (dir)
-      "Test whether DIR looks like daselt-stump's pkg-configs-directory."
-      (declare (ftype (function (str) boolean))
+                  "Test whether DIR looks like daselt-stump's pkg-configs-directory."
+                  (declare (ftype (function (str) boolean))
            (side-effect-free t))
-      (and dir
+                  (and dir
        (file-exists-p dir)
        (file-exists-p (concat dir "stumpwm"))))
 
@@ -207,11 +219,13 @@ Sets this option according to whether daselt-stump-binwarp is set to t."
                               `("binwarp" . 'binwarp:*binwarp-mode-p*))))))
 
 ;;;;; Main function
-(defun daselt-stump-generate-init (&optional filename)
+(defun daselt-stump-generate-init (&optional filename official)
   "Generate a daselt-stump initialization file.
 
 Use the files in `daselt-stump-pkg-configs-directory' for config. Call the
-resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
+resulting file FILENAME. The default for FILENAME is `d-stump.lisp'.
+
+If OFFICIAL is t, don't include user-files."
   (declare (ftype (function (&optional string) string)))
   (interactive)
 
@@ -239,7 +253,7 @@ resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
                       (daselt-bind--generate-define-key-strings-from-bindlist
                        (daselt-base-read-region)))
                     t))
-                 . ("dbl" "regular")))
+                 . ("dbl" "-special" ,(if official "-user-defined" ""))))
               daselt-stump-pkg-configs-directory)))))
 
          ;; Get all lisp-code from init files. Again we have to remove initial and final brackets.
@@ -266,22 +280,24 @@ resulting file FILENAME. The default for FILENAME is `d-stump.lisp'."
     (save-buffer)))
 
 ;;;;;; Generation for other layouts
-(defun daselt-stump-generate-all-inits ()
+(defun daselt-stump-generate-all-inits (&optional official)
   "Execute `daselt-stump-generate-init' for each layout in `daselt-xkb-layouts'.
 
-Add in layer 0 to each layout first, just to be sure."
+Add in layer 0 to each layout first, just to be sure.
+
+If OFFICIAL is t, don't include user-files."
   (declare (ftype (function ()
                             ;; (list string) ; Compiler complains.
                             list)))
 
   (daselt-xkb-generate-layouts)
   (daselt-coords-for-layouts-in (lambda (layoutsym)
-                                   (let ((namecore (daselt-base-namecore
-                                                    layoutsym "daselt-dfk-" "-layout")))
-                                     (daselt-stump-generate-init (concat "d-stump-" namecore
-                                                                          ".lisp"))))
-                                 (mapcar (lambda (layoutsym) (eval `(daselt-dfk-import-layout ,layoutsym)))
-                                         daselt-xkb-layouts)))
+                                  (let ((namecore (daselt-base-namecore
+                                                   layoutsym "daselt-dfk-" "-layout")))
+                                    (daselt-stump-generate-init (concat "d-stump-" namecore
+                                                                        ".lisp"))))
+                                (mapcar (lambda (layoutsym) (eval `(daselt-dfk-import-layout ,layoutsym)))
+                                        daselt-xkb-layouts)))
 
 ;;;;; Modules
 (defun daselt-stump--generate-module-code ()

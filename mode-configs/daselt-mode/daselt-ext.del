@@ -699,13 +699,14 @@ In math-mode, no abbrevs are expanded."
                (tempo-expand-if-complete))
       (cl-return-from daselt-C-3-0-2))
 
-    (unless (or (texmathp)
-                (save-excursion
-                  (if daselt-abbrev-chain
-                      (abbrev-chain-with-syntax-table-and-combining-categories
-                       (backward-word))
-                    (backward-word))
-                  (texmathp)))
+    (unless (and (derived-mode-p LaTeX-mode)
+                 (or (texmathp))
+                 (save-excursion
+                   (if daselt-abbrev-chain
+                       (abbrev-chain-with-syntax-table-and-combining-categories
+                        (backward-word))
+                     (backward-word))
+                   (texmathp)))
       (maybe-expand-abbrev))
 
     (let ((pos (point))

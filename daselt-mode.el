@@ -608,14 +608,14 @@ resetting the keyboard layout as well."
           (daselt-dirs-act-on-pkg-files-by-type-and-maybe-kill
            `((daselt-dirs-with-eval-load-elc-or-lispcode-in-file .  "del")
              (daselt-dirs-save-and-with-eval-apply-bindlists-in-file
-              . ("dbl" "regular"))
+              . ("dbl" "-special"))
 
              ;; Do rebinding before other operations, that way if something goes wrong, at least the layout is defined.
              (daselt-dirs-save-bindlists-in-file . ("dbl" "special"))
              (daselt-dirs-save-bindforms-in-file . "dbf")
-             (daselt-dirs-with-eval-set-constantlists-in-file . ("dcl" "regular"))
-             (daselt-dirs-with-eval-add-advicelists-in-file . ("dal" "regular"))
-             (daselt-dirs-with-eval-add-adviceforms-in-file . ("daf" "regular")))
+             (daselt-dirs-with-eval-set-constantlists-in-file . ("dcl" "-special"))
+             (daselt-dirs-with-eval-add-advicelists-in-file . ("dal" "-special"))
+             (daselt-dirs-with-eval-add-adviceforms-in-file . ("daf" "-special")))
            nil t))
 
         (if daselt-mode-globalize-daselt-mode-map

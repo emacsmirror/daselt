@@ -173,7 +173,7 @@
 
 (defcustom daselt-dirs-pkg-configs-directory
   nil
-  "The directory `daselt-dirs-act-on-files-by-pkg-type' should act on.
+  "The directory `daselt-dirs-act-on-pkg-files-by-type' should act on.
 
 From this directory the different file types are also read that allow for
 navigation using `daselt-dirs-find-pkg-file-by-type'."
@@ -377,9 +377,9 @@ Parameters:
 - TYPE can be a string or a predicate function. If it is a string, it is checked
   against the file name extension of each file. It can also be a cons whose car
   is a file name extension and whose cdr consists of type modifier strings.
-  These strings are checked against the file name base. If one of the type
-  modifiers is `regular', the base name is checked for whether it does not
-  contain the word `special'.
+  These strings are checked against the file name base, except if the string
+  starts with a `-`. Then the name is checked on whether it does not contain the
+  remainder of the string.
 
 - DIR: If provided, execute in this directory.
 
@@ -442,9 +442,8 @@ This loads the code of all regular files in
                                               (funcall maintype filepath)))
                                       t)
                                     (cl-every (lambda (typemod)
-                                                (if (string= typemod "regular")
-                                                    (not (string-match-p "special"
-                                                                         filepath))
+                                                (if (= (string-to-char typemod) ?-)
+                                                    (not (string-match-p (substring typemod 1) filepath))
                                                   (string-match-p typemod filepath)))
                                               typemods)))))))
                  funtypes)))
@@ -703,7 +702,7 @@ BLISTFILE can be selected interactively from available bindlists in
 current buffer's file name. BACKUPPFX is forwarded to
 `daselt-dirs-with-eval-apply-bindlist'."
   (declare (ftype (function (&optional string string) void)))
-  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "regular"))))
+  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "-special"))))
   (let ((blistfile (or blistfile (buffer-file-name))))
     (daselt-dirs-act-on-sexps-in-file
      blistfile (lambda () (daselt-dirs-with-eval-apply-bindlist
@@ -750,7 +749,7 @@ BLISTFILE can be selected interactively from available bindlists in
 current buffer's file name. BACKUPPFX is forwarded to
 `daselt-dirs-with-eval-apply-bindlist'."
   (declare (ftype (function (&optional string string) void)))
-  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "regular"))))
+  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "-special"))))
   (let ((blistfile (or blistfile (buffer-file-name)))
         (backuppfx (or backuppfx "daselt-")))
     (cl-flet ((restorefun (blist)
@@ -798,7 +797,7 @@ PFX is forwarded to `daselt-bind-save-bindlist-as-variable'."
 
 BACKUPPFX is forwarded to `daselt-dirs-with-eval-apply-bindlist'."
   (declare (ftype (function (&optional string string) void)))
-  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "regular"))))
+  (interactive  (list (daselt-dirs--pick-pkg-file-by-type '("dbl" "-special"))))
   (let ((bformfile (or bformfile (buffer-file-name))))
     (daselt-dirs-act-on-sexps-in-file
      bformfile
@@ -1152,7 +1151,7 @@ with those modifiers."
 With a prefix argument, only regular bindlists files are considered."
   (declare (ftype (function () void)))
   (interactive)
-  (daselt-dirs-find-pkg-file-by-type "dbl" (if current-prefix-arg '("regular"))))
+  (daselt-dirs-find-pkg-file-by-type "dbl" (if current-prefix-arg '("-special"))))
 
 ;;;;; Macros
 (defmacro daselt-dirs-create-pkg-customization-options (&optional dir group defaultfun)
