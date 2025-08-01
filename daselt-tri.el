@@ -1,6 +1,6 @@
 ;;; daselt-tri.el --- Functions to generate Tridactyl configs  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Alexander Prähauser
+;; Copyright (C) 2024, 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Version: 1.0
@@ -36,6 +36,7 @@
 (defvar daselt-xkb-layouts)
 
 (defvar daselt-emacs-dir)
+(defvar daselt-mode-quick-key-string)
 (defcustom daselt-tri-bindlist-file
   (condition-case nil (concat daselt-emacs-dir "tri-configs/daselt-tri.dbl")
     (error nil))

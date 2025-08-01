@@ -147,7 +147,8 @@ If this option is set to (nil), then it is re-set by
        (file-exists-p (concat dir "stumpwm"))))
 
 (defcustom daselt-stump-pkg-configs-directory
-  (concat daselt-emacs-dir "stump-configs/")
+  (if (bound-and-true-p daselt-emacs-dir)
+      (concat daselt-emacs-dir "stump-configs/"))
   "Pkg-configs directory for `daselt-stump'.
 
 This is the directory all `dbl' and `dcn' files for the daselt-stump-config
@@ -291,13 +292,15 @@ If OFFICIAL is t, don't include user-files."
                             list)))
 
   (daselt-xkb-generate-layouts)
-  (daselt-coords-for-layouts-in (lambda (layoutsym)
-                                  (let ((namecore (daselt-base-namecore
-                                                   layoutsym "daselt-dfk-" "-layout")))
-                                    (daselt-stump-generate-init (concat "d-stump-" namecore
-                                                                        ".lisp"))))
-                                (mapcar (lambda (layoutsym) (eval `(daselt-dfk-import-layout ,layoutsym)))
-                                        daselt-xkb-layouts)))
+  (daselt-coords-for-layouts-in
+   (lambda (layoutsym)
+     (let ((namecore (daselt-base-namecore
+                      layoutsym "daselt-dfk-" "-layout")))
+       (daselt-stump-generate-init (concat "d-stump-" namecore
+                                           ".lisp")
+                                   official)))
+   (mapcar (lambda (layoutsym) (eval `(daselt-dfk-import-layout ,layoutsym)))
+           daselt-xkb-layouts)))
 
 ;;;;; Modules
 (defun daselt-stump--generate-module-code ()

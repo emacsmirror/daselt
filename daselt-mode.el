@@ -1,6 +1,6 @@
 ;;; daselt-mode.el --- Provides daselt-mode -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Alexander Prähauser
+;; Copyright (C) 2024, 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Version: 1.0
@@ -537,7 +537,7 @@ resetting the keyboard layout as well."
         (if daselt-mode-redaselt
             (if (file-exists-p "/usr/share/X11/xkb/symbols/dxkb")
                 (daselt-mode-redaselt)
-              (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/'")))
+              (error "Please put the dxkb-file into `/usr/share/X11/xkb/symbols/' or deactivate daselt-mode-redaselt")))
         
         ;; For a non-main layout put modifiers outside the layout unless they have been put in by hand. For the main layout, do it the other way around.
         (when (eq (custom-variable-state 'daselt-dfk-outside-mods t)

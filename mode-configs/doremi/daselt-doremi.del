@@ -1,6 +1,6 @@
 ;;; daselt-doremi.del -- daselt-functions for daselt-doremi  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Alexander Prähauser
+;; Copyright (C) 2024, 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Package-Requires: ((emacs "29.1"))

@@ -1,6 +1,6 @@
 ;;; stumpwm-init.lisp --- code for the d-stump init.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Alexander Prähauser
+;; Copyright (C) 2024, 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Keywords: tools

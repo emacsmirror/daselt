@@ -75,28 +75,28 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
     (vterm-mode . vterm-send-tab)
     (emacs-lisp-mode . sp-next-sexp)
     (org-mode . (lambda () (let ((buffer (buffer-name)))
-                        (cond ((org-footnote-at-reference-p)
-                               org-footnote-action)
+                             (cond ((org-footnote-at-reference-p)
+                                    org-footnote-action)
 
-                              ((org-at-item-p)
-                               (unless (run-hook-with-args-until-success 'org-open-at-point-functions)
-                                 (let* ((context
-	                                 ;; Only consider supported types, even if they are not the
-	                                 ;; closest one.
-	                                 (org-element-lineage
-	                                  (org-element-context)
-	                                  '(citation citation-reference clock comment comment-block
-                                                     footnote-definition footnote-reference headline
-                                                     inline-src-block inlinetask keyword link node-property
-                                                     planning src-block timestamp)
-	                                  t))
-	                                (type (org-element-type context))
-	                                (value (org-element-property :value context)))
-                                   (if type
-                                       org-open-at-point
-                                     org-next-item))))
+                                   ((org-at-item-p)
+                                    (unless (run-hook-with-args-until-success 'org-open-at-point-functions)
+                                      (let* ((context
+	                                      ;; Only consider supported types, even if they are not the
+	                                      ;; closest one.
+	                                      (org-element-lineage
+	                                       (org-element-context)
+	                                       '(citation citation-reference clock comment comment-block
+                                                          footnote-definition footnote-reference headline
+                                                          inline-src-block inlinetask keyword link node-property
+                                                          planning src-block timestamp)
+	                                       t))
+	                                     (type (org-element-type context))
+	                                     (value (org-element-property :value context)))
+                                        (if type
+                                            org-open-at-point
+                                          org-next-item))))
 
-                              (t (org-open-at-point)))))))
+                                   (t (org-open-at-point)))))))
   "A list defining actions for `daselt-C-3-0-2' across different modes."
   :type '(repeat (cons symbol sexp))
   :group 'daselt-mode)
@@ -583,6 +583,12 @@ Move up ARG levels; if INVISIBLE-OK is non-nil, consider invisible lines."
       (funcall outline-search-function nil nil t t)
     (looking-at outline-regexp)))
 
+(defun daselt-switch-to-messages ()
+  "Switch to messages buffer."
+  (declare (ftype (function nil t)))
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+
 ;;;;;; Context-Specific behavior
 (defun daselt-C-1-0-2 ()
   "Contextual command on `C-(1 0 2)'.
@@ -594,7 +600,7 @@ Default behavior is to move cursor one character forward."
 
 (defun daselt-C-1--1-0 ()
   "Like `back-button-local-backward but interacts better with `daselt-C-3-0-2'."
-  (declare (ftype (function () t)))
+  (declare (ftype (function nil t)))
   (interactive)
   (cl-letf (((symbol-function 'back-button-push-mark)
              (lambda ()
@@ -1223,7 +1229,7 @@ files and directories (starting with a period) are left out."
       (set-buffer buf))))
 
 (defun daselt-replace-regexp-throughout-directory (regexp replacement dir &optional filetest dirtest allfiles)
-                "Replace REGEXP with REPLACEMENT in files in DIR.
+  "Replace REGEXP with REPLACEMENT in files in DIR.
 
 FILETEST can be either a regexp or a function. If it is a regexp, replacement is
 only done in a file if the regexp is matched in the filename. If it is a
@@ -1235,28 +1241,28 @@ either a regexp or a function and works similar to FILETEST.
 
 If ALLFILES is t, all files and directories are considered, otherwise hidden
 files and directories (starting with a period) are left out."
-                (interactive "sString: \nsReplacement: \nDDirectory: ")
-                (let* ((buf (current-buffer))
+  (interactive "sString: \nsReplacement: \nDDirectory: ")
+  (let* ((buf (current-buffer))
          (newfiletest (if filetest
-                                                      (if (stringp filetest)
-                                                          (lambda (fname) (if (string-match-p filetest fname) t))
-                                          filetest)
+                          (if (stringp filetest)
+                              (lambda (fname) (if (string-match-p filetest fname) t))
+                            filetest)
                         (lambda (_file) t)))
          (newdirtest (if (stringp dirtest)
-                                                     (lambda (fname) (if (string-match-p dirtest fname) t))
-                                     dirtest)))
+                         (lambda (fname) (if (string-match-p dirtest fname) t))
+                       dirtest)))
     (save-excursion
-                    (daselt-dirs-recurse-through-directory
+      (daselt-dirs-recurse-through-directory
        dir
        `(((lambda (fname) (set-buffer (find-file-noselect fname))
-                          (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
+            (daselt-replace-regexp-throughout-buffer ,regexp ,replacement))
           . (lambda (idx flist)
-                            (let ((file (nth idx flist)))
+              (let ((file (nth idx flist)))
                 (funcall ,newfiletest file)))))
        newdirtest
        nil
        allfiles)
-                    (set-buffer buf))))
+      (set-buffer buf))))
 
 ;;;;;; Open Emacs
 (defun daselt-open-file-in-new-emacs (&optional filename)

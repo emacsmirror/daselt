@@ -1,6 +1,6 @@
 ;;; daselt-dfk.el --- Creation of dual-function-keys configurations -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Alexander Prähauser
+;; Copyright (C) 2024, 2025  Alexander Prähauser
 
 ;; Author: Alexander Prähauser <ahprae@protonmail.com>
 ;; Version: 1.0
