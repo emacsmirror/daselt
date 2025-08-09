@@ -125,24 +125,13 @@ If this option is set to (nil), then it is re-set by
   :type '(repeat (alist :key-type string :value-type symbol))
   :group 'daselt-stump)
 
-(defcustom daselt-stump-backlight-decrease-command
-    "backlight-down"
-    "StumpWM command used to increase the screen brightness."
-    :type 'string
-    :group 'daselt-stump)
-
-(defcustom daselt-stump-backlight-increase-command
-  "backlight-up"
-  "StumpWM command used to increase the screen brightness."
-  :type 'string
-  :group 'daselt-stump)
 
 ;;;;; Set-configs directory
 (defun daselt-stump--pkg-configs-directory-test (dir)
-                  "Test whether DIR looks like daselt-stump's pkg-configs-directory."
-                  (declare (ftype (function (str) boolean))
+  "Test whether DIR looks like daselt-stump's pkg-configs-directory."
+  (declare (ftype (function (str) boolean))
            (side-effect-free t))
-                  (and dir
+  (and dir
        (file-exists-p dir)
        (file-exists-p (concat dir "stumpwm"))))
 

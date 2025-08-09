@@ -14,13 +14,16 @@
  ("KP_Page_Up" . "coord-taskright")
  ("KP_Separator" . "move-focus down")
  ("XF86AudioMute" . "pamixer-toggle-mute")
- ("XF86MonBrightnessUp" . "backlight-up")
+ ("XF86MonBrightnessUp" . "light-up-1")
  ("XF86AudioLowerVolume" . "pamixer-volume-down")
  ("XF86AudioRaiseVolume" . "pamixer-volume-up")
- ("XF86MonBrightnessDown" . "backlight-down")
+ ("XF86MonBrightnessDown" . "light-down-1")
+ ("XF86MonBrightnessDown" . "light-down-1")
 
 ;;;;;; C-
  ("C-Print" . "screenshot-area")
+ ("C-XF86MonBrightnessUp" . "light-up-10")
+ ("C-XF86MonBrightnessDown" . "light-down-10")
 
 ;;;;;; H-
  ("H-Up" . "move-focus up")
@@ -71,9 +74,9 @@
 
 ;;;;;;;; H-1-1
  (("H-" . (1 1 -6)) . "sibling")
- (("H-" . (1 1 -2)) . "backlight-down")
+ (("H-" . (1 1 -2)) . "light-down-1")
  (("H-" . (1 1 0)) . "send-raw-key")
- (("H-" . (1 1 2)) . "backlight-up")
+ (("H-" . (1 1 2)) . "light-up-1")
  (("H-" . (1 1 3)) . "show-clipboard-history")
 
 ;;;;;; H-C-
@@ -98,6 +101,8 @@
 
 ;;;;;;;; H-C-1-1
  (("H-C-" . (1 1 -5)) . "kill-window")
+ (("H-C-" . (1 1 -2)) . "light-down-10")
+ (("H-C-" . (1 1 2)) . "light-up-10")
 
 ;;;;;;; H-C-2
 ;;;;;;;; H-C-2-0
@@ -108,9 +113,12 @@
 
 ;;;; "*root-map*"
 ("*root-map*"
+;;;;; Strings
+ ("XF86MonBrightnessUp" . "light-up-max")
+ ("XF86MonBrightnessDown" . "light-down-min")
+
 ;;;;; Coordinates
 ;;;;;;; 1
-;;;;;;;; 1--1
  ((1 -1 -4) . "loadrc")
  ((1 -1 -2) . "batterystate")
  ((1 -1 -1) . "pamixer-mute")
@@ -127,9 +135,9 @@
  ((1 0 4) quote *quit-map*)
 
 ;;;;;;;; 1-1
- ((1 1 -2) . "backlight-set 0")
+ ((1 1 -2) . "light-down-min")
  ((1 1 0) . "groups")
- ((1 1 2) . "backlight-set 100")
+ ((1 1 2) . "light-up-max")
 
 ;;;;;; H-
 ;;;;;;; H-1
