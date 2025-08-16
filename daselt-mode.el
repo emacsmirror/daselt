@@ -615,7 +615,8 @@ resetting the keyboard layout as well."
              (daselt-dirs-save-bindforms-in-file . "dbf")
              (daselt-dirs-with-eval-set-constantlists-in-file . ("dcl" "-special"))
              (daselt-dirs-with-eval-add-advicelists-in-file . ("dal" "-special"))
-             (daselt-dirs-with-eval-add-adviceforms-in-file . ("daf" "-special")))
+             (daselt-dirs-with-eval-add-adviceforms-in-file . ("daf" "-special"))
+             (daselt-dirs-with-eval-process-hooklists-in-file . ("dhl" "-special")))
            nil t))
 
         (if daselt-mode-globalize-daselt-mode-map
@@ -627,6 +628,9 @@ resetting the keyboard layout as well."
 
     ;; Remove all eval forms that have been set by `daselt-mode'.
     (daselt-bind--remove-from-after-load-alist)
+
+    ;; Similarly remove hooks.
+    (daselt-dirs-remove-hooks)
 
     ;; Let's also reset all global variables that have not been found by the recursion.
     (daselt-dirs--reset-backed-up-variables)

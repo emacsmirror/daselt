@@ -37,5 +37,10 @@
   (interactive)
   (pdf-view-next-line-or-next-page 10))
 
+(defun daselt-pdf-view-apply-history-bindlist ()
+  "Apply `daselt-pdf-history-minor-mode-map-bindlist'."
+  (declare (ftype (function () t)))
+  (daselt-bind-apply-bindlist daselt-pdf-history-minor-mode-map-bindlist))
+
 (provide 'daselt-pdf-tools)
 ;;; daselt-pdf-tools.del ends here

@@ -937,7 +937,7 @@ ADLIST should consist of
                                         (radlist (if head (cdr adlist) adlist)))
                                    (with-eval-after-load evalcond
                                      (mapcar (lambda (adv)
-                                                                   (let (,@(remq nil
+                                                                                 (let (,@(remq nil
                                                              (list
                                                               `(advfun #',(intern (concat "advice-" str)))
                                                               `(symbs (car adv))
@@ -945,9 +945,9 @@ ADLIST should consist of
                                                               (if addp '(how (cadr adv)))
                                                               (if addp '(props (cadddr adv))))))
                                                  (mapcar (lambda (symb)
-                                                                               (mapcar
+                                                                                             (mapcar
                                                             (lambda (fun)
-                                                                                  (apply advfun
+                                                                                                (apply advfun
                                                                      (remq nil (list
                                                                                 symb
                                                                                 ,(if addp `how)
@@ -969,7 +969,7 @@ default." str))
                                  (daselt-dirs-act-on-sexps-in-file
                                   alfile
                                   (lambda ()
-                                                        (,(intern (concat "daselt-dirs-with-eval-" str "-advicelist"))
+                                                                      (,(intern (concat "daselt-dirs-with-eval-" str "-advicelist"))
                                      (daselt-base-read-region)))))
                                nil)
 
@@ -991,23 +991,66 @@ default." str))
                                nil))
                           (str . ("add" "remove")))
 
+;;;;;; dhl
+(defvar daselt-dirs--hook-removals nil
+  "Alist of (HOOK . FUNCTION) to remove when `daselt-mode' is disabled.")
+
+(defun daselt-dirs-with-eval-process-hooklists-in-file (filepath)
+  "Process HOOK-ALIST, conditionally hooking functions.
+HOOK-ALIST contains (FUNCTION . HOOK) pairs. Uses FILEPATH to determine
+immediate/deferred evaluation via `daselt-bind-with-eval-unless-init'.
+
+Added hooks are listed in `daselt-dirs--added-hooks' so they can be removed
+by `daselt-dirs-remove-hooks'."
+  (let* ((filename (daselt-base-containing-directory-base-name filepath))
+         (pkgsym (intern filename)))
+    (daselt-dirs-act-on-sexps-in-file
+     filepath
+     (lambda ()
+       (let* ((hook-list (daselt-base-read-region))
+              (head (if (atom (car hook-list))
+                        (car hook-list)))
+              (evalcond (or head pkgsym)))
+         (daselt-bind-with-eval-unless-init
+          filepath
+          (lambda ()
+            (dolist (pair (if head (cdr hook-list)
+                            hook-list))
+              (let ((func (car pair))
+                    (hook (cdr pair)))
+                (add-hook hook func)
+                (push (cons func hook) daselt-dirs--hook-removals))))
+          evalcond))))))
+
+(defun daselt-dirs-remove-hooks ()
+  "Remove hooks from `daselt-dirs--hook-removals'.
+
+Empty `daselt-dirs--hook-removals' afterwards."
+  (declare (ftype (function () t)))
+  (mapc (lambda (hook-cns)
+          (let ((func (car hook-cns))
+                (hook cdr hook-cns))
+            (remove-hook hook func)))
+        daselt-dirs--hook-removals)
+  (setq daselt-dirs--hook-removals nil))
+
 ;;;;; Global operations
 ;;;;;; del
 (defun daselt-dirs-compile-del-files (&optional directory)
-  "Byte-compile all `del'-files throughout DIRECTORY.
+                                                                    "Byte-compile all `del'-files throughout DIRECTORY.
 
 DIRECTORY is `daselt-dirs-pkg-configs-directory' by default."
-  (declare (ftype (function (&optional string)
+                                                                    (declare (ftype (function (&optional string)
                             ;; void
                             t)))
-  (interactive)
-  (daselt-dirs-act-on-pkg-files-by-type
+                                                                    (interactive)
+                                                                    (daselt-dirs-act-on-pkg-files-by-type
    `(((lambda (filename)
-        (byte-compile-file filename))
+                                                                          (byte-compile-file filename))
       .
       "del"))
    (if directory directory))
-  nil)
+                                                                    nil)
 
 ;;;;;; dbl
 (defun daselt-dirs--exchange-coordinates (coordlistlist &optional modlist coordsonly directory)
@@ -1069,16 +1112,16 @@ bindings.
 
 ;;;;;; dcl
 (defun daselt-dirs--reset-backed-up-variables (&optional pfx)
-  "Restore each variable named VAR for which a variable `PFX-VAR-backup' exists.
+                          "Restore each variable named VAR for which a variable `PFX-VAR-backup' exists.
 
 Unbinds the backup-symbols.
 
 PFX is `daselt-' by default."
-  (declare (ftype (function (&optional string)
+                          (declare (ftype (function (&optional string)
                             ;; void
                             t)))
-  (mapc (lambda (symb)
-          (let* ((pfx (or pfx "daselt-"))
+                          (mapc (lambda (symb)
+                                  (let* ((pfx (or pfx "daselt-"))
                  (symbname (symbol-name symb))
                  (pfxend (progn (string-match pfx symbname)
                                 (match-end 0)))
@@ -1087,26 +1130,27 @@ PFX is `daselt-' by default."
                  (origsymbname (substring symbname pfxend sfxbgn))
                  (origsymb (intern origsymbname)))
             (if (boundp symb)
-                (progn (set origsymb (symbol-value symb))
+                                                                (progn (set origsymb (symbol-value symb))
                        (makunbound symb)))))
         (apropos-internal "daselt-.*-backup"))
-  nil)
+                          nil)
+
 
 ;;;;; Finding files
 (defun daselt-dirs--pick-pkg-file-by-type (type &optional subdir nodefault)
-  "Select a file in `daselt-dirs-pkg-configs-directory' by TYPE.
+      "Select a file in `daselt-dirs-pkg-configs-directory' by TYPE.
 
 TYPE can be any expression that can act as a type specifier for
 `daselt-dirs-act-on-pkg-files-by-type'. Restrict to files in SUBDIR if
 specified. Return nil if no file is chosen. If NODEFAULT is nil, mention a
 default in the prompt."
-  (declare (ftype (function (t
+      (declare (ftype (function (t
                              ;; (or string list
                              ;;     ;; (list string) ; Compiler complains.
                              ;;     (function (string) boolean))
                              &optional string boolean)
                             string)))
-  (let* ((filelist (daselt-dirs-act-on-pkg-files-by-type
+      (let* ((filelist (daselt-dirs-act-on-pkg-files-by-type
                     `((identity . ,type))
                     subdir))
          (redfilelist (mapcar #'file-name-base filelist))
@@ -1116,11 +1160,11 @@ default in the prompt."
                               redfilelist)
                              "." (if (consp type) (car type) type)))
          (match (if (string-empty-p chosenfile)
-                    (buffer-file-name)
-                  (cl-loop for filepath in filelist
+                            (buffer-file-name)
+                      (cl-loop for filepath in filelist
                            do (if (string= chosenfile
                                            (file-name-nondirectory filepath))
-                                  (cl-return filepath))))))
+                                          (cl-return filepath))))))
     match))
 
 (defun daselt-dirs-find-pkg-file-by-type (type &optional typemodifiers)

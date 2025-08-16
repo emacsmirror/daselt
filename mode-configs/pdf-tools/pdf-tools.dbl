@@ -38,7 +38,15 @@
 
 ;;;; pdf-outline
 (pdf-outline
-(pdf-outline-buffer-mode-map
+(pdf-outline-minor-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -1))
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 4) . #'pdf-outline)) (pdf-outline-buffer-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
 ;;;;;;;; 1--1
@@ -61,15 +69,7 @@
  ((4 0 -3) . #'pdf-outline-up-heading)
  ((4 0 -2) . #'pdf-outline-display-link)
  ((4 0 2) . #'pdf-outline-follow-link-and-quit)
- ((4 0 4) . #'pdf-outline-quit)) (pdf-outline-minor-mode-map
-;;;;; Coordinates
-;;;;;;; 1
-;;;;;;;; 1-0
- ((1 0 -1))
-
-;;;;;;; 2
-;;;;;;;; 2--1
- ((2 -1 4) . #'pdf-outline)))
+ ((4 0 4) . #'pdf-outline-quit)))
 
 ;;;; pdf-history
 (pdf-history

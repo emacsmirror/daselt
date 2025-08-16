@@ -57,13 +57,14 @@ delimiters are inserted when it is used in the minibuffer and during searches."
 
 (defun daselt-cdlatex-math-modify (&optional arg)
   "This is a wrapper around `cdlatex-math-modify' that uses the prefix arg to
-determine "
+determine whether point is a minibuffer."
   (interactive "P")
   (let ((minibuffer-or-isearch t))
-    (cl-letf (((symbol-function #'cdlatex--texmathp) (lambda () (if (or (derived-mode-p 'minibuffer-mode)
-                                                                        (derived-mode-p 'isearch-mode))
-                                                                    arg
-                                                                  (symbol-function #'cdlatex--texmathp)))))
+    (cl-letf (((symbol-function #'cdlatex--texmathp)
+               (lambda () (if (or (derived-mode-p 'minibuffer-mode)
+                             (derived-mode-p 'isearch-mode))
+                         arg
+                       (symbol-function #'cdlatex--texmathp)))))
       (cdlatex-math-modify (unless minibuffer-or-isearch current-prefix-arg)))))
 
 (defun daselt-cdlatex-math-modify-modeline-math ()
