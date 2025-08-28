@@ -1,31 +1,740 @@
-;;;; gnus-mode-map
-(gnus-mode-map
+;;;; gnus
+(gnus
+ (gnus-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -1) . #'quit-window)))
+
+;;;; gnus-score
+(gnus-score
+ (gnus-score-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 1) . #'gnus-score-edit-exit)))
+
+;;;; gnus-kill
+(gnus-kill
+ (gnus-kill-file-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 1) . #'gnus-kill-file-exit)))
+
+;;;; gnus-eform
+(gnus-eform
+ (gnus-edit-form-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -1) . #'gnus-edit-form-exit)
+ ((4 0 1) . #'gnus-edit-form-done)))
+
+;;;; gnus-agent
+(gnus-agent
+ (gnus-category-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -3) . #'gnus-category-kill)
+ ((4 -1 3) . #'gnus-category-add)
+
+;;;;;;;; 4-0
+ ((4 0 1) . #'gnus-category-exit)))
+;;;; gnus-dired
+
+;;;; gnus-draft
+(gnus-draft
+ (gnus-draft-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -3) . #'gnus-draft-edit-message)
+ ((4 -1 3) . #'gnus-draft-send-message)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 3) . #'gnus-draft-send-all-messages)))
+;;;; gnus-ml
+
+;;;; gnus-agent
+(gnus-agent
+ (gnus-agent-group-mode-map
+;;;;; Coordinates
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-agent-add-group)
+ ((5 -1 -3) . #'gnus-agent-remove-group))
+
+ (gnus-agent-server-mode-map
+;;;;; Coordinates
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-agent-remove-server)
+ ((5 -1 3) . #'gnus-agent-add-server))
+
+ (gnus-agent-summary-mode-map
+;;;;; Coordinates
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-agent-toggle-mark)
+ ((5 -1 3) . #'gnus-agent-mark-article)))
+
+;;;; gnus-bookmark
+(gnus-bookmark
+ (gnus-bookmark-bmenu-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -3) . #'gnus-bookmark-bmenu-unmark)
+ ((4 -1 3) . #'gnus-bookmark-bmenu-mark)
+
+;;;;;;;; 4-0
+ ((4 0 1) . #'quit-window)
+ ((4 0 5) . #'gnus-bookmark-bmenu-save)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-bookmark-bmenu-delete)
+ ((5 -1 3) . #'gnus-bookmark-bmenu-select)
+
+;;;;;;; 6
+;;;;;;;; 6--1
+ ((6 -1 -3) . #'gnus-bookmark-bmenu-execute-deletions)))
+
+;;;; gnus-undo
+(gnus-undo
+ (gnus-undo-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -2) . #'gnus-undo)))
+
+;;;; gnus-tree
+(gnus-tree
+ (gnus-tree-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 2) . #'gnus-tree-select-article)))
+
+;;;; gnus-serv
+(gnus-serv
+ (gnus-server-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -2) . #'gnus-server-read-server-in-server-buffer)
+ ((4 0 1) . #'gnus-server-exit)
+ ((4 0 2) . #'gnus-server-read-server)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-server-close-server)
+ ((5 -1 -1) . #'gnus-server-deny-server)
+ ((5 -1 1) . #'gnus-server-open-server)
+ ((5 -1 3) . #'gnus-server-remove-denials)))
+
+;;;; gnus-browse
+(gnus-browse
+ (gnus-browse-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -2) . #'gnus-browse-prev-group)
+ ((1 0 2) . #'gnus-browse-next-group)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 3) . #'gnus-browse-select-group)
+
+;;;;;;;; 4-0
+ ((4 0 1) . #'gnus-browse-exit)
+ ((4 0 2) . #'gnus-browse-read-group)))
+;;;; gnus-cloud
+
+;;;; gnus-group
+(gnus-group
+ (gnus-group-cloud-map
 ;;;;; Coordinates
 ;;;;;;; 5
 ;;;;;;;; 5-0
- ((5 0 1) . #'quit-window)
+ ((5 0 -3) . #'gnus-cloud-download-all-data)
+ ((5 0 3) . #'gnus-cloud-upload-all-data)))
 
-;;;;;; M-
-;;;;;;; M-5
-;;;;;;;; M-5--1
- (("M-" . (5 -1 2)) . #'dired-mark-suffix))
-
-;;;; gnus-group-mode-map
-(gnus-group-mode-map
+;;;; gnus-topic
+(gnus-topic
+ (gnus-topic-mode-map
 ;;;;; Coordinates
-;;;;;;; 5
-;;;;;;;; 5-0
- ((5 0 -2) . #'gnus-group-exit)
- ((5 0 2) . #'gnus-group-select-group)
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'gnus-topic-hide-topic)
+ ((1 -1 -3) . #'gnus-topic-mark-topic)
+ ((1 -1 3) . #'gnus-topic-select-group)
+ ((1 -1 4) . #'gnus-topic-show-topic)
+
+;;;;;;;; 1-0
+ ((1 0 3) . #'gnus-topic-rename)
+
+;;;;;;;; 1-1
+ ((1 1 -3) . #'gnus-topic-kill-group)
+ ((1 1 2) . #'gnus-group-topic-map)
+ ((1 1 3) . #'gnus-topic-yank-group)
+
+;;;;;;; 3
+;;;;;;;; 3-0
+ ((3 0 -2) . #'gnus-topic-indent)
+ ((3 0 2) . #'gnus-topic-unindent)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 2) . #'gnus-topic-read-group))
+
+ (gnus-group-topic-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -4) . #'gnus-topic-hide-topic)
+ ((1 -1 2) . #'gnus-topic-indent)
+ ((1 -1 4) . #'gnus-topic-show-topic)
+
+;;;;;;;; 1-0
+ ((1 0 -5) . #'gnus-topic-toggle-display-empty-topics)
+ ((1 0 -2) . #'gnus-topic-goto-previous-topic)
+ ((1 0 2) . #'gnus-topic-goto-next-topic)
+ ((1 0 3) . #'gnus-topic-move-group)
+ ((1 0 5) . gnus-topic-sort-map)
+
+;;;;;;;; 1-1
+ ((1 1 -3) . #'gnus-topic-copy-group)
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 -3) . #'gnus-topic-delete)
+ ((2 -1 4) . #'gnus-topic-jump-to-topic)
+
+;;;;;;;; 2-0
+ ((2 0 1) . #'gnus-topic-move-matching)
+
+;;;;;;;; 2-1
+ ((2 1 -3) . #'gnus-topic-copy-matching)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -3) . #'gnus-topic-remove-group)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -4) . #'gnus-topic-hide-topic)
+ ((4 -1 -3) . #'gnus-topic-unmark-topic)
+ ((4 -1 3) . #'gnus-topic-mark-topic)
+ ((4 -1 4) . #'gnus-topic-show-topic)
+
+;;;;;;;; 4-0
+ ((4 0 -2) . #'gnus-topic-indent)
+ ((4 0 2) . #'gnus-topic-unindent)
+ ((4 0 3) . #'gnus-topic-rename)))
+
+;;;; gnus-group
+(gnus-group
+ (gnus-group-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -1) . #'gnus-group-toggle-subscription)
+ ((1 -1 1) . #'gnus-group-post-news)
+
+;;;;;;;; 1-0
+ ((1 0 -5) . gnus-group-help-map)
+ ((1 0 -4) . #'gnus-group-prev-unread-group-same-level)
+ ((1 0 -3) . #'gnus-group-prev-unread-group)
+ ((1 0 -2) . #'gnus-group-prev-group)
+ ((1 0 2) . #'gnus-group-next-group)
+ ((1 0 3) . #'gnus-group-next-unread-group)
+ ((1 0 4) . #'gnus-group-prev-unread-group-same-level)
+
+;;;;;;;; 1-1
+ ((1 1 -3) . #'gnus-group-kill-group)
+ ((1 1 -2) . #'gnus-group-get-new-news)
+ ((1 1 3) . #'gnus-group-yank-group)
+
+;;;;;;; 2
+;;;;;;;; 2--1
+ ((2 -1 -3) . gnus-group-mark-map)
+
+;;;;;;;; 2-1
+ ((2 1 -3) . #'gnus-group-kill-region)
+ ((2 1 -2) . gnus-group-cloud-map)
+ ((2 1 0) . gnus-group-sieve-map)
+ ((2 1 2) . gnus-group-group-map)
+
+;;;;;;; 3
+;;;;;;;; 3-1
+ ((3 1 -2) . gnus-group-list-map)
+ ((3 1 0) . gnus-group-score-map)
+ ((3 1 2) . gnus-group-sub-map)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -2) . #'gnus-group-save-newsrc)
+ ((4 0 1) . #'gnus-group-exit)
+ ((4 0 2) . #'gnus-group-select-group)
 
 ;;;;;;; 7
 ;;;;;;;; 7-0
- ((7 0 2) . #'daselt-gnus-group-select-group-t))
+ ((7 0 -2) . #'gnus-group-describe-briefly)
+ ((7 0 2) . #'gnus-group-describe-group))
 
-;;;; gnus-summary-mode-map
-(gnus-summary-mode-map
+ (gnus-group-mark-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -3) . #'gnus-group-unmark-group)
+ ((4 -1 3) . #'gnus-group-mark-group)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-group-unmark-all-groups)
+ ((5 -1 3) . #'gnus-group-mark-region))
+
+ (gnus-group-group-map
 ;;;;; Coordinates
 ;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'gnus-group-delete-group)
+ ((5 -1 -2) . #'gnus-group-edit-group)
+ ((5 -1 2) . #'gnus-group-rename-group)
+ ((5 -1 3) . #'gnus-group-make-group))
+
+ (gnus-group-sub-map
+;;;;; Coordinates
+;;;;;;; 2
+;;;;;;;; 2-1
+ ((2 1 -3) . #'gnus-group-kill-region)
+ ((2 1 3) . #'gnus-group-yank-group)
+
+;;;;;;; 3
+;;;;;;;; 3-1
+ ((3 1 -3) . #'gnus-group-kill-group)
+
+;;;;;;; 4
+;;;;;;;; 4-1
+ ((4 1 -3) . #'gnus-group-kill-level)))
+
+;;;; gnus-sum
+(gnus-sum
+ (gnus-summary-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1--1
+ ((1 -1 -3) . #'gnus-summary-clear-mark-forward)
+ ((1 -1 -1) . #'gnus-summary-cancel-article)
+ ((1 -1 1) . #'gnus-summary-post-news)
+ ((1 -1 3) . #'gnus-summary-mark-as-read-forward)
+
+;;;;;;;; 1-0
+ ((1 0 -5) . gnus-summary-help-map)
+ ((1 0 -4) . #'gnus-summary-prev-article)
+ ((1 0 -3) . #'gnus-summary-prev-page)
+ ((1 0 -2) . #'gnus-summary-button-backward)
+ ((1 0 -1) . #'gnus-summary-beginning-of-article)
+ ((1 0 1) . #'gnus-summary-end-of-article)
+ ((1 0 2) . #'gnus-summary-button-forward)
+ ((1 0 3) . #'gnus-summary-next-page)
+ ((1 0 4) . #'gnus-summary-next-article)
+ ((1 0 5) . gnus-summary-save-map)
+
+;;;;;;;; 1-1
+ ((1 1 0) . gnus-summary-mark-map)
+
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -4) . #'gnus-summary-limit-to-unread)
+ ((2 0 -3) . #'gnus-summary-insert-old-articles)
+ ((2 0 -2) . #'gnus-summary-limit-to-author)
+ ((2 0 2) . #'gnus-summary-pop-limit)
+ ((2 0 3) . #'gnus-summary-insert-new-articles)
+ ((2 0 4) . #'gnus-summary-limit-to-subject)
+ ((2 0 5) . #'gnus-summary-save-article)
+
+;;;;;;;; 2-1
+ ((2 1 -2) . gnus-summary-article-map)
+ ((2 1 0) . gnus-summary-limit-map)
+ ((2 1 2) . gnus-summary-wash-map)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -3) . #'gnus-summary-hide-thread)
+ ((3 -1 -2) . #'gnus-summary-lower-thread)
+ ((3 -1 2) . #'gnus-summary-raise-thread)
+ ((3 -1 3) . #'gnus-summary-show-thread)
+
+;;;;;;;; 3-0
+ ((3 0 -5) . #'gnus-summary-top-thread)
+ ((3 0 -4) . #'gnus-summary-prev-thread)
+ ((3 0 -3) . #'gnus-summary-up-thread)
+ ((3 0 1) . #'gnus-summary-kill-thread)
+ ((3 0 3) . #'gnus-summary-down-thread)
+ ((3 0 4) . #'gnus-summary-next-thread)
+ ((3 0 5) . #'gnus-summary-rethread-current)
+
+;;;;;;;; 3-1
+ ((3 1 -2) . gnus-summary-backend-map)
+ ((3 1 0) . gnus-uu-extract-map)
+ ((3 1 2) . gnus-summary-mime-map)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -3) . #'gnus-summary-supersede-article)
+ ((4 -1 -2) . #'gnus-summary-followup)
+ ((4 -1 -1) . #'gnus-summary-cancel-article)
+ ((4 -1 2) . #'gnus-summary-reply)
+
+;;;;;;;; 4-0
+ ((4 0 -2) . #'gnus-summary-save-article-file)
+ ((4 0 -1) . #'gnus-summary-save-article-body-file)
+ ((4 0 1) . #'gnus-summary-exit)
+ ((4 0 2) . #'gnus-summary-show-article)
+
+;;;;;;;; 4-1
+ ((4 1 -2) . gnus-summary-exit-map)
+ ((4 1 -2) . gnus-summary-buffer-map)
+ ((4 1 0) . gnus-summary-thread-map)
+ ((4 1 3) . #'gnus-summary-pipe-output)
+
+;;;;;;; 5
+;;;;;;;; 5-1
+ ((5 1 0) . #'gnus-summary-toggle-threads)
+
+;;;;;;; 6
+;;;;;;;; 6-0
+ ((6 0 -3) . #'gnus-summary-current-score)
+ ((6 0 3) . #'gnus-summary-set-score)
+
+;;;;;;; 7
+;;;;;;;; 7-0
+ ((7 0 -2) . #'gnus-summary-describe-briefly)
+ ((7 0 2) . #'gnus-summary-describe-group)
+
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 3)) . #'gnus-summary-wide-reply)
+
+;;;;;; s-
+;;;;;;; s-4
+;;;;;;;; s-4--1
+ (("s-" . (4 -1 4)) . #'gnus-summary-very-wide-reply))
+
+ (gnus-summary-article-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -5) . #'gnus-summary-beginning-of-article)
+ ((4 0 -3) . #'gnus-summary-prev-page)
+ ((4 0 -2) . #'gnus-summary-button-backward)
+ ((4 0 1) . #'gnus-summary-isearch-article)
+ ((4 0 2) . #'gnus-summary-button-forward)
+ ((4 0 3) . #'gnus-summary-next-page)
+ ((4 0 5) . #'gnus-summary-end-of-article))
+
+ (gnus-summary-thread-map
+;;;;; Coordinates
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -4) . #'gnus-summary-hide-thread)
+ ((3 -1 -3) . #'gnus-summary-lower-thread)
+ ((3 -1 3) . #'gnus-summary-raise-thread)
+ ((3 -1 4) . #'gnus-summary-show-thread)
+
+;;;;;;;; 3-0
+ ((3 0 -4) . #'gnus-summary-top-thread)
+ ((3 0 -3) . #'gnus-summary-up-thread)
+ ((3 0 -2) . #'gnus-summary-prev-thread)
+ ((3 0 1) . #'gnus-summary-kill-thread)
+ ((3 0 2) . #'gnus-summary-next-thread)
+ ((3 0 3) . #'gnus-summary-down-thread)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -4) . #'gnus-summary-hide-all-threads)
+ ((4 -1 4) . #'gnus-summary-show-all-threads))
+
+ (gnus-summary-goto-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -4) . #'gnus-summary-prev-article)
+ ((1 0 -3) . #'gnus-summary-prev-unread-article)
+ ((1 0 -2) . #'gnus-summary-prev-unseen-article)
+ ((1 0 2) . #'gnus-summary-next-unseen-article)
+ ((1 0 3) . #'gnus-summary-next-unread-article)
+ ((1 0 4) . #'gnus-summary-next-article)
+
+;;;;;;;; 1-1
+ ((1 1 0) . #'gnus-summary-goto-article))
+
+ (gnus-summary-exit-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 1) . #'gnus-summary-exit)
+
+;;;;;;; 7
+;;;;;;;; 7-0
+ ((7 0 -3) . #'gnus-summary-rescan-group)
+ ((7 0 -2) . #'gnus-summary-prev-group)
+ ((7 0 -1) . #'gnus-summary-catchup-all-and-exit)
+ ((7 0 1) . #'gnus-summary-catchup-and-exit)
+ ((7 0 2) . #'gnus-summary-next-group)
+ ((7 0 3) . #'gnus-summary-reselect-current-group))
+
+ (gnus-summary-backend-map
+;;;;; Coordinates
+;;;;;;; 5
+;;;;;;;; 5-1
+ ((5 1 -3) . #'gnus-summary-copy-article))
+
+ (gnus-summary-mime-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 5) . #'gnus-article-save-part)
+
+;;;;;;;; 4-1
+ ((4 1 -3) . #'gnus-article-copy-part))
+
+ (gnus-dead-summary-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -1) . #'gnus-summary-wake-up-the-dead)
+ ((4 0 1) . #'bury-buffer)))
+
+;;;; gnus-art
+(gnus-art
+ (gnus-article-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -2) . #'gnus-article-followup-with-original)
+ ((4 -1 2) . #'gnus-article-reply-with-original)
+
+;;;;;;;; 4-0
+ ((4 0 -3) . #'gnus-article-goto-prev-page)
+ ((4 0 -2) . #'backward-button)
+ ((4 0 2) . #'forward-button)
+ ((4 0 3) . #'gnus-article-goto-next-page)
+
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 2)) . #'gnus-article-wide-reply-with-original))
+
+ (gnus-article-send-map
+;;;;; Coordinates
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 2) . #'gnus-article-read-summary-send-keys)
+
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 2)) . #'gnus-article-wide-reply-with-original))
+
+ (gnus-article-edit-mode-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -6) . #'message-tab)
+
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -2) . #'message-sort-headers)
+ ((2 0 -1) . #'message-insert-to)
+ ((2 0 -1) . #'message-insert-newsgroups)
+ ((2 0 2) . #'message-delete-not-region)
+
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 -2) . #'mml-attach-file)
+ ((4 0 -1) . #'gnus-article-edit-exit)
+ ((4 0 1) . #'gnus-article-edit-done)
+ ((4 0 2) . #'message-goto-signature)
+
+;;;;;;; 7
+;;;;;;;; 7-0
+ ((7 0 -2) . #'message-beginning-of-line))
+
+ (gnus-article-edit-wash-map
+;;;;; Coordinates
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 3) . #'gnus-article-edit-full-stops))
+
+ (gnus-article-edit-mode-field-menu
+;;;;; Coordinates
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -2) . #'message-goto-to)
+ ((2 0 -1) . #'message-goto-cc)
+ ((2 0 1) . #'message-goto-subject)
+ ((2 0 2) . #'message-goto-from)
+
+;;;;;;;; 2-1
+ ((2 1 0) . #'message-goto-signature))
+
+ (gnus-mime-button-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'gnus-article-press-button)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -3) . #'gnus-mime-delete-part)
+
+;;;;;;;; 3-0
+ ((3 0 -4) . #'gnus-mime-view-part-as-charset)
+ ((3 0 -2) . #'gnus-mime-view-part-externally)
+ ((3 0 1) . #'gnus-mime-replace-part)
+ ((3 0 2) . #'gnus-mime-inline-part)
+ ((3 0 4) . #'gnus-mime-view-part)
+ ((3 0 5) . #'gnus-mime-save-part)
+
+;;;;;;;; 3-1
+ ((3 1 -3) . #'gnus-mime-copy-part)
+
+;;;;;;; 5
 ;;;;;;;; 5-0
- ((5 0 -2) . #'gnus-summary-exit)
- ((5 0 2) . #'gnus-summary-next-page))
+ ((5 0 0) . #'gnus-mime-print-part)
+
+;;;;;;;; 5-1
+ ((5 1 0) . #'gnus-mime-pipe-part))
+
+ (gnus-mime-button-menu
+;;;;; Coordinates
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -3) . #'gnus-mime-delete-part)
+
+;;;;;;;; 3-0
+ ((3 0 -4) . #'gnus-mime-view-part-as-charset)
+ ((3 0 -3) . #'gnus-mime-copy-part)
+ ((3 0 -2) . #'gnus-mime-view-part-externally)
+ ((3 0 1) . #'gnus-mime-replace-part)
+ ((3 0 2) . #'gnus-mime-inline-part)
+ ((3 0 4) . #'gnus-mime-view-part)
+ ((3 0 5) . #'gnus-mime-save-part)
+
+;;;;;;; 5
+;;;;;;;; 5-0
+ ((5 0 0) . #'gnus-mime-print-part)
+
+;;;;;;;; 5-1
+ ((5 1 0) . #'gnus-mime-pipe-part))
+
+ (gnus-mime-security-button-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'gnus-article-press-button)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 1) . #'gnus-mime-security-save-part)
+
+;;;;;;; 5
+;;;;;;;; 5-1
+ ((5 1 0) . #'gnus-mime-security-pipe-part))
+
+ (gnus-mime-security-button-menu
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'gnus-article-press-button)
+
+;;;;;;; 3
+;;;;;;;; 3-0
+ ((3 0 5) . #'gnus-mime-security-save-part))
+
+ (gnus-next-page-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'gnus-button-next-page))
+
+ (gnus-prev-page-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -2) . #'gnus-button-prev-page))
+
+ (gnus-url-button-map
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'push-button)
+
+;;;;;;; 4
+;;;;;;;; 4-1
+ ((4 1 -3) . #'gnus-article-copy-string))
+
+ (gnus-url-button-menu
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 2) . #'push-button)
+ ((1 0 5) . gnus-article-send-map)
+
+;;;;;;; 4
+;;;;;;;; 4-1
+ ((4 1 -3) . #'gnus-article-copy-string)))
+
+;;;; gnus-html
+(gnus-html
+ (gnus-html-image-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 5) . #'gnus-html-browse-url)
+
+;;;;;;;; 4-1
+ ((4 1 -3) . #'gnus-article-copy-string)
+ ((4 1 3) . #'gnus-html-insert-image))
+
+ (gnus-html-displayed-image-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4-0
+ ((4 0 5) . #'gnus-html-browse-url)
+
+;;;;;;; 7
+;;;;;;;; 7-0
+ ((7 0 5) . #'gnus-html-browse-image)))
+
+;;;; gnus-msg
+(gnus-msg
+ (gnus-summary-send-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -2) . #'gnus-summary-followup)
+ ((4 -1 2) . #'gnus-summary-reply)
+
+;;;;;;;; 4-0
+ ((4 0 -1) . #'gnus-summary-cancel-article)
+
+;;;;;;;; 4-1
+ ((4 1 3) . #'gnus-summary-yank-message)
+
+;;;;;; C-
+;;;;;;; C-4
+;;;;;;;; C-4--1
+ (("C-" . (4 -1 3)) . #'gnus-summary-wide-reply)
+
+;;;;;; s-
+;;;;;;; s-4
+;;;;;;;; s-4--1
+ (("s-" . (4 -1 3)) . #'gnus-summary-very-wide-reply)))

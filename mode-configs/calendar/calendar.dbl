@@ -1,0 +1,101 @@
+;;;; calendar-mode-map
+(
+;;;;; Coordinates
+;;;;;;; 1
+;;;;;;;; 1-0
+ ((1 0 -4) . #'calendar-scroll-right)
+ ((1 0 -3) . #'calendar-scroll-right-three-months)
+ ((1 0 -2) . #'calendar-backward-day)
+ ((1 0 -1) . #'calendar-backward-week)
+ ((1 0 1) . #'calendar-forward-week)
+ ((1 0 2) . #'calendar-forward-day)
+ ((1 0 3) . #'calendar-scroll-left-three-months)
+ ((1 0 4) . #'calendar-scroll-left)
+
+;;;;;;;; 1-1
+ ((1 1 -3) . #'calendar-beginning-of-month)
+ ((1 1 3) . #'calendar-end-of-month)
+ ((1 1 5) . #'calendar-goto-today)
+
+;;;;;;; 2
+;;;;;;;; 2-0
+ ((2 0 -5) . #'calendar-goto-date)
+ ((2 0 -3) . #'calendar-count-days-region)
+ ((2 0 -2) . #'calendar-beginning-of-month)
+ ((2 0 3) . #'calendar-end-of-month)
+ ((2 0 5) . #'calendar-print-day-of-year)
+
+;;;;;;;; 2-1
+ ((2 1 -5) . #'calendar-goto-day-of-year)
+ ((2 1 -2) . #'calendar-iso-goto-week)
+ ((2 1 2) . #'calendar-other-month)
+
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 -3) . #'diary-mark-entries)
+ ((3 -1 -2) . #'calendar-unmark)
+ ((3 -1 1) . #'diary-view-entries)
+ ((3 -1 2) . #'diary-show-all-entries)
+ ((3 -1 3) . #'diary-view-other-diary-entries)
+
+;;;;;;;; 3-0
+ ((3 0 -3) . #'diary-insert-entry)
+ ((3 0 -2) . #'diary-insert-weekly-entry)
+ ((3 0 2) . #'diary-insert-monthly-entry)
+ ((3 0 3) . #'diary-insert-yearly-entry)
+ ((3 0 4) . #'cal-tex-cursor-month)
+ ((3 0 5) . #'cal-tex-cursor-year)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -5) . #'calendar-cursor-holidays)
+ ((4 -1 -4) . #'calendar-list-holidays)
+ ((4 -1 2) . #'calendar-goto-date)
+ ((4 -1 3) . #'calendar-other-month)
+
+;;;;;;;; 4-0
+ ((4 0 3) . #'calendar-redraw)
+ ((4 0 4) . #'calendar-exit)
+
+;;;;;;; 5
+;;;;;;;; 5-0
+ ((5 0 -1) . #'diary-view-entries)
+ ((5 0 1) . #'diary-show-all-entries)
+
+;;;;;;;; 5-1
+ ((5 1 2) . #'diary-mark-entries)
+ ((5 1 5) . #'calendar-unmark)
+
+;;;;;;; 6
+;;;;;;;; 6-0
+ ((6 0 -5) . #'calendar-backward-year)
+ ((6 0 -4) . #'calendar-backward-month)
+ ((6 0 -3) . #'calendar-backward-day)
+ ((6 0 -2) . #'calendar-backward-week)
+ ((6 0 2) . #'calendar-forward-week)
+ ((6 0 3) . #'calendar-forward-day)
+ ((6 0 4) . #'calendar-forward-month)
+ ((6 0 5) . #'calendar-forward-year)
+
+;;;;;;;; 6-1
+ ((6 1 -2) . #'calendar-backward-week)
+ ((6 1 2) . #'calendar-forward-week)
+
+;;;;;;; 7
+;;;;;;;; 7-0
+ ((7 0 -4) . #'calendar-beginning-of-year)
+ ((7 0 -3) . #'calendar-scroll-right)
+ ((7 0 -2) . #'calendar-beginning-of-week)
+ ((7 0 2) . #'calendar-end-of-week)
+ ((7 0 3) . #'calendar-scroll-left)
+ ((7 0 4) . #'calendar-end-of-year)
+
+;;;;;;; 8
+;;;;;;;; 8--1
+ ((8 -1 -3) . #'calendar-cursor-holidays)
+ ((8 -1 4) . #'calendar-mark-holidays)
+
+;;;;;;;; 8-0
+ ((8 0 -1) . #'calendar-list-holidays)
+ ((8 0 4) . #'calendar-lunar-phases)
+ ((8 0 5) . #'calendar-sunrise-sunset))

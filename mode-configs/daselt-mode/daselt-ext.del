@@ -66,38 +66,37 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
   :type 'boolean
   :group 'daselt-mode)
 
-(defcustom daselt-C-3-0-2-contexts-list
+(defcustom daselt-C-4-0-2-contexts-list
   '((minibuffer-mode . minibuffer-complete-and-exit)
-    (Info-mode . Info-follow-nearest-node)
-    (eww-mode . eww-follow-link)
-    (help-mode . push-button)
+    (special-mode . daselt-follow-in-other-window)
     (LaTeX-mode . (lambda () (latex/forward-environment 1)))
     (vterm-mode . vterm-send-tab)
     (emacs-lisp-mode . sp-next-sexp)
     (org-mode . (lambda () (let ((buffer (buffer-name)))
-                             (cond ((org-footnote-at-reference-p)
-                                    org-footnote-action)
+                        (cond ((org-footnote-at-reference-p)
+                               org-footnote-action)
 
-                                   ((org-at-item-p)
-                                    (unless (run-hook-with-args-until-success 'org-open-at-point-functions)
-                                      (let* ((context
-	                                      ;; Only consider supported types, even if they are not the
-	                                      ;; closest one.
-	                                      (org-element-lineage
-	                                       (org-element-context)
-	                                       '(citation citation-reference clock comment comment-block
-                                                          footnote-definition footnote-reference headline
-                                                          inline-src-block inlinetask keyword link node-property
-                                                          planning src-block timestamp)
-	                                       t))
-	                                     (type (org-element-type context))
-	                                     (value (org-element-property :value context)))
-                                        (if type
-                                            org-open-at-point
-                                          org-next-item))))
+                              ((org-at-item-p)
+                               (unless (run-hook-with-args-until-success 'org-open-at-point-functions)
+                                 (let* ((context
+	                                 ;; Only consider supported types, even if they are not the
+	                                 ;; closest one.
+	                                 (org-element-lineage
+	                                  (org-element-context)
+	                                  '(citation citation-reference clock comment comment-block
+                                                     footnote-definition footnote-reference headline
+                                                     inline-src-block inlinetask keyword link node-property
+                                                     planning src-block timestamp)
+	                                  t))
+	                                (type (org-element-type context))
+	                                (value (org-element-property :value context)))
+                                   (if type
+                                       org-open-at-point
+                                     org-next-item))))
 
-                                   (t (org-open-at-point)))))))
-  "A list defining actions for `daselt-C-3-0-2' across different modes."
+                              (t (org-open-at-point))))))
+    (gnus-article-mode . #'gnus-article-show-summary))
+  "A list defining actions for `daselt-C-4-0-2' across different modes."
   :type '(repeat (cons symbol sexp))
   :group 'daselt-mode)
 
@@ -584,27 +583,38 @@ Move up ARG levels; if INVISIBLE-OK is non-nil, consider invisible lines."
     (looking-at outline-regexp)))
 
 (defun daselt-switch-to-messages ()
-  "Switch to messages buffer."
-  (declare (ftype (function nil t)))
+      "Switch to messages buffer."
+      (declare (ftype (function nil t)))
+      (interactive)
+      (switch-to-buffer "*Messages*"))
+
+(defun daselt-follow-in-other-window ()
+  "Follow or open link at point in another window."
   (interactive)
-  (switch-to-buffer "*Messages*"))
+  (let ((new-buffer (clone-buffer))
+        (current-point (point)))
+    ;; (unless (one-window-p)
+    ;;   (other-window 1))
+    (switch-to-buffer-other-window new-buffer)
+    (goto-char current-point)
+    (avy-act--follow-or-open)))
 
 ;;;;;; Context-Specific behavior
 (defun daselt-C-1-0-2 ()
-  "Contextual command on `C-(1 0 2)'.
+      "Contextual command on `C-(1 0 2)'.
 
 Mode-specific contexts can be edited by changing `daselt-C-1-0-2-contexts-list`.
 Default behavior is to move cursor one character forward."
-  (interactive)
-  (daselt--funcall-first-mode-match daselt-C-1-0-2-contexts-list #'forward-char))
+      (interactive)
+      (daselt--funcall-first-mode-match daselt-C-1-0-2-contexts-list #'forward-char))
 
 (defun daselt-C-1--1-0 ()
-  "Like `back-button-local-backward but interacts better with `daselt-C-3-0-2'."
+  "Like `back-button-local-backward but interacts better with `daselt-C-4-0-2'."
   (declare (ftype (function nil t)))
   (interactive)
   (cl-letf (((symbol-function 'back-button-push-mark)
              (lambda ()
-               (if (eq last-command #'daselt-C-3-0-2)
+               (if (eq last-command #'daselt-C-4-0-2)
                    (set-marker (mark-marker) (point) (current-buffer))
                  (push-mark)))))
     (back-button-local-backward)))
@@ -651,7 +661,7 @@ Mode-specific contexts can be edited by changing
   (interactive)
   (daselt--funcall-first-mode-match daselt-C-1-0-4-contexts-list #'scroll-up-command))
 
-(cl-defun daselt-C-3-0-2 ()
+(cl-defun daselt-C-4-0-2 ()
   "Expand Yasnippet, Cdlatex item, tempo tag, abbrev, Corfu expansion if available.
 
 Also, go to the next item or environment, open a footnote, or open something as
@@ -664,14 +674,14 @@ for some reason.
 In math-mode, no abbrevs are expanded."
   (interactive)
 
-  ;; If we're using `daselt-C-3-0-2-mixed-abbrevs', then we should
+  ;; If we're using `daselt-C-4-0-2-mixed-abbrevs', then we should
   ;; calculate a syntax-table in which the symbols we're using are characters.
   ;; We only need to calculate that table once per buffer, saving CPU cycles.
 
   (cl-flet ((yas-maybe-expand ()
               (when (yas-maybe-expand-abbrev-key-filter t)
                 (yas-expand)
-                (cl-return-from daselt-C-3-0-2)))
+                (cl-return-from daselt-C-4-0-2)))
 
             (cdlatex-maybe-expand ()
               (let ((pos (point)) expr math-mode)
@@ -688,14 +698,14 @@ In math-mode, no abbrevs are expanded."
                                        (if (nth 4 expr)
                                            (apply (nth 3 expr) (nth 4 expr))
                                          (funcall (nth 3 expr)))))
-                                (cl-return-from daselt-C-3-0-2))
+                                (cl-return-from daselt-C-4-0-2))
                   (goto-char pos))))
 
             (maybe-expand-abbrev ()
               (if (if daselt-abbrev-chain
                       (abbrev-chain-expand)
                     (expand-abbrev))
-                  (cl-return-from daselt-C-3-0-2))))
+                  (cl-return-from daselt-C-4-0-2))))
 
     (when daselt-yasnippet (yas-maybe-expand))
     (when (and daselt-cdlatex cdlatex-mode)
@@ -703,7 +713,7 @@ In math-mode, no abbrevs are expanded."
 
     (when (and (fboundp #'tempo-expand-if-complete)
                (tempo-expand-if-complete))
-      (cl-return-from daselt-C-3-0-2))
+      (cl-return-from daselt-C-4-0-2))
 
     (unless (and (derived-mode-p LaTeX-mode)
                  (or (texmathp))
@@ -719,7 +729,7 @@ In math-mode, no abbrevs are expanded."
           (buf (current-buffer))
           (marker (point-marker)))
 
-      (daselt--funcall-first-mode-match daselt-C-3-0-2-contexts-list #'org-open-at-point-global)
+      (daselt--funcall-first-mode-match daselt-C-4-0-2-contexts-list #'org-open-at-point-global)
 
       ;; If point has moved, save the previous position to the mark ring
       (unless (and (eq buf (current-buffer))

@@ -1143,9 +1143,9 @@ bindings are reduced."
                                   (setq runlst (append runlst
                                                        (if row2
                                                            (list (daselt-base-generate-newlines (if (and eqpfx
-                                                                                                          eqlay)
-                                                                                                     2
-                                                                                                   1))
+                                                                                                         eqlay)
+                                                                                                    2
+                                                                                                  1))
                                                                  (format
                                                                   ";;;;;;;; %s%s-%s"
                                                                   prefix2
@@ -1155,7 +1155,20 @@ bindings are reduced."
                               (setq runlst (append runlst
                                                    (list (daselt-base-generate-newlines 1)
                                                          binding2)))))))
-                   finally return runlst))))
+
+                   ;; If the cdr is a list of headed lists, insert newlines between them.
+                   finally return
+                   (if (and (daselt-bind-head runlst)
+                            (cdr runlst)
+                            (cl-every #'daselt-bind-head (cdr runlst)))
+                       (cons  (car runlst)
+                              (cl-loop for x in (cdr runlst)
+                                       append (if (equal (car (last (cdr runlst)))
+                                                         x)
+                                                  (list x)
+                                                (list x (daselt-base-generate-newlines 2)))))
+                     runlst)
+                   ))))
 
 ;;;;;;; Strings
 (defun daselt-bind--sort-and-format-marked-bindlist-string (&optional coordsonly prefun modlist)
@@ -1259,7 +1272,7 @@ used."
                                                   (: "\"" (one-or-more not-newline) "\"")))
                                        (one-or-more space))
                                       (group (or "\(" ";"))))
-                    "\(\\1\n\\2"
+                    "\(\\1\n \\2"
                     str-with-points-and-brackets-around-coords)
             str-with-points-and-brackets-around-coords))
 
@@ -1353,20 +1366,25 @@ coordinates)."
                                      daselt-bind-double-symbs-alist)))
            (doublestr (if doubleval (concat pfx (char-to-string doubleval))))
 
-           ;; The key combinations translated by Stump need to be double-bound when discrete mods are applied.
-           (stumpdoublebind
+           ;; The key combinations translated by Stump and Emacs need to be double-bound when discrete mods are applied.
+           (transdoubles
             (if (and doublebind
                      (not shifted)) ; Don't doublebind shifted things.
+
                 (let ((discmods (cl-intersection mods daselt-bind-discrete-modifiers-list)))
                   (if discmods
-                      (let ((match (alist-get non-translated-string
-                                              daselt-bind-outside-translations-alist
-                                              nil
-                                              nil
-                                              (lambda (ntstr carstr)
-                                                (string-match-p ntstr carstr)))))
-                        (if match
-                            (concat (daselt-bind-modifiers-to-string discmods) match)))))))
+                      (cl-flet ((get-match (alist)
+                                  (alist-get non-translated-string
+                                             alist
+                                             nil
+                                             nil
+                                             (lambda (ntstr carstr)
+                                               (string-match-p (rx-to-string ntstr) carstr)))))
+                        (let ((emacsmatch (get-match daselt-bind-key-translations-alist))
+                              (stumpmatch (get-match daselt-bind-outside-translations-alist)))
+                          (mapcar (lambda (match)
+                                    (concat (daselt-bind-modifiers-to-string discmods) match))
+                                  (remq nil (list emacsmatch stumpmatch)))))))))
 
            (transstr (if translate
                          (let* ((st-trans
@@ -1383,14 +1401,13 @@ coordinates)."
                            em-trans))))
 
       (if doublebind
-          (remq nil (list (if translate
-                              transstr
-                            non-translated-string)
+          (remq nil (append
+                     (list (if translate
+                               transstr
+                             non-translated-string)
 
-                          (if doubleval doublestr)
-
-                          (if (daselt-base-string-exists-and-nonempty stumpdoublebind)
-                              stumpdoublebind)))
+                           (if doubleval doublestr))
+                     transdoubles))
         (if translate transstr non-translated-string)))))
 
 ;;;;;; Generation

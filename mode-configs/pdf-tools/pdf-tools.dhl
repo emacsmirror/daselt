@@ -1,0 +1,2 @@
+(pdf-history
+ (daselt-pdf-view-apply-history-bindlist . pdf-history-minor-mode-hook))
