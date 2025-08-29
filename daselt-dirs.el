@@ -1029,7 +1029,7 @@ Empty `daselt-dirs--hook-removals' afterwards."
   (declare (ftype (function () t)))
   (mapc (lambda (hook-cns)
           (let ((func (car hook-cns))
-                (hook cdr hook-cns))
+                (hook (cdr hook-cns)))
             (remove-hook hook func)))
         daselt-dirs--hook-removals)
   (setq daselt-dirs--hook-removals nil))

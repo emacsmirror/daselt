@@ -146,13 +146,10 @@
  ((1 0 2) . #'gnus-browse-next-group)
 
 ;;;;;;; 4
-;;;;;;;; 4--1
- ((4 -1 3) . #'gnus-browse-select-group)
-
 ;;;;;;;; 4-0
+ ((4 0 -2) . #'gnus-browse-read-group)
  ((4 0 1) . #'gnus-browse-exit)
- ((4 0 2) . #'gnus-browse-read-group)))
-;;;; gnus-cloud
+ ((4 0 2) . #'gnus-browse-select-group)))
 
 ;;;; gnus-group
 (gnus-group
