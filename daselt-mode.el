@@ -499,6 +499,12 @@ resetting the keyboard layout as well."
                                    (daselt-base-remove-text-properties-from-string
                                     (completing-read "Do you have an ansi or iso-keyboard (you have ansi if your left Shift-key is larger than CapsLock)? " daselt-dfk-supported-layout-types nil t))))
 
+        (daselt-xkb-generate-layouts)
+
+        ;; Refresh the daselt-xkb-layouts in case someone has changed bindings.
+        (daselt-xkb-set-layouts-list)
+        (put 'daselt-xkb-layout 'custom-options daselt-xkb-layouts)
+
         (if daselt-bind-translate-keys
             ;; Add the key translations for C-g and ("C-" . (1 1 -2)) if they aren't there yet.
             (progn (if daselt-bind-translate-C-1-1--2-C-g
@@ -511,11 +517,6 @@ resetting the keyboard layout as well."
                    (mapc
                     (lambda (cns) (key-translate (car cns) (cdr cns)))
                     daselt-bind-key-translations-alist)))
-
-        ;; Refresh the daselt-xkb-layouts in case someone has changed bindings.
-        (daselt-xkb-generate-layouts)
-        (daselt-xkb-set-layouts-list)
-        (put 'daselt-xkb-layout 'custom-options daselt-xkb-layouts)
 
         ;; Choose the layout
         (if (or (not (boundp 'daselt-xkb-layout))

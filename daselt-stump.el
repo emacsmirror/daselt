@@ -474,7 +474,9 @@ MODES are included for conditional mappings."
 (defun daselt-stump--generate-remap-list-code ()
   "Generate the list of key translations for daselt-stump's init file.
 
-It processes each bindlist in `daselt-stump-remapped-keys-special-bindlists'
+It processes each bindlist in `daselt-stump-pkg-configs-directory'/stumpwm/remapped-keys-special.dbl
+and
+`daselt-stump-pkg-configs-directory'/stumpwm/remapped-keys-user-defined-special.dbl
 and combines them with the exceptions defined in
 `daselt-stump-remap-exceptions-alist`, producing remapped keys that meet the
 specified conditions."
