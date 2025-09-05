@@ -147,6 +147,10 @@
 
 ;;;;;;;; H-1-0
  (("H-" . (1 0 -5)) . "restore-from-file")
+ (("H-" . (1 0 -3)) . "daselt-stump-rotate-up")
+ (("H-" . (1 0 -2)) . "daselt-stump-rotate-left")
+ (("H-" . (1 0 2)) . "daselt-stump-rotate-right")
+ (("H-" . (1 0 3)) . "daselt-stump-rotate-normal")
  (("H-" . (1 0 5)) . "dump-desktop-to-file")
 
 ;;;;;;;; H-1-1

@@ -94,7 +94,7 @@ Only used if `daselt-mode-keep-tab-bar-status' is t."
                                        org-open-at-point
                                      org-next-item))))
 
-                              (t (org-open-at-point))))))
+                              (t (org-open-at-point-global))))))
     (gnus-article-mode . #'gnus-article-show-summary))
   "A list defining actions for `daselt-C-4-0-2' across different modes."
   :type '(repeat (cons symbol sexp))
@@ -758,9 +758,15 @@ In math-mode, no abbrevs are expanded."
   "Exit if at the end of the minibuffer, otherwise move char right."
   (interactive)
   (if (eobp)
-      (exit-minibuffer)
-    (forward-char)))
+                                                                                                  (exit-minibuffer)
+                                                  (forward-char)))
 
+;;;;;; Saving
+(defun daselt-abbrev-save ()
+  "Save user-defined abbrevs to default abbrev-file."
+  (declare (ftype (function () t)))
+  (interactive)
+  (write-abbrev-file nil))
 ;;;;;; Yanking
 (defun daselt-yank-or-org-roam-node-insert ()
   "Yank text when mark is inactive; otherwise call `org-roam-node-insert`."

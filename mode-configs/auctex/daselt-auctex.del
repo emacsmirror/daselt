@@ -32,7 +32,7 @@
 
 ;;;;; Insertion
 (defun daselt-latex-insert-normpair-yas-snippet (&optional ARG)
-      "This command inserts a correctly spaced norm pair yas-snippet.
+  "This command inserts a correctly spaced norm pair yas-snippet.
 
 If the region is active and usable, it inserts the norm pair around the region.
 It is bound to ∣ in LaTeX-mode, because their spacing otherwise is awful.
@@ -53,8 +53,8 @@ With 0 as a prefix, it inserts a snippet like \\left\\vert${1:-}\\right\\vert.
 With 2 as a prefix, it inserts \\big\\vert${1:-}\\big\\vert.
 
 With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
-      (interactive "p")
-      (let ((snippet (cond ((= ARG -2) "\\mathsmaller{\\mathsmaller{\\mathopen{∣}}}${1:-}\\mathsmaller{\\mathsmaller{\\mathclose{∣}}}")
+  (interactive "p")
+  (let ((snippet (cond ((= ARG -2) "\\mathsmaller{\\mathsmaller{\\mathopen{∣}}}${1:-}\\mathsmaller{\\mathsmaller{\\mathclose{∣}}}")
                        ((= ARG -1) "\\mathsmaller{\\mathopen{∣}}${1:-}\\mathsmaller{\\mathclose{∣}}")
                        ((= ARG 0)
                         "\\left\\vert${1:-}\\right\\vert")
@@ -63,13 +63,15 @@ With 3 as a prefix, it inserts \\bigg\\vert${1:-}\\bigg\\vert."
                        ((= ARG 3)
                         "\\bigg\\vert${1:-}\\bigg\\vert")
                        (t "\\mathopen{∣}${1:-}\\mathclose{∣}"))))
-    (cond ((eq ARG 4)
+    (cond ((derived-mode-p 'vterm-mode)
+           (vterm--self-insert))
+          ((eq ARG 4)
            (self-insert-command 1))
           ((use-region-p)
            (progn
-                                                       (call-interactively #'kill-region)
-                                                       (yas-expand-snippet snippet)
-                                                       (yank)))
+             (call-interactively #'kill-region)
+             (yas-expand-snippet snippet)
+             (yank)))
           (t (yas-expand-snippet snippet)))))
 
 (defun daselt-latex-insert-othernormpair-yas-snippet (&optional ARG)
@@ -106,7 +108,9 @@ With 3 as a prefix, it inserts \\bigg\\|${1:-}\\bigg\\|."
                        ((= ARG 3)
                         "\\bigg\\|${1:-}\\bigg\\|")
                        (t "\\mathopen{∥}${1:-}\\mathclose{∥}"))))
-    (cond ((eq ARG 4)
+    (cond ((derived-mode-p 'vterm-mode)
+           (vterm--self-insert))
+          ((eq ARG 4)
            (self-insert-command 1))
           ((use-region-p)
            (progn

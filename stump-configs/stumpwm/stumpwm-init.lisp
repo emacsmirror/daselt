@@ -111,6 +111,17 @@
            (progn (stumpwm:run-shell-command "redshift -x")
                   (stumpwm:run-shell-command "redshift -O 5500"))))))
 
+(defcommand daselt-stump-rotate-left () ()
+            (run-shell-command "xrandr -o left"))
+
+(defcommand daselt-stump-rotate-right () ()
+            (run-shell-command "xrandr -o right"))
+
+(defcommand daselt-stump-rotate-up () ()
+            (run-shell-command "xrandr -o inverted"))
+
+(defcommand daselt-stump-rotate-normal () ()
+            (run-shell-command "xrandr -o normal"))
 
 
 ;; ;; Commands to move programs between groups.

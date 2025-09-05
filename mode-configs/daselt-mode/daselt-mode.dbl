@@ -306,14 +306,14 @@
 ;;;;;;;; M-1-0
  (("M-" . (1 0 -5)) . #'dired-jump)
  (("M-" . (1 0 -4)) . daselt-mode-miscellaneous-map)
- (("M-" . (1 0 -3)) . #'embark-bindings)
- (("M-" . (1 0 -2)) . #'embark-act)
+ (("M-" . (1 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'add-global-abbrev))
+ (("M-" . (1 0 -2)) . (if daselt-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
  (("M-" . (1 0 -1)) . #'daselt-replace-string-backward)
  (("M-" . (1 0 1)) . #'replace-string)
- (("M-" . (1 0 2)) . #'tea-timer)
- (("M-" . (1 0 3)) . #'windresize)
+ (("M-" . (1 0 2)) . (if daselt-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
+ (("M-" . (1 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'inverse-add-global-abbrev))
  (("M-" . (1 0 4)) . #'save-buffers-kill-emacs)
- (("M-" . (1 0 5)) . #'org-brain-visualize)
+ (("M-" . (1 0 5)) . #'list-abbrevs)
 
 ;;;;;;;; M-1-1
  (("M-" . (1 1 -5)) . #'daselt-backwardaselt-base-mark-line)
@@ -471,7 +471,7 @@
  (("M-C-" . (1 0 1)) . #'query-replace)
  (("M-C-" . (1 0 3)) . #'rename-file-and-buffer)
  (("M-C-" . (1 0 4)) . #'server-edit)
- (("M-C-" . (1 0 5)) . #'eww-search-words)
+ (("M-C-" . (1 0 5)) . #'daselt-abbrev-save)
 
 ;;;;;;;; M-C-1-1
  (("M-C-" . (1 1 -6)) . #'org-timer-stop)
@@ -579,13 +579,13 @@
 
 ;;;;;;;; s-1-0
  (("s-" . (1 0 -5)) . #'icicle-read+insert-file-name)
- (("s-" . (1 0 -3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev #'add-global-abbrev))
- (("s-" . (1 0 -2)) . (if daselt-abbrev-chain #'abbrev-chain-add-mode-abbrev #'add-mode-abbrev))
+ (("s-" . (1 0 -3)) . #'embark-bindings)
+ (("s-" . (1 0 -2)) . #'embark-act)
  (("s-" . (1 0 -1)) . #'daselt-replace-string-throughout-buffer)
  (("s-" . (1 0 1)) . #'daselt-replace-string-throughout-directory)
- (("s-" . (1 0 2)) . (if daselt-abbrev-chain #'abbrev-chain-add-inverse-mode-abbrev #'inverse-add-mode-abbrev))
- (("s-" . (1 0 3)) . (if daselt-abbrev-chain #'abbrev-chain-look-up-abbrev-expansion #'inverse-add-global-abbrev))
- (("s-" . (1 0 5)) . #'list-abbrevs)
+ (("s-" . (1 0 2)) . #'tea-timer)
+ (("s-" . (1 0 3)) . #'windresize)
+ (("s-" . (1 0 5)) . #'org-brain-visualize)
 
 ;;;;;;;; s-1-1
  (("s-" . (1 1 -5)) . #'kill-whole-line)
@@ -805,8 +805,8 @@
  ("F" . #'flycheck-mode)
  ("G" . #'projectile-run-gdb)
  ("L" . #'package-lint-current-buffer)
- ("M" . #'daselt-switch-to-messages)
  ("M" . #'daselt-toggle-mode-line)
+ ("M" . #'daselt-switch-to-messages)
  ("P" . #'projectile-run-vterm)
  ("S" . #'eshell)
  ("[" . #'scroll-lock-mode)

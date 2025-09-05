@@ -88,6 +88,7 @@
  ((4 0 -5) . #'org-agenda-toggle-archive-tag)
  ((4 0 -4) . #'org-agenda-set-restriction-lock-from-agenda)
  ((4 0 -3) . #'org-agenda-refile)
+ ((4 0 1) . #'org-agenda-exit)
  ((4 0 2) . #'org-agenda-goto)
  ((4 0 3) . #'org-agenda-write)
  ((4 0 4) . #'quit-window)
