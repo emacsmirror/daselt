@@ -141,8 +141,8 @@
  (("C-" . (5 0 5)) . #'isearchp-open-recursive-edit)
 
 ;;;;;;;; C-5-1
- (("C-" . (5 1 -3)) . #'icicle-isearch-history-insert)
  (("C-" . (5 1 -3)) . #'isearchp-yank-symbol-or-char)
+ (("C-" . (5 1 -3)) . #'icicle-isearch-history-insert)
  (("C-" . (5 1 2)) . #'isearchp-act-on-demand)
  (("C-" . (5 1 3)) . #'icicle-insert-history-element)
 

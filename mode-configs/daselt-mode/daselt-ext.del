@@ -54,17 +54,21 @@
   "List of commands for which analogs are created that open a new buffer.")
 
 (defconst daselt-subsentence-command-list
-  (remq nil `(backward-sentence forward-sentence backward-kill-sentence kill-sentence ,(if (package-installed-p 'expand-region) 'er/mark-sentence) daselt-backward-transpose-sentences))
-  "List of commands for which subsentence analogs are created in.")
+          (remq nil `(backward-sentence forward-sentence backward-kill-sentence kill-sentence ,(if (package-installed-p 'expand-region) 'er/mark-sentence) daselt-backward-transpose-sentences))
+          "List of commands for which subsentence analogs are created in.")
 
+(defconst daselt-backup-limit
+  100
+  "Number of backups `daselt-backup-file' should keep.")
 ;;;; Customs
 (defcustom daselt-mode-tab-bar-status-functions
-  '(tab-new tab-bar-new-tab)
-  "Functions around which `daselt-mode-keep-tab-bar-status' should be wrapped.
+          '(tab-new tab-bar-new-tab)
+          "Functions around which `daselt-mode-keep-tab-bar-status' should be
+          wrapped.
 
 Only used if `daselt-mode-keep-tab-bar-status' is t."
-  :type 'boolean
-  :group 'daselt-mode)
+          :type 'boolean
+          :group 'daselt-mode)
 
 (defcustom daselt-C-4-0-2-contexts-list
   '((minibuffer-mode . minibuffer-complete-and-exit)
@@ -767,6 +771,24 @@ In math-mode, no abbrevs are expanded."
   (declare (ftype (function () t)))
   (interactive)
   (write-abbrev-file nil))
+
+(defun daselt-backup-file (file)
+  "Backup FILE with timestamp suffix.
+
+Creates directory if needed, removes oldest backups when `daselt-backup-file'
+exceeded. The backup directory is in the same directory as the file."
+  (declare (ftype (function (string string) t)))
+  (let* ((directory (concat file "-backups"))
+         (backup-file (expand-file-name
+                       (format (concat (file-name-nondirectory file) "-%s") (format-time-string "%Y%m%d-%H%M%S"))
+                       directory)))
+    (unless (file-directory-p directory)
+      (make-directory directory t))
+    (copy-file file backup-file t)
+    (let ((backups (sort (directory-files directory t (concat file "-.*\\.el$")) 'file-newer-than-file-p)))
+      (when (> (length backups) daselt-backup-limit)
+        (dolist (old-backup (nthcdr daselt-backup-limit backups))
+          (delete-file old-backup))))))
 ;;;;;; Yanking
 (defun daselt-yank-or-org-roam-node-insert ()
   "Yank text when mark is inactive; otherwise call `org-roam-node-insert`."

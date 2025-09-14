@@ -31,6 +31,18 @@
   (let ((delete-by-moving-to-trash nil))
     (dired-do-delete arg)))
 
+(defun daselt-dired-make-backup ()
+  "Back up all marked files or the file under point if none are marked."
+  (declare (ftype (function () string)))
+  (interactive)
+  (let ((files (dired-get-marked-files))
+        (file-name (dired-file-name-at-point)))
+    (if files
+        (mapc #'daselt-backup-file files)
+      (daselt-backup-file file-name)))
+  (revert-buffer))
+
+
 (provide 'daselt-dired)
 ;;; daselt-dired.del ends here
 

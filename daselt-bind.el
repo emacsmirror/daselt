@@ -232,7 +232,7 @@ suffixes."
 
 Automatically generated from the contents of the remapped-keys-file.
 
-If you have daselt-stump, you can use `d-stump-translatedaselt-keys' to set
+If you have daselt-stump, you can use `daselt-stump-translate-daselt-keys' to set
 this.
 
 Automatically set when starting `daselt-mode' if `d-stump' is t."

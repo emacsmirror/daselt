@@ -1,0 +1,94 @@
+;;;; mentor-sort-map
+(mentor-sort-map
+;;;;; Strings
+ ("D" . #'mentor-sort-by-directory)
+ ("c" . #'mentor-sort-by-state)
+ ("d" . #'mentor-sort-by-download-speed)
+ ("n" . #'mentor-sort-by-name)
+ ("s" . #'mentor-sort-by-size)
+ ("t" . #'mentor-sort-by-tied-file-name)
+ ("u" . #'mentor-sort-by-upload-speed))
+
+;;;; mentor-view-map
+(mentor-view-map
+;;;;; Strings
+ ("0" . #'mentor-switch-to-view-0)
+ ("1" . #'mentor-switch-to-view-1)
+ ("2" . #'mentor-switch-to-view-2)
+ ("3" . #'mentor-switch-to-view-3)
+ ("4" . #'mentor-switch-to-view-4)
+ ("5" . #'mentor-switch-to-view-5)
+ ("6" . #'mentor-switch-to-view-6)
+ ("7" . #'mentor-switch-to-view-7)
+ ("8" . #'mentor-switch-to-view-8)
+ ("9" . #'mentor-switch-to-view-9)
+ ("a" . #'mentor-add-torrent-to-view)
+ ("w" . #'mentor-switch-to-view))
+
+;;;; mentor-mode-map
+(mentor-mode-map
+;;;;; Coordinates
+;;;;;;; 3
+;;;;;;;; 3--1
+ ((3 -1 2) . #'mentor-download-hash-check)
+ ((3 -1 3) . #'mentor-download-set-inital-seeding)
+ ((3 -1 4) . #'mentor-download-set-create-resized-queued-flags)
+
+;;;;;;;; 3-0
+ ((3 0 1) . mentor-view-map)
+ ((3 0 3) . mentor-sort-map)
+
+;;;;;;;; 3-1
+ ((3 1 -3) . #'mentor-unmark-all)
+
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -5) . #'mentor-download-remove-including-files)
+ ((4 -1 -4) . #'mentor-download-stop)
+ ((4 -1 -3) . #'mentor-unmark)
+ ((4 -1 -2) . #'mentor-decrease-priority)
+ ((4 -1 -1) . #'mentor-download-close)
+ ((4 -1 1) . #'mentor-toggle-item)
+ ((4 -1 2) . #'mentor-increase-priority)
+ ((4 -1 3) . #'mentor-mark)
+ ((4 -1 4) . #'mentor-download-start)
+
+;;;;;;;; 4-0
+ ((4 0 -5) . #'mentor-dired-jump)
+ ((4 0 -3) . #'mentor-previous-item)
+ ((4 0 -2) . #'mentor-download-load-torrent)
+ ((4 0 -1) . #'bury-buffer)
+ ((4 0 1) . #'mentor-shutdown)
+ ((4 0 2) . #'mentor-download-load-magnet-link-or-url)
+ ((4 0 3) . #'mentor-next-item)
+ ((4 0 5) . #'mentor-show-download-files)
+
+;;;;;;;; 4-1
+ ((4 1 -4) . #'mentor-update)
+ ((4 1 -3) . #'mentor-download-copy-data)
+ ((4 1 -2) . #'mentor-reload)
+ ((4 1 2) . #'mentor-update-item)
+ ((4 1 3) . #'mentor-mark-all)
+ ((4 1 4) . #'mentor-download-change-target-directory)
+ ((4 1 5) . #'mentor-call-command)
+
+;;;;;;; 5
+;;;;;;;; 5--1
+ ((5 -1 -3) . #'mentor-download-remove)
+
+;;;;;;;; 5-1
+ ((5 1 3) . #'mentor-download-move))
+
+;;;; mentor-files-mode-map
+(mentor-files-mode-map
+;;;;; Coordinates
+;;;;;;; 4
+;;;;;;;; 4--1
+ ((4 -1 -4) . #'mentor-files-update)
+
+;;;;;;;; 4-0
+ ((4 0 -3) . #'mentor-files-details-previous-directory)
+ ((4 0 3) . #'mentor-files-details-next-directory)
+
+;;;;;;;; 4-1
+ ((4 1 -2) . #'mentor-files-reload))

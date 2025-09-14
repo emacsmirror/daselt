@@ -1028,7 +1028,7 @@ by `daselt-dirs-remove-hooks'."
 Empty `daselt-dirs--hook-removals' afterwards."
   (declare (ftype (function () t)))
   (mapc (lambda (hook-cns)
-          (let ((func (car hook-cns))
+            (let ((func (car hook-cns))
                 (hook (cdr hook-cns)))
             (remove-hook hook func)))
         daselt-dirs--hook-removals)
@@ -1037,20 +1037,20 @@ Empty `daselt-dirs--hook-removals' afterwards."
 ;;;;; Global operations
 ;;;;;; del
 (defun daselt-dirs-compile-del-files (&optional directory)
-                                                                    "Byte-compile all `del'-files throughout DIRECTORY.
+  "Byte-compile all `del'-files throughout DIRECTORY.
 
 DIRECTORY is `daselt-dirs-pkg-configs-directory' by default."
-                                                                    (declare (ftype (function (&optional string)
+  (declare (ftype (function (&optional string)
                             ;; void
                             t)))
-                                                                    (interactive)
-                                                                    (daselt-dirs-act-on-pkg-files-by-type
+  (interactive)
+  (daselt-dirs-act-on-pkg-files-by-type
    `(((lambda (filename)
-                                                                          (byte-compile-file filename))
+        (byte-compile-file filename))
       .
       "del"))
    (if directory directory))
-                                                                    nil)
+  nil)
 
 ;;;;;; dbl
 (defun daselt-dirs--exchange-coordinates (coordlistlist &optional modlist coordsonly directory)
