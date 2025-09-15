@@ -1,23 +1,5 @@
 ;;;; emms-browser
 (emms-browser
- (daselt-emms-browser-search-map
-;;;;; Strings
- ("A" . #'emms-browser-search-by-album)
- ("a" . #'emms-browser-search-by-artist)
- ("c" . #'emms-browser-search-by-composer)
- ("g" . #'emms-browser-search-by-genre)
- ("p" . #'emms-browser-search-by-performer)
- ("y" . #'emms-browser-search-by-year))
-
- (daselt-emms-browse-map
-;;;;; Strings
- ("A" . #'emms-browse-by-album)
- ("a" . #'emms-browse-by-artist)
- ("c" . #'emms-browse-by-composer)
- ("g" . #'emms-browse-by-genre)
- ("p" . #'emms-browse-by-performer)
- ("y" . #'emms-browse-by-year))
-
  (emms-browser-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -70,10 +52,45 @@
  ((8 -1 -3) . #'emms-browser-expand-to-level-2)
  ((8 -1 -2) . #'emms-browser-expand-to-level-3)
  ((8 -1 2) . #'emms-browser-expand-to-level-4)
- ((8 -1 4) . #'emms-browser-expand-all)))
+ ((8 -1 4) . #'emms-browser-expand-all))
+
+ (daselt-emms-browse-map
+;;;;; Strings
+ ("A" . #'emms-browse-by-album)
+ ("a" . #'emms-browse-by-artist)
+ ("c" . #'emms-browse-by-composer)
+ ("g" . #'emms-browse-by-genre)
+ ("p" . #'emms-browse-by-performer)
+ ("y" . #'emms-browse-by-year))
+
+ (daselt-emms-browser-search-map
+;;;;; Strings
+ ("A" . #'emms-browser-search-by-album)
+ ("a" . #'emms-browser-search-by-artist)
+ ("c" . #'emms-browser-search-by-composer)
+ ("g" . #'emms-browser-search-by-genre)
+ ("p" . #'emms-browser-search-by-performer)
+ ("y" . #'emms-browser-search-by-year)))
 
 ;;;; emms-playlist-mode
 (emms-playlist-mode
+ (daselt-emms-playlist-mode-limit-map
+;;;;; Strings
+ ("A" . #'emms-playlist-limit-to-info-albumartist)
+ ("N" . #'emms-playlist-limit-to-info-note)
+ ("a" . #'emms-playlist-limit-to-info-artist)
+ ("b" . #'emms-playlist-limit-to-info-album)
+ ("c" . #'emms-playlist-limit-to-info-composer)
+ ("d" . #'emms-playlist-limit-to-description)
+ ("g" . #'emms-playlist-limit-to-info-genre)
+ ("n" . #'emms-playlist-limit-to-name)
+ ("p" . #'emms-playlist-limit-to-info-performer)
+ ("t" . #'emms-playlist-limit-to-info-title)
+ ("y" . #'emms-playlist-limit-to-info-year)
+
+;;;;; Coordinates
+ ((4 0 -2) . #'emms-playlist-limit-to-all))
+
  (emms-playlist-mode-map
 ;;;;; Coordinates
 ;;;;;;; 1
@@ -102,7 +119,7 @@
 
 ;;;;;;;; 2-1
  ((2 1 -3) . #'emms-playlist-mode-kill-track)
- ((2 1 -2) . daselt-emms-playlist-limit-map)
+ ((2 1 -2) . daselt-emms-playlist-mode-limit-map)
  ((2 1 2) . emms-playlist-sort-map)
 
 ;;;;;;; 3
@@ -127,21 +144,4 @@
 
 ;;;;;;; 6
 ;;;;;;;; 6-1
- ((6 1 3) . #'emms-playlist-mode-current-kill))
-
- (daselt-emms-playlist-mode-limit-map
-;;;;; Strings
- ("A" . #'emms-playlist-limit-to-info-albumartist)
- ("N" . #'emms-playlist-limit-to-info-note)
- ("a" . #'emms-playlist-limit-to-info-artist)
- ("b" . #'emms-playlist-limit-to-info-album)
- ("c" . #'emms-playlist-limit-to-info-composer)
- ("d" . #'emms-playlist-limit-to-description)
- ("g" . #'emms-playlist-limit-to-info-genre)
- ("n" . #'emms-playlist-limit-to-name)
- ("p" . #'emms-playlist-limit-to-info-performer)
- ("t" . #'emms-playlist-limit-to-info-title)
- ("y" . #'emms-playlist-limit-to-info-year)
-
-;;;;; Coordinates
- ((4 0 -2) . #'emms-playlist-limit-to-all)))
+ ((6 1 3) . #'emms-playlist-mode-current-kill)))
