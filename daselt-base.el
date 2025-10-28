@@ -91,7 +91,7 @@
 
 ;;;; Constants
 (defconst daselt-base-definition-types-list
-  '(defun defmacro defconst defcustom defun* defalias defgroup define-derived-mode defvar-keymap)
+  '(defun defmacro defconst defcustom defun* defalias defgroup define-derived-mode defvar defvar-keymap cl-defgeneric cl-defun cl-defmethod)
   "List of definition macros for which `daselt-base-beginning-of-docstring' works.")
 
 (defconst daselt-base-escape-kbd-regexps-list

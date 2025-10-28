@@ -1,0 +1,183 @@
+;;; daselt-abv.del --- Daselt's abv module  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Alexander Prähauser
+
+;; Author: Alexander Prähauser <ahprae@protonmail.com>
+;; Keywords: tools
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'daselt-dirs)
+
+(defcustom daselt-abv-non-constituents
+  '(?- ?_ ?: ?. ?, ?! ?? ?' ?`)
+  "List of characters in the Daselt-layout that are not added to
+`abv-temporary-word-constituents'.
+
+It is not necessary to add non-characters, such as command keys. It is also not
+necessary to add brackets and such."
+  :type '(repeat character)
+  :group 'daselt-mode)
+
+(defcustom daselt-abv-added-syntax-classes
+  '(?_)
+  "Syntax classes that are added to `abv-temporary-word-constituents' by Daselt.
+
+By default only consists of the syntax class ?_, which designates symbols."
+  :type '(repeat character)
+  :group 'daselt-mode)
+
+;; Statistics configuration
+(defcustom daselt-abv-statistics-file-types
+  '("txt" "org" "md" "el" "del")
+  "List of filename extensions to include when computing personal statistics.
+
+Each element is a string like \"txt\" or \"org\". Matching is case-insensitive."
+  :type '(repeat string)
+  :group 'daselt-mode)
+
+(defcustom daselt-abv-statistics-file
+  (expand-file-name "daselt-abv-stats.el" user-emacs-directory)
+  "File where personal word-frequency statistics are written and read from."
+  :type 'file
+  :group 'daselt-mode)
+
+(defvar daselt-abv-temporary-word-constituents-backup
+  abv-temporary-word-constituents)
+
+(defun daselt-abv-add-to-temporary-word-constituents ()
+  "Add characters from `daselt-xkb-layout' to `abv-temporary-word-constituents'.
+
+Adds characters whose syntax-class is in `daselt-abv-added-syntax-classes'.
+
+Excludes symbols from `daselt-abv-non-constituents'."
+  (declare (ftype (function () t)))
+  (setopt abv-temporary-word-constituents
+          (append daselt-abv-temporary-word-constituents-backup
+                  (let ((laylist (flatten-list (symbol-value daselt-xkb-layout))))
+                    (remq
+                     nil (mapcar
+                          (lambda (entry)
+                            (if (= 1 (length entry))
+                                (let ((char (string-to-char entry)))
+                                  (if (and (or (memq (char-syntax char)
+                                                     daselt-abv-added-syntax-classes))
+                                           (not (cl-member
+                                                 char
+                                                 daselt-abv-non-constituents
+                                                 :test #'=)))
+                                      char))))
+                          laylist))))))
+
+;;; Personal statistics
+
+(defvar daselt-abv-statistics-obarray (make-vector 4096 0)
+  "Obarray holding personal word-frequency statistics.
+
+Symbols are interned for words; their symbol-values hold the counts.")
+
+(defun daselt-abv--count-words-into (file table)
+  "Count words in FILE and accumulate into hash TABLE.
+
+Words are sequences that match the regexp \"\\(\\sw\\|\\s_\\)+\". Counting is
+case-insensitive. Files that cannot be decoded or read are skipped."
+  (when (and (stringp file) (file-readable-p file))
+    (condition-case _err
+        (with-temp-buffer
+          ;; Use automatic decoding; avoid visiting to keep things light-weight.
+          (insert-file-contents file nil nil nil t)
+          (goto-char (point-min))
+          (let ((case-fold-search t))
+            (while (re-search-forward "\\(\\sw\\|\\s_\\)+" nil t)
+              (let* ((w (downcase (match-string-no-properties 0)))
+                     (old (gethash w table 0)))
+                (puthash w (1+ old) table)))))
+      (error nil))))
+
+(defun daselt-abv-read-statistics ()
+  "Read `daselt-abv-statistics-file' into an obarray.
+
+Returns the newly created obarray stored in `daselt-abv-statistics-obarray'."
+  (interactive)
+  (setq daselt-abv-statistics-obarray (make-vector 4096 0))
+  (when (file-readable-p daselt-abv-statistics-file)
+    (with-temp-buffer
+      (insert-file-contents daselt-abv-statistics-file)
+      (goto-char (point-min))
+      (condition-case _err
+          (let ((data (read (current-buffer))))
+            (dolist (pair data)
+              (when (and (consp pair)
+                         (stringp (car pair))
+                         (numberp (cdr pair)))
+                (let ((sym (intern (car pair) daselt-abv-statistics-obarray)))
+                  (set sym (cdr pair))))))
+        (error nil))))
+  daselt-abv-statistics-obarray)
+
+(defun daselt-abv-personal-statistics (&optional dir)
+  "Create a personal word-frequency statistic by scanning files in DIR.
+
+Recurse through DIR (defaults to the user's home directory) using
+`daselt-dirs-act-on-pkg-files-by-type'. For each file whose extension is in
+`daselt-abv-statistics-file-types', count the occurrences of each word
+\(case-insensitive) and aggregate counts. The resulting association list of
+\(word . COUNT) pairs is written to `daselt-abv-statistics-file'. Finally, call
+`daselt-abv-read-statistics'."
+  (interactive)
+  (let* ((start-dir (file-name-as-directory (expand-file-name (or dir "~"))))
+         (exts (mapcar #'downcase daselt-abv-statistics-file-types))
+         (table (make-hash-table :test #'equal))
+         ;; Predicate for daselt-dirs to select files by extension
+         (pred (lambda (filepath)
+                 (let ((ext (file-name-extension filepath)))
+                   (and ext (member (downcase ext) exts))))))
+    ;; Traverse and count
+    (daselt-dirs-act-on-pkg-files-by-type
+     (list (cons (lambda (filepath)
+                   (daselt-abv--count-words-into filepath table)
+                   nil)
+                 pred))
+     start-dir)
+    ;; Persist as a sorted alist for readability
+    (let (alist)
+      (maphash (lambda (k v) (push (cons k v) alist)) table)
+      (setq alist (sort alist (lambda (a b) (> (cdr a) (cdr b)))))
+      (let ((file daselt-abv-statistics-file))
+        (let ((dir (file-name-directory file)))
+          (when dir (ignore-errors (make-directory dir t))))
+        (with-temp-file file
+          (let ((print-length nil)
+                (print-level nil))
+            (prin1 alist (current-buffer))))))
+    (daselt-abv-read-statistics)))
+
+(add-hook 'after-change-major-mode-hook
+          #'daselt-abv-add-to-temporary-word-constituents
+          89)
+
+(add-hook 'daselt-mode-hook
+          (lambda ()
+            (unless daselt-mode
+              (remove-hook 'after-change-major-mode-hook
+                           #'daselt-abv-add-to-temporary-word-constituents))))
+
+(provide 'daselt-abv)
+;;; daselt-abv.del ends here

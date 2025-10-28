@@ -20,6 +20,7 @@
  ((1 0 2) "\\mathcal" "\\emph" t nil nil)
  ((1 0 3) "\\mathbf" nil t nil nil)
  ((1 0 4) "\\widehat" nil t nil nil)
+ ((1 0 5) "\\href" "\\href" t nil nil)
 
 ;;;;;;;; 1-1
  ((1 1 2) "\\text" nil t nil nil)

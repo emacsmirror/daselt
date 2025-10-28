@@ -706,14 +706,14 @@ In math-mode, no abbrevs are expanded."
                    (goto-char pos))))
 
              (daselt-cdlatex-maybe-expand ()
-               (if daselt-abbrev-chain
-                   (abbrev-chain-with-syntax-table-and-combining-categories
-                    (daselt-cdlatex-maybe-expand-1))
+               (if daselt-abv
+                   (abv-with-syntax-table-and-combining-categories
+                     (daselt-cdlatex-maybe-expand-1))
                  (daselt-cdlatex-maybe-expand-1)))
 
              (maybe-expand-abbrev ()
-               (if (if daselt-abbrev-chain
-                       (abbrev-chain-expand)
+               (if (if daselt-abv
+                       (abv-expand)
                      (expand-abbrev))
                    (cl-return-from daselt-C-4-0-2))))
 
@@ -728,7 +728,7 @@ In math-mode, no abbrevs are expanded."
     (unless (and (derived-mode-p LaTeX-mode)
                  (or (texmathp))
                  (save-excursion
-                   (if daselt-abbrev-chain
+                   (if daselt-abv
                        (abbrev-chain-with-syntax-table-and-combining-categories
                         (backward-word))
                      (backward-word))

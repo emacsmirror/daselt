@@ -111,7 +111,7 @@
 ;; (https://gitlab.com/nameiwillforget/d-emacs) and provides necessary
 ;; prerequisites for Daselt's Emacs implementation daselt.
 
-;; `daselt-coords` empowers Emacs users to meticulously design and visualize
+;; `daselt-coords' empowers Emacs users to meticulously design and visualize
 ;; their keyboard layouts, offering granular control over key positioning and
 ;; layer management. Whether you're crafting a custom ergonomic setup or
 ;; experimenting with multi-layer configurations, this package provides the
