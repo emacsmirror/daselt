@@ -307,7 +307,7 @@
  (("M-" . (1 0 -5)) . #'dired-jump)
  (("M-" . (1 0 -4)) . daselt-mode-miscellaneous-map)
  (("M-" . (1 0 -3)) . (if daselt-abv #'abv-look-up #'add-global-abbrev))
- (("M-" . (1 0 -2)) . (if daselt-abv #'abv-add-mode-abbrev #'add-mode-abbrev))
+ (("M-" . (1 0 -2)) . (if daselt-abv #'abv-add-abbrev #'add-mode-abbrev))
  (("M-" . (1 0 -1)) . #'daselt-replace-string-backward)
  (("M-" . (1 0 1)) . #'replace-string)
  (("M-" . (1 0 2)) . (if daselt-abv #'abv-add-inverse-abbrev #'inverse-add-mode-abbrev))
@@ -321,7 +321,7 @@
  (("M-" . (1 1 -2)) . #'ekg-capture)
  (("M-" . (1 1 0)) . (daselt-mode-dynamic-binding "C-x"))
  (("M-" . (1 1 2)) . #'org-roam-capture)
- (("M-" . (1 1 3)) . (if daselt-consult #'consult-yank-pop #'yank-pop))
+ (("M-" . (1 1 3)) . #'yank-pop)
  (("M-" . (1 1 4)) . #'icicle-switch-to-completions)
  (("M-" . (1 1 5)) . #'what-cursor-position)
 
@@ -468,6 +468,7 @@
  (("M-C-" . (1 -1 2)) . #'count-words-region)
 
 ;;;;;;;; M-C-1-0
+ (("M-C-" . (1 0 -2)) . #'abv-descendants-add)
  (("M-C-" . (1 0 -1)) . #'daselt-query-replace-string-backward)
  (("M-C-" . (1 0 1)) . #'query-replace)
  (("M-C-" . (1 0 3)) . #'rename-file-and-buffer)
@@ -817,8 +818,8 @@
  ("F" . #'flycheck-mode)
  ("G" . #'projectile-run-gdb)
  ("L" . #'package-lint-current-buffer)
- ("M" . #'daselt-toggle-mode-line)
  ("M" . #'daselt-switch-to-messages)
+ ("M" . #'daselt-toggle-mode-line)
  ("P" . #'projectile-run-vterm)
  ("S" . #'eshell)
  ("[" . #'scroll-lock-mode)
@@ -836,6 +837,7 @@
  ("t" . #'tab-bar-mode)
  ("u" . #'undo-tree-mode)
  ("v" . #'vterm)
+ ("γ" . #'gptel-mode)
  ("σ" . #'projectile-run-shell))
 
 ;;;; daselt-mode-theme-map

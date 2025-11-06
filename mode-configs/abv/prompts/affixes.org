@@ -1,0 +1,390 @@
+:PROPERTIES:
+:GPTEL_MODEL: gpt-5
+:GPTEL_BACKEND: ChatGPT
+:GPTEL_SYSTEM: You are a large language model living in Emacs and a helpful assistant. Respond concisely.
+:GPTEL_TOOLS: read_buffer modify_buffer
+:GPTEL_BOUNDS: ((tool (1482 1601 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (1667 1801 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (1875 2087 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (2161 2377 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (2458 2719 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (2800 3060 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (3141 3404 "call_d8Y9PMgwLusC0dGLmyUDQKvU") (3485 3748 "call_d8Y9PMgwLusC0dGLmyUDQKvU")) (response (3760 16418) (16746 18885)))
+:END:
+
+*** We have to assign symbols to affixes now.
+
+I want you to
+- read the values of:
+  - =abv-prefixes= resp. =abv-suffixes=,
+  - =ahp-prefix-frequency= resp. =ahp-suffix-frequency=,
+    - these give you the frequencies of pre-/suffixes,
+    - if some pre/suffix is in =abv-prefixes= / =abv-suffixes= but not in the frequency lists, it has not appeared in the corpus,
+  - =daselt-abv-valid-prefix-placevals= / =daselt-abv-valid-suffix-placevals=,
+  - =daselt-abv-valid-lower-paired-prefix-placevals= / =daselt-abv-valid-lower-paired-suffix-placevals=,
+- assign the pre/suffixes to symbols in the Daselt-layout as described in the guide.
+- return the definitions of hash-tables =daselt-abv-prefix-table= and =daselt-abv-suffix-table= whose keys are pre/suffixes and whose value are their Daselt-symbols.
+
+
+#+begin_tool (variable_value :variable "abv-prefixes")
+(:name "variable_value" :args (:variable "abv-prefixes"))
+
+("a" "ab" "abs" "ac" "acro" "ad" "af" "ag" "al" "amph" ...)
+#+end_tool
+#+begin_tool (variable_value :variable "abv-suffixes")
+(:name "variable_value" :args (:variable "abv-suffixes"))
+
+("ise" "able" "cene" "oid" "emia" "escent" "fy" "oma" "orama" "arium" ...)
+#+end_tool
+#+begin_tool (variable_value :variable "ahp-prefix-frequency")
+(:name "variable_value" :args (:variable "ahp-prefix-frequency"))
+
+(("a" . 11036) ("e" . 6647) ("co" . 3129) ("re" . 2727) ("un" . 2152) ("in" . 2086) ("de" . 1751) ("be" . 1541) ("di" . 1388) ("an" . 1244) ...)
+#+end_tool
+#+begin_tool (variable_value :variable "ahp-suffix-frequency")
+(:name "variable_value" :args (:variable "ahp-suffix-frequency"))
+
+(("en" . 6652) ("ed" . 6218) ("y" . 5080) ("ing" . 4441) ("er" . 3734) ("ion" . 2100) ("ly" . 1794) ("al" . 1631) ("tion" . 1567) ("th" . 1245) ...)
+#+end_tool
+#+begin_tool (variable_value :variable "daselt-abv-valid-prefix- ...)
+(:name "variable_value" :args (:variable "daselt-abv-valid-prefix-placevals"))
+
+(((1 -1 -5) . "p") ((1 -1 -4) . "u") ((1 -1 -3) . ",") ((1 -1 -2) . "q") ((1 -1 -1) . "j") ((1 -1 1) . "g") ((1 -1 2) . "c") ((1 -1 3) . ".") ((1 -1 4) . "l") ((1 -1 5) . "f") ...)
+#+end_tool
+#+begin_tool (variable_value :variable "daselt-abv-valid-suffix- ...)
+(:name "variable_value" :args (:variable "daselt-abv-valid-suffix-placevals"))
+
+(((1 -1 -5) . "p") ((1 -1 -4) . "u") ((1 -1 -2) . "q") ((1 -1 -1) . "j") ((1 -1 1) . "g") ((1 -1 2) . "c") ((1 -1 4) . "l") ((1 -1 5) . "f") ((1 0 -5) . "h") ((1 0 -4) . "i") ...)
+#+end_tool
+#+begin_tool (variable_value :variable "daselt-abv-valid-lower-p ...)
+(:name "variable_value" :args (:variable "daselt-abv-valid-lower-paired-prefix-placevals"))
+
+(((8 1 6) . "√") ((8 1 5) . "≡") ((8 1 4) . "∞") ((8 1 3) . "∑") ((8 1 2) . "↘") ((8 1 0) . "↔") ((8 1 -2) . "↙") ((8 1 -3) . "∖") ((8 1 -4) . "∅") ((8 1 -5) . "≠") ...)
+#+end_tool
+#+begin_tool (variable_value :variable "daselt-abv-valid-lower-p ...)
+(:name "variable_value" :args (:variable "daselt-abv-valid-lower-paired-suffix-placevals"))
+
+(((8 1 6) . "√") ((8 1 5) . "≡") ((8 1 4) . "∞") ((8 1 3) . "∑") ((8 1 2) . "↘") ((8 1 0) . "↔") ((8 1 -2) . "↙") ((8 1 -3) . "∖") ((8 1 -4) . "∅") ((8 1 -5) . "≠") ...)
+#+end_tool
+I can’t see the full lists/values via the API (they print truncated), so here is a self-contained Emacs Lisp implementation that reads your variables in Emacs and assigns symbols to pre-/suffixes following your guide. Evaluate this; it will compute and set daselt-abv-prefix-table and daselt-abv-suffix-table.
+
+;; Abbrev symbol assignment per guide.org
+;; - honors paired lower places for top-N by frequency
+;; - picks places near affix letters (same coord/layer 1, then across layers,
+;;   then row-adjacent, then column-adjacent), preferring ergonomic spots
+;; - removes chosen places from the free set (per class); multi-fills if needed
+;; - values in tables are the Daselt symbol (binding string) at the chosen place
+
+(require 'cl-lib)
+
+(defun daselt-abv--alist->hash (alist &optional key-fn)
+  (let ((ht (make-hash-table :test 'equal)))
+    (dolist (kv alist ht)
+      (let ((k (if key-fn (funcall key-fn (car kv)) (car kv)))
+            (v (cdr kv)))
+        (puthash k v ht)))))
+
+(defun daselt-abv--placevals->coord-hash (placevals)
+  "Return hash (coord -> binding) for PLACEVALS where placeval = ((L r c) . binding)."
+  (let ((ht (make-hash-table :test 'equal)))
+    (dolist (pv placevals ht)
+      (puthash (car pv) (cdr pv) ht))))
+
+(defun daselt-abv--keys (hash)
+  (let (ks)
+    (maphash (lambda (k _v) (push k ks)) hash)
+    ks))
+
+(defun daselt-abv--letter-p (s)
+  (and (stringp s) (= (length s) 1)
+       (let ((c (aref s 0)))
+         (or (and (<= ?a c) (<= c ?z))
+             (and (<= ?A c) (<= c ?Z))))))
+
+(defun daselt-abv--down (s)
+  (if (and (stringp s) (= (length s) 1))
+      (downcase s)
+    s))
+
+(defun daselt-abv--erg-score (coord)
+  "Lower is better. Heuristic per main_layout_heuristics.org."
+  (pcase-let ((=(,L ,row ,col) coord))
+    (let* ((abscol (abs col))
+           (row-pen (cond ((= row 0) 0.0)
+                          (t 0.6))) ;; top/bottom small penalty
+           (col-pen (pcase abscol
+                      (1 1.0) (2 1.2) (3 1.5) (4 2.0) (5 3.0) (6 4.0)
+                      (_ 5.0)))
+           (layer-pen (pcase L
+                        (1 0.0)
+                        (2 0.2) (4 0.2)
+                        (6 0.4) (5 0.4)
+                        (7 0.6) (3 0.6)
+                        (8 0.8)
+                        (_ 1.0))))
+      (+ row-pen col-pen layer-pen))))
+
+(defun daselt-abv--coord-layers-in-order (base-layer complementp)
+  "Order layers by ease. If complementp, prefer 2 before 1 (guide)."
+  (let ((base '(1 2 4 6 5 7 3 8)))
+    (if complementp
+        '(2 1 4 6 5 7 3 8)
+      base)))
+
+(defun daselt-abv--neighbors (r c layers)
+  "Produce coords around (r,c) across LAYERS in the guide's order."
+  (let ((coords '()))
+    ;; same row/col across layers
+    (dolist (L layers) (push (list L r c) coords))
+    ;; adjacent rows then across layers
+    (dolist (dr '(-1 1))
+      (dolist (L layers) (push (list L (+ r dr) c) coords)))
+    ;; column-adjacent then across layers
+    (dolist (dc '(-1 1))
+      (dolist (L layers) (push (list L r (+ c dc)) coords)))
+    (nreverse coords)))
+
+(defun daselt-abv--collect-letter-bases (placevals)
+  "Map lowercase letter -> one base coord, prefer layer 1 if present."
+  (let ((per-letter (make-hash-table :test 'equal)))
+    ;; collect all coords by letter
+    (dolist (pv placevals)
+      (let* ((coord (car pv)) (binding (daselt-abv--down (cdr pv))))
+        (when (daselt-abv--letter-p binding)
+          (push coord (gethash binding per-letter)))))
+    ;; pick best coord per letter, prefer layer 1, else minimal layer/erg score
+    (let ((out (make-hash-table :test 'equal)))
+      (maphash
+       (lambda (letter coords)
+         (let* ((on-l1 (cl-find-if (lambda (cc) (= (car cc) 1)) coords))
+                (best (or on-l1
+                          (car (cl-sort (copy-sequence coords)
+                                        (lambda (a b)
+                                          (< (daselt-abv--erg-score a)
+                                             (daselt-abv--erg-score b))))))))
+           (puthash letter best out)))
+       per-letter)
+      out)))
+
+(defun daselt-abv--affix-letters (affix)
+  "Return list of lowercase unique letters of AFFIX preserving order."
+  (let ((seen (make-hash-table :test 'equal))
+        (out '()))
+    (dotimes (i (length affix))
+      (let* ((ch (aref affix i))
+             (s (downcase (string ch))))
+        (when (and (daselt-abv--letter-p s) (not (gethash s seen)))
+          (puthash s t seen)
+          (push s out))))
+    (nreverse out)))
+
+(defun daselt-abv--letter-rarity (letter preferred-hash)
+  "How many places in preferred-hash bind to LETTER (lowercase)."
+  (let ((n 0))
+    (maphash
+     (lambda (_coord binding)
+       (when (and (stringp binding) (string= (daselt-abv--down binding) letter))
+         (setq n (1+ n))))
+     preferred-hash)
+    n))
+
+(defun daselt-abv--free-candidates (preferred-hash counts-hash)
+  "Return list of coords still unfille d (count 0) in preferred-hash."
+  (cl-loop for coord in (daselt-abv--keys preferred-hash)
+           unless (> (gethash coord counts-hash 0) 0)
+           collect coord))
+
+(defun daselt-abv--choose-fallback (preferred-hash counts-hash)
+  "Choose coord by min assignment count, then ergonomic score."
+  (let ((coords (daselt-abv--keys preferred-hash)))
+    (car (cl-sort (copy-sequence coords)
+                  (lambda (a b)
+                    (let* ((ca (gethash a counts-hash 0))
+                           (cb (gethash b counts-hash 0)))
+                      (if (/= ca cb)
+                          (< ca cb)
+                        (< (daselt-abv--erg-score a)
+                           (daselt-abv--erg-score b)))))))))
+
+(defun daselt-abv--assign-one (affix preferred-hash counts-hash letter-base complementp)
+  "Return chosen binding and update counts-hash."
+  (let* ((letters (daselt-abv--affix-letters affix))
+         ;; sort letters by rarity (fewer direct matches in preferred = earlier)
+         (letters-sorted
+          (cl-stable-sort (copy-sequence letters) #'<
+                          :key (lambda (L) (daselt-abv--letter-rarity L preferred-hash))))
+         (layers (daselt-abv--coord-layers-in-order 1 complementp))
+         (chosen-coord nil))
+    ;; letter-guided search
+    (cl-loop for L in letters-sorted
+             for base = (gethash L letter-base)
+             when base do
+             (pcase-let ((=(,_ ,r ,c) base))
+               (let ((cands (daselt-abv--neighbors r c layers)))
+                 (cl-loop for coord in cands
+                          for binding = (gethash coord preferred-hash)
+                          when (and binding (<= (gethash coord counts-hash 0) 0))
+                          do (setq chosen-coord coord)
+                             (cl-return))))
+             when chosen-coord do (cl-return))
+    ;; fallback if none free via letter-guided
+    (unless chosen-coord
+      (let ((free (daselt-abv--free-candidates preferred-hash counts-hash)))
+        (setq chosen-coord
+              (if free
+                  (car (cl-sort free #'<
+                                :key (lambda (cc) (daselt-abv--erg-score cc))))
+                ;; multi-fill: everything taken once; pick min-count then ergo
+                (daselt-abv--choose-fallback preferred-hash counts-hash)))))
+    ;; book-keeping and return binding
+    (cl-incf (gethash chosen-coord counts-hash 0))
+    (gethash chosen-coord preferred-hash)))
+
+(defun daselt-abv--complement-hash (universe-hash subset-hash)
+  "Return a hash of coords present in UNIVERSE-HASH but not in SUBSET-HASH."
+  (let ((ht (make-hash-table :test 'equal)))
+    (maphash
+     (lambda (coord binding)
+       (unless (gethash coord subset-hash)
+         (puthash coord binding ht)))
+     universe-hash)
+    ht))
+
+(defun daselt-abv--sorted-affixes-by-frequency (affixes freq-alist)
+  "Return AFFIXES sorted by descending frequency; default 0."
+  (let/ ((freq (daselt-abv--alist->hash freq-alist))
+         (pair (mapcar (lambda (a) (cons a (or (gethash a freq) 0))) affixes)))
+    (mapcar #'car
+            (cl-sort pair (lambda (a b)
+                            (let ((fa (cdr a)) (fb (cdr b)))
+                              (if (/= fa fb) (> fa fb)
+                                ;; tie-break: shorter first, then lex
+                                (let ((la (length (car a)))
+                                      (lb (length (car b))))
+                                  (if (/= la lb) (< la lb)
+                                    (string< (car a) (car b)))))))))))
+
+(defun daselt-abv-assign-affixes ()
+  "Compute and set daselt-abv-prefix-table and daselt-abv-suffix-table."
+  (interactive)
+  ;; Validate required globals
+  (dolist (v '(abv-prefixes abv-suffixes
+                ahp-prefix-frequency ahp-suffix-frequency
+                daselt-abv-valid-prefix-placevals daselt-abv-valid-suffix-placevals
+                daselt-abv-valid-lower-paired-prefix-placevals
+                daselt-abv-valid-lower-paired-suffix-placevals))
+    (unless (boundp v)
+      (error "Variable %s is not bound" v)))
+  ;; Build placeval hashes
+  (let/ (;; Universe and paired sets for prefixes
+         (prefix-univ-h (daselt-abv--placevals->coord-hash daselt-abv-valid-prefix-placevals))
+         (prefix-paired-h (daselt-abv--placevals->coord-hash daselt-abv-valid-lower-paired-prefix-placevals))
+         (prefix-complement-h (daselt-abv--complement-hash prefix-univ-h prefix-paired-h))
+         ;; Universe and paired sets for suffixes
+         (suffix-univ-h (daselt-abv--placevals->coord-hash daselt-abv-valid-suffix-placevals))
+         (suffix-paired-h (daselt-abv--placevals->coord-hash daselt-abv-valid-lower-paired-suffix-placevals))
+         (suffix-complement-h (daselt-abv--complement-hash suffix-univ-h suffix-paired-h))
+         ;; Lengths
+         (n-prefix-top (length (daselt-abv--keys prefix-paired-h)))
+         (n-suffix-top (length (daselt-abv--keys suffix-paired-h)))
+         ;; Letter base map from union of both universes
+         (letter-base (daselt-abv--collect-letter-bases
+                       (append daselt-abv-valid-prefix-placevals
+                               daselt-abv-valid-suffix-placevals)))
+         ;; Counts per coord (separate for pref/suf)
+         (prefix-counts (make-hash-table :test 'equal))
+         (suffix-counts (make-hash-table :test 'equal))
+         ;; Sort affixes by frequency
+         (prefixes-sorted (daselt-abv--sorted-affixes-by-frequency abv-prefixes ahp-prefix-frequency))
+         (suffixes-sorted (daselt-abv--sorted-affixes-by-frequency abv-suffixes ahp-suffix-frequency))
+         ;; Partition into top N and rest
+         (prefix-top (cl-subseq prefixes-sorted 0 (min n-prefix-top (length prefixes-sorted))))
+         (prefix-rest (nthcdr (length prefix-top) prefixes-sorted))
+         (suffix-top (cl-subseq suffixes-sorted 0 (min n-suffix-top (length suffixes-sorted))))
+         (suffix-rest (nthcdr (length suffix-top) suffixes-sorted))
+         ;; Output tables
+         (pref-ht (make-hash-table :test 'equal))
+         (suf-ht (make-hash-table :test 'equal)))
+    ;; Assign prefixes
+    (dolist (aff prefix-top)
+      (puthash aff
+               (daselt-abv--assign-one aff prefix-paired-h prefix-counts letter-base nil)
+               pref-ht))
+    (dolist (aff prefix-rest)
+      (puthash aff
+               (daselt-abv--assign-one aff prefix-complement-h prefix-counts letter-base t)
+               pref-ht))
+    ;; Assign suffixes
+    (dolist (aff suffix-top)
+      (puthash aff
+               (daselt-abv--assign-one aff suffix-paired-h suffix-counts letter-base nil)
+               suf-ht))
+    (dolist (aff suffix-rest)
+      (puthash aff
+               (daselt-abv--assign-one aff suffix-complement-h suffix-counts letter-base t)
+               suf-ht))
+    ;; Set globals
+    (setq daselt-abv-prefix-table pref-ht
+          daselt-abv-suffix-table suf-ht)
+    (cons pref-ht suf-ht)))
+
+;; Usage:
+;; M-x eval-buffer, then:
+;; (daselt-abv-assign-affixes)
+;; Results in daselt-abv-prefix-table and daselt-abv-suffix -table (hash tables
+;; mapping affix string -> chosen Daselt symbol string).
+
+Notes:
+- This follows the guide’s two-tier allocation: top by frequency to lower-paired slots; others to the complement; multi-fill kicks in only when all slots are used at least once.
+- Letter-guided search prefers exact letter on L1 unless assigning to complement, in which case L2 is tried first, then other layers in the ergonomic order from main_layout_heuristics.org.
+- Ergonomic scoring is coarse but aligned with your ranking: home row, center columns, and low layers preferred. Adjust daselt-abv--erg-score or layer order if you want to bias differently.
+
+*** This is great, but I still need forms that define these tables with the output of =daselt-abv-assign-affixes= as the initial value so I can put those into my config. Can you write me an elisp-function (or macro) that takes as input a hash-table and returns an elisp-form defining this hash-table with its current values?
+
+Here’s a small helper you can drop into your config. It turns a live hash-table into a stable defconst form you can paste into your init.
+
+(require 'cl-lib)
+
+(defun daselt-abv-hash->def-form (var hash &optional doc)
+  "Return a defconst form that binds VAR to a hash table equal to HASH.
+DOC is an optional docstring."
+  (let ((pairs nil))
+    (maphash (lambda (k v) (push (cons k v) pairs)) hash)
+    ;; Stable order for reproducible diffs
+    (setq pairs
+          (cl-sort pairs
+                   (lambda (a b)
+                     (string< (prin1-to-string (car a))
+                              (prin1-to-string (car b))))))
+    =(defconst ,var
+       ,(let ((ht (make-symbol "ht")))
+          =(let ((,ht (make-hash-table
+                       :test ',(hash-table-test hash)
+                       :size ,(hash-table-size hash)
+                       :rehash-size ,(hash-table-rehash-size hash)
+                       :rehash-threshold ,(hash-table-rehash-threshold hash)
+                       ,@(when (hash-table-weakness hash)
+                           =(:weakness ,(hash-table-weakness hash))))))
+             ,@(mapcar (lambda (kv)
+                         =(puthash ',(car kv) ',(cdr kv) ,ht))
+                       pairs)
+             ,ht))
+       ,(or doc ""))))
+
+Usage examples:
+- Generate and inspect a def form for the current prefix table:
+  (pp (daselt-abv-hash->def-form
+       'daselt-abv-prefix-table daselt-abv-prefix-table
+       "Auto-generated Daselt prefix table."))
+
+- Same for the suffix table:
+  (pp (daselt-abv-hash->def-form
+       'daselt-abv-suffix-table daselt-abv-suffix-table
+       "Auto-generated Daselt suffix table."))
+
+- If you want both at once after assigning:
+  (cl-destructuring-bind (pref suf) (daselt-abv-assign-affixes)
+    (let ((pref-form (daselt-abv-hash->def-form
+                      'daselt-abv-prefix-table pref
+                      "Auto-generated Daselt prefix table."))
+          (suf-form  (daselt-abv-hash->def-form
+                      'daselt-abv-suffix-table suf
+                      "Auto-generated Daselt suffix table.")))
+      (pp pref-form)
+      (pp suf-form)))
+
+*** 

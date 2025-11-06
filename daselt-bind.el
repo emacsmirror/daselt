@@ -232,8 +232,8 @@ suffixes."
 
 Automatically generated from the contents of the remapped-keys-file.
 
-If you have daselt-stump, you can use `daselt-stump-translate-daselt-keys' to set
-this.
+If you have daselt-stump, you can use `daselt-stump-translate-daselt-keys' to
+set this.
 
 Automatically set when starting `daselt-mode' if `d-stump' is t."
   :type '(alist :key-type string :value-type string)
@@ -1899,20 +1899,22 @@ COORDLIST, the function returns the original coordinate value from ORIGCOORDS."
 
 ;;;;; Drawing
 (defun daselt-bind--elbind-to-placeval (elbind)
-  "Return PLACEVAL whose car is coords of ELBIND and cdr is its cdr.
+    "Return PLACEVAL whose car is coords of ELBIND and cdr is its cdr.
 
 If ELBIND has no coordinates, return nil."
-  (declare (ftype (function (cons) cons)
+    (declare (ftype (function (cons) cons)
                   ;; (function ((or (cons (cons (cons (list integer) string) (list number)) t) ; Compiler complains.
                   ;;                (cons (cons ((cons (list integer) string)) void) t)))
                   ;;           (cons (list number) t))
                   ))
-  (let ((coords (cdar elbind))
+    (let ((coords (cdar elbind))
         (val (cdr elbind)))
     (if coords (cons coords val))))
 
-(defun daselt-bind-draw-bindlist-layer (blistsymb laycoord &rest mods)
-  "Draw a layer of the bindlist identified by BLISTSYMB.
+(defun daselt-bind-draw-bindlist-layer (blist laycoord &rest mods)
+  "Draw a layer of BLIST.
+
+BLIST can be either a bindlist or a symbol bound to a bindlist.
 
 Use a maximized window. LAYCOORD specifies the layer to draw, and MODS the
 modifiers of the layer."
@@ -1944,7 +1946,10 @@ modifiers of the layer."
                     (remq nil ; Filters out bindings without coordinate matches.
                           (mapcar #'daselt-bind--elbind-to-placeval
                                   (daselt-bind--elbinds-matching-modifier-regexps
-                                   (symbol-value blistsymb) mods)))
+                                   (if (symbolp blist)
+                                       (symbol-value blist)
+                                     blist)
+                                   mods)))
                     0
                     laycoord)))
     (funcall
@@ -1957,39 +1962,39 @@ modifiers of the layer."
      current-prefix-arg)))
 
 (defun daselt-bind--elbinds-matching-modifier-regexps (blist modrxs)
-  "Return elaborate forms of bindings in BLIST matching MODS.
+    "Return elaborate forms of bindings in BLIST matching MODS.
 
 Filter bindings by modifier regexps MODRXS. A modifier regexp is a string
 matched against all modifiers in a binding. If the regexp string starts with
 `^', the binding is matched by the regexp if and only if no modifier in the
 binding matches the string."
-  (declare (ftype (function (t list) list)
+    (declare (ftype (function (t list) list)
                   ;; (function (t (list string)) (list (list (cons (list number) t)))) ; Compiler complains.
                   )
            (pure t))
-  (let* ((case-fold-search nil)
+    (let* ((case-fold-search nil)
          (pblist (daselt-base-filter-list blist #'daselt-bind-p))
          (elblist (mapcar (lambda (bind)
-                            (daselt-bind-elaborate-on-binding bind))
+                              (daselt-bind-elaborate-on-binding bind))
                           pblist))
          (purelblist (daselt-base-filter-list elblist (lambda (bind)
-                                                         (not (daselt-bind--string-binding-p bind))))))
+                                                           (not (daselt-bind--string-binding-p bind))))))
 
     (daselt-base-filter-list purelblist
                               (lambda (elbind)
-                                (cl-flet* ((ispositive (modrx)
-                                             (not (string-match-p (rx string-start "^")
+                                  (cl-flet* ((ispositive (modrx)
+                                               (not (string-match-p (rx string-start "^")
                                                                   modrx))))
                                   (let* ((elbindmods (daselt-base-remove-indices
                                                       (caaar elbind)))
                                          (modstrs (mapcar #'char-to-string elbindmods)))
                                     (if (equal modrxs '(nil))
-                                        t
-                                      (cl-every
+                                            t
+                                        (cl-every
                                        (lambda (modrx)
-                                         (if (ispositive modrx)
-                                             (cl-member modrx modstrs :test #'string-match-p)
-                                           (not (cl-member modrx modstrs
+                                           (if (ispositive modrx)
+                                                 (cl-member modrx modstrs :test #'string-match-p)
+                                             (not (cl-member modrx modstrs
                                                            :test #'string-match-p))))
                                        modrxs))))))))
 

@@ -1,0 +1,172 @@
+#+title: Daselt-abv Guide
+#+author: Alexander Prähauser
+
+* Preamble
+The Daselt-layout has at about 175 symbols that can be used for abbrevs. This is a lowball, but see below for more precise estimates.
+
+175^2 = 30,625, enough for all the most common words.
+175^3 = 5,359,375, far more than enough for all of English.
+
+So the Daselt-layout could reduce all English words to sequences of less than three symbols. So the question is how to divide the multitude of constructs that can be abbreviated among signs in the layout in a way that can be remembered, so the provide a derivation of the highly inhomogeneous distribution of words onto 24 letters to a more homogeneous distribution on the Daselt-symbols. We do this by basically deriving a whole new English shorthand script based on the English grammar but (largely) not phonology, as well as Daselt's structure.
+
+
+** Definitions
+- We distinguish between the following linguistic classes:
+  - /roots/, basically the same as the linguistic notion,
+  - /root closures/, root with /affixes/ (prefixes, suffixes and infixes),
+  - /compounds/. root closures connected by /connectives/.
+
+- Except for connectives, the distinction between multiple words and of compound words is not important for abbrev generation. We will refer to both as /compounds/.
+
+#+begin_example
+⟨[We] (are [go]ing) ⟨to the ⟨[car] (pre-[sale])⟩⟩ and (the [rally])⟩
+#+end_example
+
+Here,
+- roots are enclosed by [square brackets],
+- root closures by (round brackets),
+- some compounds are enclosed by ⟨angle brackets⟩ (there are more),
+- connectives are given by "and", "-" and " ".
+
+
+** Procedure outline
+The abbrev generation process follows steps similar to Chomskyan generative grammar:
+
+- It starts with the /expansion/ of the would-be abbrev
+- From this it extracts the /deep structure/,
+- From this it generates the /surface structure/.
+
+- For roots and affixes,
+  - the step from the expansion to the deep structure is a function intended to maximize shortness and memorability,
+  -  the step to the surface structure consists of embellishments to make the resulting cue unique.
+- For compounds
+  - the deep structure is derived from those of their roots and affixes using simple rules,
+  - the generation of the surface structure is more ideosyncratic, since it includes steps intended to maximize shortness.
+
+
+** Statistical considerations
+Of the places of the Daselt-layout, 230 house symbols:
+
+- these fill all of layers 1, 3-6 and 8,
+- almost all of 2
+- most of 7.
+
+Not all of these can be used everywhere in abbrevs. We can distinguish based on syntax classes:
+
+- letters and symbols can be used for roots and all affixes,
+- In English, punctuation marks follow immediately the preceeding word, so to avoid unintentional expansions these can be used for prefixes (and infixes, but there are almost none in English).
+- Similarly, opening delimiters can be used for suffixes and closing delimiters for prefixes.
+
+This leaves
+
+- 224 symbols for prefixes,
+- 207 for suffixes,
+- 202 for roots.
+- 229 for standalone abbrevs.
+
+English has
+
+- roughly 100–150 common prefixes,
+- 100–200 common suffixes,
+  - 8 inflectional suffixes,
+- 10,000–20,000 common roots,
+  - around 50,000 rare roots,
+- 1,000–1,300 three-letter words.
+
+Thus we can assign
+
+- to each common pre- and suffix a unique symbol,
+- to each common root a two-symbol combination,
+  - but for some rare roots we might have to use three-letter combinations.
+
+We cannot assign to each three-letter word a one-symbol abbrev. Since expansion costs one keystroke (though a nice one), it seems useless to assign to three-letter-words a two-letter abbrev, so we have to leave some three-letter-words unabbreviated. Similarly, we don't abbreviate two-letter words.
+
+
+** Capitals and plurals
+If a word is at the beginning of a sentence, it has to be capitalized. If a prefix or root abbrev starts with a letter, it will be expanded in capitalized form if it starts with the capitalized form of that letter. For abbrevs that start with some other symbol we have to define a capitalized variant. We systematize that by dividing the abbrev layout into upper and lower layer pairs:
+
+- 1 — 2
+- 4 — 3
+- 5 — 6
+- 8 — 7
+
+Not every symbol on a lower level corresponds to a symbol on an upper layer. If we just consider valid upper-lower-pairs, that leaves us with 102 symbol pairs. We can assign those prefixes to these that are most frequent at the beginning of a word. We will still assign the other prefixes and disambiguate the two uses during the derivation of the surface form. In the final surface we might need still need a disambiguating marker, but more probably we won't. The details of the disambiguation are described in the procedure outline.
+
+We can similarly handle plurals: we assign the 91 eligible pairs to the most frequent ending suffixes, add a disambiguation during the surface derivation and remove it if unneeded.
+
+
+* Procedure  
+** Deep structure generation
+*** For affixes
+#+begin_comment
+As a reminder, a placeval is a cons whose car are the coordinates of a Daselt-place and whose cdr is the binding of that place as a string.
+#+end_comment
+The allowed prefix placevals are generated from the options in =daselt-abv= and put into the variable  =daselt-abv-valid-prefix-placevals=, and similarly for suffixes. Those placevals that are the lower parts of upper-lower-pairs are in =daselt-abv-valid-lower-paired-prefix-placevals= / =daselt-abv-valid-lower-paired-suffix-placevals=. As discussed in [[*Capitals and plurals][Capitals and plurals]], these places should be bound to
+
+- those prefixes that are most likely word beginnings,
+- those suffixes that are most likely word ends.
+
+Let =LENGTH_VALID_LOWER_PREFIX= be the length of =daselt-abv-valid-lower-paired-prefix-placevals= and similar for suffixes. These lengths bound what counts as "most likely".
+
+We have to assign to each =affix= a Daselt-symbol. For this:
+
+- if =affix= is a =prefix= and among the =LENGTH_VALID_LOWER_PREFIX= most likely prefixes we have to find a place in the Daselt-layout among =daselt-abv-valid-lower-paired-prefix-placevals= and similar for suffixes and =daselt-abv-valid-lower-paired-suffix-placevals=.
+  - Otherwise, we have to pick among the =complement= of =daselt-abv-valid-lower-paired-prefix-placevals= in =daselt-abv-valid-prefix-placevals= and similar for suffixes.
+- if all places in the Daselt-layout are filled (where we count prefixes and suffixes separately), we start multi-filling places.
+
+Among these places we pick one using criteria designed to maximize (in that order):
+
+- ergonomics,
+- memorability.
+
+The ergonomic criteria are inherited from the Daselt-layout, e.g. putting frequent affixes on strong fingers and easily accessible layers. Since the interaction between different pre/suffixes is negligible, we only have to optimize for appearance frequency. Memorability is given by using symbols in the Daselt-layout that are close to letters in the affix.
+
+Thus, for each =affix=:
+
+- we try to find a free place in =daselt-abv-valid-lower-paired-prefix-placevals= / =daselt-abv-valid-lower-paired-suffix-placevals= or their =complement=, depending on the =affix='s relative frequency,
+- we go through the =letters= of =affix=:
+  - we prefer =letters= that are:
+    - rare (increases chances of uniqueness),
+    - prominent within the =affix= (increases memorability).
+    - at a nice place within the Daselt-layout (particularly for the most frequent affixes),
+  - we go through these =letters= multiple times:
+    - first we look if the =place= of =letter= is free,
+      - in the second layer if we are going through the places in =complement=,
+    - then we try places in layers above =letter=,
+    - then places adjecent to =letter= in other rows,
+    - then the layers above these places,
+    - then column-adjecent places.
+  - if we don't find a free =place= this way, we pick some other one.
+- afterward we remove the picked =place= from the free places.
+  - note that we count for =prefixes= and =suffixes= separately.
+
+*** For roots
+
+We assign to each root a two-symbol sequence from the Daselt-layout. We have the same problem as with the prefixes though: that the first symbol should be used for capitalization. But we also have a few new problems:
+
+- Roots can be words in themselves, so in that case their assignment should be a their abbrev.
+- the ergonomics of two-symbol combinations come into play, both:
+  - in terms of ADnW-inherited criteria (e.g. hand rolls, home row focus, peripheral strain reduction, ambidexterity…)
+  - the interactions between Daselt-layers as described in the documentation for dxkb (see =main_layout_heuristics.org=).
+- if =root= is a three-letter word, an abbrev higher than one is redundant, so we need one-letter abbrevs for three-letter words, but there are not enough symbols in Daselt for all three-letter words,
+
+So:
+
+- We assign a combination to each =root= a =deep= structure string:
+  - if =root= is itself a word, =deep= should usually be its =cue=.
+    - We find out whether something is a word by matching =^...$= in =dictionary-match-word=,
+      - we should also generate a function =avy-corpus-match-against-dictionary=, which returns the entries of a corpus that return dictionary matches.
+  - if
+    - either
+      - =root= is not a word or
+      - it is is not possible to find a =cue= that's short enough,
+        - e.g. if =root= is an uncommon three-letter-word,
+    - we still assign to =root= a =deep=, but we don't define an abbrev that expands into it,
+      - in this case, deep exists solely to build =other-cues= out of,
+      - consequently, the assignment of =deeps= without =cues= need not be unique,
+        - but =cues= have to be unique,
+          - therefore, if we assign a =cue= to a =root= of length => 4, we use a two-symbol abbrev,
+          - if we assign a =deep= to a =root= of length < 4, we use a one-symbol string but only assign an abbrev =cue= to the most frequent =roots=,
+            - the free placevals are those that are not in =daselt-abv-special-non-suffix-placevals= or =daselt-abv-special-placevals=,
+        - when we assign the same =deep= to several =roots=, we should try to maximize the chances of avoiding collisions:
+          - we do this by checking whether two =roots= share =common= prefixes/suffixes and minimizing =common= for =roots= with the same =deep=

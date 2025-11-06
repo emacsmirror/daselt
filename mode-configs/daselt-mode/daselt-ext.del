@@ -587,10 +587,10 @@ Move up ARG levels; if INVISIBLE-OK is non-nil, consider invisible lines."
     (looking-at outline-regexp)))
 
 (defun daselt-switch-to-messages ()
-      "Switch to messages buffer."
-      (declare (ftype (function nil t)))
-      (interactive)
-      (switch-to-buffer "*Messages*"))
+  "Switch to messages buffer."
+  (declare (ftype (function nil t)))
+  (interactive)
+  (switch-to-buffer "*Messages*"))
 
 (defun daselt-follow-in-other-window ()
   "Follow or open link at point in another window."
@@ -768,13 +768,13 @@ In math-mode, no abbrevs are expanded."
   "Exit if at the end of the minibuffer, otherwise move char right."
   (interactive)
   (if (eobp)
-                                                                                                  (exit-minibuffer)
-                                                  (forward-char)))
+      (exit-minibuffer)
+    (forward-char)))
 
 ;;;;;; Saving
 (defun daselt-abbrev-save ()
   "Save user-defined abbrevs to default abbrev-file."
-  (declare (ftype (function () t)))
+  (declare (ftype (function nil t)))
   (interactive)
   (write-abbrev-file nil))
 
