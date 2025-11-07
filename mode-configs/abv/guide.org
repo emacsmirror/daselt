@@ -152,7 +152,7 @@ We assign to each root a two-symbol sequence from the Daselt-layout. We have the
 
 So:
 
-- We assign a combination to each =root= a =deep= structure string:
+- We assign to each =root= a =deep= structure string:
   - if =root= is itself a word, =deep= should usually be its =cue=.
     - We find out whether something is a word by matching =^...$= in =dictionary-match-word=,
       - we should also generate a function =avy-corpus-match-against-dictionary=, which returns the entries of a corpus that return dictionary matches.
@@ -168,5 +168,17 @@ So:
           - therefore, if we assign a =cue= to a =root= of length => 4, we use a two-symbol abbrev,
           - if we assign a =deep= to a =root= of length < 4, we use a one-symbol string but only assign an abbrev =cue= to the most frequent =roots=,
             - the free placevals are those that are not in =daselt-abv-special-non-suffix-placevals= or =daselt-abv-special-placevals=,
+          - since we have so few symbols in the Daselt-layout compared to three-letter words, we might encounter a situation where a symbol is the =cue= to a three-letter =root= word, but also the =deep= of some completely different =root2=. This is a trade-off we kind-of have to accept, even if it makes memorization harder.
         - when we assign the same =deep= to several =roots=, we should try to maximize the chances of avoiding collisions:
-          - we do this by checking whether two =roots= share =common= prefixes/suffixes and minimizing =common= for =roots= with the same =deep=
+          - we do this by checking whether two =roots= share =common= prefixes/suffixes and minimizing =common= for =roots= with the same =deep=.
+  - to find the actual =deep= we assign to a =root= we follow the same steps as for prefixes and suffixes, with some changes:
+    - if we assign a one-symbol =deep=, we categorically prefer to put =roots= that get a =cue= onto =daselt-abv-valid-lower-paired-root-placevals=,
+      - we will still run out of placeval-pairs, so we have to determine which three-letter word =roots= we put onto paired places by sorting for frequency.
+    - if we assign a two-symbol =deep= to a =root= then we have to determine when we vary each of the =symbols=:
+      - we try through the (not necessarily adjecent) two-letter combinations within =root= several times:
+        - first we try through the letters themselves,
+        - then we try the layer variations of =symbol2=,
+          - since =symbol2= is behind =symbol1=, there is no functional difference between paired and unpaired symbols for them, so we distribute over all symbols from the start,
+        - then the layer variations in =daselt-abv-valid-lower-paired-root-placevals= of =symbol1=,
+        - then row variations of =symbol2=,
+        - then those of =symbol1=.
