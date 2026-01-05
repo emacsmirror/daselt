@@ -91,7 +91,7 @@
 
 ;;;; Constants
 (defconst daselt-base-definition-types-list
-  '(defun defmacro defconst defcustom defun* defalias defgroup define-derived-mode defvar defvar-keymap cl-defgeneric cl-defun cl-defmethod)
+  '(defun defmacro defconst defcustom defun* defalias defgroup define-derived-mode defvar defvar-keymap cl-defgeneric cl-defun cl-defmethod cl-defmethod cl-defgeneric)
   "List of definition macros for which `daselt-base-beginning-of-docstring' works.")
 
 (defconst daselt-base-escape-kbd-regexps-list
@@ -493,44 +493,49 @@ This function modifies instances of the defined regex patterns."
   (mapconcat #'identity strs separator))
 
 (defun daselt-base-intern-from-parts (&rest parts)
-  "Concatenate strings PARTS, inserting an `-' separator between each.
+            "Concatenate strings PARTS, inserting an `-' separator between each.
 
 Make the result a symbol."
-  (declare (ftype (function (&rest string) string))
+            (declare (ftype (function (&rest string) string))
            (side-effect-free t))
-  (intern (apply #'daselt-base-concat-with-separators "-" parts)))
+            (intern (apply #'daselt-base-concat-with-separators "-" parts)))
 
-;;;;; Filling
 (defun daselt-base-beginning-of-docstring ()
   "Move to the start of the docstring if point is within a definition.
 
 Works for definitions in `daselt-base-definition-types-list'."
-  (declare (ftype (function () void))
-           (side-effect-free nil))
+  (declare
+   (ftype (function () (or number boo)))
+   (side-effect-free nil))
   (beginning-of-defun)
-  (forward-char)
-  (let* ((first-symbol (progn (mark-sexp)
-                              (prog1 (daselt-base-read-region)
-                                (deactivate-mark))))
-         (types daselt-base-definition-types-list))
-    (when (member first-symbol types)
-      (let ((place (alist-get first-symbol daselt-base-unusual-docstring-positions-alist 3 #'eq)))
-        (forward-sexp place)
-        (search-forward "\"")
-        (backward-char)))))
+  (let ((end (save-excursion
+               (end-of-defun)
+               (point))))
+    (forward-char)
+    (let* ((first-symbol (progn (mark-sexp)
+                                (prog1 (daselt-base-read-region)
+                                  (deactivate-mark))))
+           (types daselt-base-definition-types-list))
+      (when (member first-symbol types)
+        (let ((place (alist-get first-symbol daselt-base-unusual-docstring-positions-alist 3 #'eq)))
+          (forward-sexp place)
+          (when (search-forward "\"" end t)
+            (backward-char)
+            (point)))))))
 
+;;;;; Filling
 (defun daselt-base-fill-string-at-point-like-docstring ()
-  "Fill the string at point like it's a docstring.
+                          "Fill the string at point like it's a docstring.
 
 Return the filled string."
-  (declare (ftype (function () string)))
-  (cl-flet ((fill-rest (beg &optional end)
-              (forward-char)
-              (let ((fillbeg (if (< (line-beginning-position) beg)
-                                 beg
-                               (beginning-of-line)
-                               (delete-horizontal-space)
-                               (point))))
+                          (declare (ftype (function () string)))
+                          (cl-flet ((fill-rest (beg &optional end)
+                                      (forward-char)
+                                      (let ((fillbeg (if (< (line-beginning-position) beg)
+                                                                                 beg
+                                                       (beginning-of-line)
+                                                       (delete-horizontal-space)
+                                                       (point))))
                 (fill-region fillbeg (or end (progn (goto-char beg)
                                                     (forward-sexp)
                                                     (point)))))))
@@ -549,7 +554,7 @@ Return the filled string."
                                             lineend
                                             t) ; Look if it contains a potential sentence end.
                    do (if (looking-at "\n") ; Fill rest if already at line end.
-                          (progn (forward-char)
+                                                                          (progn (forward-char)
                                  (unless (looking-at (rx (* blank) "\n")) ; Insert a newline if there isn't one between the first and other filled lines.
                                    (insert "\n"))
                                  (cl-return (fill-rest beg end)))
@@ -651,46 +656,99 @@ effects."
            do (if (funcall predicate elt) (cl-return t))))
 
 (defun daselt-base-complement (list1 list2 &optional compfun)
-  "Return a new list containing elements of LIST1 that are not in LIST2.
+        "Return a new list containing elements of LIST1 that are not in LIST2.
 
 The operation is non-destructive, preserving the original lists. Use COMPFUN for
 comparisons, defaulting to `equal'.
 
 This function is declared as pure, so please don't use predicates with side
 effects."
-  (declare (ftype (function (list list &optional (function (t t) boolean)) list))
+        (declare (ftype (function (list list &optional (function (t t) boolean)) list))
            (pure t))
-  (cl-remove-if (lambda (element)
-                  (cl-member element list2 :test (or compfun #'equal)))
+        (cl-remove-if (lambda (element)
+                        (cl-member element list2 :test (or compfun #'equal)))
                 list1))
 
-(defun daselt-base-powerlist (list &optional elt)
-  "Generate the power list of SET represented by LIST.
 
-Returns a list of all sublists of LIST with elements ordered like in LIST. ELT
-is used for recursion and should normally not be set by the user."
-  (declare (ftype (function (list &optional t) list))
-           (pure t))
-  (let ((powerlist (list nil))
-        (cutlist list))
-    (if elt (mapcar (lambda (sublist) (append (list elt) sublist))
-                    (daselt-base-powerlist (cl-loop for index from 0 to (cl-position elt list)
-                                                     do (setq cutlist (remq (nth index list) cutlist))
-                                                     finally return cutlist)))
-      (cl-loop for elt in list
-               do (setq powerlist (append powerlist (daselt-base-powerlist list elt)))
-               finally return powerlist))))
+(defun daselt--validate-max (max)
+  "Validate that MAX is nil or a non-negative integer.
+Signal =wrong-type-argument' if MAX is invalid."
+  (when (and max (not (and (integerp max) (>= max 0))))
+    (signal 'wrong-type-argument (list 'natnump max))))
+
+;;;###autoload
+(defun daselt-base-powerlist
+             (list &optional elt max)
+      "Generate the power list of a set represented by LIST.
+
+Return all sublists of LIST in which elements keep their order as in
+LIST.
+
+If MAX is non-nil, only sublists whose length is at most MAX are
+returned, and recursion is pruned so that longer combinations are not
+considered.
+
+The ELT parameter is used for internal recursion.  Users should not
+bind ELT manually.
+
+Behavior with duplicate elements in LIST is unspecified.  The
+implementation does not remove duplicates."
+      (declare (pure t))
+      (daselt--validate-max max)
+      (if elt
+              ;; Internal branch: build all subsets that include ELT, followed by
+              ;; elements from the suffix after the first occurrence of ELT.
+              (progn
+            (when (and max (<= max 0))
+          ;; Cannot build any subset that already includes one element when
+          ;; MAX is 0.
+          (cl-return-from daselt-base-powerlist nil))
+            (let* ((pos (cl-position elt list))
+               ;; If ELT is not present, mirror the original behavior by
+               ;; signaling an error.  This should not occur in internal use.
+               (_ (unless pos
+                    (error "ELT not found in LIST")))
+               (suffix (nthcdr (1+ pos) list))
+               (child-max (and max (1- max)))
+               (sublists (daselt-base-powerlist suffix nil child-max)))
+          (mapcar (lambda (sub) (cons elt sub)) sublists)))
+    ;; Top-level branch: start with empty subset, then add subsets that start
+    ;; with each element of LIST.
+    (let ((powerlist (list nil)))
+      (if (and max (= max 0))
+                  powerlist
+            (dolist (e list powerlist)
+          (setq powerlist
+                (nconc powerlist
+                       (daselt-base-powerlist list e max))))))))
+
+;; (defun daselt-base-powerlist (list &optional elt)
+;;   "Generate the power list of SET represented by LIST.
+
+;; Returns a list of all sublists of LIST with elements ordered like in LIST. ELT
+;; is used for recursion and should normally not be set by the user."
+;;   (declare (ftype (function (list &optional t) list))
+;;            (pure t))
+;;   (let ((powerlist (list nil))
+;;         (cutlist list))
+;;     (if elt (mapcar (lambda (sublist) (append (list elt) sublist))
+;;                     (daselt-base-powerlist (cl-loop for index from 0 to (cl-position elt list)
+;;                                                     do (setq cutlist (remq (nth index list) cutlist))
+;;                                                     finally return cutlist)))
+;;       (cl-loop for elt in list
+;;                do (setq powerlist (append powerlist (daselt-base-powerlist list elt)))
+;;                finally return powerlist))))
 
 (defun daselt-base-setequal (list1 list2 &optional elttest)
-  "Return t if LIST1 has the same elements as LIST2.
+        "Return t if LIST1 has the same elements as LIST2.
 
 ELTTEST is the test used for element comparison. It defaults to `equal'.
 
 This function is declared as pure, so please don't use predicates with side
 effects."
-  (declare (ftype (function (list list &optional (function (t t) boolean)) boolean))
+        (declare (ftype (function (list list &optional (function (t t) boolean)) boolean))
            (pure t))
-  (and (cl-subsetp
+        (and (cl-subsetp
         list1 list2 :test elttest)
        (cl-subsetp
         list2 list1 :test elttest)))
