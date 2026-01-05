@@ -1,41 +1,65 @@
 ;;; daselt-abv.del --- Daselt's abv module  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2025  Alexander Prähauser
-
-;; Author: Alexander Prähauser <ahprae@protonmail.com>
-;; Keywords: tools, abbrev, convenience
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Affix placement and visualization utilities for Daselt.
-;;
-;; This module now defines a default `abv-layout' instance instead of exposing
-;; many defcustom options. Interactive frontends delegate to generic methods.
+;; This file defines the default abv-layout instance and Daselt-specific
+;; assignment, deep generation, and typing measurement utilities.
 
 ;;; Code:
-
-(require 'daselt-bind)
 (require 'daselt-dirs)
+(require 'abv-typed-layout)
+(require 'abv-language)
+
+
 (require 'cl-lib)
 (require 'abv-data)
 (require 'abv-corpus)
-(require 'abv-layouts)
-(require 'dash) ;; for -filter
+(require 'abv-layout)
+(require 'abv-morph)
+(require 'dash)
+(require 'abv-weights)
+(require 'abv-measure)
+(require 'ert)
 
-;;;; Object instance (replaces many options)
+(defcustom daselt-abv-stops
+  '(?- ?_ ?: ?. ?, ?! ?? ?' ?`)
+  "List of characters in the Daselt-layout that are not added to
+`abv-temporary-word-constituents'.
+
+It is not necessary to add non-characters, such as command keys. It is also not
+necessary to add brackets and such."
+  :type '(repeat character)
+  :group 'daselt-mode)
+
+;; Define a subclass for Daselt-specific behavior.
+
+(defclass daselt-abv-layout (abv-typed-layout)
+  ((letter-frequency-alist :initarg :letter-frequency-alist :initform nil :type list))
+  "Daselt-specific ABV layout class.
+
+This class inherits from \`abv-typed-layout' but allows us to
+specialize methods for Daselt behavior without affecting other layout
+types.")
+
+(defun daselt-abv--placevals-from-classes (classes)
+  ""
+  (let ((print-level nil) (print-length nil))
+    (-filter (lambda (cons)
+               (and (= 1 (length (cdr cons)))
+                    (let* ((char (string-to-char (cdr cons)))
+                           (syx (with-syntax-table org-mode-syntax-table (char-syntax char))))
+                      (cl-member syx classes :test #'=))))
+             (daselt-base-flatten-n-times
+              (cdr (daselt-coords-coordinatize-layout (symbol-value daselt-dfk-layout)))
+              2))))
+
+(defun daselt-abv--filter-to-paired (placevals)
+  ""
+  (let* ((pairs '((1 .2) (4 . 3) (5 . 6) (8 . 7))))
+    (cl-remove-if-not (lambda (pv)
+                        (pcase-let* ((`(,L ,r ,c) (car pv))
+                                     (upper (cdr (assoc L pairs))))
+                          (alist-get (list upper r c) placevals
+                                     nil nil #'equal)))
+                      placevals)))
 
 (defvar daselt-abv--default-layout
   (let* ((single-symbol-placevals
@@ -44,12 +68,15 @@
              (lambda (cons)
                (or (< 1 (length (cdr cons)))
                    (let* ((char (string-to-char (cdr cons)))
-                          (syx (with-syntax-table text-mode-syntax-table (char-syntax char))))
+                          (syx (with-syntax-table text-mode-syntax-table
+                                 (char-syntax char))))
                      (cl-member syx '(?\  ?\- ?\") :test #'=))))
-             (daselt-base-flatten-n-times (cdr (daselt-coords-coordinatize-layout
-                                                (symbol-value daselt-dfk-layout))) 2))))
+             (daselt-base-flatten-n-times
+              (cdr (daselt-coords-coordinatize-layout
+                    (symbol-value daselt-dfk-layout)))
+              2))))
          (prefix-classes '(?w ?_ ?. ?\) ?\> ?\!))
-         (suffix-classes '(?\w ?\_ ?\( ?\< ?\!))
+         (suffix-classes '(?w ?_ ?\( ?\< ?\!))
          (infix-classes  '(?w ?_ ?. ?\( ?\< ?\) ?\!))
          (standalone-classes '(?w ?_ ?. ?\( ?\< ?\) ?\!))
          (root-classes '(?w ?_))
@@ -58,56 +85,81 @@
          (special-non-prefix-placevals nil)
          (special-non-suffix-placevals nil)
          (added-syntax-classes '(?_))
-         (save-file (let ((dir (ignore-errors (and (boundp 'daselt-mode-pkg-configs-directory)
-                                                   (file-name-as-directory daselt-mode-pkg-configs-directory)))))
-                      (expand-file-name (concat (or dir (file-name-as-directory user-emacs-directory))
-                                                "abv/save.el"))))
-         ;; Derived placevals helpers
-         (placevals-from-classes
-          (lambda (classes)
-            (let ((print-level nil) (print-length nil))
-              (-filter
-               (lambda (cons)
-                 (and (= 1 (length (cdr cons)))
-                      (let* ((char (string-to-char (cdr cons)))
-                             (syx (with-syntax-table org-mode-syntax-table (char-syntax char))))
-                        (cl-member syx classes :test #'=))))
-               (daselt-base-flatten-n-times
-                (cdr (daselt-coords-coordinatize-layout
-                      (symbol-value daselt-dfk-layout))) 2)))))
-         (filter-to-paired
-          (lambda (placevals)
-            (let* ((pairs layer-pairs))
-              (cl-remove-if-not
-               (lambda (pv)
-                 (pcase-let* ((`(,L ,r ,c) (car pv))
-                              (upper (cdr (assoc L pairs))))
-                   (alist-get (list upper r c) placevals nil nil #'equal)))
-               placevals))))
-         ;; Derived placevals
+         (save-file
+          (let ((dir (ignore-errors
+                       (and (boundp 'daselt-mode-pkg-configs-directory)
+                            (file-name-as-directory
+                             daselt-mode-pkg-configs-directory)))))
+            (expand-file-name
+             (concat (or dir (file-name-as-directory user-emacs-directory))
+                     "abv/save.el"))))
          (valid-prefix-placevals
           (cl-remove-if (lambda (cns)
                           (cl-member (car cns)
-                                     (cl-union special-placevals special-non-prefix-placevals)
+                                     (cl-union special-placevals
+                                               special-non-prefix-placevals)
                                      :test #'equal))
-                        (funcall placevals-from-classes prefix-classes)))
+                        (daselt-abv--placevals-from-classes prefix-classes)))
          (valid-lower-paired-prefix-placevals
           (cl-intersection valid-prefix-placevals
-                           (funcall filter-to-paired (funcall placevals-from-classes prefix-classes))
+                           (daselt-abv--filter-to-paired
+                            (daselt-abv--placevals-from-classes
+                             prefix-classes))
                            :test #'equal))
          (valid-suffix-placevals
           (cl-remove-if (lambda (cns)
                           (cl-member (car cns)
-                                     (cl-union special-placevals special-non-suffix-placevals)
+                                     (cl-union special-placevals
+                                               special-non-suffix-placevals)
                                      :test #'equal))
-                        (funcall placevals-from-classes suffix-classes)))
+                        (daselt-abv--placevals-from-classes suffix-classes)))
          (valid-lower-paired-suffix-placevals
           (cl-intersection valid-suffix-placevals
-                           (funcall filter-to-paired (funcall placevals-from-classes suffix-classes))
-                           :test #'equal)))
-    (make-instance 'abv-layout
+                           (daselt-abv--filter-to-paired
+                            (daselt-abv--placevals-from-classes
+                             suffix-classes))
+                           :test #'equal))
+         (valid-root-placevals
+          (cl-remove-if (lambda (cns)
+                          (cl-member (car cns) special-placevals
+                                     :test #'equal))
+                        (daselt-abv--placevals-from-classes root-classes)))
+         (valid-lower-paired-root-placevals
+          (cl-intersection valid-root-placevals
+                           (daselt-abv--filter-to-paired
+                            (daselt-abv--placevals-from-classes
+                             root-classes))
+                           :test #'equal))
+         (letter-frequency-alist
+          '((a . 0.07990206893942309)
+            (b . 0.018804036732255544)
+            (c . 0.03284555835649383)
+            (d . 0.04062125282501738)
+            (e . 0.10692258421661217)
+            (f . 0.029430581496292164)
+            (g . 0.022167692766914725)
+            (h . 0.054117623651994545)
+            (i . 0.07309172351202814)
+            (j . 0.0029731002396064404)
+            (k . 0.007589358182618301)
+            (l . 0.03979804953261822)
+            (m . 0.0268008563936347)
+            (n . 0.07088648057649072)
+            (o . 0.07424010245534356)
+            (p . 0.020584509989045232)
+            (q . 0.002015370256611603)
+            (r . 0.06229882452021066)
+            (s . 0.06344027443329876)
+            (t . 0.09078947300326193)
+            (u . 0.027843402306797792)
+            (v . 0.011300127005386415)
+            (w . 0.01915707225989487)
+            (x . 0.00397964969698287)
+            (y . 0.016742003338470018)
+            (z . 0.0016582233126963238))))
+    (make-instance 'daselt-abv-layout
                    :name "daselt-default"
-                   :non-constituents '(?- ?_ ?: ?. ?, ?! ?? ?' ?`)
+                   :separators '(?- ?_ ?: ?. ?, ?! ?? ?' ?` ?\⟨ ?\⟩ ?\  ?\t ?\n)
                    :single-symbol-placevals single-symbol-placevals
                    :prefix-classes prefix-classes
                    :suffix-classes suffix-classes
@@ -123,34 +175,251 @@
                    :valid-prefix-placevals valid-prefix-placevals
                    :valid-lower-paired-prefix-placevals valid-lower-paired-prefix-placevals
                    :valid-suffix-placevals valid-suffix-placevals
-                   :valid-lower-paired-suffix-placevals valid-lower-paired-suffix-placevals))
-  "Default abv-layout object constructed directly (options replaced).")
+                   :valid-lower-paired-suffix-placevals valid-lower-paired-suffix-placevals
+                   :valid-root-placevals valid-root-placevals
+                   :valid-lower-paired-root-placevals valid-lower-paired-root-placevals
+                   :symbol-sequences nil
+                   :letter-frequency-alist letter-frequency-alist))
+  "Default abv layout instance preconfigured for Daselt.
 
-;;;; Helper functions for assignment/visualization (reused by methods)
+The instance precomputes valid placevals, class filters, layer pairs and
+save-file location. It is used by the assignment, visualization and
+deep-generation functions.")
 
-(defun daselt-abv--alist->hash (alist &optional key-fn)
-  (let ((ht (make-hash-table :test 'equal)))
-    (dolist (kv alist ht)
-      (let ((k (if key-fn (funcall key-fn (car kv)) (car kv)))
-            (v (cdr kv)))
-        (puthash k v ht)))))
+(defcustom daselt-abv-layout
+  daselt-abv--default-layout
+  "Layout to use for abv."
+  :type 'object
+  :group 'daselt-abv)
+
+;; (unless abv-collection-current
+;;   (setopt abv-collection-current (abv-layout-collection daselt-abv-layout)))
+
+;; Specialization shims for daselt-abv-layout
+(cl-defmethod abv-layout-ease ((_layout daselt-abv-layout) seq weights)
+    "Compute ergonomic ease for SEQ using WEIGHTS for Daselt layouts.
+
+This specialization currently delegates to the base method."
+    (daselt-abv--ergonomic-score seq weights))
+
+;;;; Helper functions used internally by methods and deep structure generation.
+;;;; Availability and relative-freedom checks;;; Indexed sequence helpers
+
+(defun daselt-abv--first-index-of-letter (root letter)
+  "Return the 0-based first index of LETTER in ROOT, or length(ROOT).
+
+LETTER is expected to be a one-character string. The search is case-insensitive.
+If LETTER is not found, return the length of ROOT."
+  (let* ((len (length root))
+         (low (and (stringp letter)
+                (= (length letter) 1)
+                (downcase letter)))
+         (res len)
+         (i 0))
+          (while (< i len)
+      (when (and low
+                 (char-equal (aref (downcase root) i) (aref low 0)))
+        (setq res i i len))
+      (setq i (1+ i)))
+          res))
+
+(defun daselt-abv--index-plain-seq (root plain-seq)
+  "Attach indices to PLAIN-SEQ using ROOT and return an indexed sequence.
+
+Each element in PLAIN-SEQ is a placeval (COORD . BINDING). The result elements
+are ((LETTER . INDEX) . PLACEVAL). LETTER is the lowercase one-character string
+extracted from BINDING when possible, otherwise the downcased BINDING string.
+INDEX is the first index of LETTER in ROOT; when absent, it is set to the length
+of ROOT."
+  (let ((out '()))
+    (dolist (pv plain-seq (nreverse out))
+      (let* ((binding (cdr pv))
+             (letter (if (and (stringp binding)
+                              (= (length binding) 1)
+                              (let ((c (aref binding 0)))
+                                (or (and (<= ?a c) (<= c ?z))
+                                    (and (<= ?A c) (<= c ?Z)))))
+                         (downcase binding)
+                       (if (stringp binding) (downcase binding) "")))
+             (idx (daselt-abv--first-index-of-letter root letter)))
+        (push (cons (cons letter idx) pv) out)))))
+
+
+
+(defun daselt-abv--stored-deep-for-seq (seq onep)
+      "Return stored deep-structure shape for indexed or plain SEQ given ONEP.
+
+If ONEP is non-nil, return the single placeval of SEQ. Otherwise return SEQ
+itself. SEQ may be indexed placevals; indices are removed via
+`daselt-base-remove-indices' before extracting the stored shape."
+      (let* ((plain (daselt-base-remove-indices seq)))
+    (if onep (car plain) plain)))
+
+
+
+(defun daselt-abv--relatively-free-p (layout root seq onep &optional language)
+      "Return non-nil if SEQ is free for ROOT considering LAYOUT's table.
+
+When LANGUAGE is given and ROOT is a word of length 3, only collisions with
+other three-letter words are considered for this check."
+      (let* ((deep (daselt-abv--stored-deep-for-seq seq onep))
+         (wordp (and language (abv-language-word-p language root)))
+         (len (length root))
+         (tbl (oref layout root-table))
+         (found nil))
+    (maphash
+     (lambda (k v)
+           (when (and (not found) (equal v deep)
+                  (or (not wordp) (/= len 3)
+                      (and (= 3 (length k)) (abv-language-word-p language k))))
+         (setq found t)))
+     tbl)
+    (not found)))
+
+
+;;;; New functions required by user request
+
+(defun daselt-abv--string-combinations (string &optional min max)
+  "Return sequences of indexed placevals for subsequences of STRING.
+
+Use `daselt-base-powerlist', `string-to-list' and
+`daselt-bind--get-unique-layout-match' to return sequences of indexed placevals
+of symbols present in STRING, in their original order.
+
+Each element in a returned sequence is a cons of the form ((LETTER . INDEX) .
+  PLACEVAL) where PLACEVAL is the layout placeval derived from LETTER; INDEX is
+  the 0-based index at which LETTER first appears in STRING. Sequences are
+  ordered left-to-right as in STRING.
+
+MIN and MAX bound the length of subsequences. MAX defaults to 2. This function
+does not deduplicate equal sequences and does not filter by validity classes; it
+only uses the layout bindings."
+  (let* ((chars (string-to-list (or string "")))
+         (min (or min 1))
+         (max (or max 2))
+         ;; map letter string -> first index
+         (first-idx (let ((tbl (make-hash-table :test 'equal))
+                          (i 0))
+                      (dolist (ch chars tbl)
+                        (let ((s (downcase (string ch))))
+                          (unless (gethash s tbl)
+                            (puthash s i tbl)))
+                        (setq i (1+ i)))))
+         (subs (cl-remove-if
+                (lambda (xs) (< (length xs) min))
+                (daselt-base-powerlist chars nil max)))
+         (seqs '()))
+    (dolist (sub subs)
+      (let ((seq '()) (ok t))
+        (dolist (ch sub)
+          (let* ((s (downcase (string ch)))
+                 (pv (daselt-bind--get-unique-layout-match s)))
+            (if pv
+                (push (cons (cons s (gethash s first-idx 0)) pv) seq)
+              (setq ok nil))))
+        (when ok (push (nreverse seq) seqs))))
+    (nreverse seqs)))
+
+(cl-defun daselt-abv--embellish (seqs &rest directions)
+  "Embellish indexed SEQS according to DIRECTIONS.
+
+Each SEQ is a list of indexed placevals: ((LETTER . INDEX) . PLACEVAL)
+
+Return sequences whose elements have been embellished by allowing the
+coordinates of constituent placevals to be varied per DIRECTIONS. When new
+placevals are created, they inherit the same (LETTER . INDEX) metadata from
+their source element.
+
+Algorithm: If no direction is provided, return SEQS. Otherwise walk DIRECTIONS;
+for the i-th direction, scan for the first t at index j. When found, expand each
+SEQ by varying the j-th coordinate arbitrarily for the i-th element, keeping
+other coordinates fixed. The letter is looked up using `daselt-coords-binding'.
+Recurse after replacing SEQS by this expanded set. If no t is found in any
+direction, return SEQS."
+  (if (null directions)
+      seqs
+    (let* ((i 0)
+           ;; (expanded nil)
+           (found nil))
+      (while (and (< i (length directions)) (not found))
+        (let* ((dir (nth i directions))
+               (j 0))
+          (while (and (< j (length dir)) (not found))
+            (when (nth j dir)
+              (setq found (cons i j)))
+            (setq j (1+ j))))
+        (setq i (1+ i)))
+      (if (not found)
+          seqs
+        (let* ((i (car found))
+               (j (cdr found))
+               (new-seqs '()))
+          (dolist (seq seqs)
+            (let* ((elt (nth i seq))
+                   (meta (car elt))          ; (letter . index)
+                   (pv (cdr elt))            ; placeval cons (coord . binding)
+                   (coord (car pv))
+                   (L (nth 0 coord))
+                   (r (nth 1 coord))
+                   (c (nth 2 coord)))
+              (cond
+               ((= j 0) ;; vary layer
+                (dolist (L2 '(1 2 3 4 5 6 7 8))
+                  (let* ((coord2 (list L2 r c))
+                         (bnd (daselt-coords-binding coord2)))
+                    (when bnd
+                      (push (append (cl-subseq seq 0 i)
+                                    (list (cons meta (cons coord2 bnd)))
+                                    (nthcdr (1+ i) seq))
+                            new-seqs)))))
+               ((= j 1) ;; vary row
+                (dolist (r2 '(-1 0 1))
+                  (let* ((coord2 (list L r2 c))
+                         (bnd (daselt-coords-binding coord2)))
+                    (when bnd
+                      (push (append (cl-subseq seq 0 i)
+                                    (list (cons meta (cons coord2 bnd)))
+                                    (nthcdr (1+ i) seq))
+                            new-seqs)))))
+               ((= j 2) ;; vary column
+                (dolist (c2 '(-5 -4 -3 -2 -1 1 2 3 4 5))
+                  (let* ((coord2 (list L r c2))
+                         (bnd (daselt-coords-binding coord2)))
+                    (when bnd
+                      (push (append (cl-subseq seq 0 i)
+                                    (list (cons meta (cons coord2 bnd)))
+                                    (nthcdr (1+ i) seq))
+                            new-seqs)))))))
+            (apply #'daselt-abv--embellish (list (nreverse new-seqs))
+                   (append (cl-subseq directions 0 i)
+                           (list (make-list (length (nth i directions)) nil))
+                           (nthcdr (1+ i) directions))))
+          new-seqs)))))
 
 (defun daselt-abv--placevals->coord-hash (placevals)
+  "Return a hash mapping COORD -> BINDING for PLACEVALS alist."
   (let ((ht (make-hash-table :test 'equal)))
     (dolist (pv placevals ht)
       (puthash (car pv) (cdr pv) ht))))
 
 (defun daselt-abv--keys (hash)
+  "Return a list of keys of HASH."
   (let (ks) (maphash (lambda (k _v) (push k ks)) hash) ks))
 
 (defun daselt-abv--letter-p (s)
+  "Return non-nil if S is a single ASCII letter string."
   (and (stringp s) (= (length s) 1)
        (let ((c (aref s 0)))
          (or (and (<= ?a c) (<= c ?z)) (and (<= ?A c) (<= c ?Z))))))
 
-(defun daselt-abv--down (s) (if (and (stringp s) (= (length s) 1)) (downcase s) s))
+(defun daselt-abv--down (s)
+  "If S is a single-character string, return its lowercase; otherwise identity."
+  (if (and (stringp s) (= (length s) 1)) (downcase s) s))
 
 (defun daselt-abv--erg-score (coord)
+  "Return a rough ergonomic cost (lower is better) for COORD.
+
+The score penalizes off-home rows, outer columns, and harder-to-reach layers."
   (pcase-let ((`(,L ,row ,col) coord))
     (let* ((abscol (abs col))
            (row-pen (if (= row 0) 0.0 0.6))
@@ -159,9 +428,11 @@
       (+ row-pen col-pen layer-pen))))
 
 (defun daselt-abv--coord-layers-in-order (complementp)
+  "Return a list of layers in accessibility order; if COMPLEMENTP, start with 2."
   (if complementp '(2 1 4 6 5 7 3 8) '(1 2 4 6 5 7 3 8)))
 
 (defun daselt-abv--neighbors (r c layers)
+  "Return nearby coordinates around (R,C) across LAYERS (same, adj rows/cols)."
   (let ((coords '()))
     (dolist (L layers) (push (list L r c) coords))
     (dolist (dr '(-1 1)) (dolist (L layers) (push (list L (+ r dr) c) coords)))
@@ -169,6 +440,10 @@
     (nreverse coords)))
 
 (defun daselt-abv--collect-letter-bases (placevals)
+  "Map lowercase letter -> a preferred base coordinate from PLACEVALS.
+
+Preference is for layer 1 if available; otherwise the coordinate with minimal
+`daselt-abv--erg-score'."
   (let ((per-letter (make-hash-table :test 'equal)))
     (dolist (pv placevals)
       (let* ((coord (car pv)) (binding (daselt-abv--down (cdr pv))))
@@ -187,6 +462,7 @@
       out)))
 
 (defun daselt-abv--affix-letters (affix)
+  "Return a list of unique lowercase letter strings in AFFIX, in order."
   (let ((seen (make-hash-table :test 'equal)) (out '()))
     (dotimes (i (length affix))
       (let* ((ch (aref affix i)) (s (downcase (string ch))))
@@ -195,6 +471,7 @@
     (nreverse out)))
 
 (defun daselt-abv--letter-rarity (letter preferred-hash)
+  "Return how many coordinates in PREFERRED-HASH bind to LETTER."
   (let ((n 0))
     (maphash (lambda (_coord binding)
                (when (and (stringp binding) (string= (daselt-abv--down binding) letter))
@@ -203,11 +480,13 @@
     n))
 
 (defun daselt-abv--free-candidates (preferred-hash counts-hash)
+  "Return coordinates not yet used in COUNTS-HASH."
   (cl-loop for coord in (daselt-abv--keys preferred-hash)
            unless (> (gethash coord counts-hash 0) 0)
            collect coord))
 
 (defun daselt-abv--choose-fallback (preferred-hash counts-hash)
+  "Choose a coordinate by minimal usage, then ergonomic cost."
   (let ((coords (daselt-abv--keys preferred-hash)))
     (car (cl-sort (copy-sequence coords)
                   (lambda (a b)
@@ -216,6 +495,10 @@
                         (< (daselt-abv--erg-score a) (daselt-abv--erg-score b)))))))))
 
 (defun daselt-abv--assign-one (affix preferred-hash counts-hash letter-base complementp)
+  "Choose a coordinate for AFFIX and update COUNTS-HASH.
+
+Search letters from rarest; prefer neighbors around letter bases across layer
+order. If none are free, choose by usage then ergonomic. Return coordinate."
   (let* ((letters (daselt-abv--affix-letters affix))
          (letters-sorted (cl-stable-sort (copy-sequence letters) #'<
                                          :key (lambda (L)
@@ -240,6 +523,7 @@
     chosen-coord))
 
 (defun daselt-abv--complement-hash (universe-hash subset-hash)
+  "Return a hash of coords present in UNIVERSE-HASH but not in SUBSET-HASH."
   (let ((ht (make-hash-table :test 'equal)))
     (maphash (lambda (coord binding)
                (unless (gethash coord subset-hash) (puthash coord binding ht)))
@@ -247,126 +531,929 @@
     ht))
 
 (defun daselt-abv--sorted-affixes-by-frequency (affixes freq-alist)
-  (let* ((freq (daselt-abv--alist->hash freq-alist))
+    "Sort AFFIXES by descending frequency using FREQ-ALIST; ties by length.
+
+When frequencies and lengths are equal, sort lexicographically."
+    (let* ((freq (abv-layout-alist->hash freq-alist))
          (pair (mapcar (lambda (a) (cons a (or (gethash a freq) 0))) affixes)))
     (mapcar #'car
             (cl-sort pair (lambda (a b)
-                            (let ((fa (cdr a)) (fb (cdr b)))
+                              (let ((fa (cdr a)) (fb (cdr b)))
                               (if (/= fa fb) (> fa fb)
                                 (let ((la (length (car a))) (lb (length (car b))))
                                   (if (/= la lb) (< la lb) (string< (car a) (car b)))))))))))
 
-;;;; Methods bridge to abv-layout generics
+(defun daselt-abv--ensure-hash-table (sym)
+  "Ensure SYM is bound to a hash-table and return it.
 
-(cl-defmethod abv-layout-assign-affixes ((_layout abv-layout) affixes frequencies table-id)
-  (unless (and (listp affixes) (listp frequencies) (symbolp table-id))
-    (user-error "Invalid inputs: expected (list list symbol)"))
-  (let* ((freqs (daselt-abv--normalize-frequencies frequencies))
-         (table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
-                                  ('suffix 'daselt-abv-suffix-table)
-                                  ('infix  'daselt-abv-infix-table)
-                                  ('root   'daselt-abv-root-table)
-                                  (_ (user-error "Unknown table-id %S" table-id))))
-         (table (daselt-abv--ensure-hash-table table-sym))
-         (used-coords (make-hash-table :test 'equal))
-         (counts (make-hash-table :test 'equal)))
-    (maphash (lambda (_a c) (puthash c t used-coords) (cl-incf (gethash c counts 0))) table)
-    (pcase table-id
-      ('prefix
-       (let* ((univ-h (daselt-abv--placevals->coord-hash (oref daselt-abv--default-layout valid-prefix-placevals)))
-              (paired-h (daselt-abv--placevals->coord-hash (oref daselt-abv--default-layout valid-lower-paired-prefix-placevals)))
-              (compl-h (daselt-abv--complement-hash univ-h paired-h))
-              (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
-              (letter-base (daselt-abv--collect-letter-bases
-                            (append (oref daselt-abv--default-layout valid-prefix-placevals)
-                                    (oref daselt-abv--default-layout valid-suffix-placevals)))))
-         (dolist (a sorted)
-           (unless (gethash a table)
-             (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
-               (when (or (null coord) (gethash coord used-coords))
-                 (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
-               (when coord (puthash coord t used-coords) (puthash a coord table)))))
-         table))
-      ('suffix
-       (let* ((univ-h (daselt-abv--placevals->coord-hash (oref daselt-abv--default-layout valid-suffix-placevals)))
-              (paired-h (daselt-abv--placevals->coord-hash (oref daselt-abv--default-layout valid-lower-paired-suffix-placevals)))
-              (compl-h (daselt-abv--complement-hash univ-h paired-h))
-              (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
-              (letter-base (daselt-abv--collect-letter-bases
-                            (append (oref daselt-abv--default-layout valid-prefix-placevals)
-                                    (oref daselt-abv--default-layout valid-suffix-placevals)))))
-         (dolist (a sorted)
-           (unless (gethash a table)
-             (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
-               (when (or (null coord) (gethash coord used-coords))
-                 (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
-               (when coord (puthash coord t used-coords) (puthash a coord table)))))
-         table))
-      (_ table))))
+If SYM is unbound, nil or not a hash-table, bind it to a fresh hash-table."
+  (unless (and (boundp sym) (hash-table-p (symbol-value sym)))
+    (set sym (make-hash-table :test #'equal)))
+  (symbol-value sym))
 
-(cl-defmethod abv-layout-visualize-layer ((_layout abv-layout) table-id laycoord)
-  (let* ((table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
-                                   ('suffix 'daselt-abv-suffix-table)
-                                   ('infix  'daselt-abv-infix-table)
-                                   ('root   'daselt-abv-root-table)
-                                   (_ (user-error "Unknown table-id %S" table-id)))))
-    (when (and (symbolp table-sym) (boundp table-sym) (hash-table-p (symbol-value table-sym)))
-      (unless (and (boundp (daselt-abv--table->bindlist-var table-sym))
-                   (daselt-bind-bindlist-p (symbol-value (daselt-abv--table->bindlist-var table-sym))))
-        (daselt-abv-table->bindlist table-sym))
-      (let* ((blist (symbol-value (daselt-abv--table->bindlist-var table-sym)))
-             (placevals (daselt-coords-placevals-matching-indexed-rx blist 0 laycoord))
-             (drawer (if (called-interactively-p 'any)
-                         #'daselt-coords-draw-placevals-in-temp-buffer
-                       #'daselt-coords-draw-placevals)))
-        (funcall drawer placevals nil nil current-prefix-arg)))))
+(defun daselt-abv--normalize-frequencies (freqs)
+  "Normalize FREQUENCIES to an alist of (STRING .
 
-(cl-defmethod abv-layout-lookup-affix ((_layout abv-layout) table-id query)
-  (let* ((table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
-                                   ('suffix 'daselt-abv-suffix-table)
-                                   ('infix  'daselt-abv-infix-table)
-                                   ('root   'daselt-abv-root-table)
-                                   (_ (user-error "Unknown table-id %S" table-id))))
+COUNT).
+
+Accepted key shapes are: - string - (string), as produced by abv-corpus reducers
+- symbol (its name is used)
+
+Only positive integer counts are kept."
+  (cl-loop for (k . v) in freqs
+           for key = (cond
+                      ((stringp k) k)
+                      ((and (consp k) (stringp (car k))) (car k))
+                      ((symbolp k) (symbol-name k))
+                      (t nil))
+           when (and key (integerp v) (> v 0))
+           collect (cons key v)))
+
+(defun daselt-abv--table->bindlist-var (table-sym)
+  "Return the symbol to use for the bindlist variable from TABLE-SYM."
+  (intern (replace-regexp-in-string "-table$" "-bindlist" (symbol-name table-sym))))
+
+
+;; (cl-defmethod abv-compute-root-placevals ((layout daselt-abv-layout))
+;;   "Return the valid root placevals for LAYOUT.
+
+;; This method delegates to `daselt-abv--valid-root-placevals' if available and is
+;; used by higher-level root enumeration."
+;;   (daselt-abv--valid-root-placevals layout))
+
+;; (cl-defmethod abv-layout-char-coords ((_layout abv-layout) sym)
+;;   (car (daselt-bind--get-unique-layout-match (char-to-string sym))))
+
+(cl-defmethod abv-morph-typed-layout-add-graph ((layout abv-morph-typed-layout)
+                                                stats &optional options)
+  "Compatibility wrapper.  Forward to `abv-typed-layout-add-graph'."
+  (abv-typed-layout-add-graph layout stats options))
+
+(cl-defmethod abv-typed-layout-type-root
+  ;; Backward-compat convenience wrapper used by callers that still
+  ;; invoke the old generic.  Keep for now during migration.
+  ((layout daselt-abv-layout)
+   root weights
+   &optional no-overwrite shared-matrix
+   language)
+  "Compute deep structure for ROOT on LAYOUT using ring expansion.
+
+This method replaces the older \`abv-layout-generate-deep-structure-for-root'.
+It enumerates base candidates, embellishes them, filters by valid symbol
+sequences, filters by relative freedom in the root-table, and selects by
+weighted score. Store and return the chosen deep structure."
+  (unless (and (stringp root)) (user-error "Invalid inputs"))
+  (let ((exists (gethash root (oref layout root-table))))
+    (if (and no-overwrite exists)
+        exists
+      (let* ((wobj (or weights daselt-abv-weights))
+             (wordp (and (ignore-errors (slot-boundp language 'morphs))
+                         (let ((m (ignore-errors (oref language morphs))))
+                           (and m (fboundp 'abv-morph-is-word-p)
+                                (abv-morph-is-word-p m root)))))
+             (onep (and (< (length root) 4) wordp))
+             (base-seqs (daselt-abv--string-combinations root 1 (if onep 1 2)))
+             (dirs-order (if onep
+                             '(nil ((t nil nil)) ((nil t nil)) ((nil nil t)))
+                           '(nil ((nil nil nil) (t nil nil))
+                                 ((t nil nil) (nil nil nil))
+                                 ((nil nil nil) (nil t nil))
+                                 ((nil t nil) (nil nil nil))
+                                 ((nil nil nil) (nil nil t))
+                                 ((nil nil t) (nil nil nil)))))
+             (valid-seqs (abv-layout-generate-symbol-sequences layout (if onep "r" "rr"))))
+        (cl-labels
+            ((seq-valid-p (seq)
+               (let ((plain (daselt-base-remove-indices seq)))
+                 (cl-some (lambda (row) (equal row plain)) valid-seqs)))
+             (seq-free-p (seq)
+               (daselt-abv--relatively-free-p layout root (daselt-base-remove-indices seq) onep))
+             (score-cands (cands)
+               (let* ((scored (cl-remove-if (lambda (pair) (null (cdr pair)))
+                                            (mapcar (lambda (seq)
+                                                      (cons seq (daselt-abv--score layout root seq wobj shared-matrix)))
+                                                    cands))))
+                 (car (cl-sort scored (lambda (a b) (> (cdr a) (cdr b))))))))
+          (let* ((ring-cands-free '()) (best nil))
+            (dolist (ring dirs-order)
+              (let* ((seqs (daselt-abv--embellish base-seqs ring)))
+                (dolist (seq seqs)
+                  (when (and (seq-valid-p seq) (seq-free-p seq))
+                    (push seq ring-cands-free)))))
+            (setq ring-cands-free (nreverse (cl-remove-duplicates ring-cands-free :test #'equal)))
+            (setq best (and ring-cands-free (score-cands ring-cands-free)))
+            (unless best
+              (let* ((all-valid-free (cl-remove-if-not #'seq-free-p (mapcar #'identity valid-seqs)))
+                     (best2 (and all-valid-free (score-cands all-valid-free))))
+                (setq best best2))
+              (unless best
+                (let ((ring-cands '()))
+                  (dolist (ring dirs-order)
+                    (let* ((seqs (daselt-abv--embellish base-seqs ring)))
+                      (dolist (seq seqs)
+                        (when (seq-valid-p seq) (push seq ring-cands)))))
+                  (setq ring-cands (nreverse (cl-remove-duplicates ring-cands :test #'equal)))
+                  (setq best (and ring-cands (score-cands ring-cands)))))
+              (unless best
+                (setq best (and valid-seqs (score-cands valid-seqs)))))
+            (let ((val (and best (car best)))
+                  (stored nil))
+              (when val
+                (setq stored (daselt-abv--stored-deep-for-seq val onep))
+                (puthash root stored (oref layout root-table)))
+              (gethash root (oref layout root-table)))))))))
+
+(defun daselt-abv-table->bindlist (table-sym)
+  "Convert an affix table variable to a bindlist and define a companion var.
+
+TABLE-SYM names a variable bound to a hash-table mapping affix string to
+coordinate. Create and set a new variable whose name is TABLE-SYM with the
+suffix \"-table\" replaced by \"-bindlist\" and whose value is a list of (COORDS
+. AFFIX). Return the bindlist.
+
+Interactively, prompt for a variable named like \"daselt-abv-*-table\"."
+  (interactive
+   (list (intern (completing-read "Affix table: " obarray
+                                  (lambda (s)
+                                    (and (string-match-p "^daselt-abv-.*-table$" (symbol-name s))
+                                         (hash-table-p (symbol-value s))))
+                                  t))))
+  (unless (and (symbolp table-sym) (boundp table-sym) (hash-table-p (symbol-value table-sym)))
+    (user-error "Table %s is not bound to a hash-table" table-sym))
+  (let* ((tbl (symbol-value table-sym))
+         (blist nil))
+    (maphash (lambda (k v)
+               (let* ((aff (if (stringp k) k (format "%s" k)))
+                      (coords v))
+                 (push (cons coords aff) blist)))
+             tbl)
+    (setq blist (nreverse blist))
+    (set (daselt-abv--table->bindlist-var table-sym) blist)
+    blist))
+
+;;;; Table assignment, visualization and lookup
+
+;; (cl-defmethod abv-compute-root-placevals ((layout daselt-abv-layout))
+;;   "Return the valid root placevals for LAYOUT (Daselt specialization)."
+;;   (oref layout valid-root-placevals))
+
+;; (cl-defmethod abv-layout-visualize-layer ((layout daselt-abv-layout) table-id laycoord)
+;;   "Visualize layer for Daselt layout by delegating to the base method."
+;;   (cl-call-next-method))
+
+;; (cl-defmethod abv-layout-lookup-affix ((layout daselt-abv-layout) table-id query)
+;;   "Lookup in Daselt layout by delegating to the base method."
+;;   (cl-call-next-method))
+
+;; (cl-defmethod abv-layout-lookup-root ((layout daselt-abv-layout) root)
+;;     "Lookup root in Daselt layout by delegating to the base method."
+;;     (cl-call-next-method))
+
+;;;; Root deep structure generation specialized for Daselt
+
+(cl-defmethod abv-typed-layout-type-root ((layout daselt-abv-layout)
+                                          root weights
+                                          &optional no-overwrite shared-matrix
+                                          language)
+                        "Compute deep structure for ROOT on LAYOUT using ring
+                        expansion.
+
+This method replaces the older \`abv-layout-generate-deep-structure-for-root'.
+It enumerates base candidates, embellishes them, filters by valid symbol
+sequences, filters by relative freedom in the root-table, and selects by
+weighted score. Store and return the chosen deep structure."
+                        (unless (and (stringp root)) (user-error "Invalid inputs"))
+                        (let ((exists (gethash root (oref layout root-table))))
+    (if (and no-overwrite exists)
+                                                    exists
+                            (let* ((wobj (or weights daselt-abv-weights))
+             (wordp (and language (abv-language-word-p language root)))
+             (onep (and (< (length root) 4) wordp))
+             (base-seqs (daselt-abv--string-combinations root 1 (if onep 1 2)))
+             (dirs-order (if onep
+                                                                         '(nil ((t nil nil)) ((nil t nil)) ((nil nil t)))
+                                                 '(nil ((nil nil nil) (t nil nil))
+                                 ((t nil nil) (nil nil nil))
+                                 ((nil nil nil) (nil t nil))
+                                 ((nil t nil) (nil nil nil))
+                                 ((nil nil nil) (nil nil t))
+                                 ((nil nil t) (nil nil nil)))))
+             (valid-seqs (abv-layout-generate-symbol-sequences layout (if onep "r" "rr"))))
+        (cl-labels
+                                                        ((seq-valid-p (seq)
+                                     (let ((plain (daselt-base-remove-indices seq)))
+                 (cl-some (lambda (row) (equal row plain)) valid-seqs)))
+             (seq-free-p (seq)
+                                     (daselt-abv--relatively-free-p layout root (daselt-base-remove-indices seq) onep language))
+             (score-cands (cands)
+                                     (let* ((scored (cl-remove-if (lambda (pair) (null (cdr pair)))
+                                            (mapcar (lambda (seq)
+                                                                            (cons seq (daselt-abv--score layout root seq wobj shared-matrix)))
+                                                    cands))))
+                 (car (cl-sort scored (lambda (a b) (> (cdr a) (cdr b))))))))
+          (let* ((ring-cands-free '()) (best nil))
+            (dolist (ring dirs-order)
+              (let* ((seqs (daselt-abv--embellish base-seqs ring)))
+                (dolist (seq seqs)
+                  (when (and (seq-valid-p seq) (seq-free-p seq))
+                    (push seq ring-cands-free)))))
+            (setq ring-cands-free (nreverse (cl-remove-duplicates ring-cands-free :test #'equal)))
+            (setq best (and ring-cands-free (score-cands ring-cands-free)))
+            (unless best
+              (let* ((all-valid-free (cl-remove-if-not #'seq-free-p (mapcar #'identity valid-seqs)))
+                     (best2 (and all-valid-free (score-cands all-valid-free))))
+                (setq best best2))
+              (unless best
+                (let ((ring-cands '()))
+                  (dolist (ring dirs-order)
+                    (let* ((seqs (daselt-abv--embellish base-seqs ring)))
+                      (dolist (seq seqs)
+                        (when (seq-valid-p seq) (push seq ring-cands)))))
+                  (setq ring-cands (nreverse (cl-remove-duplicates ring-cands :test #'equal)))
+                  (setq best (and ring-cands (score-cands ring-cands)))))
+              (unless best
+                (setq best (and valid-seqs (score-cands valid-seqs)))))
+            (let ((val (and best (car best)))
+                  (stored nil))
+              (when val
+                (setq stored (daselt-abv--stored-deep-for-seq val onep))
+                (puthash root stored (oref layout root-table)))
+              (gethash root (oref layout root-table)))))))))
+
+
+  (defun daselt-abv-generate-deep-structure-for-root (root &optional no-overwrite shared-matrix)
+    "Generate and cache a deep structure for ROOT on the default layout.
+
+When called interactively, prompt for ROOT and use the default layout and
+weights. With prefix argument NO-OVERWRITE non-nil, keep existing assignments.
+SHARED-MATRIX, when non-nil, is passed to the scorer.
+
+Return the value stored in the layout root-table for ROOT."
+    (interactive (list (read-string "Root: ") current-prefix-arg nil))
+    (abv-layout-generate-deep-structure-for-root
+     daselt-abv--default-layout root daselt-abv-weights no-overwrite shared-matrix))
+
+  (cl-defmethod abv-typed-layout-assign-affixes
+      ((layout daselt-abv-layout) affixes frequencies table-id &optional language stats)
+      "Assign AFFIXES into TABLE-ID according to FREQUENCIES.
+
+TABLE-ID is one of the symbols prefix, suffix, infix or root.  The
+corresponding global table variable (e.g., daselt-abv-prefix-table) is
+created when needed and updated in place.  Existing entries are
+preserved.
+
+AFFIXES is a list of strings.  FREQUENCIES is an alist whose keys are
+\(string, symbol, or (string)) and values are positive integers.
+
+The algorithm sorts AFFIXES by descending frequency (ties by length then
+lexicographic) and, for each affix not already present, chooses a
+coordinate as follows:
+
+- prefer lower paired coordinates on the side appropriate for TABLE-ID;
+- seed per-letter bases from existing letter placements and search
+  neighboring coordinates across layers in ergonomic order; if no paired
+  coordinate is free, fall back to the complement (the remaining valid
+  coordinates);
+- for infix, scan the whole valid infix set; there is no paired subset;
+- break ties by minimal usage count per coordinate, then by ergonomic
+  cost; counts are updated as assignments are made.
+
+Return the updated hash-table.  LANGUAGE and STATS are currently
+ignored but accepted for forward compatibility."
+      (ignore language stats)
+      (unless (and (listp affixes) (listp frequencies) (symbolp table-id))
+      (user-error "Invalid inputs: expected (list list symbol)"))
+      (let* ((freqs (daselt-abv--normalize-frequencies frequencies))
+           (table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
+                             ('suffix 'daselt-abv-suffix-table)
+                             ('infix  'daselt-abv-infix-table)
+                             ('root   'daselt-abv-root-table)
+                             (_ (user-error "Unknown table-id %S" table-id))))
+           (table (daselt-abv--ensure-hash-table table-sym))
+           (used-coords (make-hash-table :test 'equal))
+           (counts (make-hash-table :test 'equal)))
+      ;; Seed usage counts from existing assignments.
+      (maphash (lambda (_a c)
+                   (puthash c t used-coords)
+                   (cl-incf (gethash c counts 0)))
+               table)
+      (pcase table-id
+        ('prefix
+         (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-prefix-placevals)))
+                (paired-h (daselt-abv--placevals->coord-hash (oref layout valid-lower-paired-prefix-placevals)))
+                (compl-h (daselt-abv--complement-hash univ-h paired-h))
+                (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+                (letter-base (daselt-abv--collect-letter-bases
+                              (append (oref layout valid-prefix-placevals)
+                                      (oref layout valid-suffix-placevals)
+                                      (oref layout valid-infix-placevals)))))
+           (dolist (a sorted)
+             (unless (gethash a table)
+               (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
+                 (when (or (null coord) (gethash coord used-coords))
+                   (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
+                 (when coord
+                   (puthash coord t used-coords)
+                   (puthash a coord table)))))
+           table))
+        ('suffix
+         (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-suffix-placevals)))
+                (paired-h (daselt-abv--placevals->coord-hash (oref layout valid-lower-paired-suffix-placevals)))
+                (compl-h (daselt-abv--complement-hash univ-h paired-h))
+                (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+                (letter-base (daselt-abv--collect-letter-bases
+                              (append (oref layout valid-prefix-placevals)
+                                      (oref layout valid-suffix-placevals)
+                                      (oref layout valid-infix-placevals)))))
+           (dolist (a sorted)
+             (unless (gethash a table)
+               (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
+                 (when (or (null coord) (gethash coord used-coords))
+                   (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
+                 (when coord
+                   (puthash coord t used-coords)
+                   (puthash a coord table)))))
+           table))
+        ('infix
+         (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-infix-placevals)))
+                (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+                (letter-base (daselt-abv--collect-letter-bases
+                              (append (oref layout valid-infix-placevals)
+                                      (oref layout valid-prefix-placevals)
+                                      (oref layout valid-suffix-placevals)))))
+           (dolist (a sorted)
+             (unless (gethash a table)
+               (let* ((coord (daselt-abv--assign-one a univ-h counts letter-base nil)))
+                 (when (or (null coord) (gethash coord used-coords))
+                   ;; Fallback by minimal usage then ergonomic cost.
+                   (setq coord (daselt-abv--choose-fallback univ-h counts)))
+                 (when coord
+                   (puthash coord t used-coords)
+                   (puthash a coord table)))))
+           table))
+        (_ table))))
+
+  ;; (cl-defmethod abv-layout-visualize-layer ((layout daselt-abv-layout) table-id laycoord)
+  ;;   "Visualize layer for Daselt layout by delegating to the base method."
+  ;;   (cl-call-next-method))
+
+  (cl-defmethod abv-layout-visualize-layer ((_layout daselt-abv-layout) table-id laycoord)
+      ;; Base method retained below for generic layouts.
+      "Draw a visualization of TABLE-ID for the layer matching
+                      LAYCOORD.
+
+TABLE-ID is one of prefix, suffix, infix or root. Ensure the companion bindlist
+exists, filter its entries by LAYCOORD, and draw the placevals either in a
+temporary buffer when called interactively or return an image when called
+non-interactively."
+      (let* ((table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
+                             ('suffix 'daselt-abv-suffix-table)
+                             ('infix  'daselt-abv-infix-table)
+                             ('root   'daselt-abv-root-table)
+                             (_ (user-error "Unknown table-id %S" table-id)))))
+      (when (and (symbolp table-sym) (boundp table-sym) (hash-table-p (symbol-value table-sym)))
+        (unless (and (boundp (daselt-abv--table->bindlist-var table-sym))
+                     (daselt-bind-bindlist-p (symbol-value (daselt-abv--table->bindlist-var table-sym))))
+          (daselt-abv-table->bindlist table-sym))
+        (let* ((blist (symbol-value (daselt-abv--table->bindlist-var table-sym)))
+               (placevals (daselt-coords-placevals-matching-indexed-rx blist 0 laycoord))
+               (drawer (if (called-interactively-p 'any)
+                               #'daselt-coords-draw-placevals-in-temp-buffer
+                           #'daselt-coords-draw-placevals)))
+          (funcall drawer placevals nil nil current-prefix-arg)))))
+
+(cl-defmethod abv-layout-lookup-affix ((_layout daselt-abv-layout) table-id query)
+    "Lookup QUERY in TABLE-ID and echo its coordinate tuple.
+
+TABLE-ID is one of prefix, suffix, infix or root. Return the coordinate (list
+LAYER ROW COL) or nil when not found. When found, also message the mapping."
+    (let* ((table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
+                           ('suffix 'daselt-abv-suffix-table)
+                           ('infix  'daselt-abv-infix-table)
+                           ('root   'daselt-abv-root-table)
+                           (_ (user-error "Unknown table-id %S" table-id))))
          (tbl (and (boundp table-sym) (symbol-value table-sym)))
          (hit (and (hash-table-p tbl) (gethash query tbl))))
     (if hit
-        (prog1 hit (message "%s => %S" query hit))
-      (message "Not found in %S" table-id)
-      nil)))
+            (prog1 hit (message "%s => %S" query hit))
+        (message "Not found in %S" table-id)
+        nil)))
 
-(cl-defmethod abv-layout-lookup-root ((_layout abv-layout) root)
+(cl-defmethod abv-layout-lookup-root ((_layout daselt-abv-layout) root)
+  "Return the deep mapping for ROOT from LAYOUT's root-table.
+
+The value is either a single placeval (for one-symbol assignments) or a list of
+two placevals. Return nil if ROOT is not present."
   (let ((tbl (oref daselt-abv--default-layout root-table)))
     (and (hash-table-p tbl) (gethash root tbl))))
 
-;;;; Frontends
+;;;; Daselt-specific ergonomic scoring and constraints
 
-;;;###autoload
-(defun daselt-abv-assign-affixes (affixes frequencies table-id)
-  "Assign AFFIXES with FREQUENCIES into TABLE-ID (one of
-prefix/suffix/infix/root)."
-  (interactive
-   (let* ((table-id (intern (completing-read "Table: " '("prefix" "suffix" "infix" "root") nil t nil nil "prefix")))
-          (affs (pcase table-id ('prefix abv-prefixes) ('suffix abv-suffixes) ('infix abv-infixes) ('root abv-roots)))
-          (freqs (mapcar (lambda (a) (cons a 1)) affs)))
-     (list affs freqs table-id)))
-  (abv-layout-assign-affixes daselt-abv--default-layout affixes frequencies table-id))
+;; Default weights object used when none is provided.
+(defvar daselt-abv-weights (make-instance 'abv-weights)
+  "Default abv weights object used for scoring.
 
-;;;###autoload
-(defun daselt-abv-draw-table-layer (table-id laycoord)
-  "Visualize one layer of TABLE-ID by drawing its placevals directly."
-  (interactive
-   (let* ((table-id (intern (completing-read "Table: " '("prefix" "suffix" "infix" "root") nil t nil nil "prefix")))
-          (lay (read (read-from-minibuffer "Layer coordinate: "))))
-     (list table-id (number-to-string lay))))
-  (abv-layout-visualize-layer daselt-abv--default-layout table-id laycoord))
+This is an `abv-weights' instance. The scorer uses the following slots:
 
-;;;###autoload
-(defun daselt-abv-look-up ()
-  "Look up an affix/root in a chosen table and display coordinates if found."
+- weight-ergonomic (wE): multiplier for ergonomic subscore. weight-mnemonic
+- (wM): multiplier for mnemonic subscore. weight-availability (wA): multiplier
+- for availability subscore. root-collision-weight (C): multiplier for
+- shared-affix collision penalty.
+
+Ergonomic penalties and bonuses used by `daselt-abv--ergonomic-score': -
+penalty-pinky - penalty-row-jump - penalty-same-finger - bonus-alternation -
+bonus-roll
+
+See also `daselt-abv--score' for how the weights combine.")
+
+(cl-defmethod abv-layout-generate-deep-structure-for-root
+  ((layout daselt-abv-layout) root weights &optional no-overwrite shared-matrix)
+  "Compatibility wrapper that forwards to `abv-typed-layout-type-root'."
+  (abv-typed-layout-type-root layout root weights no-overwrite shared-matrix nil))
+
+
+(defun daselt-abv--hand (coord)
+  (let ((c (nth 2 coord))) (cond ((< c 0) 'left) ((> c 0) 'right) (t nil))))
+
+(defun daselt-abv--cross-hand (c1 c2)
+  (let ((h1 (daselt-abv--hand c1)) (h2 (daselt-abv--hand c2))) (and h1 h2 (not
+    (eq h1 h2)))))
+
+(defun daselt-abv--same-finger (c1 c2)
+  (= (abs (nth 2 c1)) (abs (nth 2 c2))))
+
+(defun daselt-abv--pinky (c)
+  (>= (abs (nth 2 c)) 5))
+
+(defun daselt-abv--roll (c1 c2)
+  (and (eq (daselt-abv--hand c1) (daselt-abv--hand c2)) (= (nth 1 c1) (nth 1
+  c2)) (= 1 (abs (- (abs (nth 2 c1)) (abs (nth 2 c2)))))))
+
+(defun daselt-abv--hold-column-for-layer (L)
+  (pcase L (2 1) (3 6) (7 6) (8 6) (5 4) (6 3) (_ nil)))
+
+(defun daselt-abv--hard-run-p (coords)
+  "Return non-nil if COORDS form a hard same-layer run."
+  (when (= (length coords) 2)
+    (let* ((c1 (nth 0 coords)) (c2 (nth 1 coords))
+           (L1 (nth 0 c1)) (L2 (nth 0 c2)))
+      (when (= L1 L2)
+        (let ((k (daselt-abv--hold-column-for-layer L1)))
+          (when k
+            (let ((sigs (list (and (= (abs (nth 2 c1)) k) (daselt-abv--hand c1))
+                              (and (= (abs (nth 2 c2)) k) (daselt-abv--hand c2)))))
+              (and (member 'left sigs) (member 'right sigs)))))))))
+
+(cl-defun daselt-abv--ergonomic-score (seq wobj)
+  "Compute the ergonomic subscore for SEQ under weights WOBJ.
+
+SEQ is a list of placevals, each a cons (COORD . BINDING). COORD is the triple
+\(LAYER ROW COL). The base value is the negative sum of `daselt-abv--erg-score'
+over the coordinates.
+
+Penalties and bonuses are then applied: - add penalty-pinky for each pinky
+coordinate, - add penalty-row-jump for each non-home row, - add
+penalty-same-finger when both coordinates use the same finger, - add
+bonus-alternation when the hands alternate, - add bonus-roll when there is an
+inward roll on the same hand and row.
+
+All penalty and bonus slots are taken from WOBJ, an `abv-weights' instance. A
+larger bonus increases the score; a larger penalty decreases it. If the
+coordinates form a disallowed same-layer hold (`daselt-abv--hard-run-p'), return
+nil to rule the candidate out."
+  (let* ((coords (mapcar #'car seq)))
+    (when (daselt-abv--hard-run-p coords) (cl-return-from daselt-abv--ergonomic-score nil))
+    (let* ((base (- (apply #'+ (mapcar #'daselt-abv--erg-score coords))))
+           (pen 0) (bon 0))
+      (dolist (c coords)
+        (when (daselt-abv--pinky c) (setq pen (+ pen (oref wobj penalty-pinky))))
+        (unless (= (nth 1 c) 0) (setq pen (+ pen (oref wobj penalty-row-jump)))))
+      (when (= (length coords) 2)
+        (let ((c1 (nth 0 coords)) (c2 (nth 1 coords)))
+          (when (daselt-abv--same-finger c1 c2) (setq pen (+ pen (oref wobj penalty-same-finger))))
+          (when (daselt-abv--cross-hand c1 c2) (setq bon (+ bon (oref wobj bonus-alternation))))
+          (when (daselt-abv--roll c1 c2) (setq bon (+ bon (oref wobj bonus-roll))))))
+      (+ base (- pen) bon))))
+
+(defun daselt-abv--availability-score (layout seq)
+  "Compute the availability subscore for SEQ on LAYOUT.
+
+SEQ is the candidate deep structure (a list of placevals). The score favors
+coordinates whose layer has a defined pair in LAYOUT's layer-pairs and slightly
+penalizes reuse of the exact same deep structure already present in LAYOUT's
+root-table.
+
+The current implementation adds +0.1 if the starting coordinate has an available
+upper-layer pair and subtracts 0.05 for each existing mapping equal to SEQ."
+  (let* ((coord1 (car (car seq)))
+         (L (nth 0 coord1)) (r (nth 1 coord1)) (c (nth 2 coord1))
+         (pairs (slot-value daselt-abv--default-layout 'layer-pairs))
+         (upper (cdr (assoc L pairs)))
+         (pairedp (and upper
+                       (assoc (list upper r c) (oref layout valid-root-placevals) #'equal)))
+         (deep seq)
+         (cnt 0))
+    (maphash (lambda (_k v) (when (equal v deep) (setq cnt (1+ cnt)))) (oref layout root-table))
+    (+ (if pairedp 0.1 0.0) (* -0.05 cnt))))
+
+;;;; Collision avoidance via shared-affix penalty
+
+(defun daselt-abv--shared-affix (matrix r1 r2)
+  "Lookup shared-affix score between R1 and R2 in MATRIX alist."
+  (or (abv-corpus-shared-affix-lookup matrix r1 r2)
+      (abv-corpus-shared-affix-lookup matrix r2 r1)
+      0))
+
+(defun daselt-abv--collision-penalty (layout root deep matrix)
+  "Sum shared-affix scores for ROOT with others bound to DEEP."
+  (if (null matrix)
+      0
+    (let ((tbl (oref layout root-table))
+          (sum 0))
+      (maphash (lambda (k v)
+                 (when (and (not (string= k root)) (equal v deep))
+                   (setq sum (+ sum (daselt-abv--shared-affix matrix root k)))))
+               tbl)
+      sum)))
+
+
+;; old duplicate removed
+(defun daselt-abv--mnemonic-score (layout _root indexed-seq)
+  "Score INDEXED-SEQ for ROOT using mnemonic criteria.
+
+INDEXED-SEQ is a list of indexed placevals where each element is ((LETTER .
+ INDEX) . PLACEVAL).
+
+The score combines two ideas: - smaller indices are better, especially when the
+first element starts at index 0 in ROOT, which receives a large bonus; - letters
+that are rarer (lower frequency) are preferred. Frequencies are looked up in the
+LAYOUT's slot `letter-frequency-alist'.
+
+When `letter-frequency-alist' is empty, the rarity term is skipped. If LETTER is
+not found in the alist, treat it as very rare.
+
+Return a real-valued score (higher is better)."
+  (let* ((freq-alist (and (slot-boundp layout 'letter-frequency-alist)
+                          (oref layout letter-frequency-alist)))
+         (use-freq (and (listp freq-alist) (> (length freq-alist) 0)))
+         ;; Build a numeric rarity score where smaller frequency -> larger bonus.
+         (freq-h (when use-freq (let ((ht (make-hash-table :test 'equal)))
+                                  (dolist (kv freq-alist ht)
+                                    (puthash (car kv) (cdr kv) ht)))))
+         ;; indices of letters in the root
+         (indices (mapcar (lambda (elt) (cdr (car elt))) indexed-seq))
+         ;; Prefer early indices; use inverse with diminishing returns.
+         (idx-term (apply #'+ (cl-mapcar (lambda (idx pos)
+                                           (/ 1.0 (+ 1.0 idx (* 0.2 pos))))
+                                         indices
+                                         (number-sequence 0 (1- (length indices))))))
+         ;; strong bonus for first element at index 0
+         (start-bonus (if (and indices (= (car indices) 0)) 2.0 0.0))
+         ;; rarity term: use -log(freq) with floor for unknowns
+         (rarity-term (if (not use-freq)
+                          0.0
+                        (let ((sum 0.0))
+                          (dolist (elt indexed-seq sum)
+                            (let* ((letter (car (car elt)))
+                                   (freq (or (and freq-h (gethash letter freq-h))
+                                             0.0005)))
+                              (setq sum (+ sum (- (log (max freq 1e-6)))))))))))
+    ;; Calibrate: rarity should usually outweigh start-bonus when a rare
+    ;; first letter like q/x/j competes with a frequent first letter, so
+    ;; give rarity a larger coefficient.
+    (+ (* 0.8 idx-term) start-bonus (* 1.2 rarity-term))))
+
+(cl-defun daselt-abv--score (layout root indexed-seq wobj shared-matrix)
+  "Combine subscores for ROOT and INDEXED-SEQ using WOBJ and SHARED-MATRIX.
+
+The total score S is:
+
+  S = wE * ERG + wM * MN + wA * AV - C * COLL
+
+where: - ERG is from `daselt-abv--ergonomic-score' (on the plain, de-indexed
+seq), - MN is from `daselt-abv--mnemonic-score' (on the indexed seq), - AV is
+from `daselt-abv--availability-score' (on the plain seq), - COLL is the
+collision value from `daselt-abv--collision-penalty'.
+
+Return nil if ERG is nil, meaning the candidate is ergonomically invalid."
+  (let* ((plain (daselt-base-remove-indices indexed-seq))
+         (erg (daselt-abv--ergonomic-score plain wobj)))
+    (when (null erg) (cl-return-from daselt-abv--score nil))
+    (let* ((mn (daselt-abv--mnemonic-score layout root indexed-seq))
+           (av (daselt-abv--availability-score layout plain))
+           (wE (or (ignore-errors (oref wobj weight-ergonomic)) 1.0))
+           (wM (or (ignore-errors (oref wobj weight-mnemonic)) 1.0))
+           (wA (oref wobj weight-availability))
+           (coll (daselt-abv--collision-penalty layout root plain shared-matrix))
+           (C (oref wobj root-collision-weight)))
+      (+ (* wE erg) (* wM mn) (* wA av) (* -1.0 C coll)))))
+
+;;;; Deep generation (updated)
+;;;; Deep generation options
+(cl-defmethod abv-typed-layout-assign-affixes
+        ((layout daselt-abv-layout) affixes frequencies table-id &optional language stats)
+        "Assign AFFIXES into TABLE-ID according to FREQUENCIES.
+
+TABLE-ID is one of the symbols prefix, suffix, infix or root. The corresponding
+global table variable (e.g., daselt-abv-prefix-table) is created when needed and
+updated in place. Existing entries are preserved.
+
+AFFIXES is a list of strings. FREQUENCIES is an alist whose keys are \(string,
+symbol, or (string)) and values are positive integers.
+
+The algorithm sorts AFFIXES by descending frequency (ties by length then
+lexicographic) and, for each affix not already present, chooses a coordinate as
+follows:
+
+- prefer lower paired coordinates on the side appropriate for TABLE-ID; seed
+- per-letter bases from existing letter placements and search neighboring
+- coordinates across layers in ergonomic order; if no paired coordinate is free,
+- fall back to the complement (the remaining valid coordinates); for infix, scan
+- the whole valid infix set; there is no paired subset; break ties by minimal
+- usage count per coordinate, then by ergonomic cost; counts are updated as
+- assignments are made.
+
+Return the updated hash-table. LANGUAGE and STATS are currently ignored but
+accepted for forward compatibility."
+        (ignore language stats)
+        (unless (and (listp affixes) (listp frequencies) (symbolp table-id))
+    (user-error "Invalid inputs: expected (list list symbol)"))
+        (let* ((freqs (daselt-abv--normalize-frequencies frequencies))
+         (table-sym (pcase table-id ('prefix 'daselt-abv-prefix-table)
+                           ('suffix 'daselt-abv-suffix-table)
+                           ('infix  'daselt-abv-infix-table)
+                           ('root   'daselt-abv-root-table)
+                           (_ (user-error "Unknown table-id %S" table-id))))
+         (table (daselt-abv--ensure-hash-table table-sym))
+         (used-coords (make-hash-table :test 'equal))
+         (counts (make-hash-table :test 'equal)))
+    ;; Seed usage counts from existing assignments.
+    (maphash (lambda (_a c)
+                     (puthash c t used-coords)
+                     (cl-incf (gethash c counts 0)))
+             table)
+    (pcase table-id
+      ('prefix
+       (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-prefix-placevals)))
+              (paired-h (daselt-abv--placevals->coord-hash (oref layout valid-lower-paired-prefix-placevals)))
+              (compl-h (daselt-abv--complement-hash univ-h paired-h))
+              (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+              (letter-base (daselt-abv--collect-letter-bases
+                            (append (oref layout valid-prefix-placevals)
+                                    (oref layout valid-suffix-placevals)
+                                    (oref layout valid-infix-placevals)))))
+         (dolist (a sorted)
+           (unless (gethash a table)
+             (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
+               (when (or (null coord) (gethash coord used-coords))
+                 (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
+               (when coord
+                 (puthash coord t used-coords)
+                 (puthash a coord table)))))
+         table))
+      ('suffix
+       (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-suffix-placevals)))
+              (paired-h (daselt-abv--placevals->coord-hash (oref layout valid-lower-paired-suffix-placevals)))
+              (compl-h (daselt-abv--complement-hash univ-h paired-h))
+              (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+              (letter-base (daselt-abv--collect-letter-bases
+                            (append (oref layout valid-prefix-placevals)
+                                    (oref layout valid-suffix-placevals)
+                                    (oref layout valid-infix-placevals)))))
+         (dolist (a sorted)
+           (unless (gethash a table)
+             (let* ((coord (daselt-abv--assign-one a paired-h counts letter-base nil)))
+               (when (or (null coord) (gethash coord used-coords))
+                 (setq coord (daselt-abv--assign-one a compl-h counts letter-base t)))
+               (when coord
+                 (puthash coord t used-coords)
+                 (puthash a coord table)))))
+         table))
+      ('infix
+       (let* ((univ-h (daselt-abv--placevals->coord-hash (oref layout valid-infix-placevals)))
+              (sorted (daselt-abv--sorted-affixes-by-frequency affixes freqs))
+              (letter-base (daselt-abv--collect-letter-bases
+                            (append (oref layout valid-infix-placevals)
+                                    (oref layout valid-prefix-placevals)
+                                    (oref layout valid-suffix-placevals)))))
+         (dolist (a sorted)
+           (unless (gethash a table)
+             (let* ((coord (daselt-abv--assign-one a univ-h counts letter-base nil)))
+               (when (or (null coord) (gethash coord used-coords))
+                 ;; Fallback by minimal usage then ergonomic cost.
+                 (setq coord (daselt-abv--choose-fallback univ-h counts)))
+               (when coord
+                 (puthash coord t used-coords)
+                 (puthash a coord table)))))
+         table))
+      (_ table))))
+
+(cl-defmethod abv-typed-layout-add-graph ((layout daselt-abv-layout)
+                                          stats &optional _options)
+  "Build a morph-sign-graph from STATS and add it to LAYOUT.
+
+This method performs two steps: - Assign affixes using
+`abv-typed-layout-assign-affixes' for prefix, suffix and infix classes, based on
+the frequency alists from STATS. - Generate deep structures for frequent roots
+using `abv-typed-layout-type-root'.
+
+The resulting graph is stored in the layout's :abv-morph-sign-graphs slot keyed
+by the language name. Return the graph."
+  (unless (and (fboundp 'abv-corpus-language-statistics-p)
+               (abv-corpus-language-statistics-p stats))
+    (user-error "Unsupported stats object: %S" stats))
+  (let* ((lang (ignore-errors (oref stats language)))
+         (lname (and lang (ignore-errors (oref lang name))))
+         (pf (ignore-errors (oref stats prefix-frequency)))
+         (sf (ignore-errors (oref stats suffix-frequency)))
+         (ifx (ignore-errors (or (and (slot-boundp stats 'infix-frequency)
+                                      (oref stats infix-frequency))
+                                 (and (slot-boundp stats 'infixes)
+                                      (oref stats infixes)))))
+         (rf (ignore-errors (oref stats root-frequency)))
+         (graph (make-instance 'abv-morph-sign-graph
+                               :abv-language lang
+                               :statistics-file (ignore-errors (oref stats file))
+                               :prefix-graph nil :suffix-graph nil
+                               :infix-graph nil :root-graph nil)))
+    (when (and (listp pf) (> (length pf) 0))
+      (abv-typed-layout-assign-affixes layout (mapcar #'car pf) pf 'prefix lang stats)
+      (oset graph prefix-graph pf))
+    (when (and (listp sf) (> (length sf) 0))
+      (abv-typed-layout-assign-affixes layout (mapcar #'car sf) sf 'suffix lang stats)
+      (oset graph suffix-graph sf))
+    (when (and (listp ifx) (> (length ifx) 0))
+      (abv-typed-layout-assign-affixes layout (mapcar #'car ifx) ifx 'infix lang stats)
+      (oset graph infix-graph ifx))
+    (when (and (listp rf) (> (length rf) 0))
+      (let* ((wobj (or (and (slot-boundp layout 'weights) (oref layout weights))
+                       daselt-abv-weights))
+             (ordered (cl-sort (copy-sequence rf)
+                               (lambda (a b)
+                                 (let ((ca (cdr a)) (cb (cdr b))
+                                       (sa (car a)) (sb (car b)))
+                                   (if (/= ca cb) (> ca cb)
+                                     (if (/= (length sa) (length sb))
+                                         (< (length sa) (length sb))
+                                       (string< sa sb))))))))
+        (dolist (cell ordered)
+          (let ((root (car cell)))
+            (abv-typed-layout-type-root layout root wobj t nil lang)))))
+    (let ((alist nil))
+      (maphash (lambda (k v) (push (cons k v) alist)) (oref layout root-table))
+      (oset graph root-graph (cl-sort alist (lambda (a b) (string< (car a) (car b))))))
+    (let ((alist (oref layout abv-morph-sign-graphs)))
+      (push (cons (or lname (format "lang-%s" (length alist))) graph) alist)
+      (oset layout abv-morph-sign-graphs alist))
+    graph))
+
+(defgroup daselt-abv-root nil
+      "Root deep generation and measurement."
+      :group 'daselt-abv)
+
+;; (defcustom daselt-abv-root-enum-max 128
+;;   "Maximum number of placevals to consider for root candidates."
+;;   :type 'integer :group 'daselt-abv-root)
+
+;;;; Root placevals validity helper
+
+;; (or (oref layout valid-root-placevals)
+;;       (let* ((classes (slot-value layout 'root-classes))
+;;              (special (slot-value layout 'special-placevals))
+;;              (all (let ((print-level nil) (print-length nil))
+;;                     (-filter
+;;                      (lambda (cons)
+;;                            (and (= 1 (length (cdr cons)))
+;;                             (let* ((char (string-to-char (cdr cons)))
+;;                                    (syx (with-syntax-table org-mode-syntax-table (char-syntax char))))
+;;                               (cl-member syx classes :test #'=))))
+;;                      (daselt-base-flatten-n-times
+;;                       (cdr (daselt-coords-coordinatize-layout
+;;                             (symbol-value daselt-dfk-layout))) 2))))
+;;              (valid (cl-remove-if (lambda (cns) (cl-member (car cns) special :test #'equal)) all)))
+;;         (oset layout valid-root-placevals valid)
+;;         valid))
+
+;;;; Cue promotion (3-letter unique cues)
+
+(defvar daselt-abv-three-letter-cue-budget
+  (cl-defmethod abv-typed-layout-promote-3letter-cues
+    ((layout daselt-abv-layout) language roots freq-alist &optional budget)
+    "Promote frequent three-letter words to one-symbol cues on LAYOUT.
+
+LANGUAGE provides word knowledge via `abv-language-word-p'.  ROOTS is a
+list of root strings.  FREQ-ALIST maps roots to counts and determines the
+processing order.  Up to BUDGET items are promoted.  Return an alist of
+\(ROOT . CUE-STRING)."
+        (let* ((budget (or budget daselt-abv-three-letter-cue-budget))
+           (freq (abv-layout-alist->hash freq-alist))
+           (ordered (cl-sort (cl-remove-if-not
+                              (lambda (r)
+                                  (and (= (length r) 3)
+                                     (abv-language-word-p language r)))
+                              (copy-sequence roots))
+                             (lambda (a b)
+                                 (let ((fa (gethash a freq 0)) (fb (gethash b freq 0)))
+                                 (if (/= fa fb) (> fa fb) (string< a b))))))
+           (assigned 0)
+           (report '())
+           (cue-ht (oref layout cue-table)))
+      (dolist (r ordered)
+        (when (< assigned budget)
+          (let* ((deep (gethash r (oref layout root-table)))
+                 (one (and (consp deep) (abv-placeval-p deep)))
+                 (pv (if one deep (car (abv-layout-generate-symbol-sequences layout "w"))))
+                 (cue (and pv (cdr pv))))
+            (when (and cue (not (gethash cue cue-ht)))
+              (puthash r pv (oref layout root-table))
+              (puthash cue r cue-ht)
+              (push (cons r cue) report)
+              (setq assigned (1+ assigned)))
+            (when (and cue (gethash cue cue-ht))
+              (let ((alts (abv-layout-generate-symbol-sequences layout "w"))
+                    (found nil))
+                (dolist (alt alts)
+                  (let ((c (cdr alt)))
+                    (when (and (not found) (not (gethash c cue-ht)))
+                      (puthash r alt (oref layout root-table))
+                      (puthash c r cue-ht)
+                      (push (cons r c) report)
+                      (setq assigned (1+ assigned) found t))))))))
+        (nreverse report)))
+
+        (length (daselt-abv--placevals-from-classes (oref daselt-abv--default-layout standalone-classes)))
+        "Number of three-letter words to promote to unique one-symbol cues."))
+
+(defun daselt-abv-promote-3letter-cues (layout language roots freq-alist &optional budget)
+  "Promote frequent three-letter words to unique cues using LANGUAGE.
+
+LAYOUT is a `daselt-abv-layout'.  LANGUAGE is an `abv-language'.  ROOTS
+is a list of root strings.  FREQ-ALIST maps roots to counts.  Promote up
+to BUDGET items.  Return an alist of (ROOT . CUE-STRING)."
   (interactive)
-  (let* ((table-id (intern (completing-read "Table: " '("prefix" "suffix" "infix" "root") nil t)))
-         (query (read-string (format "Query for %s: " table-id))))
-    (abv-layout-lookup-affix daselt-abv--default-layout table-id query)))
+  (abv-typed-layout-promote-3letter-cues layout language roots freq-alist budget))
+
+;;;; Inspection
+
+;; (defun daselt-abv-inspect-root (layout root &optional shared-matrix)ot
+;;        "Show top candidates and component scores for ROOT."
+;;        (interactive (list daselt-abv--default-layout (read-string "Root: ") nil))
+;;        (let* ((wobj daselt-abv-weights)
+;;               (wordp (abv-morph-is-word-p abv-morph-english-data root))
+;;               (onep (and (< (length root) 4) wordp))
+;;               (cands (if onep (abv-layout-generate-symbol-sequences layout "w")
+;;                        (abv-layout-generate-symbol-sequences layout "ww")))
+;;               (scored (cl-remove-if
+;;                        (lambda (row) (null (nth 4 row)))
+;;                        (mapcar (lambda (seq)
+;;                                  (let* ((seqn (if onep (list seq) seq))
+;;                                         (indexed (daselt-abv--index-plain-seq root seqn))
+;;                                         (erg (daselt-abv--ergonomic-score seqn wobj))
+;;                                         (mn (daselt-abv--mnemonic-score layout root indexed))
+;;                                         (av (daselt-abv--availability-score layout seqn))
+;;                                         (score (and erg (daselt-abv--score layout root indexed wobj shared-matrix))))
+;;                                    (list seqn erg mn av score)))
+;;                                cands)))
+;;               (top (cl-subseq (cl-sort scored (lambda (a b) (> (nth 4 a) (nth 4 b)))) 0 (min 10 (length scored)))))
+;;          (with-current-buffer (get-buffer-create "*abv Inspect Root*")
+;;            (erase-buffer)
+;;            (insert (format "Root: %s (one-symbol=%s)\n\n" root (if onep "yes" "no")))
+;;            (insert "| Candidate | Erg | Mn | Av | Score |\n|-\n")
+;;            (dolist (row top)
+;;              (insert (format "| %S | %.3f | %.3f | %.3f | %.3f |\n"
+;;                              (car row) (or (nth 1 row) 0.0) (nth 2 row) (nth 3 row) (or (nth 4 row) 0.0))))
+;;            (goto-char (point-min))
+;;            (org-mode)
+;;            (display-buffer (current-buffer)))))
+
+;; (defun daselt-abv-derive-weights-from-pairs (&optional base-weights)
+;;   "Derive an ergonomic/mnemonic weight split
+;;                     from timing statistics.
+
+;; Collect mean and standard deviation of recorded pair times in
+;; `daselt-abv--pair-stats' and adjust the ergonomic weight :wE by a scaled z-score
+;; around 120ms. The mnemonic weight :wM is set to 1 - :wE.
+
+;; BASE-WEIGHTS is a plist (:wE :wM) used as a starting point. Return a plist with
+;; the updated weights."
+;;   (let* ((w (or base-weights '(:wE 0.6 :wM 0.4)))
+;;          (wE (plist-get w :wE))
+;;          (times '()))
+;;     (maphash (lambda (_k v) (push (cdr v) times)) daselt-abv--pair-stats)
+;;     (if (null times)
+;;         w
+;;       (let* ((mean (/ (apply #'+ times) (float (length times))))
+;;              (var (/ (apply #'+ (mapcar (lambda (x) (let ((d (- x mean))) (* d d))) times))
+;;                      (max 1.0 (1- (float (length times))))))
+;;              (sd (sqrt (max var 1e-6)))
+;;              (z (/ (- mean 120.0) (max sd 1e-6)))
+;;              (k 0.05)
+;;              (wE2 (max 0.0 (min 1.0 (+ wE (* k z)))))
+;;              (wM2 (- 1.0 wE2)))
+;;         (list :wE wE2 :wM wM2)))))
+
 
 (provide 'daselt-abv)
+
+
 ;;; daselt-abv.del ends here
